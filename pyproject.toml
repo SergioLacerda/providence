@@ -47,7 +47,7 @@ examples-langgraph = [
     "langgraph>=1.2.11",
     "langchain-core>=1.6.1",
 ]
-examples-crewai = [
+examplescrewai = [
     "crewai==1.15.18",
     "onnxruntime<1.25",
     "setuptools>=84.0.0",
@@ -75,11 +75,11 @@ package = false
 conflicts = [
     [
         { extra = "test" },
-        { extra = "examples-crewai" },
+        { extra = "examplescrewai" },
     ],
     [
         { group = "test" },
-        { extra = "examples-crewai" },
+        { extra = "examplescrewai" },
     ],
 ]
 constraint-dependencies = [

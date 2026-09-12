@@ -6,7 +6,7 @@ Shows SDD detecting a tampered governance fingerprint before a CrewAI crew
 executes. The crew is initialized but never kicked off when drift is found.
 
 Run from repo root:
-    uv run --extra examples-crewai python examples/crewai/demo_spec_drift.py
+    uv run --extra examplescrewai python examples/crewai/demo_spec_drift.py
 """
 
 from __future__ import annotations

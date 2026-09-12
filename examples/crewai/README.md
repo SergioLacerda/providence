@@ -6,7 +6,7 @@ Shows SDD detecting a tampered governance fingerprint before a CrewAI crew execu
 
 ```bash
 # From repo root
-uv run --extra examples-crewai python examples/crewai/demo_spec_drift.py
+uv run --extra examplescrewai python examples/crewai/demo_spec_drift.py
 ```
 
 ## What happens

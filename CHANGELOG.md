@@ -25,6 +25,23 @@ Before tagging a new release, verify:
 
 ## [Unreleased]
 
+## [1.0.14] — 2026-09-12
+
+### Changed
+- Rebranded the project and CLI from `sdd` to `providence`, including core
+  infrastructure, pipeline orchestration, and governance documentation.
+- Extended the managed-block convention (preserving hand-edited content
+  during regeneration) to Copilot and Antigravity instructions files.
+
+### Added
+- Added post-merge and pre-push git hooks to the tools scripts.
+
+### Fixed
+- Fixed handshake strict-mode exit propagation and drift-detection logic to
+  compare against previous session states.
+- Fixed repo-root resolution to avoid falling back to the harness source
+  directory, and added validation for empty client governance artifacts.
+
 ## [1.0.13] — 2026-09-02
 
 ### Fixed

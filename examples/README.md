@@ -23,7 +23,7 @@ Expected output: `BLOCKED` with the violated mandate reference.
 **What it shows:** A CrewAI crew is initialized, then the governance fingerprint is tampered (simulating artifact drift). SDD detects the mismatch before the crew runs.
 
 ```bash
-uv run --extra examples-crewai python examples/crewai/demo_spec_drift.py
+uv run --extra examplescrewai python examples/crewai/demo_spec_drift.py
 ```
 
 Expected output: `DRIFT_DETECTED` with expected vs found fingerprint diff.

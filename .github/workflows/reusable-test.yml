@@ -3,7 +3,7 @@ name: Reusable Tests
 # Framework demos (examples/) are NOT part of this suite.
 # Run them manually with optional extras:
 #   uv run --extra examples-langgraph python examples/langgraph/demo_tool_guardrail.py
-#   uv run --extra examples-crewai    python examples/crewai/demo_spec_drift.py
+#   uv run --extra examplescrewai    python examples/crewai/demo_spec_drift.py
 
 on:
   workflow_call:
