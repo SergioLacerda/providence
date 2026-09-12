@@ -376,7 +376,7 @@ def run_build_compiler() -> int:
             "-C",
             "tools/sdd-compile",
             "-o",
-            f"bin/providence-compile{goexe}",
+            f"bin/sdd-compile{goexe}",
             ".",
         ]
     )

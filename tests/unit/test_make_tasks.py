@@ -348,7 +348,7 @@ def test_build_compiler_uses_goexe_suffix() -> None:
                 "-C",
                 "tools/sdd-compile",
                 "-o",
-                "bin/providence-compile.exe",
+                "bin/sdd-compile.exe",
                 ".",
             ]
         )
