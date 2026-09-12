@@ -75,8 +75,13 @@ else
 fi
 
 # ── Governance validation ────────────────────────────────────────────────────
-echo -e "${YELLOW}→ Running governance validation...${NC}"
-if GOV_OUTPUT=$($PROVIDENCE_CMD governance validate 2>&1); then
+# Artifact lane: pre-push checks structure/fingerprints/artifact consistency,
+# not the pusher's live M015 session handshake. Session authorization (M015)
+# is a hard-mode gate for agent execution, not a human-push gate, and the
+# handshake naturally expires or gets rewritten by full-bootstrap/tests
+# between commits — see docs/runbooks/m015-handshake-validation-failure.md.
+echo -e "${YELLOW}→ Running governance validation (artifact lane)...${NC}"
+if GOV_OUTPUT=$($PROVIDENCE_CMD governance validate --skip-handshake 2>&1); then
     echo -e "${GREEN}✓ Governance validation passed${NC}"
 else
     echo -e "${RED}GOVERNANCE VALIDATION FAILED${NC}"

@@ -108,7 +108,7 @@ def main() -> int:
         env = dict(os.environ)
         env["SDD_ASK_ENTRYPOINT"] = "hook"
         result = subprocess.run(
-            ["sdd", "ask", prompt],
+            ["providence", "ask", prompt],
             capture_output=True,
             text=True,
             timeout=10,

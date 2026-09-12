@@ -66,6 +66,31 @@ class TestCompleteBootstrapHandshake:
         assert captured["acknowledged_signature"] is True
         assert captured["compliance_declaration"] is True
 
+    def test_uses_resolved_workspace_root_not_cwd_default(self, tmp_path: Path) -> None:
+        """Bootstrap must target the resolved workspace root explicitly, not
+        AgentHandshakeProtocol()'s cwd-based default, so full-bootstrap in an
+        isolated test/CI workspace never touches the real repository root."""
+        captured_kwargs: dict = {}
+
+        class _CapturingRootAHP(_FakeAHP):
+            def __init__(self, *args, **kwargs) -> None:
+                captured_kwargs.update(kwargs)
+                super().__init__(*args, **kwargs)
+
+        with (
+            patch(
+                "providence_core.governance.handshake.AgentHandshakeProtocol",
+                _CapturingRootAHP,
+            ),
+            patch(
+                "providence_cli.services.governance_bootstrap_handlers.resolve_workspace_root",
+                return_value=tmp_path,
+            ),
+        ):
+            complete_bootstrap_handshake()
+
+        assert captured_kwargs.get("project_root") == tmp_path
+
 
 class TestRunBootstrapSigning:
     def test_normal_flow_signs_once(self, tmp_path: Path) -> None:

@@ -12,10 +12,17 @@ from providence_cli.utils.providence_authority import resolve_workspace_root
 
 
 def complete_bootstrap_handshake() -> None:
-    """Run and complete the agent handshake protocol for bootstrap."""
+    """Run and complete the agent handshake protocol for bootstrap.
+
+    Uses `resolve_workspace_root()` explicitly rather than relying on
+    `AgentHandshakeProtocol()`'s cwd-based default resolution, so this
+    always targets the same workspace as the rest of the bootstrap flow
+    (and honors `SDD_WORKSPACE_ROOT` in isolated test/CI environments
+    instead of silently falling back to the process cwd).
+    """
     from providence_core.governance.handshake import AgentHandshakeProtocol
 
-    ahp = AgentHandshakeProtocol()
+    ahp = AgentHandshakeProtocol(project_root=resolve_workspace_root())
     challenge = ahp.generate_challenge(task_description="Bootstrap Session")
     ahp.complete_handshake(bootstrap_response(challenge))
 

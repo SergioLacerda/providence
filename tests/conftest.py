@@ -439,7 +439,16 @@ def _guard_repo_sdd_write(target: Any, op: str) -> None:
 
 @pytest.fixture(autouse=True)
 def _forbid_repo_sdd_writes(monkeypatch: pytest.MonkeyPatch) -> Any:  # noqa: C901
-    """Hard-fail any test-time write mutation under repository .providence."""
+    """Hard-fail any test-time write mutation under repository .providence.
+
+    Scoped to the `tests/` subtree only (conftest.py fixtures only apply to
+    tests inside their own directory subtree). `packages/**/tests/**` needs
+    its own coverage: the repository-root `conftest.py` provides a narrower,
+    handshake-file-only guard for those trees — see its module docstring for
+    why it does not reuse this broader per-path check (doing so broke
+    unrelated, pre-existing `.providence/runtime/` usage in package test
+    suites that don't inherit this module's `SDD_WORKSPACE_ROOT` isolation).
+    """
     original_open = builtins.open
 
     def guarded_builtin_open(file: Any, mode: str = "r", *args: Any, **kwargs: Any):

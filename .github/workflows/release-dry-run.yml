@@ -301,4 +301,8 @@ jobs:
           cd "$SMOKE_DIR"
           providence install --wizard --non-interactive
           providence init --default  # sdd-ci-policy: allow-client-smoke
+          # Session lane: this validates a freshly initialized scratch project's
+          # own handshake, not this repository's. It is not equivalent to the
+          # artifact-lane `governance validate --skip-handshake` used elsewhere
+          # in CI, and must stay plain here to exercise the real M015 handshake path.
           providence governance validate  # sdd-ci-policy: allow-client-smoke

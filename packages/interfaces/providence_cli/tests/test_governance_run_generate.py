@@ -80,6 +80,32 @@ class TestRunGenerate:
         )
         mock_handshake.assert_called_once()
 
+    def test_full_bootstrap_announces_handshake_refresh(self) -> None:
+        """Full bootstrap must say out loud that it rewrote the active M015
+        handshake, since that silently invalidates a prior session's response."""
+        console = _console()
+        with (
+            patch(
+                "providence_cli.services.governance_generate_handlers.generate_artifacts"
+            ),
+            patch(
+                "providence_cli.services.governance_generate_handlers.run_bootstrap_signing"
+            ),
+            patch(
+                "providence_cli.services.governance_generate_handlers.complete_bootstrap_handshake"
+            ),
+        ):
+            run_generate(
+                output_dir="/out",
+                path="",
+                full_bootstrap=True,
+                key_id="dev-01",
+                profile="client",
+                output_json=False,
+                console=console,
+            )
+        assert "M015" in console.file.getvalue()
+
     def test_full_bootstrap_without_compile_fn(self) -> None:
         with (
             patch(

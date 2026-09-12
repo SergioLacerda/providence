@@ -17,25 +17,25 @@ from providence_wizard.orchestration.prompt_submit_hooks import (
     resolve_prompt_submit_hook_agents,
 )
 
-# Faking a bare `sdd` command that Windows will actually spawn requires a
+# Faking a bare `providence` command that Windows will actually spawn requires a
 # real .exe: `CreateProcess` only auto-appends the .exe suffix when
 # resolving an extensionless command, never .bat/.cmd, so a shebenv script
-# on PATH there is silently skipped in favor of any real `sdd` install.
+# on PATH there is silently skipped in favor of any real `providence` install.
 # These tests only cover subprocess plumbing already proven correct on
 # Linux CI, so skip the unreliable simulation on Windows rather than fight
 # process-launch semantics in the fixture.
 _SKIP_FAKE_SDD_REASON = (
     "Windows CreateProcess doesn't resolve bare commands to .bat/.cmd, so a "
-    "fake `sdd` on PATH can't be simulated reliably here; covered on Linux CI."
+    "fake `providence` on PATH can't be simulated reliably here; covered on Linux CI."
 )
 
 
 def _write_fake_sdd(bin_dir: Path, body_lines: list[str]) -> None:
-    """Write a fake `sdd` command on PATH that a subprocess can invoke."""
+    """Write a fake `providence` command on PATH that a subprocess can invoke."""
     script = "\n".join(["#!/usr/bin/env python3", *body_lines]) + "\n"
-    fake_sdd = bin_dir / "sdd"
-    fake_sdd.write_text(script, encoding="utf-8")
-    fake_sdd.chmod(0o755)
+    fake_providence = bin_dir / "providence"
+    fake_providence.write_text(script, encoding="utf-8")
+    fake_providence.chmod(0o755)
 
 
 def test_resolve_prompt_submit_hook_agents_defaults_to_all_supported() -> None:

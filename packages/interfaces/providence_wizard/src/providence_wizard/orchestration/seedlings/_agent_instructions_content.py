@@ -177,6 +177,9 @@ files above first):
    ```
 
 Without this, `providence governance validate` reports `Active handshake (M015):
-FAIL`. The response has no expiry once submitted  do it once per new agent
-session, not on every command.
+FAIL`. The response is authorized for 60 minutes from when the challenge was
+issued, not indefinitely  do it once per new agent session (not on every
+command), and redo it if `governance validate` reports M015 as expired or if
+someone runs `providence governance generate --full-bootstrap` in this
+workspace, which issues a fresh challenge and invalidates any prior response.
 """

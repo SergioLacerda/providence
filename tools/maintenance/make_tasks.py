@@ -650,6 +650,10 @@ def run_docker_build(flags_text: str = "") -> int:
 
 
 def run_governance_bootstrap() -> int:
+    # Session lane: --full-bootstrap issues a fresh M015 challenge and
+    # completes it against the resolved workspace root, invalidating any
+    # handshake response from a prior agent session in this workspace. That
+    # is intentional bootstrap behavior, not a validation-only command.
     return _run(
         _python_cmd()
         + ["-m", "providence_cli", "governance", "generate", "--full-bootstrap"]

@@ -3,7 +3,7 @@ import React from 'react';
 /**
  * Providence — GovernanceFooter
  * The CLI's signature trailer line:
- *   SDD GOVERNANCE: drift=<status> | governance=<status> | profile=<profile>
+ *   PROVIDENCE GOVERNANCE: drift=<status> | governance=<status> | profile=<profile>
  * Status words are color-coded. Use on a dark (terminal) or light surface.
  */
 export interface GovernanceFooterProps {
@@ -49,7 +49,7 @@ export function GovernanceFooter({ drift = 'clean', governance = 'active', profi
         ...style,
       }}
     >
-      <span style={{ color: labelColor, fontWeight: 700 }}>SDD GOVERNANCE:</span>
+      <span style={{ color: labelColor, fontWeight: 700 }}>PROVIDENCE GOVERNANCE:</span>
       <Field k="drift" v={drift} />
       <span style={{ color: sepColor }}>|</span>
       <Field k="governance" v={governance} />

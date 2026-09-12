@@ -60,8 +60,12 @@ def test_skill_enforcement_allows_authorized_skill(tmp_path: Path):
     assert result.policy_result != "unauthorized"
 
 
-def test_handshake_challenge_generation():
-    ahp = AgentHandshakeProtocol()
+def test_handshake_challenge_generation(tmp_path: Path):
+    # project_root must be explicit: AgentHandshakeProtocol() with no
+    # argument resolves to the real repository root (via cwd), which
+    # would persist a fresh challenge to the live .providence/runtime/
+    # and invalidate any active session handshake (M015 runtime drift).
+    ahp = AgentHandshakeProtocol(project_root=tmp_path)
     challenge = ahp.generate_challenge(task_description="Unit Test")
 
     assert challenge.session_id is not None

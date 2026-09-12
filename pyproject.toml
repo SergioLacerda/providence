@@ -164,7 +164,7 @@ python_version = "3.10"
 platform = "linux"
 strict = true
 ignore_missing_imports = false
-exclude = ["^generated/", "^site/", "^tests/", "^packages/.*/tests/", "^packages/features/providence_wizard/tests/conftest\\.py", "build/", "dist/", "^packages/core/providence_core/src/providence_core/tools/(generate-specializations|_generate_.*)\\.py$"]
+exclude = ["^generated/", "^site/", "^tests/", "^packages/.*/tests/", "^packages/features/providence_wizard/tests/conftest\\.py", "build/", "dist/", "^packages/core/providence_core/src/providence_core/tools/(generate-specializations|_generate_.*)\\.py$", "^conftest\\.py$", "^packages/conftest\\.py$"]
 cache_dir = "build/.mypy_cache"
 
 [[tool.mypy.overrides]]

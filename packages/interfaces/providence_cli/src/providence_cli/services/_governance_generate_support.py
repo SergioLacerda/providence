@@ -180,3 +180,9 @@ def run_generate_flow(
     )
     run_bootstrap_signing_fn(key_id, keygen_fn=keygen_fn, sign_fn=sign_fn)
     complete_bootstrap_handshake_fn()
+    if not output_json:
+        console.print(
+            "[dim]Full bootstrap refreshed the active session handshake "
+            "(M015) — a handshake response completed before this run is "
+            "no longer valid and must be redone.[/dim]"
+        )

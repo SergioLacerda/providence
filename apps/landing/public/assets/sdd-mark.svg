@@ -1,8 +1,8 @@
-<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SDD Harness mark">
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Providence mark">
   <rect x="4" y="4" width="88" height="88" rx="20" fill="#4453bd"></rect>
-  
+
   <path d="M34 26 H26 a4 4 0 0 0 -4 4 V66 a4 4 0 0 0 4 4 H34" stroke="#ffffff" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.55"></path>
   <path d="M62 26 H70 a4 4 0 0 1 4 4 V66 a4 4 0 0 1 -4 4 H62" stroke="#ffffff" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.55"></path>
-  
+
   <path d="M38 49 L45 57 L59 39" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
 </svg>

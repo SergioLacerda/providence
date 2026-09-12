@@ -42,7 +42,7 @@ describe('RuntimeProof', () => {
 
   it('renders the GovernanceFooter trailer', () => {
     render(<RuntimeProof stats={REAL_STATS} detailHref="/detalhe-tecnico" />);
-    expect(screen.getByText(/SDD GOVERNANCE:/)).toBeInTheDocument();
+    expect(screen.getByText(/PROVIDENCE GOVERNANCE:/)).toBeInTheDocument();
   });
 
   it('renders the "how it works" steps with real stat substitution in the command copy', () => {
