@@ -27,7 +27,7 @@ Provide an industrial-grade, immutable audit trail of all agentic decisions, ens
 The system MUST implement a dual-sink telemetry architecture:
 
 1. **Local Audit Trail (Canonical)**:
-    * Structured JSONL events persisted to `.sdd/audit-trail/compliance-events.jsonl`.
+    * Structured JSONL events persisted to `.providence/audit-trail/compliance-events.jsonl`.
     * Mandatory persistence for all governance violations and budget breaches.
     * Support for task-scoped segmentation (work-item segmentation).
 
@@ -55,8 +55,8 @@ In autonomous agent systems, "black box" behavior is a catastrophic risk. This f
 
 ## 📊 Learning Signals Contract
 
-`sdd ask` derives a `learning_signals` block from the audit trail defined above
-(`.sdd/runtime/failure-ledger.jsonl` and `.sdd/runtime/compliance-events.jsonl`)
+`providence ask` derives a `learning_signals` block from the audit trail defined above
+(`.providence/runtime/failure-ledger.jsonl` and `.providence/runtime/compliance-events.jsonl`)
 and includes it in every JSON response (`data.learning_signals`).
 
 ### Fields
@@ -74,13 +74,13 @@ and includes it in every JSON response (`data.learning_signals`).
 
 * `learning_signals` is **informational only**. It MUST NOT be used to derive
   `execution_gate` — that decision is governed exclusively by
-  `intake_index_mode` and `hard_mode_invariants` (see `.sdd/skills/sdd-ask/skill.yaml`).
-* When `inputs.full` is set (`sdd ask --full`) or any signal count is non-zero,
+  `intake_index_mode` and `hard_mode_invariants` (see `.providence/skills/sdd-ask/skill.yaml`).
+* When `inputs.full` is set (`providence ask --full`) or any signal count is non-zero,
   the agent SHOULD surface the non-zero signals to the user as a recommendation
   (e.g. "scope_violation: 2 in the last 7 days — review recent failure-ledger entries").
 * `scope_violation > 0` and `drift_recent_failures > 0` SHOULD be treated as a
-  prompt for the agent to re-read `.sdd/runtime/failure-ledger.jsonl` /
-  `.sdd/runtime/compliance-events.jsonl` before proposing further changes in the
+  prompt for the agent to re-read `.providence/runtime/failure-ledger.jsonl` /
+  `.providence/runtime/compliance-events.jsonl` before proposing further changes in the
   same area, but MUST NOT by themselves trigger `requires_human_review` or
   `escalate_to_human` — those remain governed by `escalation_policy.require_human_on`
   (`drift.critical`, `governance.violation`, `contract.invalid`).

@@ -1,4 +1,4 @@
-"""Verify the built sdd-core wheel bundles every native compiler binary.
+"""Verify the built providence-core wheel bundles every native compiler binary.
 
 Post-build release gate: staging assets into the package tree
 (`stage_packaged_compiler_assets`) happens before `python -m build`, so a
@@ -15,16 +15,16 @@ from pathlib import Path
 
 from tools.release.validate_release_assets import REQUIRED_COMPILER_ASSETS
 
-WHEEL_NATIVE_PREFIX = "sdd_core/_native/"
+WHEEL_NATIVE_PREFIX = "providence_core/_native/"
 
 
 def verify_wheel_native_assets(dist_dir: str | Path = "dist") -> Path:
-    """Return the verified sdd-core wheel path, or raise SystemExit."""
-    wheels = sorted(Path(dist_dir).glob("sdd_core-*.whl"))
+    """Return the verified providence-core wheel path, or raise SystemExit."""
+    wheels = sorted(Path(dist_dir).glob("providence_core-*.whl"))
     if not wheels:
-        raise SystemExit(f"no sdd_core wheel found in {dist_dir}")
+        raise SystemExit(f"no providence_core wheel found in {dist_dir}")
     if len(wheels) > 1:
-        raise SystemExit(f"expected exactly one sdd_core wheel, found: {wheels}")
+        raise SystemExit(f"expected exactly one providence_core wheel, found: {wheels}")
 
     wheel = wheels[0]
     with zipfile.ZipFile(wheel) as archive:

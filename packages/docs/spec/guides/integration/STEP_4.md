@@ -19,7 +19,7 @@ You have:
 You're about to:
 
 - Run PHASE 0 validation script
-- Create `.sdd/` infrastructure
+- Create `.providence/` infrastructure
 - Pass VALIDATION_QUIZ (basic knowledge check)
 - Move to Step 5 (commit)
 
@@ -41,7 +41,7 @@ python $(grep spec_path .spec.config | cut -d' ' -f3)docs/spec/SCRIPTS/phase-0-a
 ```bash
 # Part 1: Get the spec_path from .spec.config
 $(grep spec_path .spec.config | cut -d' ' -f3)
-# Returns: ../sdd-harness (or your absolute path)
+# Returns: ../providence (or your absolute path)
 
 # Part 2: Run the script
 python [path-from-part-1]docs/spec/SCRIPTS/phase-0-agent-onboarding.py
@@ -53,11 +53,11 @@ python [path-from-part-1]docs/spec/SCRIPTS/phase-0-agent-onboarding.py
 If the command above doesn't work:
 
 ```bash
-# If sdd-harness is in sibling directory
-python ../sdd-harnessdocs/spec/SCRIPTS/phase-0-agent-onboarding.py
+# If providence is in sibling directory
+python ../providencedocs/spec/SCRIPTS/phase-0-agent-onboarding.py
 
 # Or if you know the full path
-python /path/to/sdd-harnessdocs/spec/SCRIPTS/phase-0-agent-onboarding.py
+python /path/to/providencedocs/spec/SCRIPTS/phase-0-agent-onboarding.py
 ```
 
 ---
@@ -69,7 +69,7 @@ The script will:
 1. **Verify Framework**
 
    ```
-   ✅ Found sdd-harness at: [path]
+   ✅ Found providence at: [path]
    ✅ CANONICAL/ structure verified
    ✅ Framework integrity check: PASS
    ```
@@ -77,8 +77,8 @@ The script will:
 2. **Create Infrastructure**
 
    ```
-   ✅ Creating .sdd/context-aware/
-   ✅ Creating .sdd/runtime/
+   ✅ Creating .providence/context-aware/
+   ✅ Creating .providence/runtime/
    ✅ Populating search indices...
    ```
 
@@ -130,11 +130,11 @@ The quiz tests your understanding of SDD principles.
 
 ## ✅ Verify Infrastructure Created
 
-After the script finishes, verify `.sdd/` was created:
+After the script finishes, verify `.providence/` was created:
 
 ```bash
-# Check .sdd/ exists
-ls -la .sdd/
+# Check .providence/ exists
+ls -la .providence/
 
 # Should show:
 # drwxr-xr-x  context-aware/
@@ -146,15 +146,15 @@ ls -la .sdd/
 
 ```bash
 # Verify context-aware/
-ls .sdd/context-aware/
+ls .providence/context-aware/
 # Should show: task-progress/, analysis/, runtime-state/
 
 # Verify runtime/ (search indices)
-ls .sdd/runtime/
+ls .providence/runtime/
 # Should show: search-keywords.md, spec-canonical-index.md, spec-guides-index.md, README.md
 
 # Check file sizes
-wc -l .sdd/runtime/search-keywords.md
+wc -l .providence/runtime/search-keywords.md
 # Should show: 703 lines
 ```
 
@@ -189,7 +189,7 @@ python3 $(grep spec_path .spec.config | cut -d' ' -f3)docs/spec/SCRIPTS/phase-0-
 ls -la .spec.config
 
 # If missing, copy it:
-cp ../sdd-harness/INTEGRATION/templates/.spec.config .
+cp ../providence/INTEGRATION/templates/.spec.config .
 
 # Then re-run validation
 python $(grep spec_path .spec.config | cut -d' ' -f3)docs/spec/SCRIPTS/phase-0-agent-onboarding.py
@@ -202,7 +202,7 @@ python $(grep spec_path .spec.config | cut -d' ' -f3)docs/spec/SCRIPTS/phase-0-a
 
 # Fix it:
 nano .spec.config
-# Edit: spec_path = ../sdd-harness
+# Edit: spec_path = ../providence
 
 # Then re-run validation
 python $(grep spec_path .spec.config | cut -d' ' -f3)docs/spec/SCRIPTS/phase-0-agent-onboarding.py
@@ -219,7 +219,7 @@ python $(grep spec_path .spec.config | cut -d' ' -f3)docs/spec/SCRIPTS/phase-0-a
 # 3. Answer best you can (doesn't block progress)
 
 # To try again later:
-python ../sdd-harnessdocs/spec/SCRIPTS/phase-0-agent-onboarding.py
+python ../providencedocs/spec/SCRIPTS/phase-0-agent-onboarding.py
 ```
 
 ### Issue: Script Hangs or Never Completes
@@ -231,12 +231,12 @@ python ../sdd-harnessdocs/spec/SCRIPTS/phase-0-agent-onboarding.py
 # (Ctrl+C in terminal)
 
 # Then:
-1. Check if .sdd/ was partially created
-2. Delete .sdd/ if corrupted: rm -rf .sdd/
+1. Check if .providence/ was partially created
+2. Delete .providence/ if corrupted: rm -rf .providence/
 3. Run validation again
 
 # If still stuck, check:
-ls ../sdd-harnessdocs/spec/SCRIPTS/
+ls ../providencedocs/spec/SCRIPTS/
 # Should show: phase-0-agent-onboarding.py
 ```
 
@@ -251,8 +251,8 @@ Once validation passes:
 git status
 
 # Should show new files (untracked):
-# .sdd/context-aware/
-# .sdd/runtime/
+# .providence/context-aware/
+# .providence/runtime/
 # (You'll commit these in Step 5)
 
 # Preview what you'll commit
@@ -281,7 +281,7 @@ Commit all changes to git.
 By running PHASE 0 validation, you now have:
 
 ```
-.sdd/
+.providence/
 ├── context-aware/
 │   ├── task-progress/        (for tracking tasks during development)
 │   ├── analysis/              (for documenting decisions)

@@ -14,7 +14,7 @@ The current orchestration contract applies to:
 - `sdd-converge`
 
 The implementation lives primarily in
-`packages/core/sdd_runtime/src/sdd_runtime/_skill_executor.py`.
+`packages/core/providence_runtime/src/providence_runtime/_skill_executor.py`.
 
 ## Execution Model
 
@@ -57,7 +57,7 @@ Pipeline gates are configuration-driven.
 Current gate source:
 
 - `skill.config.pipeline.decision_gates` from the runtime registry
-- `.sdd/skills/sdd-pipeline/skill.yaml` as the canonical governance copy
+- `.providence/skills/sdd-pipeline/skill.yaml` as the canonical governance copy
 
 Current supported rule:
 
@@ -108,4 +108,4 @@ non-recoverable condition.
 - `docs/adr/ADR-013-pipeline-composition.md`
 - `docs/adr/ADR-003-skill-handler-strategy-pattern.md`
 - `docs/adr/ADR-004-skillengine-registry-executor-split.md`
-- `.sdd/skills/sdd-pipeline/skill.yaml`
+- `.providence/skills/sdd-pipeline/skill.yaml`

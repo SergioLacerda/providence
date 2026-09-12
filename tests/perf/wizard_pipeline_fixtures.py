@@ -1,7 +1,7 @@
-"""Shared fixtures for `sdd_wizard` Phase 4-6 pipeline benchmarks and tests.
+"""Shared fixtures for `providence_wizard` Phase 4-6 pipeline benchmarks and tests.
 
 Provides synthetic governance payloads and a typical wizard config so both
-the regression test (`packages/interfaces/sdd_wizard/tests/test_full_pipeline_performance.py`)
+the regression test (`packages/interfaces/providence_wizard/tests/test_full_pipeline_performance.py`)
 and the standalone benchmark script (`tests/perf/benchmark_wizard_pipeline.py`)
 exercise `run_phase_4_5_6_generator` against the same inputs.
 """
@@ -70,8 +70,8 @@ def generate_governance_items(
 def write_governance_inputs(
     repo_root: Path, mandates: list[dict[str, Any]], guidelines: list[dict[str, Any]]
 ) -> None:
-    """Write governance-core.json/governance-client.json under `repo_root/.sdd/source`."""
-    sdd_source = repo_root / ".sdd" / "source"
+    """Write governance-core.json/governance-client.json under `repo_root/.providence/source`."""
+    sdd_source = repo_root / ".providence" / "source"
     sdd_source.mkdir(parents=True, exist_ok=True)
     (sdd_source / "governance-core.json").write_text(
         json.dumps({"items": mandates}), encoding="utf-8"

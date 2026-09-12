@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Resolve personal agent capabilities overlaid with canonical .sdd registries."""
+"""Resolve personal agent capabilities overlaid with canonical .providence registries."""
 
 from __future__ import annotations
 
@@ -57,7 +57,7 @@ def _validate_skill_canonical(
         return DriftEvent(
             "missing_canonical_ref",
             "skill entry missing skill_yaml reference",
-            ".sdd/skills/registry.json",
+            ".providence/skills/registry.json",
         )
     canonical_path = project_root / yaml_path
     if canonical_path.exists():
@@ -77,9 +77,11 @@ def _validate_command_canonical(
         return DriftEvent(
             "invalid_command_id",
             "command entry missing id",
-            ".sdd/commands/registry.json",
+            ".providence/commands/registry.json",
         )
-    canonical_path = project_root / ".sdd" / "commands" / command_id / "command.yaml"
+    canonical_path = (
+        project_root / ".providence" / "commands" / command_id / "command.yaml"
+    )
     if canonical_path.exists():
         return None
     return DriftEvent(
@@ -93,7 +95,7 @@ def _load_skills_from_registry(
     project_root: Path,
     registry_path: Path,
 ) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
-    """Load governed skills from the .sdd skills registry. Returns (skills, drift_events)."""
+    """Load governed skills from the .providence skills registry. Returns (skills, drift_events)."""
     skills: list[dict[str, Any]] = []
     drift: list[dict[str, str]] = []
     registry, err = _load_json(registry_path)
@@ -121,7 +123,7 @@ def _load_skills_from_registry(
         skills.append(
             {
                 "name": entry["name"],
-                "source": ".sdd",
+                "source": ".providence",
                 "path": entry.get("skill_yaml", ""),
                 "kind": "governed",
             }
@@ -133,7 +135,7 @@ def _load_commands_from_registry(
     project_root: Path,
     registry_path: Path,
 ) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
-    """Load governed commands from the .sdd commands registry. Returns (commands, drift_events)."""
+    """Load governed commands from the .providence commands registry. Returns (commands, drift_events)."""
     commands: list[dict[str, Any]] = []
     drift: list[dict[str, str]] = []
     registry, err = _load_json(registry_path)
@@ -167,7 +169,7 @@ def resolve_personal_overlay(
     project_root: Path,
     personal_root_candidates: list[Path] | None = None,
 ) -> dict[str, Any]:
-    """Resolve effective agent capabilities using local personal + .sdd overlays."""
+    """Resolve effective agent capabilities using local personal + .providence overlays."""
     project_root = Path(project_root)
     if personal_root_candidates is None:
         personal_root_candidates = [
@@ -182,8 +184,8 @@ def resolve_personal_overlay(
             personal_sources.append(str(root))
             skills_local.extend(_discover_personal_skills(root))
 
-    skills_registry_path = project_root / ".sdd" / "skills" / "registry.json"
-    commands_registry_path = project_root / ".sdd" / "commands" / "registry.json"
+    skills_registry_path = project_root / ".providence" / "skills" / "registry.json"
+    commands_registry_path = project_root / ".providence" / "commands" / "registry.json"
 
     skills_sdd, drift_skills = _load_skills_from_registry(
         project_root, skills_registry_path
@@ -203,7 +205,7 @@ def resolve_personal_overlay(
                 {
                     "type": "skill_name_conflict",
                     "name": governed["name"],
-                    "winner": ".sdd",
+                    "winner": ".providence",
                     "loser": existing.get("source", "unknown"),
                 }
             )

@@ -46,15 +46,15 @@ echo ""
 
 # 1. Artifact availability
 echo "📦 Artifacts:"
-if [ -f ".sdd-wizard/compiled/governance-core.compiled.msgpack" ]; then
-    SIZE=$(du -h .sdd-wizard/compiled/governance-core.compiled.msgpack | cut -f1)
+if [ -f ".providence-wizard/compiled/governance-core.compiled.msgpack" ]; then
+    SIZE=$(du -h .providence-wizard/compiled/governance-core.compiled.msgpack | cut -f1)
     echo "  ✅ Core artifact: $SIZE"
 else
     echo "  ❌ Core artifact: MISSING"
 fi
 
-if [ -f ".sdd-wizard/compiled/governance-client-template.compiled.msgpack" ]; then
-    SIZE=$(du -h .sdd-wizard/compiled/governance-client-template.compiled.msgpack | cut -f1)
+if [ -f ".providence-wizard/compiled/governance-client-template.compiled.msgpack" ]; then
+    SIZE=$(du -h .providence-wizard/compiled/governance-client-template.compiled.msgpack | cut -f1)
     echo "  ✅ Client artifact: $SIZE"
 else
     echo "  ❌ Client artifact: MISSING"
@@ -65,7 +65,7 @@ echo ""
 # 2. CLI availability
 echo "⚙️  CLI Status:"
 if command -v sdd &> /dev/null; then
-    VERSION=$(sdd version 2>/dev/null || echo "ERROR")
+    VERSION=$(providence version 2>/dev/null || echo "ERROR")
     echo "  ✅ CLI available: $VERSION"
 else
     echo "  ❌ CLI not found in PATH"
@@ -75,7 +75,7 @@ echo ""
 
 # 3. Governance validation
 echo "🔐 Governance:"
-VALIDATION=$(sdd governance validate 2>&1)
+VALIDATION=$(providence governance validate 2>&1)
 if echo "$VALIDATION" | grep -q "✅"; then
     echo "  ✅ Validation passed"
 else
@@ -116,12 +116,12 @@ mkdir -p metrics
 echo "=== Metrics: $(date +%Y-%m-%d\ %H:%M:%S) ===" >> "$METRICS_FILE"
 
 # Performance metrics
-echo "LOAD_TIME=$(( SECONDS = 0; sdd governance load > /dev/null; echo $SECONDS ))" >> "$METRICS_FILE"
-echo "VALIDATE_TIME=$(( SECONDS = 0; sdd governance validate > /dev/null; echo $SECONDS ))" >> "$METRICS_FILE"
+echo "LOAD_TIME=$(( SECONDS = 0; providence governance load > /dev/null; echo $SECONDS ))" >> "$METRICS_FILE"
+echo "VALIDATE_TIME=$(( SECONDS = 0; providence governance validate > /dev/null; echo $SECONDS ))" >> "$METRICS_FILE"
 
 # Artifact sizes
-echo "CORE_SIZE=$(stat -f%z .sdd-wizard/compiled/governance-core.compiled.msgpack 2>/dev/null || echo 'N/A')" >> "$METRICS_FILE"
-echo "CLIENT_SIZE=$(stat -f%z .sdd-wizard/compiled/governance-client-template.compiled.msgpack 2>/dev/null || echo 'N/A')" >> "$METRICS_FILE"
+echo "CORE_SIZE=$(stat -f%z .providence-wizard/compiled/governance-core.compiled.msgpack 2>/dev/null || echo 'N/A')" >> "$METRICS_FILE"
+echo "CLIENT_SIZE=$(stat -f%z .providence-wizard/compiled/governance-client-template.compiled.msgpack 2>/dev/null || echo 'N/A')" >> "$METRICS_FILE"
 
 # Disk usage
 echo "DISK_USAGE=$(du -sh . | cut -f1)" >> "$METRICS_FILE"
@@ -157,18 +157,18 @@ echo "✅ Metrics collected: $METRICS_FILE"
 # Save as: scripts/alerts.sh
 
 check_artifacts() {
-    if [ ! -f ".sdd-wizard/compiled/governance-core.compiled.msgpack" ]; then
+    if [ ! -f ".providence-wizard/compiled/governance-core.compiled.msgpack" ]; then
         echo "🚨 ALERT: Core artifact missing!"
-        echo "Action: Recompile with: python .sdd-wizard/compile_artifacts.py"
+        echo "Action: Recompile with: python .providence-wizard/compile_artifacts.py"
         return 1
     fi
     return 0
 }
 
 check_validation() {
-    if ! sdd governance validate &>/dev/null; then
+    if ! providence governance validate &>/dev/null; then
         echo "🚨 ALERT: Governance validation failed!"
-        echo "Action: Run 'sdd governance validate' for details"
+        echo "Action: Run 'providence governance validate' for details"
         return 1
     fi
     return 0
@@ -185,7 +185,7 @@ check_disk_space() {
 
 check_performance() {
     START=$(date +%s%N)
-    sdd governance load > /dev/null
+    providence governance load > /dev/null
     END=$(date +%s%N)
     DURATION=$(( (END - START) / 1000000 ))  # Convert to ms
 
@@ -216,11 +216,11 @@ echo "=== SDD Health Dashboard ==="
 echo "Updated: $(date)"
 echo ""
 echo "Performance:"
-echo "  Load time: $(( SECONDS = 0; sdd governance load > /dev/null; echo $SECONDS )ms"
-echo "  Validate time: $(( SECONDS = 0; sdd governance validate > /dev/null; echo $SECONDS )ms"
+echo "  Load time: $(( SECONDS = 0; providence governance load > /dev/null; echo $SECONDS )ms"
+echo "  Validate time: $(( SECONDS = 0; providence governance validate > /dev/null; echo $SECONDS )ms"
 echo ""
 echo "Artifacts:"
-ls -lh .sdd-wizard/compiled/ | grep msgpack | awk "{print \"  \" \$NF \": \" \$5}"
+ls -lh .providence-wizard/compiled/ | grep msgpack | awk "{print \"  \" \$NF \": \" \$5}"
 echo ""
 echo "System:"
 echo "  Disk: $(df -h . | awk '\''NR==2 {print $5 \" used, \" $4 \" free}'\''"
@@ -291,12 +291,12 @@ echo "=== SDD System Health ==="
 
 # 1. Governance state
 echo "1. Governance:"
-sdd governance validate --verbose
+providence governance validate --verbose
 
 # 2. Artifacts
 echo ""
 echo "2. Artifacts:"
-cd .sdd-wizard/compiled
+cd .providence-wizard/compiled
 md5sum * > /tmp/artifact.md5
 echo "Checksums recorded"
 
@@ -304,14 +304,14 @@ echo "Checksums recorded"
 echo ""
 echo "3. Performance:"
 for i in {1..5}; do
-    time sdd governance load > /dev/null
+    time providence governance load > /dev/null
 done
 
 # 4. System resources
 echo ""
 echo "4. System Resources:"
 ps aux | grep -E "sdd|wizard|python" | grep -v grep
-du -sh .sdd-*
+du -sh .providence-*
 free -h
 
 echo ""
@@ -330,7 +330,7 @@ echo "Testing: $1 (50 iterations)"
 TIMES=()
 for i in {1..50}; do
     START=$(date +%s%N)
-    sdd governance load > /dev/null 2>&1
+    providence governance load > /dev/null 2>&1
     END=$(date +%s%N)
     DURATION=$(( (END - START) / 1000000 ))  # ms
     TIMES+=($DURATION)
@@ -368,13 +368,13 @@ echo "=== Integrity Verification ==="
 
 # 1. File existence
 echo "1. Files:"
-[ -f ".sdd-wizard/compiled/governance-core.compiled.msgpack" ] && echo "  ✅ Core" || echo "  ❌ Core missing"
-[ -f ".sdd-wizard/compiled/governance-client-template.compiled.msgpack" ] && echo "  ✅ Client" || echo "  ❌ Client missing"
+[ -f ".providence-wizard/compiled/governance-core.compiled.msgpack" ] && echo "  ✅ Core" || echo "  ❌ Core missing"
+[ -f ".providence-wizard/compiled/governance-client-template.compiled.msgpack" ] && echo "  ✅ Client" || echo "  ❌ Client missing"
 
 # 2. Checksums
 echo ""
 echo "2. Checksums:"
-cd .sdd-wizard/compiled
+cd .providence-wizard/compiled
 md5sum * | while read hash file; do
     echo "  $file: $hash"
 done
@@ -393,9 +393,9 @@ EXPECTED = {
 }
 
 # Load metadata
-with open('.sdd-wizard/compiled/metadata-core.json') as f:
+with open('.providence-wizard/compiled/metadata-core.json') as f:
     core_meta = json.load(f)
-with open('.sdd-wizard/compiled/metadata-client-template.json') as f:
+with open('.providence-wizard/compiled/metadata-client-template.json') as f:
     client_meta = json.load(f)
 
 # Compare
@@ -416,7 +416,7 @@ PYTHON
 # 4. Validation
 echo ""
 echo "4. Validation:"
-sdd governance validate | grep -E "✅|❌"
+providence governance validate | grep -E "✅|❌"
 ```
 
 ---
@@ -433,7 +433,7 @@ echo "=== Governance Compliance ==="
 
 # 1. Core immutability
 echo "1. Core Immutability:"
-if git diff HEAD .sdd-core/CANONICAL/mandate.spec | grep -q "^[+-]"; then
+if git diff HEAD .providence-core/CANONICAL/mandate.spec | grep -q "^[+-]"; then
     echo "  ⚠️  Core rules changed (expected if authorized)"
 else
     echo "  ✅ Core rules unchanged"
@@ -442,10 +442,10 @@ fi
 # 2. Client modifications
 echo ""
 echo "2. Client Modifications:"
-MODIFIED=$(git status --porcelain .sdd-core/CANONICAL/guidelines.dsl)
+MODIFIED=$(git status --porcelain .providence-core/CANONICAL/guidelines.dsl)
 if [ -n "$MODIFIED" ]; then
     echo "  ℹ️  Client rules modified"
-    git diff .sdd-core/CANONICAL/guidelines.dsl
+    git diff .providence-core/CANONICAL/guidelines.dsl
 else
     echo "  ✅ Client rules unchanged since last commit"
 fi
@@ -453,7 +453,7 @@ fi
 # 3. Configuration drift
 echo ""
 echo "3. Configuration Drift:"
-git diff .sdd-integration/
+git diff .providence-integration/
 ```
 
 ---

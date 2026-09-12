@@ -1,0 +1,10 @@
+{
+  "keys": [
+    {
+      "key_id": "dev-01",
+      "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAIhqelIEZzUfWMsJNt3hfLxSXm3dXDyUH5Klwm0qvbu4=\n-----END PUBLIC KEY-----\n",
+      "status": "active",
+      "not_before": "2026-09-12T10:50:20.638529Z"
+    }
+  ]
+}

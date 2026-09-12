@@ -8,10 +8,10 @@ Spec-Driven Development — executable governance for AI agents. Rules are compi
 **Does SDD replace my framework?**
 No. SDD sits between your team's decisions and the agent's actions. It doesn't replace LangChain, AutoGen, or any orchestration tool.
 
-**What does `sdd doctor run` check?**
+**What does `providence doctor run` check?**
 Workspace profile, compiled governance artifacts, compliance trail, CLI health, and environment consistency.
 
 **How do I update governance rules?**
-Edit files under `docs/spec/canonical/`, then run `sdd governance compile` + `sdd governance validate`.
+Edit files under `docs/spec/canonical/`, then run `providence governance compile` + `providence governance validate`.
 
 **Full FAQ →** [docs/spec/guides/faq.md](../spec/guides/faq.md)

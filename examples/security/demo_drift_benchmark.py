@@ -34,11 +34,16 @@ import time
 from pathlib import Path
 from typing import Any
 
-from sdd_runtime import CompiledArtifact, DriftDetector, SessionState
-from sdd_runtime.drift import DRIFT_MISMATCH, DRIFT_MISSING, DRIFT_NONE, DRIFT_PROFILE
+from providence_runtime import CompiledArtifact, DriftDetector, SessionState
+from providence_runtime.drift import (
+    DRIFT_MISMATCH,
+    DRIFT_MISSING,
+    DRIFT_NONE,
+    DRIFT_PROFILE,
+)
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-METADATA_PATH = REPO_ROOT / ".sdd" / "metadata.json"
+METADATA_PATH = REPO_ROOT / ".providence" / "metadata.json"
 SECTION = "\n" + "=" * 60
 
 # Simulated session distribution (weights sum to 1.0)
@@ -228,7 +233,7 @@ def main() -> None:
     print(SECTION)
 
     if not METADATA_PATH.exists():
-        print("[SDD] ERROR: .sdd/metadata.json not found. Run from repo root.")
+        print("[SDD] ERROR: .providence/metadata.json not found. Run from repo root.")
         sys.exit(1)
 
     artifact = load_artifact()

@@ -17,18 +17,22 @@ from typing import Any, cast
 
 import pytest
 
-from sdd_cli.utils.sdd_authority import compiled_active_dir
+from providence_cli.utils.providence_authority import compiled_active_dir
 from tests.helpers.text_io import read_text_utf8
 
 REPO_ROOT = Path(__file__).parent.parent.parent
-_REPO_CANONICAL_ARTIFACT = REPO_ROOT / ".sdd" / "compiled" / "governance-core.json"
+_REPO_CANONICAL_ARTIFACT = (
+    REPO_ROOT / ".providence" / "compiled" / "governance-core.json"
+)
 _CANONICAL_ARTIFACT = compiled_active_dir() / "governance-core.json"
 _LEGACY_ARTIFACT = (
     REPO_ROOT / "generated" / "master" / "compiled" / "governance-core.json"
 )
 GOLDEN = Path(__file__).parent / "fixtures" / "governance_core.golden.json"
 
-_REPO_CLIENT_ARTIFACT = REPO_ROOT / ".sdd" / "compiled" / "governance-client.json"
+_REPO_CLIENT_ARTIFACT = (
+    REPO_ROOT / ".providence" / "compiled" / "governance-client.json"
+)
 _CLIENT_ARTIFACT = compiled_active_dir() / "governance-client.json"
 _CLIENT_GOLDEN = Path(__file__).parent / "fixtures" / "governance_client.golden.json"
 
@@ -72,7 +76,7 @@ def artifact() -> dict[str, Any]:
     if not artifact_path.exists():
         pytest.skip(
             f"Compiled artifact not found: {artifact_path}\n"
-            "Run: uv run sdd governance compile"
+            "Run: uv run providence governance compile"
         )
     return json.loads(read_text_utf8(artifact_path))  # type: ignore[no-any-return]
 
@@ -95,7 +99,7 @@ class TestGovernanceCoreSchema:
         """MUST: Compiled artifact is present and readable."""
         artifact_path = _artifact_path()
         assert artifact_path.exists(), (
-            f"Artifact missing: {artifact_path}\nRun: uv run sdd governance compile"
+            f"Artifact missing: {artifact_path}\nRun: uv run providence governance compile"
         )
 
     def test_top_level_structure(self, artifact: dict[str, Any]) -> None:
@@ -169,7 +173,7 @@ class TestGovernanceCoreSchema:
     @pytest.mark.slow
     def test_compilation_is_deterministic(self, artifact: dict[str, Any]) -> None:
         """MUST: Two consecutive compilations produce identical fingerprints."""
-        from sdd_core.governance_orchestrator import GovernanceOrchestrator
+        from providence_core.governance_orchestrator import GovernanceOrchestrator
 
         repo_root = Path(__file__).parent.parent.parent
         GovernanceOrchestrator(repo_root=str(repo_root)).run_full_pipeline()
@@ -257,7 +261,7 @@ def client_artifact() -> dict[str, Any]:
     if not artifact_path.exists():
         pytest.skip(
             f"Client artifact not found: {artifact_path}\n"
-            "Run: uv run sdd governance compile"
+            "Run: uv run providence governance compile"
         )
     return json.loads(read_text_utf8(artifact_path))  # type: ignore[no-any-return]
 
@@ -270,7 +274,7 @@ class TestGovernanceClientSchema:
         """MUST: Client artifact is present and readable."""
         artifact_path = _client_artifact_path()
         assert artifact_path.exists(), (
-            f"Artifact missing: {artifact_path}\nRun: uv run sdd governance compile"
+            f"Artifact missing: {artifact_path}\nRun: uv run providence governance compile"
         )
 
     def test_top_level_structure(self, client_artifact: dict[str, Any]) -> None:
@@ -333,7 +337,7 @@ class TestGovernanceClientGoldenFile:
         """Client artifact must match the golden snapshot (volatile fields excluded).
 
         Skips in environments where no client-specific governance items are defined
-        (e.g., CI containers where .sdd/source/guidelines.dsl is gitignored).
+        (e.g., CI containers where .providence/source/guidelines.dsl is gitignored).
         """
         import difflib
 

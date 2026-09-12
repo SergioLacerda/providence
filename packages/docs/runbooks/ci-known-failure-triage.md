@@ -40,7 +40,7 @@ matrix below first.
    |---|---|---|---|
    | `ERESOLVE`, `@astrojs/check@0.9.10`, `typescript@7.0.2` | The failing ref still requests TypeScript 7 while `@astrojs/check` only supports `^5 \|\| ^6` | Compare `origin/main`, `origin/develop`, and local `apps/landing/package.json` | Keep TypeScript pinned to `^6.0.3` in `apps/landing`; keep the Dependabot semver-major ignore rule (see [ADR-018](../adr/ADR-018-dependabot-typescript-major-ignore.md)) until Astro tooling supports TypeScript 7 |
    | `Unexpected input(s) 'cache'`, `uv.ndjson` timeout | `astral-sh/setup-uv@v9` received the obsolete `cache` input and resolved `version: "latest"` through a live manifest fetch | Scan the workflow's `setup-uv` step block for `cache:` and `version: "latest"` | Pin `version` to a known-good release (e.g. `0.11.9`) and use `enable-cache: true` instead of `cache:` |
-   | "ambiguous user/pass authority", `uv-resolver` panic, `git+file:///D:/...@sha` | On Windows, `uv` can re-parse local `git+file:///D:/...` installs with a resolved `@<sha>` as URL authority instead of a git ref | Inspect the release source-install smoke step for any `git+file://` URL | Install the checkout package path directly with `uv tool install ./packages/interfaces/sdd_cli`; do not add sibling packages via `--with-editable`, because the workspace already resolves them locally |
+   | "ambiguous user/pass authority", `uv-resolver` panic, `git+file:///D:/...@sha` | On Windows, `uv` can re-parse local `git+file:///D:/...` installs with a resolved `@<sha>` as URL authority instead of a git ref | Inspect the release source-install smoke step for any `git+file://` URL | Install the checkout package path directly with `uv tool install ./packages/interfaces/providence_cli`; do not add sibling packages via `--with-editable`, because the workspace already resolves them locally |
 
    If the error text does not match any row, do not assume one of these
    fixes applies — follow [Escalation](#escalation).
@@ -80,12 +80,12 @@ matrix below first.
    sibling packages once:
 
    ```bash
-   uv tool install ./packages/interfaces/sdd_cli
+   uv tool install ./packages/interfaces/providence_cli
    ```
 
    Do not add the sibling packages with `--with-editable`; that creates
-   conflicting URL sources such as `file:///.../sdd_integration` and
-   `file:///.../sdd_integration (editable)`.
+   conflicting URL sources such as `file:///.../providence_integration` and
+   `file:///.../providence_integration (editable)`.
 
 3. Re-run the targeted policy test:
 
@@ -96,7 +96,7 @@ matrix below first.
 ### After any of the above
 
 ```bash
-uv run sdd governance validate
+uv run providence governance validate
 ```
 
 ## Rollback

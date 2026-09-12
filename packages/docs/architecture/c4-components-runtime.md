@@ -1,12 +1,12 @@
-# C4 Level 3 — Components: sdd_runtime
+# C4 Level 3 — Components: providence_runtime
 
-Internal structure of the `sdd_runtime` execution engine.
+Internal structure of the `providence_runtime` execution engine.
 
 ```mermaid
 graph TB
-    cli["sdd_cli\n(caller)"]
+    cli["providence_cli\n(caller)"]
 
-    subgraph runtime["sdd_runtime"]
+    subgraph runtime["providence_runtime"]
         engine["SkillEngine\n(thin facade)\nskills.py"]
 
         subgraph registry["Registry"]
@@ -36,7 +36,7 @@ graph TB
             store["SupervisedLearningStore\nledger → candidates → rules\nrule impact recording"]
         end
 
-        telemetry["TelemetrySink\nRuntimeEvent → JSONL\n.sdd/runtime/telemetry.jsonl"]
+        telemetry["TelemetrySink\nRuntimeEvent → JSONL\n.providence/runtime/telemetry.jsonl"]
     end
 
     cli -->|"run_skill(name, context)"| engine
@@ -70,10 +70,10 @@ graph TB
 
 ## Key Flows
 
-### Skill execution (`sdd ask "..."`)
+### Skill execution (`providence ask "..."`)
 
 ```
-sdd_cli → SkillEngine.run_skill("sdd-ask", context)
+providence_cli → SkillEngine.run_skill("sdd-ask", context)
   → SkillRegistry.get_skill("sdd-ask")
   → PolicyEngine.evaluate_skill_policy()
   → AskHandler.pre_run()  # builds execution contract
@@ -84,7 +84,7 @@ sdd_cli → SkillEngine.run_skill("sdd-ask", context)
 ### Correction with gate (`sdd correct`)
 
 ```
-sdd_cli → SkillEngine.run_skill("sdd-correct", context)
+providence_cli → SkillEngine.run_skill("sdd-correct", context)
   → CorrectHandler.pre_run()
       → _evaluate_correction_gate()  # evidence / confidence / scope checks
       → if deny: SupervisedLearningStore.append_failure() → early exit

@@ -19,10 +19,10 @@ var compileCmd = &cobra.Command{
 		output, _ := cmd.Flags().GetString("output")
 
 		if input == "" {
-			input = ".sdd/compiled"
+			input = ".providence/compiled"
 		}
 		if output == "" {
-			output = ".sdd/compiled"
+			output = ".providence/compiled"
 		}
 
 		result, err := govcompiler.New(input).Compile(output)
@@ -55,6 +55,6 @@ var compileCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(compileCmd)
-	compileCmd.Flags().StringP("input", "i", "", "Directory containing governance JSON files (default: .sdd/compiled)")
-	compileCmd.Flags().StringP("output", "o", "", "Directory to write compiled artifacts (default: .sdd/compiled)")
+	compileCmd.Flags().StringP("input", "i", "", "Directory containing governance JSON files (default: .providence/compiled)")
+	compileCmd.Flags().StringP("output", "o", "", "Directory to write compiled artifacts (default: .providence/compiled)")
 }

@@ -1,5 +1,5 @@
-#!/bin/bash
-# Pre-commit Hook — SDD Architecture Framework
+#!/usr/bin/env bash
+# Pre-commit Hook --- Providence Architecture Framework
 # Enforces governance guardrails before every local commit.
 
 set -euo pipefail
@@ -8,20 +8,21 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 STAGED_FILES="$(git diff --cached --name-only)"
 STAGED_PY_FILES="$(git diff --cached --name-only -- '*.py' || true)"
+export UV_CACHE_DIR="${UV_CACHE_DIR:-$REPO_ROOT/.uv-cache}"
 
 # Same workspace src dirs as [tool.pytest.ini_options].pythonpath in
 # pyproject.toml (and Makefile's WORKSPACE_PYTHONPATH). `uv run python -m
-# sdd_cli ...` below relies on uv's own sync-freshness cache to have sdd_cli
-# installed as an editable — if something external touches .venv without
+# providence_cli ...` below relies on uv's own sync-freshness cache to have providence_cli
+# installed as an editable --- if something external touches .venv without
 # going through uv (e.g. a reset/reprovisioned .venv), that cache can be
 # stale and `uv run` will not repair it. Exporting this directly makes the
 # `-m` invocation resolve regardless of uv's sync state.
-WORKSPACE_PYTHONPATH="$REPO_ROOT/packages/core/sdd_core/src:$REPO_ROOT/packages/core/sdd_runtime/src:$REPO_ROOT/packages/core/sdd_telemetry/src:$REPO_ROOT/packages/features/sdd_integration/src:$REPO_ROOT/packages/features/sdd_adapters/src:$REPO_ROOT/packages/features/sdd_skills/src:$REPO_ROOT/packages/features/sdd_pages/src:$REPO_ROOT/packages/interfaces/sdd_wizard/src:$REPO_ROOT/packages/interfaces/sdd_cli/src"
+WORKSPACE_PYTHONPATH="$REPO_ROOT/packages/core/providence_core/src:$REPO_ROOT/packages/core/providence_runtime/src:$REPO_ROOT/packages/core/providence_telemetry/src:$REPO_ROOT/packages/features/providence_integration/src:$REPO_ROOT/packages/features/providence_adapters/src:$REPO_ROOT/packages/features/providence_skills/src:$REPO_ROOT/packages/features/providence_pages/src:$REPO_ROOT/packages/interfaces/providence_wizard/src:$REPO_ROOT/packages/interfaces/providence_cli/src"
 
-echo "SDD Guardrail: Pre-commit Validation"
+echo "Providence Guardrail: Pre-commit Validation"
 echo "Branch: $CURRENT_BRANCH"
 
-# ── Helper: cross-platform file modification time (seconds since epoch) ──────
+# ------ Helper: cross-platform file modification time (seconds since epoch) ------------------
 file_mtime() {
     local file="$1"
     if stat --version >/dev/null 2>&1; then
@@ -33,7 +34,7 @@ file_mtime() {
     fi
 }
 
-# ── Helper: is current branch protected? ────────────────────────────────────
+# ------ Helper: is current branch protected? ------------------------------------------------------------------------------------------------------------
 is_protected_branch() {
     case "$CURRENT_BRANCH" in
         main|develop|release/*|hotfix/*)
@@ -43,30 +44,30 @@ is_protected_branch() {
     esac
 }
 
-# ── 1. Block direct commits to main ─────────────────────────────────────────
+# ------ 1. Block direct commits to main ---------------------------------------------------------------------------------------------------------------------------
 if [ "$CURRENT_BRANCH" = "main" ]; then
     echo "BLOCKED: Direct commits to main are not allowed."
     echo "FIX: Use a feature/wip branch and open a PR."
     exit 1
 fi
 
-# ── 2. P003: Block agent-initiated commits ───────────────────────────────────
-# SDD_AGENT_MODE must be explicitly "true" (exact string, case-sensitive).
-if [ "${SDD_AGENT_MODE:-}" = "true" ]; then
+# ------ 2. P003: Block agent-initiated commits ---------------------------------------------------------------------------------------------------------
+# PROVIDENCE_AGENT_MODE must be explicitly "true" (exact string, case-sensitive).
+if [ "${PROVIDENCE_AGENT_MODE:-}" = "true" ]; then
     echo "BLOCKED (P003): Agents must not commit autonomously."
     echo "FIX: Stage the changes and ask the user to run git commit."
     exit 1
 fi
 
-# ── 3. Cache staleness check (.sdd/runtime/.sdd-cache.md) ───────────────────
-CACHE_FILE="$REPO_ROOT/.sdd/runtime/.sdd-cache.md"
+# 3. Cache staleness check (.providence/runtime/.providence-cache.md)
+CACHE_FILE="$REPO_ROOT/.providence/runtime/.providence-cache.md"
 if [ ! -f "$CACHE_FILE" ]; then
     if is_protected_branch; then
-        echo "GUARDRAIL L2 FAILURE: Missing .sdd/runtime/.sdd-cache.md."
-        echo "FIX: Create .sdd/runtime/.sdd-cache.md to maintain traceability."
+        echo "GUARDRAIL L2 FAILURE: Missing .providence/runtime/.providence-cache.md."
+        echo "FIX: Create .providence/runtime/.providence-cache.md to maintain traceability."
         exit 1
     fi
-    echo "WARNING L2: Missing .sdd/runtime/.sdd-cache.md on non-protected branch."
+    echo "WARNING L2: Missing .providence/runtime/.providence-cache.md on non-protected branch."
 else
     last_mod=$(file_mtime "$CACHE_FILE")
     now=$(date +%s)
@@ -74,17 +75,18 @@ else
 
     if [ "$age" -gt 3600 ]; then
         if is_protected_branch; then
-            echo "GUARDRAIL L2 FAILURE: .sdd/runtime/.sdd-cache.md is stale ($((age / 60)) min ago)."
-            echo "FIX: Update the cache and run the Validation Quiz before committing."
+            echo "GUARDRAIL L2 FAILURE: .providence/runtime/.providence-cache.md is stale ($((age / 60)) min ago)."
+            echo "FIX: Update the cache and run the Validation Quiz before committing.uv run providence runtime status --update-cache"
             exit 1
         fi
-        echo "WARNING L2: .sdd/runtime/.sdd-cache.md is stale ($((age / 60)) min ago)."
+        echo "WARNING L2: .providence/runtime/.providence-cache.md is stale ($((age / 60)) min ago)."
     fi
 fi
 
-# ── 4. Mandate integrity check ───────────────────────────────────────────────
+# 4. Mandate integrity check
 MANDATE_CANDIDATES=(
-    "$REPO_ROOT/.sdd/compiled/metadata-core.json"
+    "$REPO_ROOT/.providence/compiled/audit/metadata-core.json"
+    "$REPO_ROOT/.providence/compiled/metadata-core.json"
     "$REPO_ROOT/generated/master/compiled/governance-core.json"
     "$REPO_ROOT/docs/spec/canonical/core/policies/INDEX.md"
 )
@@ -99,24 +101,24 @@ done
 
 if [ "$MANDATE_FOUND" = false ]; then
     echo "GUARDRAIL L2 FAILURE: Compiled governance artifact not found."
-    echo "FIX: Run 'sdd governance compile' before committing."
+    echo "FIX: Run 'providence governance compile' before committing."
     exit 1
 fi
 
-# ── 5. Validation Quiz check ─────────────────────────────────────────────────
+# 5. Validation Quiz check
 if [ -f "$CACHE_FILE" ] && ! grep -q "Validation Quiz" "$CACHE_FILE"; then
     if is_protected_branch; then
-        echo "GUARDRAIL L3 FAILURE: No 'Validation Quiz' entry in .sdd/runtime/.sdd-cache.md."
+        echo "GUARDRAIL L3 FAILURE: No 'Validation Quiz' entry in .providence/runtime/.providence-cache.md."
         echo "FIX: Complete the two-question quiz and record it in the cache."
         exit 1
     fi
     echo "WARNING L3: Missing Validation Quiz on non-protected branch."
 fi
 
-# ── 6. Critical file modification warning ────────────────────────────────────
+# 6. Critical file modification warning
 CRITICAL_PATTERNS=(
     "docs/spec/canonical/core/"
-    ".sdd/compiled/"
+    ".providence/compiled/"
     "tools/scripts/git-hooks/"
 )
 
@@ -127,7 +129,7 @@ for pattern in "${CRITICAL_PATTERNS[@]}"; do
     fi
 done
 
-# ── 7. Orphan document check ─────────────────────────────────────────────────
+# ------ 7. Orphan document check ---------------------------------------------------------------------------------------------------------------------------------------------------
 new_docs=$(git diff --cached --name-only --diff-filter=A docs/ 2>/dev/null || true)
 for doc in $new_docs; do
     # INDEX.md is the container file for directory entries and must not require self-listing.
@@ -144,9 +146,9 @@ for doc in $new_docs; do
     fi
 done
 
-echo "SDD Guardrails Passed."
+echo "Providence Guardrails Passed."
 
-# ── 8. Encoding guardrail (blocking) ────────────────────────────────────────
+# ------ 8. Encoding guardrail (blocking) ------------------------------------------------------------------------------------------------------------------------
 echo "Running encoding guardrail..."
 if [ -n "${STAGED_PY_FILES}" ]; then
     # Incremental enforcement: block new violations in changed Python files.
@@ -155,7 +157,7 @@ else
     echo "No staged Python files; skipping encoding guardrail."
 fi
 
-# ── 9. Architecture checks ──────────────────────────────────────────────────
+# ------ 9. Architecture checks ------------------------------------------------------------------------------------------------------------------------------------------------------
 echo "Running architecture checks..."
 if ! python3 "$REPO_ROOT/tools/architecture/validate_imports.py"; then
     echo "GUARDRAIL FAILURE: Layer import violations detected."
@@ -169,7 +171,7 @@ if ! python3 "$REPO_ROOT/tools/architecture/validate_class_size.py" --show-modul
     echo "WARNING ARCH: Class size guardrail violations detected. CI will block until fixed."
 fi
 
-# ── 10. Bandit security scan parity (blocking for staged Python changes) ────
+# ------ 10. Bandit security scan parity (blocking for staged Python changes) ------------
 if [ -n "${STAGED_PY_FILES}" ]; then
     echo "Running Bandit security scan on staged Python files..."
     if command -v uv >/dev/null 2>&1; then
@@ -187,16 +189,16 @@ else
     echo "No staged Python files; skipping Bandit security scan."
 fi
 
-# ── 11. Canonical spec lint parity (blocking for docs/spec markdown changes) ─
+# ------ 11. Canonical spec lint parity (blocking for docs/spec markdown changes) ---
 if echo "$STAGED_FILES" | grep -E '^docs/spec/.*\.md$' >/dev/null 2>&1; then
     echo "Running canonical spec lint (anchor/style parity with CI)..."
     if command -v uv >/dev/null 2>&1; then
         if ! PYTHONPATH="$WORKSPACE_PYTHONPATH${PYTHONPATH:+:$PYTHONPATH}" \
-            uv run python -m sdd_cli lint spec --validate-all-anchors --strict-anchor-style; then
+            uv run python -m providence_cli lint spec --validate-all-anchors --strict-anchor-style; then
             echo "GUARDRAIL FAILURE: Canonical spec lint failed."
             echo "FIX: Resolve spec lint errors before committing. If the error above is"
-            echo "'No module named sdd_cli' rather than an actual lint finding, your .venv"
-            echo "is not synced — run 'make install' (or 'uv sync --all-groups"
+            echo "'No module named providence_cli' rather than an actual lint finding, your .venv"
+            echo "is not synced --- run 'make install' (or 'uv sync --all-groups"
             echo "--all-packages --extra test') and retry."
             exit 1
         fi
@@ -207,7 +209,7 @@ if echo "$STAGED_FILES" | grep -E '^docs/spec/.*\.md$' >/dev/null 2>&1; then
     fi
 fi
 
-# ── 12. Internal docs link check (advisory ramp-up) ─────────────────────────
+# ------ 12. Internal docs link check (advisory ramp-up) ---------------------------------------------------------------------------
 if echo "$STAGED_FILES" | grep -E '^docs/.*\.md$' >/dev/null 2>&1; then
     echo "Running internal docs link check..."
     STAGED_DOC_ARGS=""
@@ -226,7 +228,7 @@ if echo "$STAGED_FILES" | grep -E '^docs/.*\.md$' >/dev/null 2>&1; then
     fi
 fi
 
-# ── 13. Markdown style advisory (non-blocking ramp-up) ──────────────────────
+# ------ 13. Markdown style advisory (non-blocking ramp-up) ------------------------------------------------------------------
 if echo "$STAGED_FILES" | grep -E '^docs/.*\.md$' >/dev/null 2>&1; then
     if command -v npx >/dev/null 2>&1; then
         echo "Running markdown style advisory (non-blocking)..."

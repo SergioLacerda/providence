@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://sdd-harness.local/schemas/cli-command-envelope.schema.json",
+  "$id": "https://providence.local/schemas/cli-command-envelope.schema.json",
   "title": "SDD CLI CommandResult Envelope",
   "type": "object",
   "additionalProperties": false,

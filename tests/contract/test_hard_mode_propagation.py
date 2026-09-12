@@ -3,13 +3,15 @@
 from __future__ import annotations
 
 import pytest
-from sdd_runtime.skills import _REGISTRY
+from providence_runtime.skills import _REGISTRY
 
-from sdd_wizard.orchestration.seedlings._agent_instructions_content import (
+from providence_wizard.orchestration.seedlings._agent_instructions_content import (
     build_agent_instructions_content,
 )
-from sdd_wizard.templates._agent_instructions_template import build_agent_instructions
-from sdd_wizard.templates._hard_mode_rules import HARD_MODE_RULES_SECTION
+from providence_wizard.templates._agent_instructions_template import (
+    build_agent_instructions,
+)
+from providence_wizard.templates._hard_mode_rules import HARD_MODE_RULES_SECTION
 
 pytestmark = pytest.mark.unit
 

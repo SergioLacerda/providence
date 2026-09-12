@@ -52,7 +52,7 @@ def test_release_dry_run_runs_tests_wrapper() -> None:
     with (
         patch.object(make_tasks, "_read_project_version", return_value="1.2.3"),
         patch.object(make_tasks, "run_test", return_value=0) as run_test,
-        patch("sdd_core.utils.process.SafeProcessRunner.run") as runner_run,
+        patch("providence_core.utils.process.SafeProcessRunner.run") as runner_run,
     ):
         runner_run.return_value.returncode = 0
         runner_run.return_value.stdout = "v1.0.0\nv1.1.0\n"
@@ -109,7 +109,7 @@ def test_check_venv_fails_when_typer_outdated(tmp_path: Path) -> None:
     with (
         patch.object(make_tasks, "REPO_ROOT", tmp_path),
         patch.object(make_tasks, "_min_typer_version", return_value=(0, 26, 8)),
-        patch("sdd_core.utils.process.SafeProcessRunner.run") as runner_run,
+        patch("providence_core.utils.process.SafeProcessRunner.run") as runner_run,
     ):
         runner_run.return_value.returncode = 0
         runner_run.return_value.stdout = "0.12.1\n"
@@ -128,7 +128,7 @@ def test_check_venv_succeeds_when_typer_meets_minimum(tmp_path: Path) -> None:
     with (
         patch.object(make_tasks, "REPO_ROOT", tmp_path),
         patch.object(make_tasks, "_min_typer_version", return_value=(0, 26, 8)),
-        patch("sdd_core.utils.process.SafeProcessRunner.run") as runner_run,
+        patch("providence_core.utils.process.SafeProcessRunner.run") as runner_run,
     ):
         runner_run.return_value.returncode = 0
         runner_run.return_value.stdout = "0.26.8\n"
@@ -181,7 +181,7 @@ def test_run_golden_status_reports_clean_status(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     make_tasks = _make_tasks_module()
-    with patch("sdd_core.utils.process.SafeProcessRunner.run") as runner_run:
+    with patch("providence_core.utils.process.SafeProcessRunner.run") as runner_run:
         runner_run.return_value = SimpleNamespace(returncode=0, stdout="", stderr="")
         assert make_tasks.run_golden_status() == 0
 
@@ -204,7 +204,7 @@ def test_run_golden_status_reports_changed_fixtures(
 ) -> None:
     make_tasks = _make_tasks_module()
     status = " M tests/contract/fixtures/governance_core.golden.json\n"
-    with patch("sdd_core.utils.process.SafeProcessRunner.run") as runner_run:
+    with patch("providence_core.utils.process.SafeProcessRunner.run") as runner_run:
         runner_run.return_value = SimpleNamespace(
             returncode=0, stdout=status, stderr=""
         )
@@ -220,7 +220,7 @@ def test_run_golden_status_is_informational_when_git_fails(
 ) -> None:
     """A non-git checkout (e.g. CI's shadow-repo copy) must not fail `check`."""
     make_tasks = _make_tasks_module()
-    with patch("sdd_core.utils.process.SafeProcessRunner.run") as runner_run:
+    with patch("providence_core.utils.process.SafeProcessRunner.run") as runner_run:
         runner_run.return_value = SimpleNamespace(
             returncode=128,
             stdout="",
@@ -283,6 +283,48 @@ def test_web_wrappers_use_npm_prefix() -> None:
         assert npm_cmd.call_count == 2
 
 
+def test_npm_audit_fix_uses_npm_prefix() -> None:
+    make_tasks = _make_tasks_module()
+    with (
+        patch.object(make_tasks, "_npm_cmd", return_value="npm"),
+        patch.object(make_tasks, "_run", return_value=0) as run,
+    ):
+        assert make_tasks.run_npm_audit_fix() == 0
+        run.assert_called_with(["npm", "--prefix", "apps/landing", "audit", "fix"])
+
+
+def test_npm_audit_fix_swallows_unresolved_vulnerabilities(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    make_tasks = _make_tasks_module()
+    with (
+        patch.object(make_tasks, "_npm_cmd", return_value="npm"),
+        patch.object(make_tasks, "_run", return_value=1),
+    ):
+        assert make_tasks.run_npm_audit_fix() == 0
+    assert "unresolved vulnerabilities" in capsys.readouterr().out
+
+
+def test_lint_web_runs_audit_fix_then_lint_script() -> None:
+    make_tasks = _make_tasks_module()
+    with (
+        patch.object(make_tasks, "run_npm_audit_fix", return_value=0) as audit_fix,
+        patch.object(make_tasks, "run_npm_script", return_value=0) as npm_script,
+    ):
+        assert make_tasks.run_lint_web() == 0
+        audit_fix.assert_called_once_with()
+        npm_script.assert_called_once_with("lint")
+
+
+def test_lint_web_ignores_audit_fix_result() -> None:
+    make_tasks = _make_tasks_module()
+    with (
+        patch.object(make_tasks, "run_npm_audit_fix", return_value=1),
+        patch.object(make_tasks, "run_npm_script", return_value=0),
+    ):
+        assert make_tasks.run_lint_web() == 0
+
+
 def test_lint_go_skips_when_tool_missing() -> None:
     make_tasks = _make_tasks_module()
     with patch.object(make_tasks.shutil, "which", return_value=None):
@@ -292,7 +334,7 @@ def test_lint_go_skips_when_tool_missing() -> None:
 def test_build_compiler_uses_goexe_suffix() -> None:
     make_tasks = _make_tasks_module()
     with (
-        patch("sdd_core.utils.process.SafeProcessRunner.run") as runner_run,
+        patch("providence_core.utils.process.SafeProcessRunner.run") as runner_run,
         patch.object(make_tasks, "_run", return_value=0) as run,
     ):
         runner_run.return_value = SimpleNamespace(
@@ -333,7 +375,7 @@ def test_main_dispatches_release_prepare_with_version_arg() -> None:
         run_release_prepare.assert_called_once_with("1.0.11")
 
 
-def test_run_governance_bootstrap_invokes_sdd_cli_module() -> None:
+def test_run_governance_bootstrap_invokes_providence_cli_module() -> None:
     make_tasks = _make_tasks_module()
     with (
         patch.object(make_tasks, "_python_cmd", return_value=["PYTHON"]),
@@ -341,7 +383,14 @@ def test_run_governance_bootstrap_invokes_sdd_cli_module() -> None:
     ):
         assert make_tasks.run_governance_bootstrap() == 0
         run.assert_called_once_with(
-            ["PYTHON", "-m", "sdd_cli", "governance", "generate", "--full-bootstrap"]
+            [
+                "PYTHON",
+                "-m",
+                "providence_cli",
+                "governance",
+                "generate",
+                "--full-bootstrap",
+            ]
         )
 
 

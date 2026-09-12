@@ -99,7 +99,7 @@ class TestRun:
         run("telemetry", AnalysisConfig(), output_dir=out, target_dir=project)
 
         data = json.loads((out / "analysis.json").read_text(encoding="utf-8"))
-        assert data["analyzer_name"] == "sdd_telemetry"
+        assert data["analyzer_name"] == "providence_telemetry"
 
 
 class TestMainEndToEnd:

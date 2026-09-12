@@ -1,4 +1,4 @@
-name: SDD Mandate Validation
+name: Providence Mandate Validation
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main, dev, develop]
 
 concurrency:
-  group: sdd-validation-${{ github.ref }}
+  group: providence-validation-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   mandate-validation:
-    name: Validate SDD Governance Mandates
+    name: Validate Providence Governance Mandates
     runs-on: ubuntu-latest
     env:
       SDD_ENFORCE_PIPELINE_CORRECT: "1"
@@ -38,8 +38,8 @@ jobs:
           version: "0.11.9"
           enable-cache: true
 
-      - name: Bootstrap SDD CLI
-        uses: ./.github/actions/bootstrap-sdd-cli
+      - name: Bootstrap Providence CLI
+        uses: ./.github/actions/bootstrap-providence-cli
 
       - name: Enforce CI command policy
         shell: bash
@@ -57,7 +57,7 @@ jobs:
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
           # Validate governance artifacts are properly structured
-          uv run python -m sdd_cli governance validate --skip-handshake
+          uv run python -m providence_cli governance validate --skip-handshake
 
           echo "✓ M001 Clean Architecture validated."
 
@@ -91,11 +91,11 @@ jobs:
           echo "Validating Context Awareness (M003)"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-          # Verify SDD cache exists
-          if [ -f ".sdd/runtime/.sdd-cache.md" ]; then
-            echo "✓ SDD context cache found"
+          # Verify Providence cache exists
+          if [ -f ".providence/runtime/.providence-cache.md" ]; then
+            echo "✓ Providence context cache found"
           else
-            echo "⚠ Warning: SDD cache not found (.sdd/runtime/.sdd-cache.md)"
+            echo "⚠ Warning: Providence cache not found (.providence/runtime/.providence-cache.md)"
           fi
 
           echo "✓ M003 Context Awareness validated."
@@ -109,7 +109,7 @@ jobs:
 
           # Run compliance checks for token economy
           uv run pytest \
-            packages/core/sdd_runtime/tests/test_circuit_breaker.py \
+            packages/core/providence_runtime/tests/test_circuit_breaker.py \
             -v --tb=short -q
 
           echo "✓ M005 Token Economy Enforcement validated."
@@ -124,4 +124,4 @@ jobs:
           # Verify governance compliance with all mandates
           python3 tools/governance/compliance.py . --verify
 
-          echo "✓ All SDD mandates validated."
+          echo "✓ All Providence mandates validated."

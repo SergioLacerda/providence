@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Validate inter-layer import rules for the SDD monorepo.
+Validate inter-layer import rules for the Providence monorepo.
 
 Layer detection: derived from the `packages/<layer>/` directory segment.
 Rules define which layers a given layer is NOT allowed to import from.
@@ -23,12 +23,12 @@ FORBIDDEN: dict[str, set[str]] = {
 }
 
 # Package prefixes that identify intra-project imports (underscore convention).
-SDD_PREFIXES = (
-    "sdd_core",
-    "sdd_telemetry",
-    "sdd_integration",
-    "sdd_cli",
-    "sdd_wizard",
+PROVIDENCE_PREFIXES = (
+    "providence_core",
+    "providence_telemetry",
+    "providence_integration",
+    "providence_cli",
+    "providence_wizard",
 )
 
 ALLOWLIST_FILE = "tools/architecture/imports_allowlist.json"
@@ -59,14 +59,14 @@ def _get_layer(path: Path, root: Path) -> str | None:
 
 
 def _target_layer(module: str) -> str | None:
-    """Map a module name to its layer, or None if not an SDD module."""
-    for prefix in SDD_PREFIXES:
+    """Map a module name to its layer, or None if not a Providence module."""
+    for prefix in PROVIDENCE_PREFIXES:
         if module == prefix or module.startswith(prefix + "."):
-            if prefix in ("sdd_core", "sdd_telemetry"):
+            if prefix in ("providence_core", "providence_telemetry"):
                 return "core"
-            if prefix == "sdd_integration":
+            if prefix == "providence_integration":
                 return "features"
-            if prefix in ("sdd_cli", "sdd_wizard"):
+            if prefix in ("providence_cli", "providence_wizard"):
                 return "interfaces"
     return None
 
@@ -138,7 +138,7 @@ def main() -> int:
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Validate SDD inter-layer import rules"
+        description="Validate Providence inter-layer import rules"
     )
     parser.add_argument(
         "--root", type=Path, default=None, help="Repo root (default: auto-detect)"

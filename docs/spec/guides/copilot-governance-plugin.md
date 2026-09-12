@@ -1,40 +1,40 @@
-# SDD Governance Projection for GitHub Copilot
+# Providence Governance Projection for GitHub Copilot
 
-Generates a self-contained, zero-SDD-mention GitHub Copilot governance
+Generates a self-contained, zero-Providence-mention GitHub Copilot governance
 configuration from curated, static content, in **Soft/Standalone** profile. This is
-the Copilot analogue of `sdd devin build --standalone` — same criteria, same
+the Copilot analogue of `providence devin build --standalone` — same criteria, same
 curated/generic (not repo-specific) content approach, adapted to Copilot's own real
 file conventions.
 
 This is a different mechanism from the existing per-skill Copilot adapter
-(`AdapterGenerator`, writing `.github/prompts/*.prompt.md` from `.sdd/skills/`,
-wizard-integrated, SDD-branded) — see
+(`AdapterGenerator`, writing `.github/prompts/*.prompt.md` from `.providence/skills/`,
+wizard-integrated, Providence-branded) — see
 `docs/spec/decisions/2026-05-16-multi-agent-adapters-design.md`. This projection is
 additive and does not touch that integration.
 
 ## What Soft/Standalone means
 
-- Works without SDD Harness, without network, without any runtime dependency in
+- Works without Providence, without network, without any runtime dependency in
   the consuming project.
 - Go-only for now (2026-08-18 scope decision) — see
   `.analysis/refined/20260818-plugin-language-scope-and-canonical-review/`.
-- Content is curated and generic — not parsed from this repository's own `.sdd/`
+- Content is curated and generic — not parsed from this repository's own `.providence/`
   governance sources — so it is reusable in any project, the same design choice
   `DevinPluginGenerator.generate_standalone()` already makes. It never mentions
   "sdd" (verified by test).
-- Is never represented as equivalent to a connected, governed SDD Harness session.
+- Is never represented as equivalent to a connected, governed Providence session.
 
 ## Build
 
 ```bash
-sdd copilot build
-# optional: sdd copilot build --dest ./some/other/path
+providence copilot build
+# optional: providence copilot build --dest ./some/other/path
 ```
 
 Or from Python:
 
 ```python
-from sdd_adapters.copilot import CopilotStandaloneGenerator
+from providence_adapters.copilot import CopilotStandaloneGenerator
 
 CopilotStandaloneGenerator().generate_standalone(output_dir=repo_root)
 ```

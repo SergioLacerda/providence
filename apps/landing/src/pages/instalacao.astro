@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteNav from '../components/SiteNav.astro';
+import InstallCard from '../components/InstallCard.astro';
+import { INSTALL_CONTENT } from '../lib/i18n';
+
+const install = INSTALL_CONTENT.pt;
+const RELEASES_URL = 'https://github.com/SergioLacerda/providence/releases';
+---
+<BaseLayout title="Providentian — Instalação" description="Como instalar o sdd-cli e configurar a governança no seu repositório.">
+  <SiteNav />
+  <main class="wrap">
+    <div class="page-head">
+      <p class="eyebrow" data-i18n="install.eyebrow">{install.eyebrow}</p>
+      <h1 data-i18n="install.title">{install.title}</h1>
+      <p data-i18n="install.intro">{install.intro}</p>
+    </div>
+
+    <p class="preview-note" data-i18n="install.previewNote">{install.previewNote}</p>
+
+    <div class="step">
+      <div class="step-head"><h2 data-i18n="install.step1Title">{install.step1Title}</h2><span class="rule"></span><span class="stepnum" data-i18n="install.step1Num">{install.step1Num}</span></div>
+
+      <InstallCard
+        label="github releases (recomendado)"
+        linkHref={RELEASES_URL}
+        linkText="github.com/SergioLacerda/providence/releases"
+        note="Baixe os artefatos dist/ de um release publicado e instale sdd-cli localmente (python -m venv + pip install --no-index --find-links) — canal oficial validado por CI."
+        copyLabel="copiar"
+        openLabel="abrir ↗"
+      />
+      <InstallCard
+        label="uv tool install · a partir do código-fonte"
+        command='uv tool install "git+https://github.com/SergioLacerda/providence@&lt;tag&gt;#subdirectory=packages/interfaces/sdd_cli"'
+        note="Substitua <tag> por um release (ex.: v1.0.13). Omitir a tag instala o HEAD do branch default — não recomendado."
+        copyLabel="copiar"
+      />
+    </div>
+
+    <div class="step">
+      <div class="step-head"><h2 data-i18n="install.step2Title">{install.step2Title}</h2><span class="rule"></span><span class="stepnum" data-i18n="install.step2Num">{install.step2Num}</span></div>
+      <p class="step-intro" data-i18n="install.step2Intro">{install.step2Intro}</p>
+
+      <InstallCard label="sdd-cli" command="sdd install --wizard" copyLabel="copiar" />
+      <InstallCard label="sdd-cli" command="sdd init --default" copyLabel="copiar" />
+      <InstallCard
+        label="verificar"
+        command="sdd governance validate"
+        note="Confirma perfil ativo e estado da governança."
+        copyLabel="copiar"
+      />
+    </div>
+  </main>
+
+  <script>
+    document.querySelectorAll<HTMLButtonElement>('.copybtn[data-copy]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const value = btn.getAttribute('data-copy');
+        if (!value) return;
+        navigator.clipboard.writeText(value).then(() => {
+          const orig = btn.textContent;
+          btn.textContent = btn.dataset.copiedLabel ?? 'copiado';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            if (orig) btn.textContent = orig;
+            btn.classList.remove('copied');
+          }, 1600);
+        });
+      });
+    });
+  </script>
+</BaseLayout>
+
+<style>
+  main{padding:64px 0 100px;}
+  .page-head{margin-bottom:32px;}
+  h1{font-family:var(--serif); font-weight:600; font-size:clamp(30px,4vw,42px); margin:0 0 16px;}
+  .page-head p{color:var(--ink-dim); max-width:60ch; margin:0;}
+  .preview-note{
+    font-size:13px; color:var(--ink-faint); max-width:70ch; margin:0 0 48px;
+    padding:14px 16px; border:1px solid var(--line-strong); border-left:2px solid var(--bronze-dim);
+    border-radius:4px; background:var(--panel);
+  }
+  .step{margin-bottom:56px;}
+  .step-head{display:flex; align-items:baseline; gap:18px; margin:0 0 22px;}
+  .step-head h2{
+    font-family:var(--serif); font-weight:600; font-size:15px; letter-spacing:0.06em;
+    text-transform:uppercase; color:var(--bronze); margin:0; white-space:nowrap;
+  }
+  .step-head .rule{flex:1; height:1px; background:var(--line-strong);}
+  .step-head .stepnum{font-family:var(--mono); font-size:11px; color:var(--ink-faint); white-space:nowrap;}
+  .step-intro{font-size:14.5px; color:var(--ink-dim); margin:0 0 20px;}
+</style>
+
+<script>
+  import { INSTALL_CONTENT } from '../lib/i18n';
+  import { getLang, onLangChange } from '../lib/lang-bridge';
+
+  const map: Record<string, keyof (typeof INSTALL_CONTENT)['pt']> = {
+    'install.eyebrow': 'eyebrow', 'install.title': 'title', 'install.intro': 'intro',
+    'install.previewNote': 'previewNote', 'install.step1Title': 'step1Title', 'install.step1Num': 'step1Num',
+    'install.step2Title': 'step2Title', 'install.step2Num': 'step2Num', 'install.step2Intro': 'step2Intro',
+  };
+  const els = Object.entries(map).map(([sel, key]) => [document.querySelector(`[data-i18n="${sel}"]`), key] as const);
+
+  function apply(lang: 'pt' | 'en') {
+    const copy = INSTALL_CONTENT[lang];
+    els.forEach(([el, key]) => { if (el) el.textContent = copy[key]; });
+  }
+
+  apply(getLang());
+  onLangChange(apply);
+</script>

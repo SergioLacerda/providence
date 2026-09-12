@@ -12,7 +12,7 @@
 The governed `sdd-pipeline` flow originally existed as a registry entry plus CLI
 fallback commands, but not as a first-class runtime composition model.
 
-That left three structural gaps in `packages/core/sdd_runtime/src/sdd_runtime/_skill_executor.py`:
+That left three structural gaps in `packages/core/providence_runtime/src/providence_runtime/_skill_executor.py`:
 
 1. Cross-stage state moved only through ad-hoc plain dictionaries, making it
    harder to preserve provenance and audit context propagation.
@@ -23,7 +23,7 @@ That left three structural gaps in `packages/core/sdd_runtime/src/sdd_runtime/_s
    correct → converge.
 
 The pending implementation roadmap in
-`.analysis/pending/sdd_cli_skills/05-IMPLEMENTATION_ROADMAP.md` explicitly
+`.analysis/pending/providence_cli_skills/05-IMPLEMENTATION_ROADMAP.md` explicitly
 called for a composed runtime pipeline, a context carrier, freeze escalation,
 retry/timeout hooks, and externalized gate rules.
 
@@ -92,9 +92,9 @@ termination rules, timeout escalation, retry bookkeeping, and freeze-mode exit.
 
 ## Links
 
-- `packages/core/sdd_runtime/src/sdd_runtime/_skill_executor.py`
-- `packages/core/sdd_runtime/src/sdd_runtime/_skill_contracts.py`
-- `packages/core/sdd_runtime/src/sdd_runtime/skills.py`
-- `.sdd/skills/sdd-pipeline/skill.yaml`
+- `packages/core/providence_runtime/src/providence_runtime/_skill_executor.py`
+- `packages/core/providence_runtime/src/providence_runtime/_skill_contracts.py`
+- `packages/core/providence_runtime/src/providence_runtime/skills.py`
+- `.providence/skills/sdd-pipeline/skill.yaml`
 - `docs/guides/PIPELINE_ORCHESTRATION.md`
-- `.analysis/pending/sdd_cli_skills/05-IMPLEMENTATION_ROADMAP.md`
+- `.analysis/pending/providence_cli_skills/05-IMPLEMENTATION_ROADMAP.md`

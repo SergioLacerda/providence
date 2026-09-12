@@ -1,8 +1,8 @@
 /**
  * Client-safe types and formatting helpers for governance stats. No Node
- * built-ins here — this module is imported by Landing.tsx, which is
- * client-hydrated (`client:load`) and gets bundled for the browser.
- * Reading the real stats from `.sdd/metadata.json` happens server-side only,
+ * built-ins here — this module is imported by client-hydrated React islands
+ * (RuntimeProof, CapabilitiesPanel) and gets bundled for the browser.
+ * Reading the real stats from `.providence/metadata.json` happens server-side only,
  * in `governance-data.server.ts`, and is passed down as a prop.
  */
 

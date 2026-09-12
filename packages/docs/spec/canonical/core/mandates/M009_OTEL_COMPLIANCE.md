@@ -114,9 +114,9 @@ SDD_OTEL_SERVICE_NAME=sdd-agent
 **Code Pattern:**
 
 ```python
-from sdd_runtime.otel import OtelBridge
+from providence_runtime.otel import OtelBridge
 
-bridge = OtelBridge(service_name="sdd-harness")
+bridge = OtelBridge(service_name="providence")
 with bridge.start_span("task.execute") as span:
     span.set_attribute("sdd.workspace_id", workspace_id)
     span.set_attribute("sdd.agent_id", agent_id)

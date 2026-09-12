@@ -18,7 +18,7 @@ from pathlib import Path
 import msgpack
 import pytest
 
-from sdd_cli.utils.sdd_authority import compiled_active_dir
+from providence_cli.utils.providence_authority import compiled_active_dir
 
 _FINGERPRINT_RE = re.compile(r"^[0-9a-f]{64}$")
 _ITEM_ID_RE = re.compile(r"^[A-Z]\d{2,3}$")

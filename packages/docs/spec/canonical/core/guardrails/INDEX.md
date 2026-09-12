@@ -18,7 +18,7 @@
 
 *Focus: Is the process being followed?*
 
-- **Constraint**: `.sdd-cache.md` must be updated before any commit.
+- **Constraint**: `.providence-cache.md` must be updated before any commit.
 - **Constraint**: `mandate.spec` must pass validation.
 - **Mechanism**: [pre-commit](../../../../../tools/scripts/git-hooks/pre-commit) (Git Hooks).
 

@@ -70,7 +70,7 @@ your-project/
 ├── .vscode/
 ├── .cursor/
 ├── scripts/
-├── .sdd/
+├── .providence/
 └── (existing project files)
 ```
 
@@ -90,8 +90,8 @@ ls -la | grep "^\."
 **Goal:** Copy SDD template files to your project
 
 ```bash
-# From sdd-harness root:
-cd /path/to/sdd-harness
+# From providence root:
+cd /path/to/providence
 
 # Copy all templates
 cp -r INTEGRATION/templates/* /path/to/your-project/
@@ -107,7 +107,7 @@ cp -r INTEGRATION/templates/* /path/to/your-project/
 .cursor/rules/spec.mdc
 .pre-commit-config.yaml   → project root
 .github/setup-precommit-hook.sh
-.sdd/README.md
+.providence/README.md
 ```
 
 **Verify:**
@@ -124,7 +124,7 @@ cat .spec.config | head -5
 
 ## ✅ Step 3: Configure .spec.config
 
-**Goal:** Point to sdd-harness (2 lines to edit!)
+**Goal:** Point to providence (2 lines to edit!)
 
 ```bash
 cd /path/to/your-project
@@ -133,7 +133,7 @@ cd /path/to/your-project
 nano .spec.config  # or your favorite editor
 
 # Edit lines:
-# Line 2: spec_path = ../sdd-harness
+# Line 2: spec_path = ../providence
 #         (or absolute path if not sibling directory)
 ```
 
@@ -141,15 +141,15 @@ nano .spec.config  # or your favorite editor
 
 ```ini
 [spec]
-spec_path = ../sdd-harness
-# spec_path = /home/sergio/dev/sdd-harness  # alternative: absolute path
+spec_path = ../providence
+# spec_path = /home/sergio/dev/providence  # alternative: absolute path
 ```
 
 **Verify:**
 
 ```bash
 cat .spec.config | grep spec_path
-# Should show: spec_path = ../sdd-harness
+# Should show: spec_path = ../providence
 ```
 
 **Stuck?** → See [STEP_3.md](./STEP_3.md)
@@ -171,18 +171,18 @@ python $(grep spec_path .spec.config | cut -d' ' -f3)docs/spec/SCRIPTS/phase-0-a
 
 ```
 ✅ Framework verified
-✅ .sdd/context-aware/ created
-✅ .sdd/runtime/ created
+✅ .providence/context-aware/ created
+✅ .providence/runtime/ created
 VALIDATION_QUIZ: Pass 8/10 questions (≥80%)
 ```
 
 **After script:**
 
 ```bash
-ls -la .sdd/
+ls -la .providence/
 # Should show: context-aware/, runtime/
 
-cat .sdd/runtime/search-keywords.md
+cat .providence/runtime/search-keywords.md
 # Should have 703 lines
 ```
 
@@ -198,7 +198,7 @@ cat .sdd/runtime/search-keywords.md
 cd /path/to/your-project
 
 # Stage all new files
-git add .spec.config .github/ .vscode/ .cursor/ .pre-commit-config.yaml scripts/ .sdd/
+git add .spec.config .github/ .vscode/ .cursor/ .pre-commit-config.yaml scripts/ .providence/
 
 # Verify what's staged
 git status
@@ -235,9 +235,9 @@ git status
 
 After all 5 steps:
 
-- ✅ `.spec.config` points to sdd-harness
+- ✅ `.spec.config` points to providence
 - ✅ All SDD templates are in place
-- ✅ `.sdd/` infrastructure created
+- ✅ `.providence/` infrastructure created
 - ✅ Changes committed to git
 - ✅ **Your project is ready for development with SDD AGENT_HARNESS**
 
@@ -259,7 +259,7 @@ Your developers can now:
 |---------|----------|
 | `.spec.config` not found | Check: did Step 2 copy work? Try manual: `cp INTEGRATION/templates/.spec.config .` |
 | Python script fails | Check: `cat .spec.config` spec_path is correct |
-| `.sdd/` not created | Run Step 4 again, capture full output |
+| `.providence/` not created | Run Step 4 again, capture full output |
 | Can't commit | Check: `git status`, make sure `.spec.config` is staged |
 | Still stuck | See full guides: STEP_1_*.md through STEP_5_*.md |
 

@@ -1,7 +1,7 @@
 import json
 
 import pytest
-from sdd_runtime.artifacts import CompiledArtifact, GovernanceItem
+from providence_runtime.artifacts import CompiledArtifact, GovernanceItem
 
 
 def make_items():

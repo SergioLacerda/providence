@@ -1,4 +1,4 @@
-# Contributing to SDD Harness
+# Contributing to Providence
 
 Thank you for your interest in contributing. This document covers how to set up your environment, run tests, and submit changes.
 
@@ -20,14 +20,14 @@ Thank you for your interest in contributing. This document covers how to set up 
 
 ```bash
 # Clone and enter the repo
-git clone https://github.com/SergioLacerda/sdd-harness.git
-cd sdd-harness
+git clone https://github.com/SergioLacerda/providence.git
+cd providence
 
 # Install all workspace dependencies
 make install
 
 # Verify the setup
-sdd runtime status
+providence runtime status
 ```
 
 ---
@@ -37,14 +37,14 @@ sdd runtime status
 ```
 packages/
   core/
-    sdd_core/        # Domain models, fingerprinting, registry
+    providence_core/        # Domain models, fingerprinting, registry
     sdd_compiler/    # Governance artifact compiler
-    sdd_telemetry/   # Observability / audit trail
+    providence_telemetry/   # Observability / audit trail
   features/
-    sdd_integration/ # Integration layer (external tools)
+    providence_integration/ # Integration layer (external tools)
   interfaces/
-    sdd_cli/         # CLI entry point (`sdd` command)
-    sdd_wizard/      # Interactive setup wizard
+    providence_cli/         # CLI entry point (`sdd` command)
+    providence_wizard/      # Interactive setup wizard
 tests/
   unit/              # Fast, isolated unit tests
   integration/       # Tests with real I/O and CLI
@@ -93,17 +93,17 @@ This runs, in order:
 
 ## Governance Compliance
 
-SDD Harness enforces its own governance rules at runtime. Before opening a PR:
+Providence enforces its own governance rules at runtime. Before opening a PR:
 
 ```bash
 # Compile governance artifacts
-sdd governance compile
+providence governance compile
 
 # Validate compliance
-sdd governance validate
+providence governance validate
 
 # Check workspace health
-sdd runtime status
+providence runtime status
 ```
 
 All three must pass cleanly before submitting.
@@ -125,7 +125,7 @@ SDD enforces **Policy P003: Mandatory Human Review**. This means:
 1. Fork the repo and create a feature branch
 2. Make your changes
 3. Run `make check` and `make lint`
-4. Run `sdd governance validate`
+4. Run `providence governance validate`
 5. Open a PR using the [pull request template](.github/pull_request_template.md)
 6. Include `Human Review: [Signed-off]` in the PR body
 
@@ -146,7 +146,7 @@ Common types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `ci`
 Examples:
 ```
 feat(compiler): add fingerprint caching for incremental builds
-fix(cli): handle missing .sdd/profile gracefully
+fix(cli): handle missing .providence/profile gracefully
 docs(contributing): add governance compliance steps
 ```
 
@@ -154,4 +154,4 @@ docs(contributing): add governance compliance steps
 
 ## Questions
 
-Open a [GitHub Discussion](https://github.com/SergioLacerda/sdd-harness/discussions) for questions, or file a [bug report](.github/ISSUE_TEMPLATE/BUG_REPORT.md) for defects.
+Open a [GitHub Discussion](https://github.com/SergioLacerda/providence/discussions) for questions, or file a [bug report](.github/ISSUE_TEMPLATE/BUG_REPORT.md) for defects.

@@ -1,7 +1,7 @@
 {
   "allowlist": {
-    "packages/features/sdd_integration/src/sdd_integration/builders/governance/pipeline_builder.py": [
-      "sdd_wizard.validator"
+    "packages/features/providence_integration/src/providence_integration/builders/governance/pipeline_builder.py": [
+      "providence_wizard.validator"
     ]
   }
 }

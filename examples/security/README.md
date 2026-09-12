@@ -35,7 +35,7 @@ done
 ### Purpose
 
 Run before and after implementing a feature to detect governance drift regressions.
-Unlike the simulation demos, this tool measures **real accuracy** against the actual `.sdd/metadata.json` artifact.
+Unlike the simulation demos, this tool measures **real accuracy** against the actual `.providence/metadata.json` artifact.
 
 ### Battery composition (100 sessions, fixed)
 
@@ -53,7 +53,7 @@ Unlike the simulation demos, this tool measures **real accuracy** against the ac
 uv run python examples/security/drift_battery.py --label "before-auth-refactor"
 
 # Step 2 — implement feature, recompile artifact
-sdd governance compile
+providence governance compile
 
 # Step 3 — after the feature: compare
 uv run python examples/security/drift_battery.py --label "after-auth-refactor"
@@ -64,7 +64,7 @@ uv run python examples/security/drift_battery.py --label "after-auth-refactor"
 | Drift rate | Artifact changed? | Meaning |
 |---|---|---|
 | 15% | No | Normal steady state — only `missing` + `corrupt` drift |
-| 30% | Yes | Expected after `sdd governance compile` — stale sessions need refresh |
+| 30% | Yes | Expected after `providence governance compile` — stale sessions need refresh |
 | 30% | No | Regression — investigate new drift source |
 | False positives > 0 | Any | Detector error — clean sessions are being flagged |
 | Detection rate < 100% | Any | Missed detections — drift not being caught |
@@ -97,6 +97,6 @@ uv run python examples/security/demo_drift_benchmark.py --sessions 1000 --runs 1
 
 ## Notes
 
-- All demos require `.sdd/metadata.json` (run `sdd governance compile` if missing).
+- All demos require `.providence/metadata.json` (run `providence governance compile` if missing).
 - Demos 2, 3, 5, and 6 are self-contained and do not read governance files.
 - `drift_battery_snapshot.json` is local state — do not commit it.

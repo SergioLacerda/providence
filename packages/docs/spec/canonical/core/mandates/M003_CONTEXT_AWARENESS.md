@@ -14,7 +14,7 @@ Ensure absolute continuity of state and logic across parallel agents, long-runni
 
 ## 📜 Requirement
 
-1. **Mandatory Cache File**: Every project must maintain a `.sdd-cache.md` (or `.sdd/task-context.json`) in its root.
+1. **Mandatory Cache File**: Every project must maintain a `.providence-cache.md` (or `.providence/task-context.json`) in its root.
 2. **Sub-task Checkpoint**: Agents MUST update this cache at the end of EVERY sub-task or significant logical block.
 3. **Pre-flight Sync**: Before starting any task, the agent MUST read the cache to synchronize with the current global state of the project, overriding stale memory.
 4. **Isolation**: The cache is strictly project-scoped. In multi-repository IDEs, agents must treat each repository as a separate context-aware cell.
@@ -38,7 +38,7 @@ The cache must contain:
 ```bash
 # At the end of a subtask:
 1. Validate subtask completion (tests pass).
-2. Write summary to .sdd-cache.md.
+2. Write summary to .providence-cache.md.
 3. Commit cache alongside code changes.
 ```
 
@@ -54,7 +54,7 @@ The cache must contain:
 
 ## ✅ Validation
 
-- [ ] Presence of `.sdd-cache.md` in root.
+- [ ] Presence of `.providence-cache.md` in root.
 - [ ] Git history shows cache updates synchronized with logical feature commits.
 - [ ] Cache content reflects the actual current state of the implementation.
 
@@ -62,7 +62,7 @@ The cache must contain:
 
 ## Skill-Oriented Reinforcement (Normative)
 
-- [ ] When a capability-oriented skill exists for the task, agents SHOULD prefer `sdd skills run <skill>` over ad-hoc command guessing.
+- [ ] When a capability-oriented skill exists for the task, agents SHOULD prefer `providence skills run <skill>` over ad-hoc command guessing.
 - [ ] If no suitable skill exists, agents MAY fall back to low-level CLI primitives with explicit context synchronization first.
 - [ ] The selected execution mode (skill or primitive fallback) MUST be recorded in session context for downstream auditability.
 
@@ -70,9 +70,9 @@ The cache must contain:
 
 ## Enforcement Steps
 
-- Verify `.sdd-cache.md` exists in the project root before starting any task
-- Read `.sdd-cache.md` (pre-flight sync) and confirm understanding of current state before acting
-- Update `.sdd-cache.md` at the end of every sub-task or significant logical block
+- Verify `.providence-cache.md` exists in the project root before starting any task
+- Read `.providence-cache.md` (pre-flight sync) and confirm understanding of current state before acting
+- Update `.providence-cache.md` at the end of every sub-task or significant logical block
 - Confirm cache content is project-scoped and does not reference state from other repositories
 - Confirm cache was committed alongside the last code change
 

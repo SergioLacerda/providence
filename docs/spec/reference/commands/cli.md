@@ -1,15 +1,15 @@
-# SDD CLI Reference (v3.1)
+# Providence CLI Reference (v3.1)
 
-The sdd command is the main entry point for framework operations.
+The `providence` command is the main entry point for framework operations.
 
 ## Profile Detection
 
-The SDD CLI operates in one of two profiles: **master** (framework development) or **client** (project instance). The profile is auto-detected using the following priority:
+The Providence CLI operates in one of two profiles: **master** (framework development) or **client** (project instance). The profile is auto-detected using the following priority:
 
 1. `--profile` flag (highest priority)
 2. `SDD_PROFILE` environment variable
-3. `.sdd/profile` (`[sdd] type = master|client`)
-4. If workspace is not initialized, fail with actionable message (`sdd init`)
+3. `.providence/profile` (`[sdd] type = master|client`)
+4. If workspace is not initialized, fail with actionable message (`providence init`)
 
 ```bash
 # Use explicit profile override
@@ -17,7 +17,7 @@ sdd --profile master governance compile
 sdd --profile client wizard run
 
 # Or set via environment
-SDD_PROFILE=master sdd governance compile
+SDD_PROFILE=master providence governance compile
 ```
 
 The current profile is inferred automatically in most cases. Profile affects which operations are permitted:
@@ -48,48 +48,48 @@ sdd --verbose runtime status
 
 ### Project Setup
 
-- sdd setup run: Initializes workspace dependencies and local tooling.
+- providence setup run: Initializes workspace dependencies and local tooling.
 
 ### Testing and Validation
 
-- sdd test run: Runs the full test pipeline and shows project coverage summary by default.
-- sdd test ci-validate: Runs CI-oriented validations.
-- sdd lint run: Runs static quality checks.
+- providence test run: Runs the full test pipeline and shows project coverage summary by default.
+- providence test ci-validate: Runs CI-oriented validations.
+- providence lint run: Runs static quality checks.
 
-Coverage options for sdd test run:
+Coverage options for providence test run:
 
 ```bash
 # Default coverage output
-sdd test run
+providence test run
 
 # Disable coverage
-sdd test run --no-coverage
+providence test run --no-coverage
 
 # Customize report style
-sdd test run --cov-report term
+providence test run --cov-report term
 
 # Enforce minimum percentage
-sdd test run --cov-fail-under 80
+providence test run --cov-fail-under 80
 ```
 
 ### Governance Management
 
-- sdd governance load: Shows loaded governance summary.
-- sdd governance validate: Validates structure, file access, and fingerprints.
-- sdd governance generate: Generates agent seeds from governance rules.
-- sdd governance compile: Compiles governance artifacts (mandates + guidelines → msgpack binaries).
-- sdd governance sign: Signs compiled artifacts or source specs (`--source`) with Ed25519.
-- sdd governance audit: Performs a security audit of the workspace and signatures.
-- sdd governance keygen: Generates Ed25519 key pairs for signing.
+- providence governance load: Shows loaded governance summary.
+- providence governance validate: Validates structure, file access, and fingerprints.
+- providence governance generate: Generates agent seeds from governance rules.
+- providence governance compile: Compiles governance artifacts (mandates + guidelines → msgpack binaries).
+- providence governance sign: Signs compiled artifacts or source specs (`--source`) with Ed25519.
+- providence governance audit: Performs a security audit of the workspace and signatures.
+- providence governance keygen: Generates Ed25519 key pairs for signing.
 
 ### Compliance Audit
 
-- `sdd audit`: Governance drift + telemetry summary (existing behavior).
-- `sdd audit view --since YYYY-MM-DD --event-type VIOLATION`: filtered event viewer for compliance events.
-- `sdd audit export --format=csv > compliance_report.csv`: deterministic CSV export to stdout, plus evidence manifest via `--manifest-file` (default `.sdd/runtime/compliance-export.manifest.json`).
-- `sdd audit legacy-check [--phase-date YYYY-MM-DD]`: staged legacy policy enforcement (Q3 2026 warn, Q4 2026 block).
-- `sdd audit bootstrap-check`: validates AGENTS/CLAUDE bootstrap contract drift against `.sdd` authority model.
-- `sdd audit compliance-pack --out-dir .sdd/runtime/compliance-pack`: generates external-review evidence bundle.
+- `providence audit`: Governance drift + telemetry summary (existing behavior).
+- `providence audit view --since YYYY-MM-DD --event-type VIOLATION`: filtered event viewer for compliance events.
+- `providence audit export --format=csv > compliance_report.csv`: deterministic CSV export to stdout, plus evidence manifest via `--manifest-file` (default `.providence/runtime/compliance-export.manifest.json`).
+- `providence audit legacy-check [--phase-date YYYY-MM-DD]`: staged legacy policy enforcement (Q3 2026 warn, Q4 2026 block).
+- `providence audit bootstrap-check`: validates AGENTS/CLAUDE bootstrap contract drift against `.providence` authority model.
+- `providence audit compliance-pack --out-dir .providence/runtime/compliance-pack`: generates external-review evidence bundle.
 
 ### Maintenance and Tooling
 
@@ -107,20 +107,20 @@ script discovery under `tools/` for compatibility.
 
 ### Governance Query (Ask)
 
-`sdd ask` is the single governed entrypoint: it is the source of truth that
+`providence ask` is the single governed entrypoint: it is the source of truth that
 the prompt-submit hook and the `/sdd-ask` slash/skill adapters route through.
 Adapters do not classify intent independently; they consume the CLI's
 structured decision. Loads compiled governance context before any agent
 response.
 
-- `sdd ask "<query>"` — minimal governance context (fingerprint + mandates). Use for quick queries and skill routing decisions.
-- `sdd ask "<query>" --full` — full governance context with telemetry. Use when confidence or drift information is needed.
-- `sdd ask "<query>" --intake-only` — cheap profile for automated callers (e.g. a prompt-submit hook): emits only `execution_gate`, `intake_index_mode`, and the structured intent fields below. Skips the compiled-governance load, signature verification, handbook lookup, and telemetry emission that the full profile performs.
+- `providence ask "<query>"` — minimal governance context (fingerprint + mandates). Use for quick queries and skill routing decisions.
+- `providence ask "<query>" --full` — full governance context with telemetry. Use when confidence or drift information is needed.
+- `providence ask "<query>" --intake-only` — cheap profile for automated callers (e.g. a prompt-submit hook): emits only `execution_gate`, `intake_index_mode`, and the structured intent fields below. Skips the compiled-governance load, signature verification, handbook lookup, and telemetry emission that the full profile performs.
 
-Both `sdd ask` and `sdd ask --full` emit:
+Both `providence ask` and `providence ask --full` emit:
 
 ```
-=== SDD Governance Context ===
+=== Providence Governance Context ===
 query_hash      : <hash>
 context_source  : compiled
 fingerprint     : <hash>
@@ -128,7 +128,7 @@ mandates_loaded : <n>
 trust_source    : canonical
 degraded        : no
 
-SDD GOVERNANCE: drift=<status> | governance=<status> | profile=<profile>
+PROVIDENCE GOVERNANCE: drift=<status> | governance=<status> | profile=<profile>
 ```
 
 Every profile (including `--intake-only`) also emits a structured intake
@@ -143,7 +143,7 @@ provider_bound    : false
 ```
 
 `delegation_executed` and `provider_bound` are always `false` today: no
-runtime code path in `sdd ask` invokes an external provider (e.g.
+runtime code path in `providence ask` invokes an external provider (e.g.
 Strategist) or any other analysis skill. `next_action:
 create_execution_contract` (surfaced today as `next_valid_path:
 implementation_handoff`) means the calling agent should proceed with an
@@ -151,36 +151,36 @@ authorized implementation path itself — it is not a signal that
 implementation, delegation, or provider execution already happened.
 Governance stays provider-agnostic: using an analysis skill such as
 Strategist to refine an implementation plan is the user's independent
-choice, not something `sdd ask` selects or invokes automatically.
+choice, not something `providence ask` selects or invokes automatically.
 
-If `drift=detected` or `governance=partial`, run `sdd governance compile` before retrying.
+If `drift=detected` or `governance=partial`, run `providence governance compile` before retrying.
 
 ```bash
 # Route a request through governed context
-sdd ask "diagnose failing tests"
+providence ask "diagnose failing tests"
 
 # Full telemetry (confidence gate, drift check)
-sdd ask "implementar plano: .sdd/skills/sdd-ask/skill.yaml" --full
+providence ask "implementar plano: .providence/skills/sdd-ask/skill.yaml" --full
 
 # Cheap profile for automated hook callers
-sdd ask "diagnose failing tests" --intake-only
+providence ask "diagnose failing tests" --intake-only
 ```
 
 ### Capability Layer (Skills)
 
 Skills are V6-schema governed capabilities (`schema_version: 1.1.0`). Each skill has explicit `triggers`, `forbidden` actions, `fallback_to`, and `idempotent` flag.
 
-- `sdd skills list` — list all registered skills with category and risk score.
-- `sdd skills describe <name>` — return full skill metadata including V6 fields.
-- `sdd skills run <name>` — execute governed skill pipeline.
-- `sdd skills export` — export skill definitions to `json/openai/langchain/crewai/autogen`.
-- `sdd skills --full-bootstrap` — regenerate all `skill.yaml` files and `registry.json` from the canonical Python `_REGISTRY`. **Overwrites** any manual edits to `.sdd/skills/` — V6 fields must be set in `_REGISTRY` (`packages/core/sdd_runtime/src/sdd_runtime/skills.py`) to survive bootstrap.
-- `sdd skills learning-candidates` — generate/list supervised `RuleCandidate` entries from `FailureLedger`.
-- `sdd skills learning-approve <candidate-id> --rationale ... [--ttl-days N]` — human approval path; activates rule in registry.
-- `sdd skills learning-reject <candidate-id> --rationale ...` — human rejection path; keeps candidate history without activation.
-- `sdd skills learning-rules` — list active supervised rules.
-- `sdd skills learning-impact <rule-id> --rework-delta X --false-block-rate Y --escalation-delta Z [--rollback-flag]` — record impact and optionally trigger rollback (negative learning).
-- `sdd skills learning-status [--window-days N]` — summarize candidate/rule/impact health in a recent time window.
+- `providence skills list` — list all registered skills with category and risk score.
+- `providence skills describe <name>` — return full skill metadata including V6 fields.
+- `providence skills run <name>` — execute governed skill pipeline.
+- `providence skills export` — export skill definitions to `json/openai/langchain/crewai/autogen`.
+- `providence skills --full-bootstrap` — regenerate all `skill.yaml` files and `registry.json` from the canonical Python `_REGISTRY`. **Overwrites** any manual edits to `.providence/skills/` — V6 fields must be set in `_REGISTRY` (`packages/core/providence_runtime/src/providence_runtime/skills.py`) to survive bootstrap.
+- `providence skills learning-candidates` — generate/list supervised `RuleCandidate` entries from `FailureLedger`.
+- `providence skills learning-approve <candidate-id> --rationale ... [--ttl-days N]` — human approval path; activates rule in registry.
+- `providence skills learning-reject <candidate-id> --rationale ...` — human rejection path; keeps candidate history without activation.
+- `providence skills learning-rules` — list active supervised rules.
+- `providence skills learning-impact <rule-id> --rework-delta X --false-block-rate Y --escalation-delta Z [--rollback-flag]` — record impact and optionally trigger rollback (negative learning).
+- `providence skills learning-status [--window-days N]` — summarize candidate/rule/impact health in a recent time window.
 
 Built-in skills (registry `schema_version: 1.1.0`):
 
@@ -211,12 +211,12 @@ Skill output schema (`skill_output.schema.yaml`):
 
 - `status`: `ok | error | degraded`
 - `confidence.overall`: float `[0.0, 1.0]`
-- `error.category`: taxonomy key (see `.sdd/skills/contracts/skill_output.schema.yaml`)
+- `error.category`: taxonomy key (see `.providence/skills/contracts/skill_output.schema.yaml`)
 - `next_skill`: id of recommended next skill, or `null`
 
 Governance footer contract:
 
-- `SDD GOVERNANCE: drift=<status> | governance=<status> | profile=<profile>`
+- `PROVIDENCE GOVERNANCE: drift=<status> | governance=<status> | profile=<profile>`
 
 JSON automation examples:
 
@@ -224,8 +224,8 @@ JSON automation examples:
 sdd --json governance compile | jq '.data.summary'
 sdd --json governance load --path runtime | jq '.data.summary'
 sdd --json governance validate | jq '.ok,.data.preflight'
-sdd skills list
-sdd skills describe sdd-ask
+providence skills list
+providence skills describe sdd-ask
 sdd --json skills learning-status | jq '.data.status'
 sdd --json skills learning-candidates | jq '.data.created_count,.data.candidates | length'
 sdd --json skills run sdd-diagnose | jq '.data.artifacts.diagnosis_attestation'
@@ -262,8 +262,8 @@ sdd --json skills learning-impact rr-def456 \
 
 Generate new skills and slash commands from V6-compliant canonical templates.
 
-- `sdd scaffold skill <name>` — create a new skill under `.sdd/skills/<name>/` with `skill.yaml` and `SKILL.md`.
-- `sdd scaffold command <name>` — create a new slash command under `.sdd/commands/<name>/` with `command.yaml`.
+- `sdd scaffold skill <name>` — create a new skill under `.providence/skills/<name>/` with `skill.yaml` and `SKILL.md`.
+- `sdd scaffold command <name>` — create a new slash command under `.providence/commands/<name>/` with `command.yaml`.
 
 Options for `sdd scaffold skill`:
 
@@ -285,15 +285,15 @@ sdd scaffold skill my-skill --category analysis --risk low \
 sdd scaffold command my-skill --routes-to my-skill
 ```
 
-Templates live in `.sdd/templates/` (deployed by wizard from `sdd_integration`). To add a skill to the canonical registry so it survives `--full-bootstrap`, add a `SkillDefinition` entry to `packages/core/sdd_runtime/src/sdd_runtime/skills.py`.
+Templates live in `.providence/templates/` (deployed by wizard from `providence_integration`). To add a skill to the canonical registry so it survives `--full-bootstrap`, add a `SkillDefinition` entry to `packages/core/providence_runtime/src/providence_runtime/skills.py`.
 
 ### Wizard
 
-- `sdd install --wizard` — canonical entrypoint. Runs a single guided flow
+- `providence install --wizard` — canonical entrypoint. Runs a single guided flow
   (language/hook-mode/agent-selection prompts, then generate-or-load-custom,
   compile, seeds, deploy to project root) — no user-facing phase choice.
   _(client primary; warns in master)_
-- `sdd wizard run` — legacy alias for the same command; deploys to project
+- `providence wizard run` — legacy alias for the same command; deploys to project
   root by default.
 
 | Flag | Effect |
@@ -303,7 +303,7 @@ Templates live in `.sdd/templates/` (deployed by wizard from `sdd_integration`).
 | `--from-file <path>` | Supply a custom mandates/guidelines JSON instead of generating one (validated before use) |
 | `--non-interactive` | Resolve preferences/agent selection without prompting (reuses an existing `wizard-config.json` or falls back to defaults) |
 
-The wizard deploys `.sdd/templates/` to the target project, enabling `sdd scaffold skill` in generated workspaces.
+The wizard deploys `.providence/templates/` to the target project, enabling `sdd scaffold skill` in generated workspaces.
 
 ### Documentation Artifacts
 
@@ -329,15 +329,15 @@ sdd docs deploy --no-force
 
 ### Release
 
-- sdd release build: Builds release artifacts into `dist/`. _(master only — blocked in client)_
+- providence release build: Builds release artifacts into `dist/`. _(master only — blocked in client)_
 
 ### Version
 
-- sdd version: Shows the installed SDD CLI version.
+- providence version: Shows the installed Providence CLI version.
 
 ### Diagnostics
 
-- sdd doctor run: Executes protocol-based diagnostics using integration flow steps.
+- providence doctor run: Executes protocol-based diagnostics using integration flow steps.
 
 Runtime JSON example:
 
@@ -369,13 +369,13 @@ Examples:
 
 ```bash
 # Default (isolated)
-sdd doctor run
+providence doctor run
 
 # Real workspace diagnostics
-sdd doctor run --mode real
+providence doctor run --mode real
 
 # Custom protocol file
-sdd doctor run --spec packages/features/sdd_integration/src/sdd_integration/protocol/integration_flow.yaml
+providence doctor run --spec packages/features/providence_integration/src/providence_integration/protocol/integration_flow.yaml
 ```
 
 ## Notes on Diagnostic Semantics
@@ -390,8 +390,8 @@ Use help per command for authoritative flags:
 
 ```bash
 sdd --help
-sdd doctor --help
-sdd governance validate --help
+providence doctor --help
+providence governance validate --help
 ```
 
 ## Related Documentation

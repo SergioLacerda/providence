@@ -1,8 +1,8 @@
 {
   "allowlist": {
-    "packages/core/sdd_core/src/sdd_core/utils/compiler_runner.py": "Pre-existing at ADR-019 (2026-08-07); grandfathered, not yet split. See docs/adr/ADR-019-guardrail-complexity-budget.md.",
-    "packages/interfaces/sdd_cli/src/sdd_cli/services/governance_docs_sources.py": "Pre-existing at ADR-019 (2026-08-07); grandfathered, not yet split. See docs/adr/ADR-019-guardrail-complexity-budget.md.",
-    "packages/interfaces/sdd_cli/src/sdd_cli/services/ask_context.py": "Pre-existing at ADR-019 (2026-08-07); grandfathered, not yet split. See docs/adr/ADR-019-guardrail-complexity-budget.md.",
-    "packages/features/sdd_integration/src/sdd_integration/builders/governance/pipeline_builder.py": "Pre-existing at ADR-019 (2026-08-07); grandfathered, not yet split. See docs/adr/ADR-019-guardrail-complexity-budget.md."
+    "packages/core/providence_core/src/providence_core/utils/compiler_runner.py": "Pre-existing at ADR-019 (2026-08-07); grandfathered, not yet split. See docs/adr/ADR-019-guardrail-complexity-budget.md.",
+    "packages/interfaces/providence_cli/src/providence_cli/services/governance_docs_sources.py": "Pre-existing at ADR-019 (2026-08-07); grandfathered, not yet split. See docs/adr/ADR-019-guardrail-complexity-budget.md.",
+    "packages/interfaces/providence_cli/src/providence_cli/services/ask_context.py": "Pre-existing at ADR-019 (2026-08-07); grandfathered, not yet split. See docs/adr/ADR-019-guardrail-complexity-budget.md.",
+    "packages/features/providence_integration/src/providence_integration/builders/governance/pipeline_builder.py": "Pre-existing at ADR-019 (2026-08-07); grandfathered, not yet split. See docs/adr/ADR-019-guardrail-complexity-budget.md."
   }
 }

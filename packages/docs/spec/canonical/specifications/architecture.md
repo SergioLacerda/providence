@@ -638,7 +638,7 @@ data/
 
 Architecture is guided by dynamic state located at:
 
-.sdd/source/execution-state/_current.md
+.providence/source/execution-state/_current.md
 
 Rules:
 
@@ -652,7 +652,7 @@ Rules:
 
 Each critical domain can have its own thread:
 
-.sdd/source/threads/*.md
+.providence/source/threads/*.md
 
 Objective:
 

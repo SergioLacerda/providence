@@ -11,7 +11,7 @@
 
 The codebase had ~599 raw `print()` calls across 6 production packages with no structured
 output, no log levels, and no machine-readable format. The observability plan required
-structured JSON logging compatible with the existing `OtelBridge` and the `sdd telemetry`
+structured JSON logging compatible with the existing `OtelBridge` and the `providence telemetry`
 sink. A single shared configuration was needed to prevent each package from making
 independent formatting decisions.
 
@@ -20,10 +20,10 @@ independent formatting decisions.
 ## Decision
 
 **`structlog` is the logging primitive for all production packages. A single configuration
-module in `sdd_core` is the only place structlog is configured.**
+module in `providence_core` is the only place structlog is configured.**
 
 ```python
-# packages/core/sdd_core/src/sdd_core/logging.py
+# packages/core/providence_core/src/providence_core/logging.py
 import structlog
 
 
@@ -60,8 +60,8 @@ No package calls `structlog.configure()` directly.
 | Errors, exceptions | `logger.error()` |
 | Interactive CLI output (stdout IS the interface) | `print()` + `# noqa: T201` |
 
-Interactive CLI output — where stdout is the user-facing interface (e.g., `sdd telemetry dump`
-streaming JSONL, `sdd ask` response text) — keeps `print()` with an explicit `# noqa: T201`.
+Interactive CLI output — where stdout is the user-facing interface (e.g., `providence telemetry dump`
+streaming JSONL, `providence ask` response text) — keeps `print()` with an explicit `# noqa: T201`.
 These are not logging calls.
 
 ### Migration gate
@@ -86,15 +86,15 @@ completes. A package with T201 active blocks new `print()` in CI.
 
 ## Consequences
 
-- Packages may not call `structlog.configure()` — only `sdd_core.logging.configure_logging()`.
-  A direct `structlog.configure()` call outside `sdd_core/logging.py` is a policy violation.
+- Packages may not call `structlog.configure()` — only `providence_core.logging.configure_logging()`.
+  A direct `structlog.configure()` call outside `providence_core/logging.py` is a policy violation.
 - Interactive stdout output is exempt from T201; callers must add `# noqa: T201` with intent.
 - Adding a new log processor (e.g., sampling, redaction) requires changing only
-  `sdd_core/logging.py` — all packages pick it up automatically.
+  `providence_core/logging.py` — all packages pick it up automatically.
 
 ---
 
 ## Links
 
-- Implementation: `packages/core/sdd_core/src/sdd_core/logging.py`
+- Implementation: `packages/core/providence_core/src/providence_core/logging.py`
 - Related: M007 (Telemetry Enforcement), ADR-008 (trace_id propagation)

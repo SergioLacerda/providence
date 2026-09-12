@@ -4,13 +4,13 @@ Reference for architects, tech leads, and senior engineers.
 
 ## Architecture Overview
 
-SDD Harness is structured as a hexagonal uv workspace with three tiers:
+Providence is structured as a hexagonal uv workspace with three tiers:
 
 ```
 packages/
-├── core/          # sdd_core, sdd_compiler, sdd_telemetry
-├── features/      # sdd_integration, sdd_wizard
-└── interfaces/    # sdd_cli, sdd_wizard (UI layer)
+├── core/          # providence_core, sdd_compiler, providence_telemetry
+├── features/      # providence_integration, providence_wizard
+└── interfaces/    # providence_cli, providence_wizard (UI layer)
 
 tools/             # Sovereign Factory: operational tooling and tool projects
 ```
@@ -76,7 +76,7 @@ Operational checklist:
 
 ## Governance Artifacts
 
-After `sdd governance compile`, artifacts land in:
+After `providence governance compile`, artifacts land in:
 
 - `generated/master/compiled/` — master governance (msgpack + JSON)
 - `generated/client/compiled/` — client/project instance artifacts
@@ -90,10 +90,10 @@ Four integrated modules work together:
 
 | Module | Package | Role |
 |--------|---------|------|
-| `llm.py` | `sdd_runtime` | Captures tokens from LLM API responses or env vars (`SDD_TOKENS_INPUT/OUTPUT`) |
-| `context.py` | `sdd_runtime` | Budget zone enforcement + YELLOW zone compression trigger |
-| `cache.py` | `sdd_runtime` | LRU context cache (128 entries, 5-min TTL) — cache hits bypass compression |
-| `providers/` | `sdd_runtime` | Pluggable compression providers (TF-IDF, AST, HTTP, Local) |
+| `llm.py` | `providence_runtime` | Captures tokens from LLM API responses or env vars (`SDD_TOKENS_INPUT/OUTPUT`) |
+| `context.py` | `providence_runtime` | Budget zone enforcement + YELLOW zone compression trigger |
+| `cache.py` | `providence_runtime` | LRU context cache (128 entries, 5-min TTL) — cache hits bypass compression |
+| `providers/` | `providence_runtime` | Pluggable compression providers (TF-IDF, AST, HTTP, Local) |
 
 ### Budget Zones
 
@@ -106,22 +106,22 @@ Four integrated modules work together:
 
 ### CLI Integration
 
-Pass token counts to `sdd ask --full`:
+Pass token counts to `providence ask --full`:
 
 ```bash
 # Via CLI flags
-sdd ask --full "query" --tokens-input 150 --tokens-output 50
+providence ask --full "query" --tokens-input 150 --tokens-output 50
 
 # Via environment variables (picked up automatically)
-SDD_TOKENS_INPUT=150 SDD_TOKENS_OUTPUT=50 sdd ask --full "query"
+SDD_TOKENS_INPUT=150 SDD_TOKENS_OUTPUT=50 providence ask --full "query"
 ```
 
 Budget breach guard blocks context loading:
 
 ```bash
 # When budget is breached (≥100% utilization), ask in full mode exits with code 3
-SDD_BUDGET_UTILIZATION_PCT=105 sdd ask --full "query"
-# → [SDD] BUDGET BREACH: context utilization at 105.0% (>= 100%).
+SDD_BUDGET_UTILIZATION_PCT=105 providence ask --full "query"
+# → [Providence] BUDGET BREACH: context utilization at 105.0% (>= 100%).
 # → Further context loading is blocked.
 ```
 
@@ -150,23 +150,23 @@ classifies drift into five semantic types, each with a deterministic remediation
 
 | Type | Meaning | Remediation |
 |------|---------|-------------|
-| `spec_drift` | Spec changed but artifact not recompiled | `sdd governance compile` |
-| `profile_drift` | Runtime profile ≠ expected profile | `sdd governance validate --profile <expected>` |
-| `session_drift` | Session cached to stale artifact fingerprint | `sdd runtime reset-session` |
-| `policy_drift` | Policy-set version mismatch | `sdd governance compile --force` |
-| `fingerprint_mismatch` | Artifact fingerprint differs from session | `sdd governance compile` |
+| `spec_drift` | Spec changed but artifact not recompiled | `providence governance compile` |
+| `profile_drift` | Runtime profile ≠ expected profile | `providence governance validate --profile <expected>` |
+| `session_drift` | Session cached to stale artifact fingerprint | `providence runtime reset-session` |
+| `policy_drift` | Policy-set version mismatch | `providence governance compile --force` |
+| `fingerprint_mismatch` | Artifact fingerprint differs from session | `providence governance compile` |
 
-### Integration with `sdd runtime status`
+### Integration with `providence runtime status`
 
-The `sdd runtime status` command runs drift classification and emits telemetry:
+The `providence runtime status` command runs drift classification and emits telemetry:
 
 ```bash
-sdd runtime status
+providence runtime status
 # → [runtime] drift detected: spec_drift
-# →   → sdd governance compile
+# →   → providence governance compile
 ```
 
-Emitted events in `.sdd/runtime/compliance-events.jsonl`:
+Emitted events in `.providence/runtime/compliance-events.jsonl`:
 
 - `runtime.session.start` — session loaded
 - `runtime.drift.detected` — drift classified (if detected)
@@ -180,9 +180,9 @@ Emitted events in `.sdd/runtime/compliance-events.jsonl`:
 
 Code modules:
 
-- `sdd_runtime/drift.py` — `DriftDetector` + `DriftReport` + remediation mapping
-- `sdd_runtime/session.py` — `SessionState` persistence
-- `packages/interfaces/sdd_cli/commands/runtime.py` — `sdd runtime status` integration
+- `providence_runtime/drift.py` — `DriftDetector` + `DriftReport` + remediation mapping
+- `providence_runtime/session.py` — `SessionState` persistence
+- `packages/interfaces/providence_cli/commands/runtime.py` — `providence runtime status` integration
 
 ---
 

@@ -4,25 +4,25 @@ Verification state: documented
 
 ## Symptoms
 
-- `.sdd/` runtime files disagree with authored docs.
+- `.providence/` runtime files disagree with authored docs.
 - Governance validation reports stale or mismatched generated output.
-- Agents cite `.sdd/` behavior that no longer matches `docs/`.
+- Agents cite `.providence/` behavior that no longer matches `docs/`.
 - A generated seed or runtime file appears to be the only place a rule exists.
 
 ## Diagnosis
 
 1. Read `docs/governance-runtime-model.md`.
 2. Identify the authored source in `docs/spec/canonical/governance-sources.yaml`.
-3. Compare the source entry's declared outputs with the generated `.sdd/` files.
+3. Compare the source entry's declared outputs with the generated `.providence/` files.
 4. Check runtime health:
 
    ```bash
-   uv run sdd runtime status --force
-   uv run sdd governance validate
+   uv run providence runtime status --force
+   uv run providence governance validate
    ```
 
-5. Treat disagreement between registry outputs and `.sdd/` as build drift, not as
-   permission to edit `.sdd/` directly.
+5. Treat disagreement between registry outputs and `.providence/` as build drift, not as
+   permission to edit `.providence/` directly.
 
 ## Resolution Steps
 
@@ -30,14 +30,14 @@ Verification state: documented
 2. Regenerate runtime outputs:
 
    ```bash
-   uv run sdd governance generate --full-bootstrap
+   uv run providence governance generate --full-bootstrap
    ```
 
 3. Re-run validation:
 
    ```bash
-   uv run sdd governance validate
-   uv run sdd runtime status --force
+   uv run providence governance validate
+   uv run providence runtime status --force
    ```
 
 4. If the change affects agent entrypoints, regenerate skills/seeds as required by
@@ -46,7 +46,7 @@ Verification state: documented
 ## Rollback
 
 1. Revert the authored `docs/` source change.
-2. Regenerate `.sdd/` from the restored source.
+2. Regenerate `.providence/` from the restored source.
 3. Re-run governance validation.
 
 ## Post-Incident
@@ -58,8 +58,8 @@ Verification state: documented
 ## Evidence To Attach
 
 - `git diff -- docs/`
-- `uv run sdd governance validate` output
-- `uv run sdd runtime status --force` output
+- `uv run providence governance validate` output
+- `uv run providence runtime status --force` output
 - source registry entry from `docs/spec/canonical/governance-sources.yaml`
 
 ## Sources

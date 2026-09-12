@@ -12,7 +12,7 @@
 **What happens here:**
 
 1. Agent discovers spec-architecture via `.spec.config`
-2. Agent creates `.sdd/context-aware/` infrastructure
+2. Agent creates `.providence/context-aware/` infrastructure
 3. Agent takes SDD validation quiz (≥80% required)
 4. Agent confirms workspace is ready
 5. Agent proceeds to actual work tasks
@@ -74,7 +74,7 @@ ls templates/
 cd -
 
 # Create .ai folder structure
-mkdir -p .sdd/context-aware/{task-progress/completed,analysis,runtime-state}
+mkdir -p .providence/context-aware/{task-progress/completed,analysis,runtime-state}
 
 # Create other required directories if not present
 mkdir -p tests/unit/specs_ia_units
@@ -89,32 +89,32 @@ SPEC_PATH=$(grep spec_path .spec.config | cut -d' ' -f3)
 
 # Copy context-aware template
 cp $SPEC_PATH/templates/ai/context-aware/README.md \
-   .sdd/context-aware/README.md
+   .providence/context-aware/README.md
 
 # Copy task-progress template
 cp $SPEC_PATH/templates/ai/context-aware/task-progress/_current.md \
-   .sdd/context-aware/task-progress/_current.md
+   .providence/context-aware/task-progress/_current.md
 
 # Copy analysis template
 cp $SPEC_PATH/templates/ai/context-aware/analysis/_template.md \
-   .sdd/context-aware/analysis/_current-issues.md
+   .providence/context-aware/analysis/_current-issues.md
 
 # Copy runtime-state template
 cp $SPEC_PATH/templates/ai/context-aware/runtime-state/_current.md \
-   .sdd/context-aware/runtime-state/_current.md
+   .providence/context-aware/runtime-state/_current.md
 ```
 
 ### 2.3 Verify Structure
 
 ```bash
 # Check that all files exist
-ls -la .sdd/context-aware/
-ls -la .sdd/context-aware/task-progress/
-ls -la .sdd/context-aware/analysis/
-ls -la .sdd/context-aware/runtime-state/
+ls -la .providence/context-aware/
+ls -la .providence/context-aware/task-progress/
+ls -la .providence/context-aware/analysis/
+ls -la .providence/context-aware/runtime-state/
 
 # Verify README exists
-cat .sdd/context-aware/README.md | head -20
+cat .providence/context-aware/README.md | head -20
 ```
 
 **Agent validates:**
@@ -218,7 +218,7 @@ cat $SPEC_PATH/EXECUTION/spec/CANONICAL/rules/ia-rules.md
 
 ### 5.1 Update Project Metadata
 
-Edit `.sdd/context-aware/task-progress/_current.md`:
+Edit `.providence/context-aware/task-progress/_current.md`:
 
 ```markdown
 # Task Progress — [Today's Date]
@@ -234,7 +234,7 @@ Edit `.sdd/context-aware/task-progress/_current.md`:
 #### Checklist
 - [x] Read .spec.config
 - [x] Verified SPEC framework location
-- [x] Created .sdd/context-aware/ directories
+- [x] Created .providence/context-aware/ directories
 - [x] Copied templates
 - [x] Read ia-rules.md
 - [x] Read context-aware guide
@@ -249,7 +249,7 @@ Edit `.sdd/context-aware/task-progress/_current.md`:
 
 ```bash
 # Stage all files
-git add .sdd/
+git add .providence/
 git add .github/
 git add .vscode/
 # (don't add docs/ia if it's symlink)
@@ -257,7 +257,7 @@ git add .vscode/
 # Commit with PHASE 0 message
 git commit --no-verify -m "🚀 PHASE 0: Initialize agent workspace (onboarding complete)
 
-- Created .sdd/context-aware/ infrastructure
+- Created .providence/context-aware/ infrastructure
 - Verified SPEC framework connection
 - Passed SDD validation quiz (5/5)
 - Ready for development tasks
@@ -273,14 +273,14 @@ PHASE 0 Status: COMPLETE ✅"
 
 ```bash
 # Verify directories exist
-[ -d .sdd/context-aware ] && echo "✅ .sdd/context-aware exists"
-[ -d .sdd/context-aware/task-progress ] && echo "✅ task-progress exists"
-[ -d .sdd/context-aware/analysis ] && echo "✅ analysis exists"
-[ -d .sdd/context-aware/runtime-state ] && echo "✅ runtime-state exists"
+[ -d .providence/context-aware ] && echo "✅ .providence/context-aware exists"
+[ -d .providence/context-aware/task-progress ] && echo "✅ task-progress exists"
+[ -d .providence/context-aware/analysis ] && echo "✅ analysis exists"
+[ -d .providence/context-aware/runtime-state ] && echo "✅ runtime-state exists"
 
 # Verify files exist
-[ -f .sdd/context-aware/README.md ] && echo "✅ README.md exists"
-[ -f .sdd/context-aware/task-progress/_current.md ] && echo "✅ _current.md exists"
+[ -f .providence/context-aware/README.md ] && echo "✅ README.md exists"
+[ -f .providence/context-aware/task-progress/_current.md ] && echo "✅ _current.md exists"
 
 # Verify .spec.config readable
 grep spec_path .spec.config > /dev/null && echo "✅ .spec.config readable"
@@ -304,7 +304,7 @@ echo "
 Project Setup:
   ✅ .spec.config verified
   ✅ SPEC framework accessible
-  ✅ .sdd/context-aware/ created
+  ✅ .providence/context-aware/ created
   ✅ Templates copied
 
 Knowledge Validation:
@@ -360,10 +360,10 @@ cat $SPEC_PATH/EXECUTION/spec/CANONICAL/rules/ia-rules.md
 ls -la .
 
 # Create manually if needed
-mkdir -p .sdd/context-aware/{task-progress/completed,analysis,runtime-state}
+mkdir -p .providence/context-aware/{task-progress/completed,analysis,runtime-state}
 
 # Verify
-ls -la .sdd/
+ls -la .providence/
 ```
 
 ---
@@ -375,7 +375,7 @@ You understand:
 ✅ **Where SPEC is** (.spec.config points to it)
 ✅ **What the rules are** (ia-rules.md)
 ✅ **How to use context-aware** (runtime guides)
-✅ **What infrastructure is created** (.sdd/context-aware/)
+✅ **What infrastructure is created** (.providence/context-aware/)
 ✅ **Why SDD matters** (validation quiz passed)
 
 ---

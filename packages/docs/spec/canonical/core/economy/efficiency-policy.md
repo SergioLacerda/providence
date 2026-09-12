@@ -41,8 +41,8 @@ logged and the next provider is tried automatically.
 **Target at YELLOW zone:** When utilization is 70–90%, `ContextLoader` computes a target budget
 (`original_bytes × 70 / utilization_pct`) and aims to fit within it, bringing utilization down to 70%.
 
-**Implementation:** `packages/core/sdd_runtime/src/sdd_runtime/context.py:ContextLoader.load_result()`
-and `packages/core/sdd_runtime/src/sdd_runtime/providers/`
+**Implementation:** `packages/core/providence_runtime/src/providence_runtime/context.py:ContextLoader.load_result()`
+and `packages/core/providence_runtime/src/providence_runtime/providers/`
 
 ---
 

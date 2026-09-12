@@ -1,8 +1,8 @@
-"""Unit tests for sdd_core.governance.compliance_record_validator."""
+"""Unit tests for providence_core.governance.compliance_record_validator."""
 
 import pytest
 
-from sdd_core.governance.compliance_record_validator import (
+from providence_core.governance.compliance_record_validator import (
     _REDACTED_PLACEHOLDER,
     ComplianceRecordValidator,
 )

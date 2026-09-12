@@ -13,7 +13,7 @@ Run from repo root:
 
 from __future__ import annotations
 
-from sdd_runtime.budget import TokenBudget, TokenBudgetBreachError
+from providence_runtime.budget import TokenBudget, TokenBudgetBreachError
 
 SECTION = "\n" + "=" * 60
 

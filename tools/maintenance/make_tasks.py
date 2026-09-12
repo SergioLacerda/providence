@@ -23,9 +23,9 @@ if sys.platform == "win32":
         sys.stderr.reconfigure(encoding="utf-8")
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-SDD_CORE_SRC = REPO_ROOT / "packages" / "core" / "sdd_core" / "src"
-if str(SDD_CORE_SRC) not in sys.path:
-    sys.path.insert(0, str(SDD_CORE_SRC))
+PROVIDENCE_CORE_SRC = REPO_ROOT / "packages" / "core" / "providence_core" / "src"
+if str(PROVIDENCE_CORE_SRC) not in sys.path:
+    sys.path.insert(0, str(PROVIDENCE_CORE_SRC))
 
 # Fallback used only if pyproject.toml is missing or has no parseable typer pin.
 _FALLBACK_MIN_TYPER_VERSION = (0, 26, 8)
@@ -92,7 +92,7 @@ def _fail_venv(message: str) -> None:
 
 
 def _check_venv() -> Path:
-    from sdd_core.utils.process import SafeProcessRunner
+    from providence_core.utils.process import SafeProcessRunner
 
     venv_python = _venv_python_path()
     if not venv_python.exists():
@@ -121,7 +121,7 @@ def _python_cmd() -> list[str]:
 def _run(
     cmd: list[str], *, cwd: Path | None = None, env: dict[str, str] | None = None
 ) -> int:
-    from sdd_core.utils.process import SafeProcessRunner
+    from providence_core.utils.process import SafeProcessRunner
 
     result = SafeProcessRunner().run(
         cmd, cwd=cwd or REPO_ROOT, env=env, capture_output=False
@@ -174,8 +174,8 @@ def run_check_venv() -> int:
 
 def run_help() -> int:
     """Print Make target help without awk/shell dependencies."""
-    print("SDD Architecture Development")
-    print("===========================")
+    print("Providence Architecture Development")
+    print("====================================")
     for path in [REPO_ROOT / "Makefile", *sorted((REPO_ROOT / "mk").glob("*.mk"))]:
         for raw_line in path.read_text(encoding="utf-8").splitlines():
             line = raw_line.strip()
@@ -226,7 +226,7 @@ def run_check() -> int:
 
 def run_golden_status() -> int:
     """Print golden fixture git status without relying on shell syntax."""
-    from sdd_core.utils.process import SafeProcessRunner
+    from providence_core.utils.process import SafeProcessRunner
 
     print("Checking golden file status...")
     result = SafeProcessRunner().run(
@@ -333,13 +333,35 @@ def run_npm_script(script: str) -> int:
     return _run([_npm_cmd(), "--prefix", "apps/landing", "run", script])
 
 
+def run_npm_audit_fix() -> int:
+    """Best-effort dependency vulnerability fix; never blocks lint-web.
+
+    `npm audit fix` exits non-zero when vulnerabilities remain that need
+    `--force` (a breaking major bump) to resolve. Those need a deliberate,
+    manual call rather than an automatic lint-time upgrade, so a non-zero
+    exit here is logged and swallowed instead of failing lint-web.
+    """
+    returncode = _run([_npm_cmd(), "--prefix", "apps/landing", "audit", "fix"])
+    if returncode != 0:
+        print(
+            "lint-web: npm audit fix left unresolved vulnerabilities "
+            "(likely requiring --force / a breaking upgrade); continuing."
+        )
+    return 0
+
+
+def run_lint_web() -> int:
+    run_npm_audit_fix()
+    return run_npm_script("lint")
+
+
 def run_install_web() -> int:
     return _run([_npm_cmd(), "--prefix", "apps/landing", "ci"])
 
 
 def run_build_compiler() -> int:
     goexe = ""
-    from sdd_core.utils.process import SafeProcessRunner
+    from providence_core.utils.process import SafeProcessRunner
 
     result = SafeProcessRunner().run(["go", "env", "GOEXE"], capture_output=True)
     if result.returncode != 0:
@@ -348,7 +370,15 @@ def run_build_compiler() -> int:
         return result.returncode
     goexe = result.stdout.strip()
     return _run(
-        ["go", "build", "-C", "tools/sdd-compile", "-o", f"bin/sdd-compile{goexe}", "."]
+        [
+            "go",
+            "build",
+            "-C",
+            "tools/sdd-compile",
+            "-o",
+            f"bin/sdd-compile{goexe}",
+            ".",
+        ]
     )
 
 
@@ -510,15 +540,15 @@ def run_generate_schemas() -> int:
 
 def _workspace_pythonpath_env() -> dict[str, str]:
     paths = [
-        "packages/core/sdd_core/src",
-        "packages/core/sdd_runtime/src",
-        "packages/core/sdd_telemetry/src",
-        "packages/features/sdd_integration/src",
-        "packages/features/sdd_adapters/src",
-        "packages/features/sdd_skills/src",
-        "packages/features/sdd_pages/src",
-        "packages/interfaces/sdd_wizard/src",
-        "packages/interfaces/sdd_cli/src",
+        "packages/core/providence_core/src",
+        "packages/core/providence_runtime/src",
+        "packages/core/providence_telemetry/src",
+        "packages/features/providence_integration/src",
+        "packages/features/providence_adapters/src",
+        "packages/features/providence_skills/src",
+        "packages/features/providence_pages/src",
+        "packages/interfaces/providence_wizard/src",
+        "packages/interfaces/providence_cli/src",
     ]
     env = os.environ.copy()
     existing = env.get("PYTHONPATH")
@@ -535,7 +565,7 @@ def run_docs_build() -> int:
         _python_cmd()
         + [
             "-m",
-            "sdd_wizard.orchestration.wizard.selector_compiler_cli",
+            "providence_wizard.orchestration.wizard.selector_compiler_cli",
             "--output-dir",
             "build/site/selector",
         ],
@@ -559,7 +589,7 @@ def _replace_dir_link(link: Path, target: Path) -> None:
         if sys.platform != "win32" or getattr(exc, "winerror", None) != 1314:
             raise
 
-    from sdd_core.utils.process import SafeProcessRunner
+    from providence_core.utils.process import SafeProcessRunner
 
     result = SafeProcessRunner().run(
         ["cmd", "/c", "mklink", "/J", str(link), str(target)],
@@ -581,10 +611,10 @@ def run_docs_serve() -> int:
         )
         return 1
     _replace_dir_link(
-        REPO_ROOT / "build" / "serve-root" / "sdd-harness",
+        REPO_ROOT / "build" / "serve-root" / "providence",
         REPO_ROOT / "build" / "site",
     )
-    print("Serving at http://localhost:8000/sdd-harness/")
+    print("Serving at http://localhost:8000/providence/")
     return _run(
         _python_cmd() + ["-m", "http.server", "8000", "--directory", "build/serve-root"]
     )
@@ -607,7 +637,7 @@ def run_docker_build(flags_text: str = "") -> int:
                 "--load",
                 *flags,
                 "-t",
-                "sdd-harness",
+                "providence",
                 "-f",
                 "infrastructure/docker/Dockerfile",
                 ".",
@@ -620,8 +650,13 @@ def run_docker_build(flags_text: str = "") -> int:
 
 
 def run_governance_bootstrap() -> int:
+    # Session lane: --full-bootstrap issues a fresh M015 challenge and
+    # completes it against the resolved workspace root, invalidating any
+    # handshake response from a prior agent session in this workspace. That
+    # is intentional bootstrap behavior, not a validation-only command.
     return _run(
-        _python_cmd() + ["-m", "sdd_cli", "governance", "generate", "--full-bootstrap"]
+        _python_cmd()
+        + ["-m", "providence_cli", "governance", "generate", "--full-bootstrap"]
     )
 
 
@@ -651,7 +686,7 @@ def run_release_dry_run() -> int:
     print(f"root: {_read_project_version()}")
 
     print("=== Git tags (semver) ===")
-    from sdd_core.utils.process import SafeProcessRunner
+    from providence_core.utils.process import SafeProcessRunner
 
     tags_rc = SafeProcessRunner().run(
         ["git", "tag", "--list", "v[0-9]*"], cwd=REPO_ROOT, capture_output=True
@@ -764,7 +799,7 @@ def main(argv: list[str] | None = None) -> int:
         "lint-fix": lambda: run_lint(fix=True),
         "lint-go": lambda: run_lint_go(fix=False),
         "lint-fix-go": lambda: run_lint_go(fix=True),
-        "lint-web": lambda: run_npm_script("lint"),
+        "lint-web": run_lint_web,
         "lint-fix-web": run_lint_fix_web,
         "install-web": run_install_web,
         "build-web": lambda: run_npm_script("build"),

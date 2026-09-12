@@ -1,8 +1,8 @@
 # Agent Bootstrap Paths
-<!-- Governance fingerprint: 51b9d3e88856d9f2 -->
+<!-- Governance fingerprint: 3c92a54d04d29611 -->
 <!-- Active mandates: 16 (M001, M002, M003, M005, M006, ...) -->
-<!-- Generated: 2026-09-02T22:51:35.858743Z -->
-<!-- Drift check: fingerprint must match .sdd/metadata.json → fingerprints.combined -->
+<!-- Generated: 2026-09-12T20:03:21.912680Z -->
+<!-- Drift check: fingerprint must match .providence/metadata.json  fingerprints.combined -->
 
 Objective: standardize where each agent must load local instructions, commands, and skills in this project.
 
@@ -11,25 +11,25 @@ Objective: standardize where each agent must load local instructions, commands, 
 1. Always prioritize local project files/folders before global sources.
 2. On startup, each agent must read its dedicated path(s) listed below.
 3. If `SKILL.md`, `*.md`, `commands/`, `prompts/`, or equivalent files exist, load them as operational context.
-4. You are under governance: always resolve authoritative rules from `.sdd`.
-   Initial reference: `.sdd/agent-instructions.md`.
+4. You are under governance: always resolve authoritative rules from `.providence`.
+   Initial reference: `.providence/agent-instructions.md`.
 
-## Governance Authority (`.sdd`)
+## Governance Authority (`.providence`)
 
-1. Governance is mandatory and authoritative from `.sdd`.
-2. Initial reference: `.sdd/agent-instructions.md`.
-3. If any local/global convenience file conflicts with `.sdd`, follow `.sdd`.
+1. Governance is mandatory and authoritative from `.providence`.
+2. Initial reference: `.providence/agent-instructions.md`.
+3. If any local/global convenience file conflicts with `.providence`, follow `.providence`.
 
 ## Commands And Skills (Source Of Truth)
 
-1. Commands source of truth: `.sdd/commands`.
-2. Skills source of truth: `.sdd/skills`.
+1. Commands source of truth: `.providence/commands`.
+2. Skills source of truth: `.providence/skills`.
 3. On startup, agents must load:
-   - `.sdd/commands/registry.json`
-   - `.sdd/skills/registry.json`
+   - `.providence/commands/registry.json`
+   - `.providence/skills/registry.json`
 4. For each active command/skill in the registries, agents must read canonical files before use:
-   - Commands: `.sdd/commands/<command-id>/command.yaml`
-   - Skills: `.sdd/skills/<skill-name>/skill.yaml`
+   - Commands: `.providence/commands/<command-id>/command.yaml`
+   - Skills: `.providence/skills/<skill-name>/skill.yaml`
 5. If registry or canonical file is missing/inconsistent, register bootstrap drift and continue in safe fallback mode without inventing missing rules.
 
 ## Agent-Specific Paths

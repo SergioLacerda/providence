@@ -2,7 +2,7 @@
 
 **Status:** Active (2026-05-11)
 
-**Overview:** Defines the lifecycle for proposing, reviewing, and recording architectural decisions in the sdd-harness project.
+**Overview:** Defines the lifecycle for proposing, reviewing, and recording architectural decisions in the providence project.
 
 ---
 

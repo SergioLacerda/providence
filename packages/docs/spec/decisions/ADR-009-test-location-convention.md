@@ -59,7 +59,7 @@ verification), not domain logic tests. Domain logic tests live under `tests/`.
 
 **Positive:**
 
-- Single lookup rule: "where is the test for `sdd_core.governance.handshake`?"
+- Single lookup rule: "where is the test for `providence_core.governance.handshake`?"
   → `tests/unit/governance/`
 - `packages/` can be scanned for smoke tests without noise from domain logic
 - New test categories (e2e, performance) have a clear home

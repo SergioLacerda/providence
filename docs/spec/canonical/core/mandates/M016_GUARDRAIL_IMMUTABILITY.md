@@ -66,7 +66,7 @@ RFC required from human owner for any prohibited action.
 
 The `SkillEngine` MUST reject handshakes declaring intent to regress a
 guardrail without an active RFC token. Violations are logged to
-`.sdd/audit-trail/compliance-events.jsonl` with `severity=critical`.
+`.providence/audit-trail/compliance-events.jsonl` with `severity=critical`.
 
 ---
 

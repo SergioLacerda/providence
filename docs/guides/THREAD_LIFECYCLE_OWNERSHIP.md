@@ -54,10 +54,10 @@ Approve thread lifecycle hardening when all conditions are true:
 Run:
 
 ```bash
-uv run pytest -q packages/interfaces/sdd_cli/tests/test_metrics_commands.py
-uv run pytest -q packages/interfaces/sdd_cli/tests/test_metrics_commands.py -k soak
+uv run pytest -q packages/interfaces/providence_cli/tests/test_metrics_commands.py
+uv run pytest -q packages/interfaces/providence_cli/tests/test_metrics_commands.py -k soak
 uv run python tools/maintenance/thread_audit_report.py
-uv run sdd test ci-validate --soak-threads
+uv run providence test ci-validate --soak-threads
 ```
 
 Use `docs/guides/THREAD_AUDIT_REPORT.md` as static hotspot inventory.

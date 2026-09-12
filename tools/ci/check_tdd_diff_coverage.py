@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """TDD diff-coverage gate (A8 — enforce M002 per change, not just aggregate count).
 
-M002 (`.sdd/source/mandates/mandates.md`) mandates writing tests before
+M002 (`.providence/source/mandates/mandates.md`) mandates writing tests before
 production code. The previous "Validate Test Coverage (M002)" CI step only
 counted total `test_*.py` files repo-wide and never failed the build — it
 could not catch a single PR that changes production code without touching
@@ -36,7 +36,7 @@ _EXEMPT_PATH_PARTS = (
     "/tools/",
     "/generated/",
     "/build/",
-    "/.sdd/",
+    "/.providence/",
 )
 _EXEMPT_FILENAMES = {"__init__.py", "conftest.py", "py.typed"}
 

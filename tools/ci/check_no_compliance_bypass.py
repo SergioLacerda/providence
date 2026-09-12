@@ -6,7 +6,9 @@ from pathlib import Path
 # Block bypass for mandatory governance compliance verification commands.
 _BYPASS_PATTERNS = (
     re.compile(r"tools/governance/compliance\.py\s+[^\n]*--verify[^\n]*\|\|\s*true"),
-    re.compile(r"python(?:3)?\s+-m\s+sdd_cli\s+governance\s+audit[^\n]*\|\|\s*true"),
+    re.compile(
+        r"python(?:3)?\s+-m\s+providence_cli\s+governance\s+audit[^\n]*\|\|\s*true"
+    ),
 )
 
 

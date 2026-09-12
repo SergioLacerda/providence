@@ -3,7 +3,7 @@ name: Reusable Tests
 # Framework demos (examples/) are NOT part of this suite.
 # Run them manually with optional extras:
 #   uv run --extra examples-langgraph python examples/langgraph/demo_tool_guardrail.py
-#   uv run --extra examples-crewai    python examples/crewai/demo_spec_drift.py
+#   uv run --extra examplescrewai    python examples/crewai/demo_spec_drift.py
 
 on:
   workflow_call:
@@ -32,8 +32,8 @@ jobs:
           version: "0.11.9"
           enable-cache: true
 
-      - name: Bootstrap SDD CLI
-        uses: ./.github/actions/bootstrap-sdd-cli
+      - name: Bootstrap Providence CLI
+        uses: ./.github/actions/bootstrap-providence-cli
 
       - name: Environment boundary preflight (tests)
         shell: bash
@@ -60,11 +60,11 @@ jobs:
             --mode enforce \
             --json-out .artifacts/core_compiler_runtime_contract_gate.json
 
-      - name: Repository .sdd mutation guard
+      - name: Repository .providence mutation guard
         if: always()
         shell: bash
         run: |
-          uv run python tools/ci/environment_gates.py repo-sdd-mutation-guard --context test --mode enforce
+          uv run python tools/ci/environment_gates.py repo-providence-mutation-guard --context test --mode enforce
 
       - name: Runtime/seed drift check
         if: always()
@@ -109,8 +109,8 @@ jobs:
           version: "0.11.9"
           enable-cache: true
 
-      - name: Bootstrap SDD CLI
-        uses: ./.github/actions/bootstrap-sdd-cli
+      - name: Bootstrap Providence CLI
+        uses: ./.github/actions/bootstrap-providence-cli
 
       - name: Environment boundary preflight (tests)
         shell: bash
@@ -128,14 +128,14 @@ jobs:
         shell: bash
         run: |
           uv run pytest -q \
-            packages/interfaces/sdd_cli/tests/test_governance_output_snapshots.py \
-            packages/core/sdd_core/tests/execution/test_guardrail_code_review.py
+            packages/interfaces/providence_cli/tests/test_governance_output_snapshots.py \
+            packages/core/providence_core/tests/execution/test_guardrail_code_review.py
 
-      - name: Repository .sdd mutation guard
+      - name: Repository .providence mutation guard
         if: always()
         shell: bash
         run: |
-          uv run python tools/ci/environment_gates.py repo-sdd-mutation-guard --context test --mode enforce
+          uv run python tools/ci/environment_gates.py repo-providence-mutation-guard --context test --mode enforce
 
       - name: Runtime/seed drift check
         if: always()
@@ -160,8 +160,8 @@ jobs:
           version: "0.11.9"
           enable-cache: true
 
-      - name: Bootstrap SDD CLI
-        uses: ./.github/actions/bootstrap-sdd-cli
+      - name: Bootstrap Providence CLI
+        uses: ./.github/actions/bootstrap-providence-cli
 
       - name: Environment boundary preflight (tests)
         shell: bash
@@ -201,44 +201,44 @@ jobs:
         shell: bash
         run: |
           uv run pytest -q \
-            packages/interfaces/sdd_cli/tests/test_skills_bootstrap_command.py \
-            packages/interfaces/sdd_cli/tests/test_skills_core_command.py \
-            packages/interfaces/sdd_cli/tests/test_skills_learning_command.py \
-            packages/interfaces/sdd_cli/tests/test_skills_run_command.py \
-            packages/interfaces/sdd_cli/tests/test_skills_sync_contract.py \
-            packages/interfaces/sdd_cli/tests/test_skills_layering.py
+            packages/interfaces/providence_cli/tests/test_skills_bootstrap_command.py \
+            packages/interfaces/providence_cli/tests/test_skills_core_command.py \
+            packages/interfaces/providence_cli/tests/test_skills_learning_command.py \
+            packages/interfaces/providence_cli/tests/test_skills_run_command.py \
+            packages/interfaces/providence_cli/tests/test_skills_sync_contract.py \
+            packages/interfaces/providence_cli/tests/test_skills_layering.py
 
-      - name: Build sdd_cli reliability digest (warnings/skips)
+      - name: Build providence_cli reliability digest (warnings/skips)
         shell: bash
         run: |
           mkdir -p .artifacts
-          uv run pytest -q packages/interfaces/sdd_cli/tests -ra 2>&1 | tee .artifacts/sdd_cli_pytest.log
-          uv run python tools/ci/sdd_cli_reliability_digest.py \
-            --log .artifacts/sdd_cli_pytest.log \
-            --json-out .artifacts/sdd_cli_reliability_digest.json \
-            --md-out .artifacts/sdd_cli_reliability_digest.md \
+          uv run pytest -q packages/interfaces/providence_cli/tests -ra 2>&1 | tee .artifacts/providence_cli_pytest.log
+          uv run python tools/ci/providence_cli_reliability_digest.py \
+            --log .artifacts/providence_cli_pytest.log \
+            --json-out .artifacts/providence_cli_reliability_digest.json \
+            --md-out .artifacts/providence_cli_reliability_digest.md \
             --max-warnings 0
           uv run python tools/ci/enforcement_ladder_digest.py \
             --json-out .artifacts/enforcement_ladder_digest.json \
             --md-out .artifacts/enforcement_ladder_digest.md \
             --mode report
 
-      - name: Upload sdd_cli reliability digest artifact
+      - name: Upload providence_cli reliability digest artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
-          name: sdd-cli-reliability-digest
+          name: providence-cli-reliability-digest
           path: |
-            .artifacts/sdd_cli_reliability_digest.json
-            .artifacts/sdd_cli_reliability_digest.md
-            .artifacts/sdd_cli_pytest.log
+            .artifacts/providence_cli_reliability_digest.json
+            .artifacts/providence_cli_reliability_digest.md
+            .artifacts/providence_cli_pytest.log
             .artifacts/enforcement_ladder_digest.json
             .artifacts/enforcement_ladder_digest.md
 
-      - name: Repository .sdd mutation guard
+      - name: Repository .providence mutation guard
         if: always()
         shell: bash
         run: |
-          uv run python tools/ci/environment_gates.py repo-sdd-mutation-guard --context test --mode enforce
+          uv run python tools/ci/environment_gates.py repo-providence-mutation-guard --context test --mode enforce
 
       - name: Runtime/seed drift check
         if: always()
@@ -249,7 +249,7 @@ jobs:
       - name: Enforce registry reconciliation (drift check)
         shell: bash
         run: |
-          uv run python -m sdd_cli governance reconcile-registries --check
+          uv run python -m providence_cli governance reconcile-registries --check
 
   seeds-gate:
     name: Seeds Gate (${{ matrix.os }})
@@ -272,8 +272,8 @@ jobs:
           version: "0.11.9"
           enable-cache: true
 
-      - name: Bootstrap SDD CLI
-        uses: ./.github/actions/bootstrap-sdd-cli
+      - name: Bootstrap Providence CLI
+        uses: ./.github/actions/bootstrap-providence-cli
 
       - name: Environment boundary preflight (tests)
         shell: bash
@@ -285,14 +285,14 @@ jobs:
         shell: bash
         run: |
           uv run pytest -q \
-            packages/interfaces/sdd_wizard/tests/test_seedlings_generators.py \
+            packages/interfaces/providence_wizard/tests/test_seedlings_generators.py \
             tests/integration/wizard/test_seedlings_e2e.py
 
-      - name: Repository .sdd mutation guard
+      - name: Repository .providence mutation guard
         if: always()
         shell: bash
         run: |
-          uv run python tools/ci/environment_gates.py repo-sdd-mutation-guard --context test --mode enforce
+          uv run python tools/ci/environment_gates.py repo-providence-mutation-guard --context test --mode enforce
 
       - name: Runtime/seed drift check
         if: always()
@@ -317,8 +317,8 @@ jobs:
           version: "0.11.9"
           enable-cache: true
 
-      - name: Bootstrap SDD CLI
-        uses: ./.github/actions/bootstrap-sdd-cli
+      - name: Bootstrap Providence CLI
+        uses: ./.github/actions/bootstrap-providence-cli
 
       - name: Environment boundary preflight (tests)
         shell: bash
@@ -330,11 +330,11 @@ jobs:
         shell: bash
         run: make coverage-strict
 
-      - name: Repository .sdd mutation guard
+      - name: Repository .providence mutation guard
         if: always()
         shell: bash
         run: |
-          uv run python tools/ci/environment_gates.py repo-sdd-mutation-guard --context test --mode enforce
+          uv run python tools/ci/environment_gates.py repo-providence-mutation-guard --context test --mode enforce
 
       - name: Runtime/seed drift check
         if: always()
@@ -359,8 +359,8 @@ jobs:
           version: "0.11.9"
           enable-cache: true
 
-      - name: Bootstrap SDD CLI
-        uses: ./.github/actions/bootstrap-sdd-cli
+      - name: Bootstrap Providence CLI
+        uses: ./.github/actions/bootstrap-providence-cli
 
       - name: Environment boundary preflight (tests)
         shell: bash
@@ -371,18 +371,18 @@ jobs:
       - name: Validate runtime health
         shell: bash
         run: |
-          uv run python -m sdd_cli runtime status --force
+          uv run python -m providence_cli runtime status --force
 
       - name: Validate governance integrity
         shell: bash
         run: |
-          uv run python -m sdd_cli governance validate --skip-handshake
+          uv run python -m providence_cli governance validate --skip-handshake
 
-      - name: Repository .sdd mutation guard
+      - name: Repository .providence mutation guard
         if: always()
         shell: bash
         run: |
-          uv run python tools/ci/environment_gates.py repo-sdd-mutation-guard --context test --mode enforce
+          uv run python tools/ci/environment_gates.py repo-providence-mutation-guard --context test --mode enforce
 
       - name: Runtime/seed drift check
         if: always()
@@ -412,12 +412,12 @@ jobs:
 
       - name: Build Sovereign Container
         run: |
-          docker buildx build --load -t sdd-harness:latest -f infrastructure/docker/Dockerfile .
+          docker buildx build --load -t providence:latest -f infrastructure/docker/Dockerfile .
 
       - name: Verify Safety-Mode Boot (No Keyring)
         run: |
           # Container must boot in safety mode and exit gracefully
-          docker run --rm sdd-harness:latest | grep "SAFETY-MODE ACTIVE"
+          docker run --rm providence:latest | grep "SAFETY-MODE ACTIVE"
 
       - name: Environment boundary preflight (tests)
         shell: bash
@@ -427,16 +427,16 @@ jobs:
       - name: Run Hermetic Health Suite
         run: |
           # Run full health suite inside the container
-          docker run --rm sdd-harness:latest make check
+          docker run --rm providence:latest make check
 
       - name: Clean up staged .dockerignore
         if: always()
         run: rm -f .dockerignore
 
-      - name: Repository .sdd mutation guard
+      - name: Repository .providence mutation guard
         shell: bash
         run: |
-          uv run python tools/ci/environment_gates.py repo-sdd-mutation-guard --context test --mode enforce
+          uv run python tools/ci/environment_gates.py repo-providence-mutation-guard --context test --mode enforce
 
       - name: Runtime/seed drift check
         if: always()
@@ -462,8 +462,8 @@ jobs:
           version: "0.11.9"
           enable-cache: true
 
-      - name: Bootstrap SDD CLI
-        uses: ./.github/actions/bootstrap-sdd-cli
+      - name: Bootstrap Providence CLI
+        uses: ./.github/actions/bootstrap-providence-cli
 
       - name: Environment boundary preflight (tests)
         shell: bash
@@ -481,11 +481,11 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-      - name: Repository .sdd mutation guard
+      - name: Repository .providence mutation guard
         if: always()
         shell: bash
         run: |
-          uv run python tools/ci/environment_gates.py repo-sdd-mutation-guard --context test --mode enforce
+          uv run python tools/ci/environment_gates.py repo-providence-mutation-guard --context test --mode enforce
 
       - name: Runtime/seed drift check
         if: always()

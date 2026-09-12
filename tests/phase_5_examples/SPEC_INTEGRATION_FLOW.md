@@ -29,7 +29,7 @@ Project can create required directories
 - [ ] Create directory: `.vscode/`
 - [ ] Create directory: `.cursor/`
 - [ ] Create directory: `scripts/`
-- [ ] Create directory: `.sdd/`
+- [ ] Create directory: `.providence/`
 
 ### Success criteria:
 All 5 directories exist and are accessible
@@ -40,7 +40,7 @@ All 5 directories exist and are accessible
 ✅ Created directory: .vscode/
 ✅ Created directory: .cursor/
 ✅ Created directory: scripts/
-✅ Created directory: .sdd/
+✅ Created directory: .providence/
 ✅ STEP 1 PASSED: All directories created
 ```
 
@@ -52,13 +52,13 @@ All 5 directories exist and are accessible
 Templates exist in framework and can be located
 
 ### Requirements:
-Verify these files exist in `packages/features/sdd_integration/src/sdd_integration/templates/`:
+Verify these files exist in `packages/features/providence_integration/src/providence_integration/templates/`:
 - [ ] `.spec.config`
 - [ ] `.github/copilot-instructions.md`
 - [ ] `.vscode/ai-rules.md`
 - [ ] `.vscode/settings.json`
 - [ ] `.cursor/rules/spec.mdc`
-- [ ] `.sdd/README.md`
+- [ ] `.providence/README.md`
 
 ### Success criteria:
 All 7 template files found and readable
@@ -70,7 +70,7 @@ All 7 template files found and readable
 ✅ Template found: .vscode/ai-rules.md
 ✅ Template found: .vscode/settings.json
 ✅ Template found: .cursor/rules/spec.mdc
-✅ Template found: .sdd/README.md
+✅ Template found: .providence/README.md
 ✅ STEP 2 PASSED: All templates present
 ```
 
@@ -84,7 +84,7 @@ All 7 template files found and readable
 ### Requirements:
 - [ ] Create `.spec.config` file in test project
 - [ ] Write: `[spec]` section
-- [ ] Write: `spec_path = ../sdd-harness` (or appropriate path)
+- [ ] Write: `spec_path = ../providence` (or appropriate path)
 - [ ] File is readable
 
 ### Success criteria:
@@ -101,11 +101,11 @@ File exists, contains `spec_path` key, and is properly formatted
 ## 📋 STEP 4: Run Validation
 
 ### What to test:
-`.sdd/` infrastructure directories can be created (PHASE 0 preparation)
+`.providence/` infrastructure directories can be created (PHASE 0 preparation)
 
 ### Requirements:
-- [ ] Create directory: `.sdd/context-aware/`
-- [ ] Create directory: `.sdd/runtime/`
+- [ ] Create directory: `.providence/context-aware/`
+- [ ] Create directory: `.providence/runtime/`
 - [ ] Directories are accessible
 
 ### Success criteria:
@@ -113,8 +113,8 @@ Both subdirectories created and accessible
 
 ### Expected output:
 ```
-✅ Created: .sdd/context-aware/
-✅ Created: .sdd/runtime/
+✅ Created: .providence/context-aware/
+✅ Created: .providence/runtime/
 ✅ STEP 4 PASSED: Validation structure created
 ```
 
@@ -129,7 +129,7 @@ All files are ready for git commit
 - [ ] `.spec.config` exists
 - [ ] `.github/copilot-instructions.md` exists (created in test)
 - [ ] `.vscode/ai-rules.md` exists (created in test)
-- [ ] `.sdd/README.md` exists (created in test)
+- [ ] `.providence/README.md` exists (created in test)
 
 ### Success criteria:
 All 4 key files exist and are readable (ready to `git add`)
@@ -139,7 +139,7 @@ All 4 key files exist and are readable (ready to `git add`)
 ✅ File ready to commit: .spec.config
 ✅ File ready to commit: .github/copilot-instructions.md
 ✅ File ready to commit: .vscode/ai-rules.md
-✅ File ready to commit: .sdd/README.md
+✅ File ready to commit: .providence/README.md
 ✅ STEP 5 PASSED: All files ready for git commit
 ```
 

@@ -23,9 +23,9 @@ REQUIRED_COMPILER_ASSETS = (
 # since GitHub-hosted macos-latest runners are Apple Silicon (arm64) only.
 # See .analysis/refined/20260807-cli-binary-installer-followup/proposal.md.
 REQUIRED_CLI_ASSETS = (
-    "sdd-linux-amd64",
-    "sdd-darwin-arm64",
-    "sdd-windows-amd64.exe",
+    "providence-linux-amd64",
+    "providence-darwin-arm64",
+    "providence-windows-amd64.exe",
 )
 SUMS_FILE = "SHA256SUMS"
 REQUIRED_ASSETS = REQUIRED_COMPILER_ASSETS + REQUIRED_CLI_ASSETS + (SUMS_FILE,)

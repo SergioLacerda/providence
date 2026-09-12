@@ -68,9 +68,9 @@ python3 packages/tools/governance_compliance.py --enforcement-check
 
 ## 📚 Related Docs
 
-- [MANDATORY_POLICIES.md](../../packages/.sdd-wizard/templates/governance/adoption-rules/MANDATORY_POLICIES.md)
-- [ENFORCEMENT_GUIDE.md](../../packages/.sdd-wizard/templates/governance/adoption-rules/ENFORCEMENT_GUIDE.md)
-- [Governance Implementation](../../packages/.sdd-wizard/templates/governance/base-seedling/GOVERNANCE_IMPLEMENTATION.md)
+- [MANDATORY_POLICIES.md](../../packages/.providence-wizard/templates/governance/adoption-rules/MANDATORY_POLICIES.md)
+- [ENFORCEMENT_GUIDE.md](../../packages/.providence-wizard/templates/governance/adoption-rules/ENFORCEMENT_GUIDE.md)
+- [Governance Implementation](../../packages/.providence-wizard/templates/governance/base-seedling/GOVERNANCE_IMPLEMENTATION.md)
 
 ---
 

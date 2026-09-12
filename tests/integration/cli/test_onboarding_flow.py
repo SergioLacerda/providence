@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 import pytest
 
-from sdd_cli.services.onboarding import OnboardingOrchestrator
+from providence_cli.services.onboarding import OnboardingOrchestrator
 
 pytestmark = pytest.mark.integration
 
@@ -81,7 +81,7 @@ class TestOnboardingOrchestratorIntegration:
         self, tmp_path: Path
     ) -> None:
         """governance generate is skipped if compiled artifacts already exist."""
-        compiled = tmp_path / ".sdd" / "compiled"
+        compiled = tmp_path / ".providence" / "compiled"
         compiled.mkdir(parents=True)
         (compiled / "governance-core.json").write_text('{"items":[]}', encoding="utf-8")
 
@@ -102,7 +102,7 @@ class TestOnboardingOrchestratorIntegration:
         self, tmp_path: Path
     ) -> None:
         """--force always re-runs governance generate."""
-        compiled = tmp_path / ".sdd" / "compiled"
+        compiled = tmp_path / ".providence" / "compiled"
         compiled.mkdir(parents=True)
         (compiled / "governance-core.json").write_text('{"items":[]}', encoding="utf-8")
 
@@ -120,8 +120,8 @@ class TestOnboardingOrchestratorIntegration:
         assert result.success is True
 
     def test_skills_skipped_when_seeds_exist_no_force(self, tmp_path: Path) -> None:
-        """skills bootstrap is skipped if .sdd/skills/ already has content."""
-        skills_dir = tmp_path / ".sdd" / "skills"
+        """skills bootstrap is skipped if .providence/skills/ already has content."""
+        skills_dir = tmp_path / ".providence" / "skills"
         skills_dir.mkdir(parents=True)
         (skills_dir / "some-skill.yaml").write_text("name: test", encoding="utf-8")
 

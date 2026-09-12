@@ -1,4 +1,4 @@
-# `sdd ask` Telemetry: Token Source and LLM Latency Semantics
+# `providence ask` Telemetry: Token Source and LLM Latency Semantics
 
 Context for operators reading `governance.ask` / `governance.ask.phase` telemetry
 events (see `docs/plans/2026-07-09-sdd-ask-traceroute.md` for the full
@@ -7,19 +7,19 @@ trace-route design).
 ## `token_source` values
 
 The `governance.ask` event's `details.token_source` field (populated by
-`packages/interfaces/sdd_cli/src/sdd_cli/services/ask_telemetry.py::resolve_tokens`)
+`packages/interfaces/providence_cli/src/providence_cli/services/ask_telemetry.py::resolve_tokens`)
 can be one of:
 
 - `env` — token counts were supplied via environment variables
   (`SDD_TOKENS_INPUT`/`SDD_TOKENS_OUTPUT`), i.e. CLI- or
-  environment-provided values, not measured by `sdd_cli` itself.
+  environment-provided values, not measured by `providence_cli` itself.
 - `estimated` — token counts were derived from a local heuristic estimate
   (`len(text) // 4`, a byte-based approximation of the query and output text).
 - `unknown` — resolution itself failed (see
   `services/ask_telemetry.py::resolve_tokens`'s exception fallback); treat as
   no reliable token count being available at all.
 
-There is currently **no `actual`/API-metered token source** wired into `sdd
+There is currently **no `actual`/API-metered token source** wired into `providence
 ask` telemetry — no code path in this repository calls an LLM billing/usage
 API to obtain ground-truth token counts. Do not assume or report one exists
 until such an integration is added.

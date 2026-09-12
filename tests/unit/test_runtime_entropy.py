@@ -1,14 +1,14 @@
 import json
 from types import SimpleNamespace
 
-from sdd_runtime.entropy import (
+from providence_runtime.entropy import (
     ConvergenceTracker,
     EntropyAdvisor,
     EntropyScore,
     PathDistribution,
     SessionDriftScorer,
 )
-from sdd_runtime.entropy._convergence import _compute_trend
+from providence_runtime.entropy._convergence import _compute_trend
 
 
 def test_entropy_score_compute():

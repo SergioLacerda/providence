@@ -73,11 +73,11 @@ Load `economy/index.md` when:
 
 **Implementation sources (authoritative for field names, thresholds):**
 
-- `→ packages/core/sdd_runtime/src/sdd_runtime/telemetry.py` — RuntimeEvent schema, zone event emission
-- `→ packages/core/sdd_runtime/src/sdd_runtime/context.py` — ContextLoader, BudgetBreachError exception
-- `→ packages/core/sdd_runtime/src/sdd_runtime/llm.py` — LLM token capture protocol and implementation
-- `→ packages/core/sdd_runtime/src/sdd_runtime/cache.py` — ContextCache LRU implementation
-- `→ packages/core/sdd_runtime/src/sdd_runtime/providers/` — Intelligence provider implementations
+- `→ packages/core/providence_runtime/src/providence_runtime/telemetry.py` — RuntimeEvent schema, zone event emission
+- `→ packages/core/providence_runtime/src/providence_runtime/context.py` — ContextLoader, BudgetBreachError exception
+- `→ packages/core/providence_runtime/src/providence_runtime/llm.py` — LLM token capture protocol and implementation
+- `→ packages/core/providence_runtime/src/providence_runtime/cache.py` — ContextCache LRU implementation
+- `→ packages/core/providence_runtime/src/providence_runtime/providers/` — Intelligence provider implementations
 
 ---
 

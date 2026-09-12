@@ -67,8 +67,8 @@ class SkillEngine:
 
 **Files:**
 
-- `packages/core/sdd_runtime/src/sdd_runtime/_skill_registry.py`
-- `packages/core/sdd_runtime/src/sdd_runtime/_skill_executor.py`
-- `packages/core/sdd_runtime/src/sdd_runtime/skills.py`
-- `packages/core/sdd_runtime/tests/test_skill_registry.py`
-- `packages/core/sdd_runtime/tests/test_skill_executor.py`
+- `packages/core/providence_runtime/src/providence_runtime/_skill_registry.py`
+- `packages/core/providence_runtime/src/providence_runtime/_skill_executor.py`
+- `packages/core/providence_runtime/src/providence_runtime/skills.py`
+- `packages/core/providence_runtime/tests/test_skill_registry.py`
+- `packages/core/providence_runtime/tests/test_skill_executor.py`

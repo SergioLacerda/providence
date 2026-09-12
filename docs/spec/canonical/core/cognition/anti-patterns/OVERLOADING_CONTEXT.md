@@ -49,7 +49,7 @@ Loading more documentation, code, or examples into context than needed for the c
 1. **Immediate:** Review what's loaded; remove non-essential files
 2. **Re-classify:** Run TASK_CLASSIFICATION → confirm PATH is correct
 3. **Re-select context:** Use CONTEXT_SELECTION decision model → load only what applies
-4. **Measure:** Check context % utilization via `sdd runtime status`
+4. **Measure:** Check context % utilization via `providence runtime status`
 5. **If still over:** Trigger compression (see [efficiency-policy.md](../../economy/efficiency-policy.md))
 
 ---

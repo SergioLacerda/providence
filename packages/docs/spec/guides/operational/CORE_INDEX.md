@@ -21,7 +21,7 @@ The complete development workflow:
 
 | Phase | Duration | Document | Goal |
 |-------|----------|----------|------|
-| **PHASE 0** | 20-30 min | [PHASE-0-AGENT-ONBOARDING.md](.docs/spec/guides/onboarding/PHASE-0-AGENT-ONBOARDING.md) | Setup `.sdd/` infrastructure (first time only) |
+| **PHASE 0** | 20-30 min | [PHASE-0-AGENT-ONBOARDING.md](.docs/spec/guides/onboarding/PHASE-0-AGENT-ONBOARDING.md) | Setup `.providence/` infrastructure (first time only) |
 | **PHASE 1** | 15 min | [AGENT_HARNESS.md](.docs/spec/guides/onboarding/AGENT_HARNESS.md#phase-1) + [constitution.md](.docs/spec/canonical/rules/constitution.md) + [ia-rules.md](.docs/spec/canonical/rules/ia-rules.md) | Lock to rules, pass VALIDATION_QUIZ (≥80%) |
 | **PHASE 2** | 5 min | [AGENT_HARNESS.md](.docs/spec/guides/onboarding/AGENT_HARNESS.md#phase-2) | Check execution state for conflicts |
 | **PHASE 3** | 5 min | [AGENT_HARNESS.md](.docs/spec/guides/onboarding/AGENT_HARNESS.md#phase-3) | Choose PATH (A/B/C/D) → load right docs |
@@ -166,7 +166,7 @@ Follow steps
 | Feature implemented | Code written + committed |
 | Tests passing | 100% coverage for new code |
 | Quality gate | Definition of done (45+ items) checked |
-| Knowledge captured | `.sdd/context-aware/` docs updated |
+| Knowledge captured | `.providence/context-aware/` docs updated |
 | Ready for review | PR with checkpoint + decisions documented |
 
 ---

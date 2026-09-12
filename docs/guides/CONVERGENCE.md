@@ -61,7 +61,7 @@ Agents prepare commands and summarize changes. Final execution is human.
 
 ## Execution Checklist (per cycle)
 
-1. Confirm governance/runtime state: `sdd runtime status`
+1. Confirm governance/runtime state: `providence runtime status`
 2. Classify task (PATH A/B/C/D) and risk level
 3. Define execution contract (scope + validations)
 4. Run diagnose and capture root cause
@@ -88,11 +88,11 @@ Agents prepare commands and summarize changes. Final execution is human.
 
 | Purpose | Command |
 |---------|---------|
-| Governance health | `sdd runtime status` |
-| Governance validation | `sdd governance validate` |
-| Drift and telemetry | `sdd audit` |
+| Governance health | `providence runtime status` |
+| Governance validation | `providence governance validate` |
+| Drift and telemetry | `providence audit` |
 | Token economy | `sdd metrics summary` |
-| Registry reconciliation | `sdd governance reconcile-registries` |
+| Registry reconciliation | `providence governance reconcile-registries` |
 | Quality guardrails | `pytest`, `ruff check`, `ruff format` |
 | Failure tracking | `docs/incidents/FAILURE_LEDGER.md` |
 | Incident response | `docs/incidents/PLAYBOOKS.md` |

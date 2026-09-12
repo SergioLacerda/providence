@@ -6,7 +6,7 @@ Before requesting ANY additional context or performing research, the agent must 
     * *If YES:* Apply the rule and return. Do NOT proceed with more research.
     * *If NO:* Proceed to the next question.
 
-2. **Does the Local Cache (`.sdd-cache.md`) already solve my doubt?**
+2. **Does the Local Cache (`.providence-cache.md`) already solve my doubt?**
     * *If YES:* Use the cached information and return.
     * *If NO:* Only now is it permitted to expand context or perform new research.
 

@@ -127,8 +127,8 @@ tools:
       - tools/README.md
       - docs/spec/decisions/ADR-015-go-compiler-migration-performance.md
 
-  - id: analysis/deprecated/analyze_sdd_runtime
-    path: tools/analysis/deprecated/analyze_sdd_runtime.py
+  - id: analysis/deprecated/analyze_providence_runtime
+    path: tools/analysis/deprecated/analyze_providence_runtime.py
     visibility: deprecated
     status: deprecated
     runner: uv-python
@@ -139,8 +139,8 @@ tools:
     docs_refs:
       - tools/README.md
 
-  - id: analysis/deprecated/analyze_sdd_telemetry
-    path: tools/analysis/deprecated/analyze_sdd_telemetry.py
+  - id: analysis/deprecated/analyze_providence_telemetry
+    path: tools/analysis/deprecated/analyze_providence_telemetry.py
     visibility: deprecated
     status: deprecated
     runner: uv-python

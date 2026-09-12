@@ -1,6 +1,6 @@
 # 🧠 Context-Aware Template — Follow This Structure
 
-> **Purpose:** Template for standardized .sdd/context-aware/ setup in new projects
+> **Purpose:** Template for standardized .providence/context-aware/ setup in new projects
 > **Standard:** Framework Standards v1.0 (3-tier structure)
 > **Location:** Use this to bootstrap new project's context structure
 
@@ -11,7 +11,7 @@
 When you create a new project with SDD INTEGRATION, copy this template to:
 
 ```
-your-project/.sdd/context-aware/
+your-project/.providence/context-aware/
 ```
 
 ---
@@ -19,7 +19,7 @@ your-project/.sdd/context-aware/
 ## 🗂️ Complete Directory Structure
 
 ```
-.sdd/context-aware/
+.providence/context-aware/
 ├── README.md                              ← Main navigation hub
 ├── QUICK_STATUS.md                        ← Sprint snapshot
 │
@@ -179,7 +179,7 @@ Previous work in: task-progress/completed/
 
 For new projects:
 
-- [ ] Copy this template to `.sdd/context-aware/`
+- [ ] Copy this template to `.providence/context-aware/`
 - [ ] Edit README.md with project-specific info
 - [ ] Update QUICK_STATUS.md with initial state
 - [ ] Create initial entries in summaries/

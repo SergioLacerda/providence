@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from sdd_integration.builders.governance.pipeline_builder import PipelineBuilder
+from providence_integration.builders.governance.pipeline_builder import PipelineBuilder
 
 pytestmark = pytest.mark.unit
 

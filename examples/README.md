@@ -1,4 +1,4 @@
-# SDD Harness — Examples
+# Providence — Examples
 
 Runnable demos showing SDD governance enforcement with popular agentic frameworks.
 
@@ -23,7 +23,7 @@ Expected output: `BLOCKED` with the violated mandate reference.
 **What it shows:** A CrewAI crew is initialized, then the governance fingerprint is tampered (simulating artifact drift). SDD detects the mismatch before the crew runs.
 
 ```bash
-uv run --extra examples-crewai python examples/crewai/demo_spec_drift.py
+uv run --extra examplescrewai python examples/crewai/demo_spec_drift.py
 ```
 
 Expected output: `DRIFT_DETECTED` with expected vs found fingerprint diff.
@@ -42,7 +42,7 @@ done
 
 # Drift accuracy battery (before/after a feature)
 uv run python examples/security/drift_battery.py --label "before-my-feature"
-# ... implement feature, sdd governance compile ...
+# ... implement feature, providence governance compile ...
 uv run python examples/security/drift_battery.py --label "after-my-feature"
 ```
 
@@ -53,6 +53,6 @@ See [examples/security/README.md](security/README.md) for full documentation.
 ## Notes
 
 - All demos exit with code `0` — the block/detection is the expected, correct behavior.
-- Demos read from `.sdd/` in the repo root. Run them from the repo root directory.
+- Demos read from `.providence/` in the repo root. Run them from the repo root directory.
 - Optional framework extras are defined in `pyproject.toml` under `[project.optional-dependencies]`.
 - `examples/security/drift_battery_snapshot.json` is local state — do not commit it.

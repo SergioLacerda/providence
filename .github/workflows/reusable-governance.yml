@@ -24,8 +24,8 @@ jobs:
           version: "0.11.9"
           enable-cache: true
 
-      - name: Bootstrap SDD CLI
-        uses: ./.github/actions/bootstrap-sdd-cli
+      - name: Bootstrap Providence CLI
+        uses: ./.github/actions/bootstrap-providence-cli
 
       - name: Validate Human Review (P003)
         run: |
@@ -34,7 +34,7 @@ jobs:
 
       - name: Compile governance artifacts
         run: |
-          uv run python -m sdd_cli governance compile
+          uv run python -m providence_cli governance compile
 
       - name: Security Audit (ephemeral CI key)
         # Blocking: signs the artifacts compiled above with a job-local ephemeral
@@ -43,7 +43,7 @@ jobs:
         # keygen -> sign -> audit sequence release.yml's own signing smoke test
         # already proves works (release.yml:184-212).
         #
-        # `sdd governance audit` WITHOUT --json returns the correct process
+        # `providence governance audit` WITHOUT --json returns the correct process
         # exit code (0/1) on pass/fail — verified locally. --json mode always
         # exits 0 and only encodes pass/fail in the JSON payload (that's why
         # release.yml's own smoke test greps the JSON with a Python assertion
@@ -51,6 +51,6 @@ jobs:
         # avoids needing that extra step.
         run: |
           set -euo pipefail
-          uv run python -m sdd_cli governance keygen --key-id ci-governance-audit
-          uv run python -m sdd_cli governance sign --key-id ci-governance-audit
-          uv run python -m sdd_cli governance audit
+          uv run python -m providence_cli governance keygen --key-id ci-governance-audit
+          uv run python -m providence_cli governance sign --key-id ci-governance-audit
+          uv run python -m providence_cli governance audit

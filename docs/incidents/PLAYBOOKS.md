@@ -31,8 +31,8 @@ Each playbook follows this structure:
 
 ### Symptoms
 
-- `sdd ask` returns: `artifact validation failed`
-- `sdd governance compile` succeeds, but `sdd runtime status` shows corrupt artifact
+- `providence ask` returns: `artifact validation failed`
+- `providence governance compile` succeeds, but `providence runtime status` shows corrupt artifact
 - CI tests pass, but production deployment fails
 - Hash mismatch between SBOM and actual artifact
 
@@ -72,13 +72,13 @@ Each playbook follows this structure:
 1. **Stop affected services:**
 
    ```bash
-   systemctl stop sdd-runtime sdd-wizard  # if applicable
+   systemctl stop providence-runtime providence-wizard  # if applicable
    ```
 
 2. **Block release:**
 
    ```bash
-   git tag -d v$(cat packages/core/sdd_core/pyproject.toml | grep version | head -1)
+   git tag -d v$(cat packages/core/providence_core/pyproject.toml | grep version | head -1)
    # Don't push to remote yet
    ```
 
@@ -196,7 +196,7 @@ git log --oneline -- "generated/master/compiled/" | head -20
 ### Symptoms
 
 - A standalone client (installed from PyPI/Git, no local repo checkout) fails
-  `sdd init --default` or any command that compiles governance, with:
+  `providence init --default` or any command that compiles governance, with:
   `PHASE 2 error: No sdd-compile release binary found for version X.Y.Z
   (asset sdd-compile-<goos>-<goarch>; tried tags vX.Y.Z and VX.Y.Z)`
 - `curl -s https://api.github.com/repos/<org>/<repo>/releases/tags/<TAG>`
@@ -228,7 +228,7 @@ curl -s https://api.github.com/repos/<org>/<repo>/releases/tags/<TAG> | jq '.ass
 #### Phase 2: Contain (5 min)
 
 - Tell affected standalone users to set `SDD_COMPILE_BIN` to a locally built
-  `tools/sdd-compile/bin/sdd-compile` (built via `make build-compiler`) as an
+  `tools/sdd-compile/bin/providence-compile` (built via `make build-compiler`) as an
   immediate workaround, or pin to the previous good release.
 
 #### Phase 3: Investigate (5 min)
@@ -390,7 +390,7 @@ print(f'Total: {time.perf_counter() - start:.2f}s')
 
 ### Symptoms
 
-- `sdd ask` returns: `BudgetBreachError: budget utilization ≥ 100%`
+- `providence ask` returns: `BudgetBreachError: budget utilization ≥ 100%`
 - User session halts, no further context loads allowed
 - Token economy metrics show 100%+ utilization
 - Repeated queries fail after ~5 requests
@@ -408,20 +408,20 @@ print(f'Total: {time.perf_counter() - start:.2f}s')
 
 ```bash
 # Check governance/runtime state
-sdd runtime status
+providence runtime status
 
 # Check token economy metrics
-sdd metrics summary
+providence metrics summary
 ```
 
 #### Phase 2: Investigate (5 min)
 
 ```bash
 # Check session state
-cat .sdd/runtime/sdd-runtime-sessions.json | jq '.' 2>/dev/null || echo "Session file not found"
+cat .providence/runtime/providence-runtime-sessions.json | jq '.' 2>/dev/null || echo "Session file not found"
 
 # Check token consumption by query
-sdd metrics summary --last-hours 24
+providence metrics summary --last-hours 24
 
 # Is budget legitimately exhausted?
 # Or is it a bug?
@@ -433,7 +433,7 @@ sdd metrics summary --last-hours 24
 
 ```bash
 # Reset runtime state and re-bootstrap
-sdd bootstrap
+providence bootstrap
 
 # Or: increase token_budget_ceiling in pyproject.toml
 # [tool.sdd.runtime]
@@ -444,7 +444,7 @@ sdd bootstrap
 
 ```bash
 # Check recent events to identify expensive queries
-sdd metrics summary --last-hours 1
+providence metrics summary --last-hours 1
 
 # Single query consumed many tokens → expensive
 # Options:
@@ -452,7 +452,7 @@ sdd metrics summary --last-hours 1
 # 2. Use --skill to limit context to a specific path
 # 3. Increase token_budget_ceiling in pyproject.toml
 
-sdd ask "architecture" --skill "diagnose"  # route to lighter path
+providence ask "architecture" --skill "diagnose"  # route to lighter path
 ```
 
 **Scenario C: Budget Not Reset**
@@ -462,7 +462,7 @@ sdd ask "architecture" --skill "diagnose"  # route to lighter path
 # If not, it's a bug — file an issue.
 
 # Workaround: re-bootstrap the runtime state
-sdd bootstrap
+providence bootstrap
 
 # File bug: "Budget not reset between sessions"
 ```
@@ -470,27 +470,27 @@ sdd bootstrap
 **Scenario D: Token Accounting Bug**
 
 ```bash
-# Reproduce: sdd ask "<query>" N times
+# Reproduce: providence ask "<query>" N times
 # Check if tokens charged correctly via metrics
 
-sdd metrics summary --last-hours 1
+providence metrics summary --last-hours 1
 
 # File bug with reproduction steps
 # Escalate to maintainer
 
 # Workaround: re-bootstrap the runtime state
-sdd bootstrap
+providence bootstrap
 ```
 
 #### Phase 4: Verify
 
 ```bash
 # Confirm runtime is healthy
-sdd runtime status
-# Should show: "SDD Governance: ACTIVE" with drift=none
+providence runtime status
+# Should show: "PROVIDENCE GOVERNANCE: drift=none | governance=ok | ..."
 
 # Try query again
-sdd ask "test"
+providence ask "test"
 # Should succeed
 ```
 
@@ -507,7 +507,7 @@ sdd ask "test"
 
 ### Symptoms
 
-- `sdd ask` returns incorrect context items
+- `providence ask` returns incorrect context items
 - Same query returns different results at different times
 - Cache hit shows stale/wrong data
 - Inconsistent behavior between fresh vs cached results
@@ -525,11 +525,11 @@ sdd ask "test"
 
 ```bash
 # Reproduce: run same query multiple times
-sdd ask "mandate"
+providence ask "mandate"
 
 # Check if results consistent
-sdd ask "mandate" > query1.txt
-sdd ask "mandate" > query2.txt
+providence ask "mandate" > query1.txt
+providence ask "mandate" > query2.txt
 diff query1.txt query2.txt
 # If different: cache poisoning
 ```
@@ -538,10 +538,10 @@ diff query1.txt query2.txt
 
 ```bash
 # Clear cache manually to restore service
-rm -f .sdd/runtime/.sdd-cache.md
+rm -f .providence/runtime/.providence-cache.md
 
 # Verify fresh results
-sdd ask "mandate"
+providence ask "mandate"
 # Should show correct results
 ```
 
@@ -549,7 +549,7 @@ sdd ask "mandate"
 
 ```bash
 # Check recent compliance events for cache anomalies
-tail -100 .sdd/runtime/compliance-events.jsonl | jq . | tail -20
+tail -100 .providence/runtime/compliance-events.jsonl | jq . | tail -20
 
 # Look for:
 # 1. Same key, different values?
@@ -557,7 +557,7 @@ tail -100 .sdd/runtime/compliance-events.jsonl | jq . | tail -20
 # 3. Artifact ID collisions?
 
 # Run tests
-pytest packages/core/sdd_runtime/tests/test_*.py -k cache -v
+pytest packages/core/providence_runtime/tests/test_*.py -k cache -v
 # Look for failures in cache tests
 ```
 
@@ -566,7 +566,7 @@ pytest packages/core/sdd_runtime/tests/test_*.py -k cache -v
 **Scenario A: Cache Key Collision**
 
 ```python
-# In packages/core/sdd_runtime/cache.py
+# In packages/core/providence_runtime/cache.py
 # Check _make_key() function
 
 # Example bug:
@@ -601,7 +601,7 @@ def get(self, ...):
 
 ```bash
 # Run cache integrity tests
-pytest packages/core/sdd_runtime/tests/test_cache.py -v
+pytest packages/core/providence_runtime/tests/test_cache.py -v
 
 # Stress test: concurrent queries
 python tests/perf/benchmark_performance.py --concurrent 10
@@ -622,7 +622,7 @@ python tests/perf/benchmark_performance.py --concurrent 10
 
 ### Symptoms
 
-- `pip install sdd-harness` installs older/unexpected version
+- `pip install providence` installs older/unexpected version
 - SBOM contains unexpected dependencies
 - Artifact signature fails Sigstore verification
 - CI detects new CVE in a dependency (pip-audit)
@@ -647,7 +647,7 @@ cosign verify-blob --certificate-identity-regexp="" ...
 # Output: "signature validation failed"
 
 # Or: SBOM shows unexpected package
-cat .sdd/compiled/sbom.spdx.json | jq '.packages[] | select(.name=="suspicious")'
+cat .providence/compiled/sbom.spdx.json | jq '.packages[] | select(.name=="suspicious")'
 ```
 
 #### Phase 2: Immediate Containment (5 min)
@@ -737,7 +737,7 @@ uv sync
 pytest tests/unit tests/integration -q
 
 # 3. Rebuild
-python -m build packages/core/sdd_core
+python -m build packages/core/providence_core
 
 # 4. Update version
 # (depends on semver: patch for CVE fix)
@@ -782,7 +782,7 @@ git push origin v0.2.2
 
 ### Symptoms
 
-- `sdd ask` times out or returns timeout error
+- `providence ask` times out or returns timeout error
 - ContextLoader.load_result() raises exception
 - Manifest parsing fails
 - Artifact file missing or unreadable
@@ -800,7 +800,7 @@ git push origin v0.2.2
 #### Phase 1: Detect
 
 ```bash
-sdd ask "test" 2>&1
+providence ask "test" 2>&1
 # Error: "context load failed: [Errno 13] Permission denied"
 ```
 
@@ -850,7 +850,7 @@ python -m sdd_compiler  # Rebuild
 
 - Telemetry events not persisting
 - JSONL log file not updated or missing
-- `sdd metrics summary` returns empty results
+- `providence metrics summary` returns empty results
 - Telemetry file permission errors in logs
 
 ### Root Causes
@@ -866,10 +866,10 @@ python -m sdd_compiler  # Rebuild
 
 ```bash
 # Check governance state and timestamp
-sdd runtime status
+providence runtime status
 
 # Check if metrics reflect recent activity
-sdd metrics summary
+providence metrics summary
 # If output is empty or stale: pipeline may be blocked
 ```
 
@@ -877,17 +877,17 @@ sdd metrics summary
 
 ```bash
 # Check telemetry file (compliance events log)
-stat .sdd/runtime/compliance-events.jsonl 2>/dev/null || echo "Telemetry file not found"
+stat .providence/runtime/compliance-events.jsonl 2>/dev/null || echo "Telemetry file not found"
 
 # Check permissions
-ls -l .sdd/runtime/ 2>/dev/null || echo "Runtime directory not found"
+ls -l .providence/runtime/ 2>/dev/null || echo "Runtime directory not found"
 
 # Inspect recent events
-tail -5 .sdd/runtime/compliance-events.jsonl | jq . 2>/dev/null || echo "Cannot read events"
+tail -5 .providence/runtime/compliance-events.jsonl | jq . 2>/dev/null || echo "Cannot read events"
 
 # Emit a test event and verify it was written
-sdd ask "test" 2>/dev/null
-tail -1 .sdd/runtime/compliance-events.jsonl | jq '.event'
+providence ask "test" 2>/dev/null
+tail -1 .providence/runtime/compliance-events.jsonl | jq '.event'
 ```
 
 #### Phase 3: Fix
@@ -895,7 +895,7 @@ tail -1 .sdd/runtime/compliance-events.jsonl | jq '.event'
 **Option A: Check for disk space**
 
 ```bash
-df -h .sdd/
+df -h .providence/
 # If full: free space and retry
 ```
 
@@ -903,20 +903,20 @@ df -h .sdd/
 
 ```bash
 # Telemetry sink should emit events automatically via sdd commands
-sdd ask "test"  # This should emit an event
+providence ask "test"  # This should emit an event
 
 # Check if event was written
-tail -1 .sdd/runtime/compliance-events.jsonl | jq .
+tail -1 .providence/runtime/compliance-events.jsonl | jq .
 ```
 
 **Option C: Reset telemetry (last resort)**
 
 ```bash
 # Backup current log
-mv .sdd/runtime/compliance-events.jsonl .sdd/runtime/compliance-events.jsonl.backup
+mv .providence/runtime/compliance-events.jsonl .providence/runtime/compliance-events.jsonl.backup
 
 # Bootstrap fresh runtime state
-sdd bootstrap
+providence bootstrap
 ```
 
 ---

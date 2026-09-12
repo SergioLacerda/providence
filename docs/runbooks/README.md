@@ -17,15 +17,15 @@ governance_source:
 
 # Runbooks
 
-Reusable operational procedures for SDD Harness maintainers and agents.
+Reusable operational procedures for Providence maintainers and agents.
 
 Runbooks are not the same as guides. `docs/guides/` contains tutorials,
 references, onboarding material, and topic guides. `docs/runbooks/` contains
 repeatable procedures for recognized operational situations: symptoms,
 diagnosis, resolution, rollback, and post-incident follow-up.
 
-`docs/` is the authored source of truth. `.sdd/` is generated runtime output.
-Do not edit `.sdd/` directly to publish or change runbooks; change authored docs
+`docs/` is the authored source of truth. `.providence/` is generated runtime output.
+Do not edit `.providence/` directly to publish or change runbooks; change authored docs
 first, then regenerate runtime artifacts when a runtime task explicitly requires
 it.
 
@@ -65,7 +65,7 @@ MkDocs site:
 ## Runtime Use
 
 This index is an authored handbook source. Runtime generation emits it to
-`.sdd/source/handbook/runbooks/index.yaml`; direct `.sdd/` edits remain
+`.providence/source/handbook/runbooks/index.yaml`; direct `.providence/` edits remain
 forbidden.
 
 Runtime agents use this file as a selector, not as a bulk-load target:

@@ -8,11 +8,11 @@
 
 ## Central Principle
 
-> Plugins connected to SDD Harness are autonomous within their own domain,
+> Plugins connected to Providence are autonomous within their own domain,
 > but governed at the boundary. They may use their own methods, heuristics,
 > and expertise, but must respect host mandates, execution contracts,
-> source-of-truth hierarchy, and artifact schemas when operating inside an
-> SDD-governed environment.
+> source-of-truth hierarchy, and artifact schemas when operating inside a
+> Providence-governed environment.
 >
 > **Internal autonomy. External compatibility.**
 
@@ -22,10 +22,10 @@
 
 | Tier | Location | Governed by |
 |------|----------|-------------|
-| Internal SDD skills | `.sdd/skills/`|`governance_adherence:`block in`skill.yaml` |
-| External plugins | Installed elsewhere (e.g. `~/.claude/skills/`) | Entry in `.sdd/plugins/registry.yaml` via agent-mediated handshake |
+| Internal Providence skills | `.providence/skills/`|`governance_adherence:`block in`skill.yaml` |
+| External plugins | Installed elsewhere (e.g. `~/.claude/skills/`) | Entry in `.providence/plugins/registry.yaml` via agent-mediated handshake |
 
-Internal skills are part of SDD core. They do not appear in the plugin registry.
+Internal skills are part of Providence core. They do not appear in the plugin registry.
 External plugins are registered at runtime when the agent detects governance and offers registration.
 
 ---
@@ -45,9 +45,9 @@ M017 and M019 are complementary. M019 governs entry; M017 governs execution.
 
 | Mode | When | Behavior |
 |------|------|----------|
-| `governed`| Full`.sdd/` governance found, all HARD mandates resolvable | HARD mandates enforced, execution contract required, artifacts validated against schema |
-| `compatible`|`.sdd/` found but governance is partial or incomplete | Adapts to available rules, reports missing governance context, degrades safely |
-| `standalone`| No`.sdd/` governance found | Operates read-only by default, produces portable artifacts, recommends SDD integration |
+| `governed`| Full`.providence/` governance found, all HARD mandates resolvable | HARD mandates enforced, execution contract required, artifacts validated against schema |
+| `compatible`|`.providence/` found but governance is partial or incomplete | Adapts to available rules, reports missing governance context, degrades safely |
+| `standalone`| No`.providence/` governance found | Operates read-only by default, produces portable artifacts, recommends Providence integration |
 
 The agent determines the mode at registration time based on what governance it finds.
 
@@ -69,15 +69,15 @@ The agent determines the mode at registration time based on what governance it f
 
 **SHOULD:**
 
-- Consult SDD governance sources when the task affects architecture, requirements, or public contracts
+- Consult Providence governance sources when the task affects architecture, requirements, or public contracts
 
-- Reuse SDD templates for outputs
+- Reuse Providence templates for outputs
 
 - Report confidence, assumptions, and unresolved ambiguities
 
 **MUST NOT:**
 
-- Invent SDD rules that do not exist
+- Invent Providence rules that do not exist
 
 - Execute write actions without declared scope
 
@@ -97,6 +97,6 @@ The agent determines the mode at registration time based on what governance it f
 
 - M017 Mandate: `docs/spec/canonical/core/mandates/M017_ANALYSIS_PLUGIN_COMPLIANCE.md`
 
-- `.sdd/plugins/registry.yaml` — live registry
+- `.providence/plugins/registry.yaml` — live registry
 
-- `.sdd/plugins/handshake-protocol.md` — agent-facing protocol
+- `.providence/plugins/handshake-protocol.md` — agent-facing protocol

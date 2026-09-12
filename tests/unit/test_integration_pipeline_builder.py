@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from sdd_integration.builders.governance.pipeline_builder import PipelineBuilder
+from providence_integration.builders.governance.pipeline_builder import PipelineBuilder
 
 
 def test_build_with_parsed_items():
@@ -27,7 +27,7 @@ def test_build_with_parsed_items():
 
 
 def test_generate_fingerprint_empty_and_salt():
-    from sdd_integration.builders.governance.fingerprinter import (
+    from providence_integration.builders.governance.fingerprinter import (
         GovernanceFingerprinter,
     )
 

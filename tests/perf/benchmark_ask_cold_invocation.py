@@ -1,12 +1,12 @@
-"""Standalone benchmark for `sdd ask` cold-invocation wall time (T-U1).
+"""Standalone benchmark for `providence ask` cold-invocation wall time (T-U1).
 
-Splits one `sdd ask` CLI call's wall time into two measurable pieces:
-- a baseline `import sdd_cli` cost (process/interpreter startup), and
-- the full `sdd ask <query>` call time, from which the baseline is
+Splits one `providence ask` CLI call's wall time into two measurable pieces:
+- a baseline `import providence_cli` cost (process/interpreter startup), and
+- the full `providence ask <query>` call time, from which the baseline is
   subtracted to estimate governance-snapshot assembly cost.
 
-Every invocation is a fresh subprocess (`python -m sdd_cli ask ...`),
-matching how `sdd ask` is actually used — see
+Every invocation is a fresh subprocess (`python -m providence_cli ask ...`),
+matching how `providence ask` is actually used — see
 `.analysis/refined/20260730-sdd-ask-tu1-cold-invocation-benchmark/design.md`
 D2. Reports percentiles rather than a pass/fail budget: full-process timing
 is noisy (OS scheduling, disk cache state), so results are directional, not
@@ -91,9 +91,9 @@ def _time_subprocess(argv: list[str]) -> float:
 
 
 def _benchmark_import_baseline(iterations: int) -> dict[str, float]:
-    """Time `python -c "import sdd_cli"` — the process/interpreter startup floor."""
+    """Time `python -c "import providence_cli"` — the process/interpreter startup floor."""
     samples = [
-        _time_subprocess([sys.executable, "-c", "import sdd_cli"])
+        _time_subprocess([sys.executable, "-c", "import providence_cli"])
         for _ in range(iterations)
     ]
     return _summarize(samples)
@@ -106,7 +106,9 @@ def _benchmark_query(query_spec: dict[str, Any], iterations: int) -> dict[str, A
             arg.format(i=i) if query_spec.get("vary_per_iteration") else arg
             for arg in query_spec["args"]
         ]
-        samples.append(_time_subprocess([sys.executable, "-m", "sdd_cli", *args]))
+        samples.append(
+            _time_subprocess([sys.executable, "-m", "providence_cli", *args])
+        )
     return {
         "label": query_spec["label"],
         "full_call_ms": _summarize(samples),
@@ -137,7 +139,7 @@ def build_results(iterations: int = DEFAULT_ITERATIONS) -> dict[str, Any]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Benchmark sdd ask cold-invocation wall time"
+        description="Benchmark providence ask cold-invocation wall time"
     )
     parser.add_argument(
         "--output",

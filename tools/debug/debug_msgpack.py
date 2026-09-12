@@ -28,7 +28,7 @@ def _find_repo_root() -> Path:
 
 def _bootstrap_imports(repo_root: Path) -> None:
     """Add package src dirs to sys.path so we can import without installing."""
-    for pkg in ("sdd_integration", "sdd_core"):
+    for pkg in ("providence_integration", "providence_core"):
         for layer in ("core", "features", "interfaces"):
             src = repo_root / "packages" / layer / pkg / "src"
             if src.is_dir() and str(src) not in sys.path:
@@ -47,13 +47,15 @@ def _build_artifacts(spec_dir: Path, out_dir: Path) -> tuple[int, Path]:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     try:
-        from sdd_integration.builders.governance.pipeline_builder import PipelineBuilder
+        from providence_integration.builders.governance.pipeline_builder import (
+            PipelineBuilder,
+        )
 
         PipelineBuilder(str(spec_dir)).save_outputs(str(out_dir))
         print("Pipeline built.")
     except ImportError as e:
         print(f"ERROR: Could not import PipelineBuilder: {e}")
-        print("Ensure sdd_integration is installed or run from the repo root.")
+        print("Ensure providence_integration is installed or run from the repo root.")
         return 1, Path()
     except Exception as e:
         print(f"ERROR: Pipeline build failed: {e}")
@@ -61,7 +63,7 @@ def _build_artifacts(spec_dir: Path, out_dir: Path) -> tuple[int, Path]:
 
     print("Compiling governance artifacts...")
     try:
-        from sdd_core.utils.compiler_runner import CompilerRunner
+        from providence_core.utils.compiler_runner import CompilerRunner
 
         result: Any = CompilerRunner().compile(out_dir, out_dir)
     except ImportError as e:
@@ -78,7 +80,7 @@ def main() -> int:
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Inspect SDD compiled governance msgpack artifacts"
+        description="Inspect Providence compiled governance msgpack artifacts"
     )
     parser.add_argument(
         "--spec-dir",
@@ -90,7 +92,7 @@ def main() -> int:
         "--out-dir",
         type=Path,
         default=None,
-        help="Compiled output directory (default: <tmp>/sdd-debug-compiled-<uid>)",
+        help="Compiled output directory (default: <tmp>/providence-debug-compiled-<uid>)",
     )
     parser.add_argument(
         "--compiled-only",
@@ -105,7 +107,7 @@ def main() -> int:
     spec_dir = args.spec_dir or (repo_root / "docs" / "spec" / "canonical")
     out_dir = (
         args.out_dir
-        or Path(tempfile.gettempdir()) / f"sdd-debug-compiled-{os.getuid()}"
+        or Path(tempfile.gettempdir()) / f"providence-debug-compiled-{os.getuid()}"
     )
 
     if args.compiled_only:

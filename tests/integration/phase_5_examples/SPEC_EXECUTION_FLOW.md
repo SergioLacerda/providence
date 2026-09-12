@@ -219,7 +219,7 @@ AI-first documentation exists at root level
 
 ### Requirements:
 At root level of framework:
-- [ ] `.sdd-index.md` — Machine learning seed (for LLMs/agents)
+- [ ] `.providence-index.md` — Machine learning seed (for LLMs/agents)
 - [ ] `README.md` — Public-facing documentation
 - [ ] `.spec.config` — Framework discovery
 
@@ -228,7 +228,7 @@ All 3 files exist at root and are readable
 
 ### Expected output:
 ```
-✅ .sdd-index.md (12548 bytes)
+✅ .providence-index.md (12548 bytes)
 ✅ README.md (7859 bytes)
 ✅ .spec.config (1333 bytes)
 ```

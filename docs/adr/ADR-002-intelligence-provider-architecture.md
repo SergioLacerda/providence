@@ -195,12 +195,12 @@ def create_provider(name: str) -> IntelligenceProvider:
 
 ## Implementation Details
 
-- **Protocol:** `sdd_runtime/intelligence.py:IntelligenceProvider`
-- **Registry:** `sdd_runtime/intelligence.py:ProviderRegistry`
-- **Built-in providers:** `sdd_runtime/providers/{http,ast,tfidf,local}_provider.py`
-- **Integration:** `sdd_runtime/context.py:ContextLoader` attempts compression in YELLOW zone
-- **Tests:** `packages/core/sdd_runtime/tests/test_providers.py` (unit tests per provider)
-- **Integration tests:** `packages/core/sdd_runtime/tests/test_compression_trigger.py`
+- **Protocol:** `providence_runtime/intelligence.py:IntelligenceProvider`
+- **Registry:** `providence_runtime/intelligence.py:ProviderRegistry`
+- **Built-in providers:** `providence_runtime/providers/{http,ast,tfidf,local}_provider.py`
+- **Integration:** `providence_runtime/context.py:ContextLoader` attempts compression in YELLOW zone
+- **Tests:** `packages/core/providence_runtime/tests/test_providers.py` (unit tests per provider)
+- **Integration tests:** `packages/core/providence_runtime/tests/test_compression_trigger.py`
 
 ---
 

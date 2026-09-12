@@ -5,7 +5,7 @@
 
 ## Context
 
-As the SDD Harness moves toward autonomous agent orchestration, a formal trust boundary is required. Previously, agents could execute any CLI command or skill if they had the binary, without a formal declaration of intent or acknowledgment of governance mandates. This created a "Fail-Open" risk where unauthorized or high-risk skills could be used without a pre-delivery quality gate.
+As the Providence moves toward autonomous agent orchestration, a formal trust boundary is required. Previously, agents could execute any CLI command or skill if they had the binary, without a formal declaration of intent or acknowledgment of governance mandates. This created a "Fail-Open" risk where unauthorized or high-risk skills could be used without a pre-delivery quality gate.
 
 ## Decision
 
@@ -29,6 +29,6 @@ Implement a **Fail-Closed** bidirectional handshake protocol (Mandate M015) that
 
 ## Implementation Notes
 
-- Handshake state is persisted in `.sdd/runtime/handshake-response.json`.
-- `AgentHandshakeProtocol` in `sdd_core` is the authority for challenge/response logic.
-- Integration into `sdd ask` and `sdd ask-full` ensures all primary entry points are guarded.
+- Handshake state is persisted in `.providence/runtime/handshake-response.json`.
+- `AgentHandshakeProtocol` in `providence_core` is the authority for challenge/response logic.
+- Integration into `providence ask` and `providence ask-full` ensures all primary entry points are guarded.

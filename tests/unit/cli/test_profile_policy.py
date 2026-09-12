@@ -1,4 +1,4 @@
-"""Unit tests for sdd_cli.utils.profile — ProfilePolicy adapters and governance_gate."""
+"""Unit tests for providence_cli.utils.profile — ProfilePolicy adapters and governance_gate."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, patch
 import click
 import pytest
 
-from sdd_cli.utils.profile import (
+from providence_cli.utils.profile import (
     ClientAdapter,
     MasterAdapter,
     enforce_profile_policy,
@@ -74,7 +74,9 @@ class TestGetActiveProfile:
 
     def test_returns_client_for_none_ctx(self) -> None:
         # Without context, detect_profile falls back to "client"
-        with patch("sdd_core.utils.environment.detect_profile", return_value="client"):
+        with patch(
+            "providence_core.utils.environment.detect_profile", return_value="client"
+        ):
             result = get_active_profile(None)
         assert result == "client"
 
@@ -93,22 +95,26 @@ class TestGovernanceGate:
     def test_exempt_init_skips_gate(self) -> None:
         ctx = self._make_ctx("init")
         # Should return immediately — no AHP import attempted
-        with patch("sdd_core.governance.handshake.AgentHandshakeProtocol") as mock_ahp:
+        with patch(
+            "providence_core.governance.handshake.AgentHandshakeProtocol"
+        ) as mock_ahp:
             governance_gate(ctx)
             mock_ahp.assert_not_called()
 
     def test_exempt_version_skips_gate(self) -> None:
         ctx = self._make_ctx("version")
-        with patch("sdd_core.governance.handshake.AgentHandshakeProtocol") as mock_ahp:
+        with patch(
+            "providence_core.governance.handshake.AgentHandshakeProtocol"
+        ) as mock_ahp:
             governance_gate(ctx)
             mock_ahp.assert_not_called()
 
     def test_never_raises_on_import_error(self) -> None:
         ctx = self._make_ctx("doctor")
         with (
-            patch("sdd_cli.utils.profile.governance_gate.__module__"),
+            patch("providence_cli.utils.profile.governance_gate.__module__"),
             patch(
-                "sdd_core.governance.handshake.AgentHandshakeProtocol",
+                "providence_core.governance.handshake.AgentHandshakeProtocol",
                 side_effect=RuntimeError("boom"),
             ),
         ):
@@ -120,11 +126,11 @@ class TestGovernanceGate:
         mock_report = MagicMock()
         mock_report.confidence = 100.0
         with patch(
-            "sdd_core.governance.handshake.AgentHandshakeProtocol"
+            "providence_core.governance.handshake.AgentHandshakeProtocol"
         ) as mock_ahp_cls:
             instance = mock_ahp_cls.return_value
             instance.validate.return_value = ("HEALTHY", mock_report)
-            with patch("sdd_runtime.telemetry.TelemetrySink.emit"):
+            with patch("providence_runtime.telemetry.TelemetrySink.emit"):
                 governance_gate(ctx)
         out, err = capsys.readouterr()
         assert "WARN" not in out
@@ -136,12 +142,12 @@ class TestGovernanceGate:
         ctx = self._make_ctx("doctor", obj={"profile": "client", "root": None})
         mock_report = MagicMock()
         with patch(
-            "sdd_core.governance.handshake.AgentHandshakeProtocol"
+            "providence_core.governance.handshake.AgentHandshakeProtocol"
         ) as mock_ahp_cls:
             instance = mock_ahp_cls.return_value
             instance.validate.return_value = ("MISCONFIGURED", mock_report)
             with (
-                patch("sdd_runtime.telemetry.TelemetrySink.emit"),
+                patch("providence_runtime.telemetry.TelemetrySink.emit"),
                 pytest.raises(click.exceptions.Exit),
             ):
                 governance_gate(ctx)
@@ -156,11 +162,13 @@ class TestGovernanceGate:
         ctx.args = ["wizard"]
         mock_report = MagicMock()
         with patch(
-            "sdd_core.governance.handshake.AgentHandshakeProtocol"
+            "providence_core.governance.handshake.AgentHandshakeProtocol"
         ) as mock_ahp_cls:
             instance = mock_ahp_cls.return_value
             instance.validate.return_value = ("PARTIAL", mock_report)
-            with patch("sdd_runtime.telemetry.TelemetrySink.emit") as mock_append:
+            with patch(
+                "providence_runtime.telemetry.TelemetrySink.emit"
+            ) as mock_append:
                 governance_gate(ctx)
         out, err = capsys.readouterr()
         combined = out + err

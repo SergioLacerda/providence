@@ -3,9 +3,9 @@ from typing import Any
 
 import pytest
 
-from sdd_integration.assertions.config import ConfigIsValidPathAssertion
-from sdd_integration.assertions.process import ProcessNotAllSkippedAssertion
-from sdd_integration.engine.integration_engine import IntegrationEngine
+from providence_integration.assertions.config import ConfigIsValidPathAssertion
+from providence_integration.assertions.process import ProcessNotAllSkippedAssertion
+from providence_integration.engine.integration_engine import IntegrationEngine
 
 pytestmark = pytest.mark.unit
 
@@ -99,7 +99,7 @@ def test_integration_engine_applies_context_overrides(
         return DummyContext()
 
     monkeypatch.setattr(
-        "sdd_integration.engine.integration_engine.ExecutionContext.from_spec",
+        "providence_integration.engine.integration_engine.ExecutionContext.from_spec",
         fake_from_spec,
     )
 

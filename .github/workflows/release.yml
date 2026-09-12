@@ -61,15 +61,15 @@ jobs:
           create-venv: "true"
           retry-backoff-seconds: "15"
           editable-packages: |
-            packages/core/sdd_core
-            packages/core/sdd_telemetry
-            packages/features/sdd_skills
-            packages/core/sdd_runtime
-            packages/features/sdd_adapters
-            packages/features/sdd_integration
-            packages/features/sdd_pages
-            packages/interfaces/sdd_wizard
-            packages/interfaces/sdd_cli
+            packages/core/providence_core
+            packages/core/providence_telemetry
+            packages/features/providence_skills
+            packages/core/providence_runtime
+            packages/features/providence_adapters
+            packages/features/providence_integration
+            packages/features/providence_pages
+            packages/interfaces/providence_wizard
+            packages/interfaces/providence_cli
 
       - name: Set up Go
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
@@ -146,7 +146,7 @@ jobs:
         shell: bash
         run: python -m venv .release-smoke
 
-      - name: Install sdd-cli from dist only (no PyPI fallback)
+      - name: Install providence-cli from dist only (no PyPI fallback)
         shell: bash
         run: |
           set -euo pipefail
@@ -156,7 +156,7 @@ jobs:
             PY=".release-smoke/bin/python"
           fi
           "$PY" -m pip install --upgrade pip
-          "$PY" -m pip install --no-index --find-links dist sdd-cli
+          "$PY" -m pip install --no-index --find-links dist providence-cli
 
       - name: Upgrade/rollback smoke
         shell: bash
@@ -207,13 +207,13 @@ jobs:
               (
                   asset
                   for asset in release["assets"]
-                  if asset["name"].startswith("sdd_cli-") and asset["name"].endswith(".whl")
+                  if asset["name"].startswith("providence_cli-") and asset["name"].endswith(".whl")
               ),
               None,
           )
           if wheel is None:
               raise SystemExit(
-                  f"No sdd_cli-*.whl asset found on release {release['tag_name']}"
+                  f"No providence_cli-*.whl asset found on release {release['tag_name']}"
               )
 
           print(f"PREV_TAG={release['tag_name']}")
@@ -233,21 +233,21 @@ jobs:
           PREV_VERSION="${PREV_VERSION#V}"
 
           echo "--- Install previous release ($PREV_VERSION) ---"
-          # sdd-cli is already installed at the new dist version from the
-          # earlier "Install sdd-cli from dist only" step, so plain `pip
+          # providence-cli is already installed at the new dist version from the
+          # earlier "Install providence-cli from dist only" step, so plain `pip
           # install` sees the requirement as already satisfied and skips —
           # it never downgrades without --force-reinstall.
           # --no-deps is required alongside it: .release-smoke/prev only has
-          # the single downloaded sdd-cli wheel, not a full dependency
+          # the single downloaded providence-cli wheel, not a full dependency
           # closure like dist/ does (reusable-release-build.yml's `pip
           # download` step vendors every transitive wheel there) — without
           # --no-deps, --force-reinstall also tries to reinstall click/
           # pyyaml/rich/etc. from that same directory and fails to find them
-          # ("No matching distribution found for click>=8.3.3"). sdd-cli's
+          # ("No matching distribution found for click>=8.3.3"). providence-cli's
           # own version is all this smoke test verifies, so skipping its
           # dependency tree here is correct, not a shortcut.
-          "$PY" -m pip install --no-index --find-links .release-smoke/prev --force-reinstall --no-deps sdd-cli
-          INSTALLED=$("$PY" -m pip show sdd-cli | grep -i '^Version:' | awk '{print $2}')
+          "$PY" -m pip install --no-index --find-links .release-smoke/prev --force-reinstall --no-deps providence-cli
+          INSTALLED=$("$PY" -m pip show providence-cli | grep -i '^Version:' | awk '{print $2}')
           if [ "$INSTALLED" != "$PREV_VERSION" ]; then
             echo "ERROR: expected previous version $PREV_VERSION, got $INSTALLED"
             exit 1
@@ -255,8 +255,8 @@ jobs:
           echo "OK: previous version installed ($INSTALLED)"
 
           echo "--- Upgrade to this release ($EXPECTED_NEW_VERSION) ---"
-          "$PY" -m pip install --no-index --find-links dist --upgrade sdd-cli
-          INSTALLED=$("$PY" -m pip show sdd-cli | grep -i '^Version:' | awk '{print $2}')
+          "$PY" -m pip install --no-index --find-links dist --upgrade providence-cli
+          INSTALLED=$("$PY" -m pip show providence-cli | grep -i '^Version:' | awk '{print $2}')
           if [ "$INSTALLED" != "$EXPECTED_NEW_VERSION" ]; then
             echo "ERROR: expected upgraded version $EXPECTED_NEW_VERSION, got $INSTALLED"
             exit 1
@@ -265,8 +265,8 @@ jobs:
 
           echo "--- Roll back to previous release ($PREV_VERSION) ---"
           # --no-deps needed here for the same reason as the install above.
-          "$PY" -m pip install --no-index --find-links .release-smoke/prev --force-reinstall --no-deps sdd-cli
-          INSTALLED=$("$PY" -m pip show sdd-cli | grep -i '^Version:' | awk '{print $2}')
+          "$PY" -m pip install --no-index --find-links .release-smoke/prev --force-reinstall --no-deps providence-cli
+          INSTALLED=$("$PY" -m pip show providence-cli | grep -i '^Version:' | awk '{print $2}')
           if [ "$INSTALLED" != "$PREV_VERSION" ]; then
             echo "ERROR: expected rolled-back version $PREV_VERSION, got $INSTALLED"
             exit 1
@@ -274,16 +274,16 @@ jobs:
           echo "OK: rollback succeeded ($INSTALLED)"
 
           echo "--- Re-upgrade to this release for the remaining smoke steps ---"
-          "$PY" -m pip install --no-index --find-links dist --upgrade sdd-cli
+          "$PY" -m pip install --no-index --find-links dist --upgrade providence-cli
 
       - name: Run CLI smoke commands
         shell: bash
         run: |
           set -euo pipefail
           if [ "${{ runner.os }}" = "Windows" ]; then
-            SDD_BIN=".release-smoke/Scripts/sdd.exe"
+            SDD_BIN=".release-smoke/Scripts/providence.exe"
           else
-            SDD_BIN=".release-smoke/bin/sdd"
+            SDD_BIN=".release-smoke/bin/providence"
           fi
           "$SDD_BIN" --help
           "$SDD_BIN" install --help
@@ -294,9 +294,9 @@ jobs:
         run: |
           set -euo pipefail
           if [ "${{ runner.os }}" = "Windows" ]; then
-            SDD_BIN=".release-smoke/Scripts/sdd.exe"
+            SDD_BIN=".release-smoke/Scripts/providence.exe"
           else
-            SDD_BIN=".release-smoke/bin/sdd"
+            SDD_BIN=".release-smoke/bin/providence"
           fi
           mkdir -p .release-smoke/project
           cd .release-smoke/project
@@ -307,9 +307,9 @@ jobs:
         run: |
           set -euo pipefail
           if [ "${{ runner.os }}" = "Windows" ]; then
-            SDD_BIN=".release-smoke/Scripts/sdd.exe"
+            SDD_BIN=".release-smoke/Scripts/providence.exe"
           else
-            SDD_BIN=".release-smoke/bin/sdd"
+            SDD_BIN=".release-smoke/bin/providence"
           fi
           mkdir -p .release-smoke/sign-project
           cd .release-smoke/sign-project
@@ -337,9 +337,9 @@ jobs:
         run: |
           set -euo pipefail
           if [ "${{ runner.os }}" = "Windows" ]; then
-            SDD_BIN=".release-smoke/Scripts/sdd.exe"
+            SDD_BIN=".release-smoke/Scripts/providence.exe"
           else
-            SDD_BIN=".release-smoke/bin/sdd"
+            SDD_BIN=".release-smoke/bin/providence"
           fi
           TAG="${GITHUB_REF_NAME}"
           EXPECTED="${TAG#v}"
@@ -430,14 +430,14 @@ jobs:
             kill "$(cat server.pid)" 2>/dev/null || true
           fi
 
-      - name: Run sdd --version from the installed binary
+      - name: Run providence --version from the installed binary
         shell: bash
         run: |
           set -euo pipefail
           if [ "${{ runner.os }}" = "Windows" ]; then
-            SDD_BIN="${{ runner.temp }}/sdd-install-smoke/sdd.exe"
+            SDD_BIN="${{ runner.temp }}/sdd-install-smoke/providence.exe"
           else
-            SDD_BIN="${{ runner.temp }}/sdd-install-smoke/sdd"
+            SDD_BIN="${{ runner.temp }}/sdd-install-smoke/providence"
           fi
           "$SDD_BIN" --version
 
@@ -450,9 +450,9 @@ jobs:
         run: |
           set -euo pipefail
           if [ "${{ runner.os }}" = "Windows" ]; then
-            SDD_BIN="${{ runner.temp }}/sdd-install-smoke/sdd.exe"
+            SDD_BIN="${{ runner.temp }}/sdd-install-smoke/providence.exe"
           else
-            SDD_BIN="${{ runner.temp }}/sdd-install-smoke/sdd"
+            SDD_BIN="${{ runner.temp }}/sdd-install-smoke/providence"
           fi
           "$SDD_BIN" doctor compiler
 
@@ -518,31 +518,31 @@ jobs:
           fi
           echo "SDD_COMPILE_BIN=$BIN" >> "$GITHUB_ENV"
 
-      - name: Install sdd-cli from checkout source (documented client channel)
+      - name: Install providence-cli from checkout source (documented client channel)
         shell: bash
         run: |
           set -euo pipefail
-          # sdd-cli's local workspace dependencies (sdd-adapters, sdd-runtime,
+          # providence-cli's local workspace dependencies (providence-adapters, providence-runtime,
           # etc.) aren't published to PyPI, so `uv tool install` needs each of
           # them handed in explicitly via --with — a bare `uv tool install
-          # ./packages/interfaces/sdd_cli` fails with "sdd-adapters was not
+          # ./packages/interfaces/providence_cli` fails with "providence-adapters was not
           # found in the package registry".
-          uv tool install ./packages/interfaces/sdd_cli \
-            --with ./packages/core/sdd_core \
-            --with ./packages/core/sdd_telemetry \
-            --with ./packages/features/sdd_skills \
-            --with ./packages/core/sdd_runtime \
-            --with ./packages/features/sdd_adapters \
-            --with ./packages/features/sdd_integration \
-            --with ./packages/interfaces/sdd_wizard
+          uv tool install ./packages/interfaces/providence_cli \
+            --with ./packages/core/providence_core \
+            --with ./packages/core/providence_telemetry \
+            --with ./packages/features/providence_skills \
+            --with ./packages/core/providence_runtime \
+            --with ./packages/features/providence_adapters \
+            --with ./packages/features/providence_integration \
+            --with ./packages/interfaces/providence_wizard
 
       - name: Run client bootstrap from the source install
         shell: bash
         run: |
           set -euo pipefail
           export PATH="$HOME/.local/bin:$PATH"
-          # Must live outside $GITHUB_WORKSPACE: the sdd-harness checkout is
-          # itself an SDD workspace (tracked .sdd/), so a scratch project
+          # Must live outside $GITHUB_WORKSPACE: the providence checkout is
+          # itself an SDD workspace (tracked .providence/), so a scratch project
           # created inside it trips the nested-workspace guard in sdd's init command.
           if [ "${{ runner.os }}" = "Windows" ]; then
             SMOKE_DIR="$(cygpath -m "$RUNNER_TEMP")/git-smoke-project"
@@ -551,9 +551,13 @@ jobs:
           fi
           mkdir -p "$SMOKE_DIR"
           cd "$SMOKE_DIR"
-          sdd install --wizard --non-interactive
-          sdd init --default  # sdd-ci-policy: allow-client-smoke
-          sdd governance validate  # sdd-ci-policy: allow-client-smoke
+          providence install --wizard --non-interactive
+          providence init --default  # sdd-ci-policy: allow-client-smoke
+          # Session lane: this validates a freshly initialized scratch project's
+          # own handshake, not this repository's. It is not equivalent to the
+          # artifact-lane `governance validate --skip-handshake` used elsewhere
+          # in CI, and must stay plain here to exercise the real M015 handshake path.
+          providence governance validate  # sdd-ci-policy: allow-client-smoke
 
   release:
     name: Create GitHub Release

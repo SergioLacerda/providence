@@ -28,7 +28,7 @@
   },
   "remoteUser": "sdd",
   "workspaceFolder": "/app",
-  "postCreateCommand": "sdd tools list && sdd runtime status",
+  "postCreateCommand": "sdd tools list && providence runtime status",
   "features": {
     "ghcr.io/devcontainers/features/common-utils:1": {
       "installZsh": true,

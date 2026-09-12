@@ -24,8 +24,8 @@ from __future__ import annotations
 from typing import Any
 from unittest.mock import patch
 
-from sdd_runtime import RuntimeEvent, TelemetrySink
-from sdd_runtime.alerts import _DEFAULT_ALERT_EVENTS, AlertDispatcher
+from providence_runtime import RuntimeEvent, TelemetrySink
+from providence_runtime.alerts import _DEFAULT_ALERT_EVENTS, AlertDispatcher
 
 SECTION = "\n" + "=" * 60
 

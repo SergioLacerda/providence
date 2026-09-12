@@ -5,7 +5,7 @@ inputs:
   sync-args:
     description: >-
       Arguments passed to `uv sync`. Includes `--all-packages` by default so
-      every uv workspace member (e.g. `sdd_wizard`, not referenced by the
+      every uv workspace member (e.g. `providence_wizard`, not referenced by the
       root project's own `[project.dependencies]`) gets installed — without
       it, `--all-groups` alone silently omits workspace members the root
       doesn't directly depend on, which caused `mypy`/other whole-tree tools

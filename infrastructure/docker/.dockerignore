@@ -24,17 +24,17 @@ build/
 
 # Generated runtime state (compiled fresh inside builder stage)
 generated/
-.sdd/compiled/
-.sdd/runtime/
-.sdd/scratch/
-.sdd-local/
+.providence/compiled/
+.providence/runtime/
+.providence/scratch/
+.providence-local/
 
 # Local dev config
 .env
 *.local
 erro_esteira*.txt
-.sdd/.spec.config
-.sdd/trust/
+.providence/.spec.config
+.providence/trust/
 
 # Docs build output
 docs/archive/

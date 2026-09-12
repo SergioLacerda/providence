@@ -20,27 +20,27 @@ Load in this order when context is low:
 ## Runtime Commands
 
 ```bash
-sdd runtime status --verbose    # check workspace health
-sdd governance compile          # build governance artifacts
-sdd governance score --verbose  # evaluate compliance
-sdd governance sign --help      # learn about mandatory human sign-off (P003)
+providence runtime status --verbose    # check workspace health
+providence governance compile          # build governance artifacts
+providence governance score --verbose  # evaluate compliance
+providence governance sign --help      # learn about mandatory human sign-off (P003)
 sdd tools list                  # discover maintenance utilities
-sdd doctor run                  # full monorepo diagnostics
+providence doctor run                  # full monorepo diagnostics
 ```
 
 ## Supervised Learning Commands
 
 ```bash
-sdd skills learning-candidates                       # derive rule candidates from failure ledger
-sdd skills learning-approve <candidate-id> --rationale "..." --ttl-days 30
-sdd skills learning-reject <candidate-id> --rationale "..."
-sdd skills learning-rules                            # list currently active rules
-sdd skills learning-impact <rule-id> \
+providence skills learning-candidates                       # derive rule candidates from failure ledger
+providence skills learning-approve <candidate-id> --rationale "..." --ttl-days 30
+providence skills learning-reject <candidate-id> --rationale "..."
+providence skills learning-rules                            # list currently active rules
+providence skills learning-impact <rule-id> \
   --rework-delta -0.10 \
   --false-block-rate 0.05 \
   --escalation-delta 0.02 \
   --rollback-flag
-sdd skills learning-status --window-days 7           # summary health for supervised learning
+providence skills learning-status --window-days 7           # summary health for supervised learning
 ```
 
 Operational policy:

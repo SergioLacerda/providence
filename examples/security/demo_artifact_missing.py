@@ -4,7 +4,7 @@ SDD Security Demo — Artifact Missing / Corrupt
 
 Shows three pre-flight failure modes that SDD catches before any agent
 execution begins:
-  1. Artifact file not found (missing .sdd/metadata.json)
+  1. Artifact file not found (missing .providence/metadata.json)
   2. Artifact with unsupported / future schema version (corrupt/upgraded artifact)
   3. Artifact with empty fingerprint (incomplete compilation)
 
@@ -21,10 +21,15 @@ import json
 import sys
 from pathlib import Path
 
-from sdd_runtime import CompiledArtifact, PolicyEngine, SchemaValidator, SessionState
+from providence_runtime import (
+    CompiledArtifact,
+    PolicyEngine,
+    SchemaValidator,
+    SessionState,
+)
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-METADATA_PATH = REPO_ROOT / ".sdd" / "metadata.json"
+METADATA_PATH = REPO_ROOT / ".providence" / "metadata.json"
 SECTION = "\n" + "=" * 60
 
 
@@ -73,7 +78,7 @@ def main() -> None:
     print(SECTION)
 
     if not METADATA_PATH.exists():
-        print("[SDD] ERROR: .sdd/metadata.json not found. Run from repo root.")
+        print("[SDD] ERROR: .providence/metadata.json not found. Run from repo root.")
         sys.exit(1)
 
     real_artifact = load_real_artifact()

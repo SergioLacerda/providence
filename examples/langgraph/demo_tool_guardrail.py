@@ -22,10 +22,10 @@ from langchain_core.messages import (  # type: ignore[import-not-found]
 from langchain_core.tools import tool  # type: ignore[import-not-found]
 from langgraph.graph import END, StateGraph  # type: ignore[import-not-found]
 from langgraph.graph.message import add_messages  # type: ignore[import-not-found]
-from sdd_runtime import CompiledArtifact, PolicyEngine, SessionState
+from providence_runtime import CompiledArtifact, PolicyEngine, SessionState
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-METADATA_PATH = REPO_ROOT / ".sdd" / "metadata.json"
+METADATA_PATH = REPO_ROOT / ".providence" / "metadata.json"
 
 SECTION = "\n" + "=" * 60
 
@@ -69,7 +69,7 @@ def main() -> None:
     # 1. Load SDD governance artifact
     print("\n[SDD] Loading governance artifact...")
     if not METADATA_PATH.exists():
-        print("[SDD] ERROR: .sdd/metadata.json not found. Run from repo root.")
+        print("[SDD] ERROR: .providence/metadata.json not found. Run from repo root.")
         sys.exit(1)
 
     artifact = load_artifact()

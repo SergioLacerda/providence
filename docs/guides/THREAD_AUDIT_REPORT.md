@@ -11,9 +11,9 @@ Static audit of `threading` hotspots in production modules.
 
 | Priority | File | Line | Rule | Snippet |
 |---|---|---:|---|---|
-| P1 | `packages/core/sdd_runtime/src/sdd_runtime/metrics.py` | 138 | `rlock-usage` | `self._lock = threading.RLock()` |
-| P1 | `packages/interfaces/sdd_cli/src/sdd_cli/commands/metrics.py` | 31 | `rlock-usage` | `self._lock = threading.RLock()` |
-| P1 | `packages/interfaces/sdd_cli/src/sdd_cli/commands/metrics.py` | 67 | `thread-start` | `worker = threading.Thread(` |
+| P1 | `packages/core/providence_runtime/src/providence_runtime/metrics.py` | 138 | `rlock-usage` | `self._lock = threading.RLock()` |
+| P1 | `packages/interfaces/providence_cli/src/providence_cli/commands/metrics.py` | 31 | `rlock-usage` | `self._lock = threading.RLock()` |
+| P1 | `packages/interfaces/providence_cli/src/providence_cli/commands/metrics.py` | 67 | `thread-start` | `worker = threading.Thread(` |
 
 ## Priority Rules
 

@@ -175,12 +175,12 @@ class AskLatencyBenchmark:
         try:
             import sys
 
-            sys.path.insert(0, "packages/core/sdd_runtime/src")
-            sys.path.insert(0, "packages/core/sdd_core/src")
-            sys.path.insert(0, "packages/features/sdd_skills/src")
+            sys.path.insert(0, "packages/core/providence_runtime/src")
+            sys.path.insert(0, "packages/core/providence_core/src")
+            sys.path.insert(0, "packages/features/providence_skills/src")
 
-            from sdd_runtime.cache import get_context_cache
-            from sdd_runtime.context import ContextLoader, ContextRequest
+            from providence_runtime.cache import get_context_cache
+            from providence_runtime.context import ContextLoader, ContextRequest
 
             loader = ContextLoader()
             cache = get_context_cache()

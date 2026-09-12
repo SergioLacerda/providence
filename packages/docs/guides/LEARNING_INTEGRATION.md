@@ -4,8 +4,8 @@ This guide describes how supervised learning is integrated into the governed
 runtime today.
 
 It focuses on the runtime-side feedback loop implemented in
-`packages/core/sdd_runtime/src/sdd_runtime/learning.py` and consumed by skill
-handlers in `packages/core/sdd_runtime/src/sdd_runtime/_skill_executor.py`.
+`packages/core/providence_runtime/src/providence_runtime/learning.py` and consumed by skill
+handlers in `packages/core/providence_runtime/src/providence_runtime/_skill_executor.py`.
 
 ## Scope
 
@@ -21,14 +21,14 @@ This is runtime guidance. Command syntax remains canonical in
 
 ## Storage Model
 
-`SupervisedLearningStore` persists learning artifacts under `.sdd/runtime/`.
+`SupervisedLearningStore` persists learning artifacts under `.providence/runtime/`.
 
 Current files:
 
-- `.sdd/runtime/failure-ledger.jsonl`
-- `.sdd/runtime/rule-candidates.json`
-- `.sdd/runtime/rule-registry.json`
-- `.sdd/runtime/rule-impact.jsonl`
+- `.providence/runtime/failure-ledger.jsonl`
+- `.providence/runtime/rule-candidates.json`
+- `.providence/runtime/rule-registry.json`
+- `.providence/runtime/rule-impact.jsonl`
 
 The store is append-oriented for event history and JSON-backed for mutable rule
 state.
@@ -111,7 +111,7 @@ Learning does not auto-activate rules.
 The safe default workflow is:
 
 1. runtime accumulates repeated failures
-2. operators inspect candidates with `sdd skills learning-candidates`
+2. operators inspect candidates with `providence skills learning-candidates`
 3. a human approves or rejects each candidate
 4. runtime tracks impact of approved rules
 5. negative impact can roll the rule back
@@ -124,11 +124,11 @@ self-modifying behavior.
 Use these commands when inspecting the learning loop:
 
 ```bash
-uv run sdd skills learning-status --window-days 7
-uv run sdd skills learning-candidates
-uv run sdd skills learning-rules
-uv run sdd skills run sdd-ask
-uv run sdd skills run sdd-diagnose
+uv run providence skills learning-status --window-days 7
+uv run providence skills learning-candidates
+uv run providence skills learning-rules
+uv run providence skills run sdd-ask
+uv run providence skills run sdd-diagnose
 ```
 
 For approval and impact recording, keep using the canonical CLI workflow from
@@ -139,12 +139,12 @@ For approval and impact recording, keep using the canonical CLI workflow from
 - Keep historical context bounded; `sdd-ask` only loads a small recent window.
 - Keep rule activation human-approved; runtime may suggest, not self-authorize.
 - Keep evidence references attached to diagnosis and correction artifacts.
-- Keep runtime storage local to `.sdd/runtime/` for auditability and teardown.
+- Keep runtime storage local to `.providence/runtime/` for auditability and teardown.
 
 ## References
 
-- `packages/core/sdd_runtime/src/sdd_runtime/learning.py`
-- `packages/core/sdd_runtime/src/sdd_runtime/_skill_executor.py`
+- `packages/core/providence_runtime/src/providence_runtime/learning.py`
+- `packages/core/providence_runtime/src/providence_runtime/_skill_executor.py`
 - `docs/architecture/c4-components-runtime.md`
 - `docs/spec/reference/commands/cli.md`
 - `docs/guides/AGENT_GUIDE.md`

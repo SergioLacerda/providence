@@ -21,7 +21,7 @@ the same simplification rule by default.
 
 1. Derive all LLM input context from canonical fields (governance state, fingerprint, mandates count). Base form: max 2 lines, key=value compact
 2. Derive all user-facing output from a canonical event (phase, status, decision, artifact_path, next_action). Base output: max 3 lines, max 120 chars per line
-3. Persist full diagnostic evidence in `.sdd/runtime/` artifacts, not in console output
+3. Persist full diagnostic evidence in `.providence/runtime/` artifacts, not in console output
 4. Emit DEBUG/TRACE as structured JSON telemetry, bypassing all profile renderers
 5. Deduplicate repeated findings before rendering
 6. Include artifact paths for auditability on every finding or decision event
@@ -65,4 +65,4 @@ for audit.
 - M005: Token Economy Enforcement (compact IO reduces token usage)
 - M007: Telemetry Enforcement (DEBUG/TRACE structured JSON routing)
 - M011: English Language Standard (all canonical IO types and tests in English)
-- `packages/core/sdd_core/src/sdd_core/output/canonical_event.py` (`CanonicalLogEvent`, `CanonicalGovernanceInput`, `ProfileRenderer`)
+- `packages/core/providence_core/src/providence_core/output/canonical_event.py` (`CanonicalLogEvent`, `CanonicalGovernanceInput`, `ProfileRenderer`)

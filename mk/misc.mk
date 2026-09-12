@@ -1,7 +1,7 @@
 ##@ Misc
 
 .PHONY: hooks-install
-hooks-install: ## Install local git hooks (SDD shell hooks + pre-commit)
+hooks-install: ## Install local git hooks (Providence shell hooks + pre-commit)
 	$(PYTHON) tools/maintenance/make_tasks.py hooks-install
 
 governance-bootstrap: ## Generate full governance artifacts for local workspace

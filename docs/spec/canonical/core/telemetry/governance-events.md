@@ -63,4 +63,4 @@ Governance events are exported under the `sdd.*` namespace.
 
 - Envelope definition: [`INDEX.md`](INDEX.md)
 - Economy metrics: [`../economy/metrics.md`](../economy/metrics.md)
-- Drift detection logic: `packages/core/sdd_runtime/src/sdd_runtime/drift.py`
+- Drift detection logic: `packages/core/providence_runtime/src/providence_runtime/drift.py`

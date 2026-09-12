@@ -12,7 +12,7 @@ This layer is ALWAYS loaded at runtime.
 
 - Cannot be modified by agents
 - Cannot be bypassed during execution
-- Always compiled into `.sdd/compiled/`
+- Always compiled into `.providence/compiled/`
 - Must be loaded before ANY task
 
 ---
@@ -38,7 +38,7 @@ This layer is ALWAYS loaded at runtime.
 
 Compiled into:
 
-.sdd/compiled/
+.providence/compiled/
 
 Includes:
 
@@ -51,7 +51,7 @@ Includes:
 ## 🔁 Mandatory Load Sequence
 
 1. Detect `.spec.config`
-2. Load `.sdd/compiled/` indices
+2. Load `.providence/compiled/` indices
 3. Validate fingerprint
 4. Activate governance mode
 

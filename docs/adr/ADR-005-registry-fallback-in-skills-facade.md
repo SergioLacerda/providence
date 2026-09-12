@@ -72,6 +72,6 @@ class SkillRegistry:
 
 **Files:**
 
-- `packages/core/sdd_runtime/src/sdd_runtime/skills.py` — `_REGISTRY` definition
-- `packages/core/sdd_runtime/src/sdd_runtime/_skill_registry.py` — `SkillRegistry._fallback`
-- `packages/core/sdd_runtime/tests/test_skill_registry.py` — `test_get_skill_reflects_live_fallback_mutations`
+- `packages/core/providence_runtime/src/providence_runtime/skills.py` — `_REGISTRY` definition
+- `packages/core/providence_runtime/src/providence_runtime/_skill_registry.py` — `SkillRegistry._fallback`
+- `packages/core/providence_runtime/tests/test_skill_registry.py` — `test_get_skill_reflects_live_fallback_mutations`

@@ -1,4 +1,4 @@
-"""Unit tests for sdd_cli.utils.loader."""
+"""Unit tests for providence_cli.utils.loader."""
 
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ def _make_required_files(compiled_dir: Path) -> None:
 
 class TestRequiredFiles:
     def test_all_four_files_in_list(self, tmp_path: Path) -> None:
-        from sdd_cli.utils.loader import _required_files
+        from providence_cli.utils.loader import _required_files
 
         result = _required_files(tmp_path)
         assert len(result) == 4
@@ -39,7 +39,7 @@ class TestRequiredFiles:
 
 class TestAllExist:
     def test_returns_true_when_all_files_exist(self, tmp_path: Path) -> None:
-        from sdd_cli.utils.loader import _all_exist
+        from providence_cli.utils.loader import _all_exist
 
         files = [tmp_path / "a.txt", tmp_path / "b.txt"]
         for f in files:
@@ -47,33 +47,35 @@ class TestAllExist:
         assert _all_exist(files) is True
 
     def test_returns_false_when_any_file_missing(self, tmp_path: Path) -> None:
-        from sdd_cli.utils.loader import _all_exist
+        from providence_cli.utils.loader import _all_exist
 
         files = [tmp_path / "a.txt", tmp_path / "missing.txt"]
         (tmp_path / "a.txt").write_text("x", encoding="utf-8")
         assert _all_exist(files) is False
 
     def test_returns_true_for_empty_list(self) -> None:
-        from sdd_cli.utils.loader import _all_exist
+        from providence_cli.utils.loader import _all_exist
 
         assert _all_exist([]) is True
 
 
 class TestResolveCompiledDir:
     def test_returns_none_when_no_valid_path(self, tmp_path: Path) -> None:
-        from sdd_cli.utils.loader import _resolve_compiled_dir
+        from providence_cli.utils.loader import _resolve_compiled_dir
 
         mock_paths: dict[str, Any] = {
             "client_compiled": tmp_path / "no_client",
             "master_compiled": tmp_path / "no_master",
             "client_build": tmp_path / "no_build",
         }
-        with patch("sdd_core.utils.environment.get_sdd_paths", return_value=mock_paths):
+        with patch(
+            "providence_core.utils.environment.get_sdd_paths", return_value=mock_paths
+        ):
             result = _resolve_compiled_dir(str(tmp_path / "nonexistent"))
         assert result is None
 
     def test_returns_direct_path_when_files_present(self, tmp_path: Path) -> None:
-        from sdd_cli.utils.loader import _resolve_compiled_dir
+        from providence_cli.utils.loader import _resolve_compiled_dir
 
         _make_required_files(tmp_path)
         mock_paths: dict[str, Any] = {
@@ -81,12 +83,14 @@ class TestResolveCompiledDir:
             "master_compiled": tmp_path / "no_master",
             "client_build": tmp_path / "no_build",
         }
-        with patch("sdd_core.utils.environment.get_sdd_paths", return_value=mock_paths):
+        with patch(
+            "providence_core.utils.environment.get_sdd_paths", return_value=mock_paths
+        ):
             result = _resolve_compiled_dir(str(tmp_path))
         assert result == tmp_path
 
     def test_finds_compiled_subdir(self, tmp_path: Path) -> None:
-        from sdd_cli.utils.loader import _resolve_compiled_dir
+        from providence_cli.utils.loader import _resolve_compiled_dir
 
         compiled_subdir = tmp_path / "compiled"
         _make_required_files(compiled_subdir)
@@ -95,42 +99,48 @@ class TestResolveCompiledDir:
             "master_compiled": tmp_path / "no_master",
             "client_build": tmp_path / "no_build",
         }
-        with patch("sdd_core.utils.environment.get_sdd_paths", return_value=mock_paths):
+        with patch(
+            "providence_core.utils.environment.get_sdd_paths", return_value=mock_paths
+        ):
             result = _resolve_compiled_dir(str(tmp_path))
         assert result == compiled_subdir
 
     def test_finds_sdd_compiled_subdir(self, tmp_path: Path) -> None:
-        from sdd_cli.utils.loader import _resolve_compiled_dir
+        from providence_cli.utils.loader import _resolve_compiled_dir
 
-        sdd_compiled = tmp_path / ".sdd" / "compiled"
+        sdd_compiled = tmp_path / ".providence" / "compiled"
         _make_required_files(sdd_compiled)
         mock_paths: dict[str, Any] = {
             "client_compiled": tmp_path / "no_client",
             "master_compiled": tmp_path / "no_master",
             "client_build": tmp_path / "no_build",
         }
-        with patch("sdd_core.utils.environment.get_sdd_paths", return_value=mock_paths):
+        with patch(
+            "providence_core.utils.environment.get_sdd_paths", return_value=mock_paths
+        ):
             result = _resolve_compiled_dir(str(tmp_path))
         assert result == sdd_compiled
 
     def test_rejects_sdd_base_dir_without_compiled_subdir(self, tmp_path: Path) -> None:
-        from sdd_cli.utils.loader import _resolve_compiled_dir
+        from providence_cli.utils.loader import _resolve_compiled_dir
 
-        sdd_dir = tmp_path / ".sdd"
+        sdd_dir = tmp_path / ".providence"
         _make_required_files(sdd_dir)
         mock_paths: dict[str, Any] = {
             "client_compiled": tmp_path / "no_client",
             "master_compiled": tmp_path / "no_master",
             "client_build": tmp_path / "no_build",
         }
-        with patch("sdd_core.utils.environment.get_sdd_paths", return_value=mock_paths):
+        with patch(
+            "providence_core.utils.environment.get_sdd_paths", return_value=mock_paths
+        ):
             result = _resolve_compiled_dir(str(tmp_path))
         assert result is None
 
     def test_does_not_fallback_to_canonical_client_compiled(
         self, tmp_path: Path
     ) -> None:
-        from sdd_cli.utils.loader import _resolve_compiled_dir
+        from providence_cli.utils.loader import _resolve_compiled_dir
 
         canonical = tmp_path / "client_compiled"
         _make_required_files(canonical)
@@ -140,7 +150,7 @@ class TestResolveCompiledDir:
     def test_does_not_fallback_to_canonical_master_compiled(
         self, tmp_path: Path
     ) -> None:
-        from sdd_cli.utils.loader import _resolve_compiled_dir
+        from providence_cli.utils.loader import _resolve_compiled_dir
 
         canonical = tmp_path / "master_compiled"
         _make_required_files(canonical)
@@ -150,7 +160,7 @@ class TestResolveCompiledDir:
     def test_rejects_legacy_generated_path_even_when_files_exist(
         self, tmp_path: Path
     ) -> None:
-        from sdd_cli.utils.loader import _resolve_compiled_dir
+        from providence_cli.utils.loader import _resolve_compiled_dir
 
         legacy = tmp_path / "generated" / "master" / "compiled"
         _make_required_files(legacy)
@@ -160,19 +170,21 @@ class TestResolveCompiledDir:
 
 class TestValidateGovernancePath:
     def test_returns_false_for_invalid_path(self, tmp_path: Path) -> None:
-        from sdd_cli.utils.loader import validate_governance_path
+        from providence_cli.utils.loader import validate_governance_path
 
         mock_paths: dict[str, Any] = {
             "client_compiled": tmp_path / "no_client",
             "master_compiled": tmp_path / "no_master",
             "client_build": tmp_path / "no_build",
         }
-        with patch("sdd_core.utils.environment.get_sdd_paths", return_value=mock_paths):
+        with patch(
+            "providence_core.utils.environment.get_sdd_paths", return_value=mock_paths
+        ):
             result = validate_governance_path(str(tmp_path / "nonexistent"))
         assert result is False
 
     def test_returns_true_for_valid_path(self, tmp_path: Path) -> None:
-        from sdd_cli.utils.loader import validate_governance_path
+        from providence_cli.utils.loader import validate_governance_path
 
         _make_required_files(tmp_path)
         mock_paths: dict[str, Any] = {
@@ -180,14 +192,16 @@ class TestValidateGovernancePath:
             "master_compiled": tmp_path / "no_master",
             "client_build": tmp_path / "no_build",
         }
-        with patch("sdd_core.utils.environment.get_sdd_paths", return_value=mock_paths):
+        with patch(
+            "providence_core.utils.environment.get_sdd_paths", return_value=mock_paths
+        ):
             result = validate_governance_path(str(tmp_path))
         assert result is True
 
 
 class TestLoadGovernanceConfig:
     def test_raises_value_error_when_path_invalid(self, tmp_path: Path) -> None:
-        from sdd_cli.utils.loader import load_governance_config
+        from providence_cli.utils.loader import load_governance_config
 
         mock_paths: dict[str, Any] = {
             "client_compiled": tmp_path / "no_client",
@@ -195,13 +209,16 @@ class TestLoadGovernanceConfig:
             "client_build": tmp_path / "no_build",
         }
         with (
-            patch("sdd_core.utils.environment.get_sdd_paths", return_value=mock_paths),
+            patch(
+                "providence_core.utils.environment.get_sdd_paths",
+                return_value=mock_paths,
+            ),
             pytest.raises(ValueError, match="Invalid governance path"),
         ):
             load_governance_config(str(tmp_path / "nonexistent"))
 
     def test_raises_value_error_when_loader_fails(self, tmp_path: Path) -> None:
-        from sdd_cli.utils.loader import load_governance_config
+        from providence_cli.utils.loader import load_governance_config
 
         _make_required_files(tmp_path)
         mock_paths: dict[str, Any] = {
@@ -213,14 +230,20 @@ class TestLoadGovernanceConfig:
         mock_loader.load_all.side_effect = RuntimeError("load failed")
 
         with (
-            patch("sdd_core.utils.environment.get_sdd_paths", return_value=mock_paths),
-            patch("sdd_core.utils.loader.GovernanceLoader", return_value=mock_loader),
+            patch(
+                "providence_core.utils.environment.get_sdd_paths",
+                return_value=mock_paths,
+            ),
+            patch(
+                "providence_core.utils.loader.GovernanceLoader",
+                return_value=mock_loader,
+            ),
             pytest.raises(ValueError, match="Failed to load governance config"),
         ):
             load_governance_config(str(tmp_path))
 
     def test_returns_config_dict_when_loader_succeeds(self, tmp_path: Path) -> None:
-        from sdd_cli.utils.loader import load_governance_config
+        from providence_cli.utils.loader import load_governance_config
 
         _make_required_files(tmp_path)
         mock_paths: dict[str, Any] = {
@@ -237,8 +260,14 @@ class TestLoadGovernanceConfig:
         mock_loader._client_data = {"items": []}
 
         with (
-            patch("sdd_core.utils.environment.get_sdd_paths", return_value=mock_paths),
-            patch("sdd_core.utils.loader.GovernanceLoader", return_value=mock_loader),
+            patch(
+                "providence_core.utils.environment.get_sdd_paths",
+                return_value=mock_paths,
+            ),
+            patch(
+                "providence_core.utils.loader.GovernanceLoader",
+                return_value=mock_loader,
+            ),
         ):
             result = load_governance_config(str(tmp_path))
 
@@ -249,7 +278,7 @@ class TestLoadGovernanceConfig:
 
 class TestGetGovernanceSummary:
     def test_returns_summary_dict(self, tmp_path: Path) -> None:
-        from sdd_cli.utils.loader import get_governance_summary
+        from providence_cli.utils.loader import get_governance_summary
 
         config = {
             "core_fingerprint": "abcdef1234567890",
@@ -265,7 +294,7 @@ class TestGetGovernanceSummary:
         assert result["Core Items"] == 1
 
     def test_calls_load_governance_config_when_no_config(self, tmp_path: Path) -> None:
-        from sdd_cli.utils.loader import get_governance_summary
+        from providence_cli.utils.loader import get_governance_summary
 
         mock_config = {
             "core_fingerprint": "abc123def456789012",
@@ -275,7 +304,8 @@ class TestGetGovernanceSummary:
             "client_items_count": 0,
         }
         with patch(
-            "sdd_cli.utils.loader.load_governance_config", return_value=mock_config
+            "providence_cli.utils.loader.load_governance_config",
+            return_value=mock_config,
         ) as mock_load:
             result = get_governance_summary(str(tmp_path))
             mock_load.assert_called_once_with(str(tmp_path))

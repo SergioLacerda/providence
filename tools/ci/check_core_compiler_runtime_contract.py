@@ -16,8 +16,8 @@ from pathlib import Path
 SUITE = [
     "tests/contract/test_governance_schema.py",
     "tests/unit/test_governance_compiler.py",
-    "tests/unit/test_sdd_core_loader.py",
-    "packages/core/sdd_runtime/tests/test_runtime_contract.py",
+    "tests/unit/test_providence_core_loader.py",
+    "packages/core/providence_runtime/tests/test_runtime_contract.py",
 ]
 
 

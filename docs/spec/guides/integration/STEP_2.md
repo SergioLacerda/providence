@@ -17,7 +17,7 @@ You have:
 
 You're about to:
 
-- Copy files from sdd-harness/INTEGRATION/templates/
+- Copy files from providence/INTEGRATION/templates/
 - Populate your project with SDD configuration
 - Move to Step 3
 
@@ -27,26 +27,26 @@ You're about to:
 
 ### Option A: From Command Line (Recommended)
 
-**If sdd-harness is in a sibling directory** (recommended setup):
+**If providence is in a sibling directory** (recommended setup):
 
 ```bash
 # From your project directory
 cd /path/to/your-project
 
 # Copy templates (note trailing /)
-cp -r ../sdd-harness/INTEGRATION/templates/* .
+cp -r ../providence/INTEGRATION/templates/* .
 ```
 
-**If sdd-harness is elsewhere:**
+**If providence is elsewhere:**
 
 ```bash
-# Adjust the path to sdd-harness
-cp -r /path/to/sdd-harness/INTEGRATION/templates/* /path/to/your-project/
+# Adjust the path to providence
+cp -r /path/to/providence/INTEGRATION/templates/* /path/to/your-project/
 ```
 
 ### Option B: Manual Copy (If CLI doesn't work)
 
-1. Open file browser to `sdd-harness/INTEGRATION/templates/`
+1. Open file browser to `providence/INTEGRATION/templates/`
 2. Select all files: `Ctrl+A`
 3. Copy: `Ctrl+C`
 4. Navigate to your project root
@@ -69,7 +69,7 @@ ls -la .github/
 ls -la .vscode/
 ls -la .cursor/
 ls -la scripts/
-ls -la .sdd/
+ls -la .providence/
 ```
 
 **Expected files:**
@@ -83,13 +83,13 @@ ls -la .sdd/
 | `.cursor/rules/spec.mdc` | `.cursor/` | ~250 lines |
 | `.pre-commit-config.yaml` | project root | ~30 lines |
 | `.github/setup-precommit-hook.sh` | `scripts/` | ~50 lines |
-| `.sdd/README.md` | `.sdd/` | ~100 lines |
+| `.providence/README.md` | `.providence/` | ~100 lines |
 
 ### Quick Verification Script
 
 ```bash
 # Run this to verify all files
-for file in .spec.config .github/copilot-instructions.md .vscode/ai-rules.md .cursor/rules/spec.mdc .pre-commit-config.yaml .github/setup-precommit-hook.sh .sdd/README.md; do
+for file in .spec.config .github/copilot-instructions.md .vscode/ai-rules.md .cursor/rules/spec.mdc .pre-commit-config.yaml .github/setup-precommit-hook.sh .providence/README.md; do
   if [ -f "$file" ]; then
     echo "✅ $file"
   else
@@ -138,9 +138,9 @@ done
 - **Run:** After copying (optional) or during Step 4
 - **Usage:** `bash .github/setup-precommit-hook.sh`
 
-### `.sdd/README.md`
+### `.providence/README.md`
 
-- **Purpose:** Explains .sdd/ directory structure
+- **Purpose:** Explains .providence/ directory structure
 - **Used by:** Developers during PHASE 0
 - **Don't edit yet:** PHASE 0 will create infrastructure
 
@@ -152,13 +152,13 @@ done
 
 ```bash
 # Wrong: cp -r INTEGRATION/templates/* .
-# The path sdd-harness is not found
+# The path providence is not found
 
-# Solution: Check where sdd-harness actually is
-find ~ -type d -name "sdd-harness" 2>/dev/null
+# Solution: Check where providence actually is
+find ~ -type d -name "providence" 2>/dev/null
 
 # Then use the full path
-cp -r /home/username/sdd-harness/INTEGRATION/templates/* .
+cp -r /home/username/providence/INTEGRATION/templates/* .
 ```
 
 ### Issue: "Permission denied"
@@ -167,7 +167,7 @@ cp -r /home/username/sdd-harness/INTEGRATION/templates/* .
 # You don't have permission to copy
 
 # Solution: Use sudo (if needed)
-sudo cp -r ../sdd-harness/INTEGRATION/templates/* .
+sudo cp -r ../providence/INTEGRATION/templates/* .
 
 # Or change to your user
 sudo chown -R $USER:$USER .
@@ -177,10 +177,10 @@ sudo chown -R $USER:$USER .
 
 ```bash
 # Verify templates directory has all files
-ls -la ../sdd-harness/INTEGRATION/templates/
+ls -la ../providence/INTEGRATION/templates/
 
-# If templates/ is empty, something is wrong with sdd-harness
-# Check sdd-harness/INTEGRATION/templates/ exists
+# If templates/ is empty, something is wrong with providence
+# Check providence/INTEGRATION/templates/ exists
 ```
 
 ### Issue: Hidden files not showing
@@ -189,7 +189,7 @@ ls -la ../sdd-harness/INTEGRATION/templates/
 # Hidden files (starting with .) might not copy with *
 # Solution: Use this instead
 
-cp -r ../sdd-harness/INTEGRATION/templates/. .
+cp -r ../providence/INTEGRATION/templates/. .
 # Note: dot at end of "templates/."
 ```
 
@@ -201,7 +201,7 @@ Once all files are copied, proceed to:
 
 **→ [STEP_3.md](./STEP_3.md)**
 
-Configure `.spec.config` to point to sdd-harness.
+Configure `.spec.config` to point to providence.
 
 ---
 
@@ -212,7 +212,7 @@ After copying, you should have approximately:
 ```bash
 # Count files in each directory
 find . -type f ! -path './.git/*' ! -path './.github/*' -o -path './.github/*' | wc -l
-# Should show: ~8 files across .github/, .vscode/, .cursor/, scripts/, .sdd/
+# Should show: ~8 files across .github/, .vscode/, .cursor/, scripts/, .providence/
 ```
 
 ---

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SDD Architecture — Diagnostic Test Suite
+Providence Architecture — Diagnostic Test Suite
 
 Runs critical checks across file structure, configuration, imports, and git.
 
@@ -23,9 +23,11 @@ class DiagnosticTestSuite:
     def __init__(self, verbose: bool = False) -> None:
         self.verbose = verbose
         self.project_root = self._find_project_root()
-        sdd_core_src = self.project_root / "packages" / "core" / "sdd_core" / "src"
-        if str(sdd_core_src) not in sys.path:
-            sys.path.insert(0, str(sdd_core_src))
+        providence_core_src = (
+            self.project_root / "packages" / "core" / "providence_core" / "src"
+        )
+        if str(providence_core_src) not in sys.path:
+            sys.path.insert(0, str(providence_core_src))
         self.results: dict[str, Any] = {
             "timestamp": datetime.now().isoformat(),
             "project_root": str(self.project_root),
@@ -102,12 +104,15 @@ class DiagnosticTestSuite:
         d = self.project_root / "docs"
         return d.is_dir(), f"{'Found' if d.is_dir() else 'Not found'} at {d}"
 
-    def _check_sdd_compiled(self) -> tuple[bool, str]:
-        d = self.project_root / ".sdd" / "compiled"
+    def _check_governance_compiled(self) -> tuple[bool, str]:
+        d = self.project_root / ".providence" / "compiled"
         if not d.is_dir():
-            return False, ".sdd/compiled/ not initialized — run: sdd governance compile"
+            return (
+                False,
+                ".providence/compiled/ not initialized — run: providence governance compile",
+            )
         artifacts = list(d.glob("*.msgpack")) + list(d.glob("*.json"))
-        return True, f"{len(artifacts)} artifact(s) in .sdd/compiled/"
+        return True, f"{len(artifacts)} artifact(s) in .providence/compiled/"
 
     def _check_git_dir(self) -> tuple[bool, str]:
         d = self.project_root / ".git"
@@ -146,7 +151,7 @@ class DiagnosticTestSuite:
         return f.is_file(), (
             "CLAUDE.md found"
             if f.is_file()
-            else "CLAUDE.md missing — run: sdd governance generate"
+            else "CLAUDE.md missing — run: providence governance generate"
         )
 
     def _check_copilot_instructions(self) -> tuple[bool, str]:
@@ -154,7 +159,7 @@ class DiagnosticTestSuite:
         return f.is_file(), (
             "copilot-instructions.md found"
             if f.is_file()
-            else "Missing — run: sdd governance generate"
+            else "Missing — run: providence governance generate"
         )
 
     # ── Import tests ─────────────────────────────────────────────────────────
@@ -174,7 +179,7 @@ class DiagnosticTestSuite:
 
     def _check_git_status(self) -> tuple[bool, str]:
         try:
-            from sdd_core.utils.process import SafeProcessRunner
+            from providence_core.utils.process import SafeProcessRunner
 
             r = SafeProcessRunner().run(
                 ["git", "status"],
@@ -190,7 +195,7 @@ class DiagnosticTestSuite:
 
     def _check_git_main_branch(self) -> tuple[bool, str]:
         try:
-            from sdd_core.utils.process import SafeProcessRunner
+            from providence_core.utils.process import SafeProcessRunner
 
             r = SafeProcessRunner().run(
                 ["git", "branch", "--list", "main"],
@@ -216,8 +221,8 @@ class DiagnosticTestSuite:
         )
         self._run("docs/ root", self._check_docs_root, "structure")
         self._run(
-            "Compiled governance (.sdd/compiled/)",
-            self._check_sdd_compiled,
+            "Compiled governance (.providence/compiled/)",
+            self._check_governance_compiled,
             "structure",
             optional=True,
         )
@@ -264,7 +269,7 @@ class DiagnosticTestSuite:
 
     def print_report(self) -> None:
         print(f"\n{'=' * 70}")
-        print("SDD Diagnostic Report")
+        print("Providence Diagnostic Report")
         print(f"{'=' * 70}\n")
 
         by_category: dict[str, list[Any]] = {}
@@ -292,7 +297,7 @@ class DiagnosticTestSuite:
 def main() -> int:
     import argparse
 
-    parser = argparse.ArgumentParser(description="SDD Diagnostic Test Suite")
+    parser = argparse.ArgumentParser(description="Providence Diagnostic Test Suite")
     parser.add_argument("--verbose", "-v", action="store_true")
     parser.add_argument("--json", dest="as_json", action="store_true")
     args = parser.parse_args()

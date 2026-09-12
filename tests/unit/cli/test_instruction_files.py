@@ -1,4 +1,4 @@
-"""Unit tests for sdd_cli.generators._instruction_files."""
+"""Unit tests for providence_cli.generators._instruction_files."""
 
 from __future__ import annotations
 
@@ -29,7 +29,7 @@ def _make_config(items: list[dict[str, Any]] | None = None) -> dict[str, Any]:
 
 class TestGenerateAgentInstructionFiles:
     def test_generates_all_ide_files(self, tmp_path: Path) -> None:
-        from sdd_cli.generators._instruction_files import (
+        from providence_cli.generators._instruction_files import (
             generate_agent_instruction_files,
         )
 
@@ -37,7 +37,7 @@ class TestGenerateAgentInstructionFiles:
         assert len(results) >= 5  # copilot, vscode, claude, gemini, antigravity, cursor
 
     def test_creates_github_copilot_instructions(self, tmp_path: Path) -> None:
-        from sdd_cli.generators._instruction_files import (
+        from providence_cli.generators._instruction_files import (
             generate_agent_instruction_files,
         )
 
@@ -46,7 +46,7 @@ class TestGenerateAgentInstructionFiles:
         assert copilot_file.exists()
 
     def test_creates_claude_instructions(self, tmp_path: Path) -> None:
-        from sdd_cli.generators._instruction_files import (
+        from providence_cli.generators._instruction_files import (
             generate_agent_instruction_files,
         )
 
@@ -55,7 +55,7 @@ class TestGenerateAgentInstructionFiles:
         assert claude_file.exists()
 
     def test_creates_cursor_rules(self, tmp_path: Path) -> None:
-        from sdd_cli.generators._instruction_files import (
+        from providence_cli.generators._instruction_files import (
             generate_agent_instruction_files,
         )
 
@@ -64,7 +64,7 @@ class TestGenerateAgentInstructionFiles:
         assert cursor_file.exists()
 
     def test_returns_label_and_path_tuples(self, tmp_path: Path) -> None:
-        from sdd_cli.generators._instruction_files import (
+        from providence_cli.generators._instruction_files import (
             generate_agent_instruction_files,
         )
 
@@ -74,7 +74,7 @@ class TestGenerateAgentInstructionFiles:
             assert isinstance(path, Path)
 
     def test_claude_file_contains_bootstrap(self, tmp_path: Path) -> None:
-        from sdd_cli.generators._instruction_files import (
+        from providence_cli.generators._instruction_files import (
             generate_agent_instruction_files,
         )
 
@@ -84,7 +84,7 @@ class TestGenerateAgentInstructionFiles:
         assert "Agent Entrypoint" in content
 
     def test_files_contain_governance_content(self, tmp_path: Path) -> None:
-        from sdd_cli.generators._instruction_files import (
+        from providence_cli.generators._instruction_files import (
             generate_agent_instruction_files,
         )
 
@@ -105,14 +105,18 @@ class TestGenerateAgentInstructionFiles:
 
 class TestGenerateCopilotInstructions:
     def test_generates_copilot_file(self, tmp_path: Path) -> None:
-        from sdd_cli.generators._instruction_files import generate_copilot_instructions
+        from providence_cli.generators._instruction_files import (
+            generate_copilot_instructions,
+        )
 
         path = generate_copilot_instructions(tmp_path, _make_config())
         assert path.exists()
         assert path.name == "copilot-instructions.md"
 
     def test_returns_path_to_file(self, tmp_path: Path) -> None:
-        from sdd_cli.generators._instruction_files import generate_copilot_instructions
+        from providence_cli.generators._instruction_files import (
+            generate_copilot_instructions,
+        )
 
         path = generate_copilot_instructions(tmp_path, _make_config())
         assert isinstance(path, Path)

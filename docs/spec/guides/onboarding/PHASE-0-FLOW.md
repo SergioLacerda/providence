@@ -21,7 +21,7 @@ project-alvo/
 ├── tests/unit/specs_ia_units/     (minimal template)
 └── ... (rest of project code)
 
-# NO .sdd/context-aware/ yet (will be created by agent)
+# NO .providence/context-aware/ yet (will be created by agent)
 ```
 
 **Why minimal?** Project is "dumb" about SDD. Agent creates structure.
@@ -58,7 +58,7 @@ After agent completes PHASE 0:
 ```
 project-alvo/
 ├── .spec.config              ← SEED
-├── .sdd/context-aware/        ← CREATED BY AGENT
+├── .providence/context-aware/        ← CREATED BY AGENT
 │   ├── README.md
 │   ├── task-progress/
 │   │   ├── _current.md      ← Agent's tasks go here
@@ -89,10 +89,10 @@ Step 2: Read PHASE-0 Guide
      cat $SPEC_PATHdocs/spec/guides/onboarding/PHASE-0-AGENT-ONBOARDING.md
 
 Step 3: Create Directories
-  └─ mkdir -p .sdd/context-aware/{task-progress/completed,analysis,runtime-state}
+  └─ mkdir -p .providence/context-aware/{task-progress/completed,analysis,runtime-state}
 
 Step 4: Copy Templates
-  └─ cp $SPEC_PATH/templates/ai/context-aware/* .sdd/context-aware/
+  └─ cp $SPEC_PATH/templates/ai/context-aware/* .providence/context-aware/
 
 Step 5: Read Documentation
   └─ Read ia-rules.md
@@ -103,7 +103,7 @@ Step 6: Validate Knowledge
   └─ Score ≥ 4/5 on quiz = PASS
 
 Step 7: Commit
-  └─ git add .sdd/
+  └─ git add .providence/
      git commit -m "🚀 PHASE 0: Agent workspace initialized"
 ```
 
@@ -139,7 +139,7 @@ python $(grep spec_path .spec.config | cut -d' ' -f3)docs/spec/SCRIPTS/phase-0-a
 
 ```
 Problem:
-  - Each project had .sdd/context-aware/ pre-created
+  - Each project had .providence/context-aware/ pre-created
   - Duplicated across projects
   - Agent didn't "learn" by creating
   - Setup was implicit, not explicit
@@ -179,7 +179,7 @@ Agent has completed PHASE 0 if:
 ✅ SPEC framework accessible
    └─ All required directories present
 
-✅ .sdd/context-aware/ created
+✅ .providence/context-aware/ created
    └─ All folders and templates in place
 
 ✅ Knowledge validated
@@ -211,7 +211,7 @@ Agent navigates to spec-architecture
   → "Ah! This is the source of truth"
 
 Agent reads: PHASE-0-AGENT-ONBOARDING.md
-  → "I need to create .sdd/context-aware/"
+  → "I need to create .providence/context-aware/"
 
 Agent executes:
   $ python docs/ia/SCRIPTS/phase-0-agent-onboarding.py
@@ -219,9 +219,9 @@ Agent executes:
 Agent sees: "✅ PHASE 0 Complete"
 
 Agent commits:
-  $ git add .sdd/ && git commit -m "🚀 PHASE 0: Agent workspace initialized"
+  $ git add .providence/ && git commit -m "🚀 PHASE 0: Agent workspace initialized"
 
-Agent checks: .sdd/context-aware/ now exists
+Agent checks: .providence/context-aware/ now exists
   → task-progress/_current.md (ready to fill)
   → analysis/_current-issues.md (ready to fill)
   → runtime-state/_current.md (ready to fill)
@@ -246,7 +246,7 @@ Agent proceeds: Read AGENT_HARNESS.md (phases 1-7)
     ↓
 PHASE-0-AGENT-ONBOARDING.md (in spec)
     ↓
-    Creates .sdd/context-aware/
+    Creates .providence/context-aware/
     ↓
 Copies templates (from spec)
     ↓
@@ -274,7 +274,7 @@ Real work begins! 🚀
 
 **Created during PHASE 0 (by agent):**
 
-- `.sdd/context-aware/` — Entire infrastructure
+- `.providence/context-aware/` — Entire infrastructure
 
 ---
 
@@ -292,7 +292,7 @@ Real work begins! 🚀
 **For agents (before starting work):**
 
 - [ ] Executed PHASE 0 (manual or automated) ✅
-- [ ] `.sdd/context-aware/` created ✅
+- [ ] `.providence/context-aware/` created ✅
 - [ ] Passed SDD validation quiz (≥4/5) ✅
 - [ ] Changes committed to git ✅
 - [ ] Ready to read AGENT_HARNESS ✅
@@ -304,7 +304,7 @@ Real work begins! 🚀
 **PHASE 0 is the bridge between:**
 
 - General SPEC framework (in spec-architecture)
-- Project-specific context (in .sdd/context-aware/)
+- Project-specific context (in .providence/context-aware/)
 
 **Agent executes it once per project** → Workspace is initialized and ready.
 

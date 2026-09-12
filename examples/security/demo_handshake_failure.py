@@ -21,7 +21,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from sdd_runtime import SkillContractError, validate_awakening_profile
+from providence_runtime import SkillContractError, validate_awakening_profile
 
 SECTION = "\n" + "=" * 60
 

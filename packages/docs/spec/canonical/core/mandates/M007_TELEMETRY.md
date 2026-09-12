@@ -37,10 +37,10 @@ If OpenTelemetry is enabled, agents MUST:
 
 ## 🛠️ Implementation
 
-- **Runtime module:** `packages/core/sdd_runtime/src/sdd_runtime/telemetry.py`
+- **Runtime module:** `packages/core/providence_runtime/src/providence_runtime/telemetry.py`
   - `RuntimeEvent` — standardized event envelope.
   - `TelemetrySink` — collector and JSONL persistence.
-- **OTEL Bridge:** `packages/core/sdd_runtime/src/sdd_runtime/otel.py`
+- **OTEL Bridge:** `packages/core/providence_runtime/src/providence_runtime/otel.py`
   - `OtelBridge` — subclass for OTEL export.
   - `OtlpHttpExporter` — OTLP-HTTP/JSON transport.
 
@@ -54,7 +54,7 @@ Unrecorded governance decisions are a security risk. Telemetry provides the "bla
 
 ## ✅ Validation
 
-- [ ] Every `sdd ask` command generates at least one entry in `.sdd/compliance-events.jsonl` (written to the runtime state folder).
+- [ ] Every `providence ask` command generates at least one entry in `.providence/compliance-events.jsonl` (written to the runtime state folder).
 - [ ] Events contain a valid `artifact_fingerprint`.
 - [ ] If an OTEL endpoint is configured, spans appear in the target observability platform with `sdd.*` attributes.
 
@@ -62,7 +62,7 @@ Unrecorded governance decisions are a security risk. Telemetry provides the "bla
 
 ## Skill-Oriented Reinforcement (Normative)
 
-- [ ] Every `sdd skills run <skill>` invocation MUST emit a structured skill execution event.
+- [ ] Every `providence skills run <skill>` invocation MUST emit a structured skill execution event.
 - [ ] Skill telemetry MUST include at minimum: skill name, active profile, policy result, reason, and exit code.
 - [ ] If CLI primitive fallback is used, telemetry MUST include fallback command references for forensic traceability.
 

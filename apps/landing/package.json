@@ -1,5 +1,5 @@
 {
-  "name": "sdd-harness-landing",
+  "name": "providence-landing",
   "private": true,
   "type": "module",
   "version": "0.1.0",
@@ -20,10 +20,13 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
     "@types/node": "^26.4.1",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitest/coverage-v8": "^5.0.0",
+    "happy-dom": "^20.14.0",
     "typescript": "^6.0.3",
     "vitest": "^5.0.0"
   },

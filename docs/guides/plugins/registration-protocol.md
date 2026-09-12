@@ -2,15 +2,15 @@
 
 **Status:** Active
 **Mandate:** M019 (Governance Federation)
-**Agent-facing counterpart:** `.sdd/plugins/handshake-protocol.md`
+**Agent-facing counterpart:** `.providence/plugins/handshake-protocol.md`
 
 ---
 
 ## Overview
 
-Plugin registration is **agent-mediated**: the agent detects SDD governance,
+Plugin registration is **agent-mediated**: the agent detects Providence governance,
 identifies the active skill, and offers to register it. The user approves.
-The agent writes the entry to `.sdd/plugins/registry.yaml` and emits a
+The agent writes the entry to `.providence/plugins/registry.yaml` and emits a
 GovernanceEvent.
 
 No plugin self-registers. No static pre-population. The registry reflects
@@ -21,7 +21,7 @@ what has actually been used and approved in this project.
 ## Registration Flow
 
 ```
-Agent detects .sdd/metadata.json
+Agent detects .providence/metadata.json
         ↓
 Agent identifies active skill
         ↓
@@ -49,9 +49,9 @@ The agent determines mode based on what governance it finds at registration time
 
 | Condition | Mode assigned |
 |-----------|--------------|
-| `.sdd/metadata.json` present + all HARD mandates resolvable | `governed` |
-| `.sdd/metadata.json` present but governance incomplete | `compatible` |
-| No `.sdd/` found | `standalone` (registration deferred) |
+| `.providence/metadata.json` present + all HARD mandates resolvable | `governed` |
+| `.providence/metadata.json` present but governance incomplete | `compatible` |
+| No `.providence/` found | `standalone` (registration deferred) |
 
 ---
 
@@ -77,13 +77,13 @@ Two events are relevant to plugin governance:
 | `PLUGIN_REGISTERED` | Plugin successfully registered | `info` |
 | `PLUGIN_GOVERNANCE_VIOLATION` | Plugin violated M019 or M017 at runtime | `critical` |
 
-Events are written to `.sdd/runtime/compliance-events.jsonl`.
+Events are written to `.providence/runtime/compliance-events.jsonl`.
 
 ---
 
 ## Internal Skills
 
-Skills under `.sdd/skills/` are **not registered** via this protocol. Their
+Skills under `.providence/skills/` are **not registered** via this protocol. Their
 governance contract is declared directly in their `skill.yaml` via the
 `governance_adherence:` block. They are governed at load time, not registration time.
 

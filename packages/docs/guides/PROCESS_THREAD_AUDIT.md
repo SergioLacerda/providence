@@ -14,8 +14,8 @@ via `uv run python tools/maintenance/thread_audit_report.py`.
 ### P0 (fixed in this phase)
 
 - Direct subprocess execution bypassing canonical runner:
-  - `packages/interfaces/sdd_cli/src/sdd_cli/commands/tools.py`
-  - `packages/core/sdd_runtime/src/sdd_runtime/skills.py` (fallback path)
+  - `packages/interfaces/providence_cli/src/providence_cli/commands/tools.py`
+  - `packages/core/providence_runtime/src/providence_runtime/skills.py` (fallback path)
 
 ### P1 (remaining)
 
@@ -34,19 +34,19 @@ via `uv run python tools/maintenance/thread_audit_report.py`.
 ### P1
 
 - Metrics command starts background threads for live reload:
-  - `packages/interfaces/sdd_cli/src/sdd_cli/commands/metrics.py`
+  - `packages/interfaces/providence_cli/src/providence_cli/commands/metrics.py`
 - Residual risk: explicit thread creation remains and should keep deterministic lifecycle tests as regression guard.
 
 ### P2
 
 - In-process collectors use locks (`RLock`) with broad scope:
-  - `packages/core/sdd_runtime/src/sdd_runtime/metrics.py`
+  - `packages/core/providence_runtime/src/providence_runtime/metrics.py`
 - Risk: potential contention under high-frequency event ingestion (low risk in current workload profile).
 
 ### P2
 
 - Tests spawn HTTP servers with background threads:
-  - `packages/interfaces/sdd_cli/tests/test_metrics_commands.py`
+  - `packages/interfaces/providence_cli/tests/test_metrics_commands.py`
 - Risk: flakiness from timing windows; improve deterministic shutdown patterns.
 
 ## Backlog for Phase 2 (Threads)

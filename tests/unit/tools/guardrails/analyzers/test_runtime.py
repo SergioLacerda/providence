@@ -57,19 +57,19 @@ class TestFindHeavyImports:
 
 
 class TestFindCircularDeps:
-    """find_circular_deps flags sdd_runtime imports other than self-imports."""
+    """find_circular_deps flags providence_runtime imports other than self-imports."""
 
     def test_detects_circular_dep(self) -> None:
-        imports = _parse_imports("from sdd_runtime.bar import Baz\n")
+        imports = _parse_imports("from providence_runtime.bar import Baz\n")
         deps = find_circular_deps(Path("foo.py"), imports)
-        assert deps == ["sdd_runtime.bar"]
+        assert deps == ["providence_runtime.bar"]
 
     def test_self_import_not_circular(self) -> None:
-        imports = _parse_imports("from sdd_runtime.foo import something\n")
+        imports = _parse_imports("from providence_runtime.foo import something\n")
         deps = find_circular_deps(Path("foo.py"), imports)
         assert deps == []
 
-    def test_no_sdd_runtime_imports(self) -> None:
+    def test_no_providence_runtime_imports(self) -> None:
         imports = _parse_imports("import os\n")
         assert find_circular_deps(Path("foo.py"), imports) == []
 
@@ -210,12 +210,12 @@ class TestPerformanceDetector:
             name="a.py", path="a.py", lines=10, classes=0, functions=1, imports=1
         )
         metrics.custom_metrics["heavy_imports"] = ["pandas"]
-        metrics.custom_metrics["circular_deps"] = ["sdd_runtime.other"]
+        metrics.custom_metrics["circular_deps"] = ["providence_runtime.other"]
 
         result = _performance_detector(metrics, "content", AnalysisConfig())
 
         assert "Heavy import: pandas" in result.findings
-        assert "Circular dependency: sdd_runtime.other" in result.findings
+        assert "Circular dependency: providence_runtime.other" in result.findings
         assert result.score == 100 - 10 - 15
 
 
@@ -299,7 +299,7 @@ class TestAnalyzeAllEndToEnd:
         data = json.loads(
             (tmp_path / "out" / "analysis.json").read_text(encoding="utf-8")
         )
-        assert data["analyzer_name"] == "sdd_runtime"
+        assert data["analyzer_name"] == "providence_runtime"
         assert set(data["summary"]) >= {
             "total_files",
             "refactoring",

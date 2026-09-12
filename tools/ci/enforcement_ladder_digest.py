@@ -183,7 +183,7 @@ def main() -> int:
     )
     parser.add_argument(
         "--impacts",
-        default=".sdd/runtime/rule-impact.jsonl",
+        default=".providence/runtime/rule-impact.jsonl",
         help="Path to rule-impact jsonl telemetry.",
     )
     parser.add_argument(

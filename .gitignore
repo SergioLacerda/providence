@@ -78,13 +78,13 @@ scratch/
 # Build Artifacts (PHASE 1-3 compilation outputs)
 packages/sdd-compiled/
 packages/build_scripts/source/
-packages/sdd-wizard/.sdd-runtime/compiled/
+packages/sdd-wizard/.providence-runtime/compiled/
 packages/sdd-compiler/runtime/
 *.compiled.msgpack
 *.compiled.json
 
 # Wizard Output (test/temporary)
-sdd-generated/
+providence-generated/
 packages/interfaces/sdd_wizard/src/sdd_wizard/sdd_runtime/
 packages/interfaces/sdd_wizard/src/sdd_wizard/sdd_runtime/**
 packages/interfaces/sdd_wizard/src/sdd_wizard/sdd_runtime/templates/
@@ -100,29 +100,51 @@ packages/core/sdd_core/src/sdd_core/_native/
 # OS
 .DS_Store
 Thumbs.db
+NUL
 
-# SDD Profiles — gerado via CLI, ignorar conteúdo mas manter arquivos de trust
-# Git não suporta exceções dentro de diretórios ignorados via dir/,
-# então usamos dir/* para poder abrir exceções em subdiretórios específicos.
-.sdd/*
-# Trust: apenas chaves públicas e keyring são seguros para commitar
-!.sdd/trust/
-.sdd/trust/*
-!.sdd/trust/trusted-keys.json
-!.sdd/trust/README.md
-# Compiled: apenas assinaturas dos artifacts são commitadas
-!.sdd/compiled/
-.sdd/compiled/*
-!.sdd/compiled/governance-core.json.sig
-!.sdd/compiled/governance-client.json.sig
-# Selector: metadata e mandates são fontes canônicas necessárias para o selector em CI/CD
-!.sdd/metadata.json
-!.sdd/source/
-.sdd/source/*
-!.sdd/source/mandates/
-.sdd/source/mandates/*
-!.sdd/source/mandates/mandates.md
-!.sdd/source/guidelines.dsl
+# SDD Profiles - generated via CLI; ignore runtime contents but keep safe/canonical files
+# Git cannot re-include files inside a directory ignored with dir/, so use dir/*.
+.providence/*
+# Trust: only public/keyring material is safe to commit
+!.providence/trust/
+.providence/trust/*
+!.providence/trust/trusted-keys.json
+!.providence/trust/README.md
+# Compiled: only artifact signatures are committed
+!.providence/compiled/
+.providence/compiled/*
+!.providence/compiled/governance-core.json.sig
+!.providence/compiled/governance-client.json.sig
+# Selector: metadata and mandates are canonical inputs needed by selector in CI/CD
+!.providence/metadata.json
+!.providence/source/
+.providence/source/*
+!.providence/source/mandates/
+.providence/source/mandates/*
+!.providence/source/mandates/mandates.md
+!.providence/source/guidelines.dsl
+
+# Providence Profiles - generated via CLI; ignore runtime contents but keep safe/canonical files
+# Mirrors the legacy .providence policy for the .providence runtime directory.
+.providence/*
+# Trust: only public/keyring material is safe to commit
+!.providence/trust/
+.providence/trust/*
+!.providence/trust/trusted-keys.json
+!.providence/trust/README.md
+# Compiled: only artifact signatures are committed
+!.providence/compiled/
+.providence/compiled/*
+!.providence/compiled/governance-core.json.sig
+!.providence/compiled/governance-client.json.sig
+# Selector: metadata and mandates are canonical inputs needed by selector in CI/CD
+!.providence/metadata.json
+!.providence/source/
+.providence/source/*
+!.providence/source/mandates/
+.providence/source/mandates/*
+!.providence/source/mandates/mandates.md
+!.providence/source/guidelines.dsl
 
 # Project Specific
 test_output.log
@@ -133,12 +155,12 @@ _version.py
 # Generated selector assets (built into docs_dir so MkDocs serves/copies them)
 docs/selector/
 
-# Dev Container — ignore dotfiles but keep the config files
+# Dev Container - ignore dotfiles but keep the config files
 .devcontainer/.*
 !.devcontainer/devcontainer.json
 !.devcontainer/post-create.sh
 build/
 
-# Drift battery local state — not for commit
+# Drift battery local state - not for commit
 examples/security/drift_battery_snapshot.json
 .strategist/.compiled/

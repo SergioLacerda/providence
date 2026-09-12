@@ -2,7 +2,7 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from sdd_integration.engine.context import ExecutionContext
+from providence_integration.engine.context import ExecutionContext
 
 
 def make_spec(isolation=False, working_dir=None):

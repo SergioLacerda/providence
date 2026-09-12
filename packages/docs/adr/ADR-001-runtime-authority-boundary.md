@@ -9,7 +9,7 @@
 
 ## Context
 
-The introduction of `sdd_runtime` creates a second active layer in the governance
+The introduction of `providence_runtime` creates a second active layer in the governance
 stack alongside `sdd_compiler`.  Both layers process governance artifacts, which
 raises the risk of a dual source of truth: compiler defines semantics, runtime
 redefines or re-interprets them at execution time.
@@ -21,12 +21,12 @@ this boundary be made explicit and enforced by a formal architectural rule.
 
 ## Decision
 
-**`sdd_runtime` is a pure execution engine.  It is not a normative authority.**
+**`providence_runtime` is a pure execution engine.  It is not a normative authority.**
 
 The canonical decision chain is immutable:
 
 ```
-docs/spec/canonical/  →  sdd_compiler  →  compiled artifacts  →  sdd_runtime  →  CLI/IDE
+docs/spec/canonical/  →  sdd_compiler  →  compiled artifacts  →  providence_runtime  →  CLI/IDE
 (normative source)       (semantic        (versioned DTOs)       (executor)
                           authority)
 ```
@@ -40,7 +40,7 @@ semantics from any other source is a violation of this boundary.
 
 ## Consequences
 
-### Permitted in `sdd_runtime`
+### Permitted in `providence_runtime`
 
 - Loading and consuming compiled artifacts (read-only).
 - Executing policy checks against artifact state.
@@ -48,7 +48,7 @@ semantics from any other source is a violation of this boundary.
 - Emitting structured telemetry events.
 - Returning deterministic outcomes for fixed `(profile, artifact, session)` tuples.
 
-### Prohibited in `sdd_runtime`
+### Prohibited in `providence_runtime`
 
 - Parsing `docs/spec/canonical/` or any source markdown for enforcement logic.
 - Introducing policy semantics not present in compiled artifacts.
@@ -63,10 +63,10 @@ semantics from any other source is a violation of this boundary.
 | Gate | Mechanism | Location |
 |---|---|---|
 | No New Rules | Code review policy: runtime PRs must not introduce normative semantics | ADR + CLAUDE.md |
-| Traceability | `TraceabilityValidator.validate_event()` on sensitive events | `sdd_runtime.validator` |
-| Compatibility | `SchemaValidator.validate_artifact()` before any artifact is consumed | `sdd_runtime.validator` |
+| Traceability | `TraceabilityValidator.validate_event()` on sensitive events | `providence_runtime.validator` |
+| Compatibility | `SchemaValidator.validate_artifact()` before any artifact is consumed | `providence_runtime.validator` |
 | Determinism | Replay harness in `tests/test_determinism.py` (20 iterations) | CI test suite |
-| Audit | `RuntimeEvent.event_schema_version` mandatory; passive JSONL sink | `sdd_runtime.telemetry` |
+| Audit | `RuntimeEvent.event_schema_version` mandatory; passive JSONL sink | `providence_runtime.telemetry` |
 
 ---
 
@@ -84,7 +84,7 @@ When the boundary is violated at runtime:
 
 This ADR must be revisited if:
 
-1. `sdd_runtime` is proposed to accept raw spec documents as input.
+1. `providence_runtime` is proposed to accept raw spec documents as input.
 2. A new fingerprint algorithm is introduced.
 3. Session schema is extended with new semantics beyond the mandatory fields in §12.3.
 4. Runtime policy adapter versions diverge from compiler output versions.

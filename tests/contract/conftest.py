@@ -2,12 +2,12 @@
 
 Recompiles governance artifacts before the contract test suite runs.
 This prevents stale-artifact failures when tests are invoked via
-'sdd test run', 'make check', or 'pytest tests/contract/' directly.
+'providence test run', 'make check', or 'pytest tests/contract/' directly.
 
 In CI, the bootstrap action already compiles and validates artifacts
-(sdd governance compile + sync). The fixture skips recompilation when
+(providence governance compile + sync). The fixture skips recompilation when
 valid artifacts are already present to avoid a redundant pipeline run
-that could fail due to env differences (e.g. missing .sdd/source/).
+that could fail due to env differences (e.g. missing .providence/source/).
 """
 
 from __future__ import annotations
@@ -21,13 +21,16 @@ from pathlib import Path
 
 import pytest
 
-from sdd_cli.utils.sdd_authority import compiled_active_dir, resolve_workspace_root
+from providence_cli.utils.providence_authority import (
+    compiled_active_dir,
+    resolve_workspace_root,
+)
 
 _ITEM_ID_PATTERN = re.compile(r"^[A-Z]\d{2,3}$")
 
 
 def _repo_compiled_dir(repo_root: Path) -> Path:
-    return repo_root / ".sdd" / "compiled"
+    return repo_root / ".providence" / "compiled"
 
 
 def _repo_artifacts_valid(repo_root: Path) -> bool:
@@ -57,7 +60,7 @@ def _repo_artifacts_valid(repo_root: Path) -> bool:
 
 def _sync_repo_artifacts_into_workspace(repo_root: Path, workspace_root: Path) -> None:
     compiled_src = _repo_compiled_dir(repo_root)
-    compiled_dst = workspace_root / ".sdd" / "compiled"
+    compiled_dst = workspace_root / ".providence" / "compiled"
     compiled_dst.mkdir(parents=True, exist_ok=True)
     for name in (
         "governance-core.json",
@@ -128,7 +131,7 @@ def _acquire_compile_lock(
 
 
 def _compile_fresh_governance(repo_root: Path, workspace_root: Path) -> None:
-    from sdd_core.governance_orchestrator import GovernanceOrchestrator
+    from providence_core.governance_orchestrator import GovernanceOrchestrator
 
     result = GovernanceOrchestrator(
         repo_root=str(repo_root),
@@ -154,7 +157,7 @@ def fresh_governance_artifact() -> None:
 
     # xdist workers can enter this fixture concurrently and race while
     # writing/reading governance artifacts. Serialize compilation with a lock.
-    lock_file = workspace_root / ".sdd" / "runtime" / "contract-compile.lock"
+    lock_file = workspace_root / ".providence" / "runtime" / "contract-compile.lock"
     lock_file.parent.mkdir(parents=True, exist_ok=True)
     lock_fd = _acquire_compile_lock(
         lock_file, timeout_seconds=60.0, repo_root=repo_root

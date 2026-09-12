@@ -4,10 +4,10 @@ set -e
 # Sovereign Entrypoint: Governance-Aware Boot Sequence
 # Mandate: P003 (Mandatory Human Sign-off)
 
-echo "🛡️ Starting SDD Sovereign Container..."
+echo "🛡️ Starting Providence Sovereign Container..."
 
 # 1. Keyring Pre-flight
-TRUST_DIR="/app/.sdd/trust"
+TRUST_DIR="/app/.providence/trust"
 KEYRING="$TRUST_DIR/trusted-keys.json"
 
 if [ ! -f "$KEYRING" ]; then
@@ -17,7 +17,7 @@ if [ ! -f "$KEYRING" ]; then
 else
     # 2. Run Governance Audit (Hardened Gate)
     echo "🔍 Performing Security Audit (P003)..."
-    if sdd governance audit --verbose; then
+    if providence governance audit --verbose; then
         echo "✅ Audit passed. Governance is hardened."
         export SDD_GOVERNANCE_MODE="hardened"
     else
@@ -37,7 +37,7 @@ if [ "$SDD_GOVERNANCE_MODE" == "safety" ]; then
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
     if [ "$#" -eq 0 ]; then
-        set -- sdd tools list
+        set -- providence tools list
     fi
 else
     if [ "$#" -eq 0 ]; then
@@ -47,7 +47,7 @@ fi
 
 # 4. Test isolation for container CI health checks
 # When running `make check` inside the container, execute tests from a shadow
-# copy of the repository so any `.sdd` runtime/trust mutations stay in /tmp.
+# copy of the repository so any `.providence` runtime/trust mutations stay in /tmp.
 if [ "${1:-}" = "make" ] && [ "${2:-}" = "check" ]; then
     SHADOW_ROOT="/tmp/sdd-shadow-repo"
     rm -rf "$SHADOW_ROOT"

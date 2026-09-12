@@ -38,7 +38,7 @@ class TestIntegrationFlow:
         print("\n📋 TEST STEP 1: Setup Project Structure")
 
         # Create required directories
-        dirs = [".github", ".vscode", ".cursor", "scripts", ".sdd"]
+        dirs = [".github", ".vscode", ".cursor", "scripts", ".providence"]
         for d in dirs:
             dir_path = os.path.join(self.test_dir, d)
             os.makedirs(dir_path, exist_ok=True)
@@ -67,7 +67,7 @@ class TestIntegrationFlow:
             ".vscode/ai-rules.md",
             ".vscode/settings.json",
             ".cursor/rules/spec.mdc",
-            ".sdd/README.md",
+            ".providence/README.md",
         ]
 
         for file_path in expected_files:
@@ -86,15 +86,15 @@ class TestIntegrationFlow:
         print("\n📋 TEST STEP 4: Run Validation")
 
         # Simulate PHASE 0 validation
-        ai_dir = os.path.join(self.test_dir, ".sdd")
+        ai_dir = os.path.join(self.test_dir, ".providence")
 
-        # Create expected .sdd/ subdirectories
+        # Create expected .providence/ subdirectories
         subdirs = ["context-aware", "runtime"]
         for subdir in subdirs:
             sub_path = os.path.join(ai_dir, subdir)
             os.makedirs(sub_path, exist_ok=True)
-            assert os.path.exists(sub_path), f"Failed to create .sdd/{subdir}"
-            print(f"  ✅ Created: .sdd/{subdir}/")
+            assert os.path.exists(sub_path), f"Failed to create .providence/{subdir}"
+            print(f"  ✅ Created: .providence/{subdir}/")
 
         print("  ✅ STEP 4 PASSED: Validation structure created")
         return True
@@ -107,7 +107,7 @@ class TestIntegrationFlow:
         files_to_create = [
             ".github/copilot-instructions.md",
             ".vscode/ai-rules.md",
-            ".sdd/README.md",
+            ".providence/README.md",
         ]
 
         for file_path in files_to_create:

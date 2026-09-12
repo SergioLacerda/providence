@@ -26,7 +26,7 @@ For new developers and agents learning SDD.
 
 **File:** `guides/onboarding/PHASE-0-AGENT-ONBOARDING.md`
 **Purpose:** Detailed guide for Phase 0 setup
-**Read When:** New to SDD, need to set up .sdd/ infrastructure
+**Read When:** New to SDD, need to set up .providence/ infrastructure
 **Duration:** 20-30 minutes
 **Covers:** Creating context-aware and runtime directories, validating setup
 

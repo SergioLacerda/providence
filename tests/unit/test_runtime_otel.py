@@ -1,13 +1,13 @@
 from types import SimpleNamespace
 
-from sdd_runtime._events import _generate_span_id
-from sdd_runtime.otel import (
+from providence_runtime._events import _generate_span_id
+from providence_runtime.otel import (
     _build_otlp_payload,
     _status_code,
     _to_kv_list,
     _ts_to_nano,
 )
-from sdd_runtime.telemetry import OtelAttributes, OtelBridge
+from providence_runtime.telemetry import OtelAttributes, OtelBridge
 
 
 class DummyExporter:
@@ -170,7 +170,7 @@ def test_ot_bridge_no_exporter(tmp_path):
 
 
 def test_otlp_http_exporter_makes_post(monkeypatch):
-    from sdd_runtime.otel import OtlpHttpExporter
+    from providence_runtime.otel import OtlpHttpExporter
 
     called = {}
 

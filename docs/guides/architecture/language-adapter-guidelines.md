@@ -10,7 +10,7 @@
 
 Language adapter guidelines translate universal, agnostic mandates into
 concrete enforcement for a specific technology stack. They live in
-`.sdd/source/guidelines.dsl` and are filtered by the wizard at client
+`.providence/source/guidelines.dsl` and are filtered by the wizard at client
 onboarding time based on the declared target language.
 
 **Separation principle:**
@@ -154,4 +154,4 @@ exception_policy: {
 
 - [TypeScript Engineering Guidelines](../../guidelines/languages/typescript.md) — G04, G08, G12, G16, G20
 
-See complete DSL: `.sdd/source/guidelines.dsl` — G01–G022 covering language adapters plus contextual language-preference guidance.
+See complete DSL: `.providence/source/guidelines.dsl` — G01–G022 covering language adapters plus contextual language-preference guidance.

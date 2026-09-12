@@ -40,7 +40,7 @@ assignees: ''
 Link to relevant docs:
 - [Health Check Guide](../../docs/HEALTH_CHECK_GUIDE.md)
 - [Troubleshooting Guide](../../docs/TROUBLESHOOTING.md)
-- [Governance Implementation](../../packages/.sdd-wizard/templates/governance/base-seedling/GOVERNANCE_IMPLEMENTATION.md)
+- [Governance Implementation](../../packages/.providence-wizard/templates/governance/base-seedling/GOVERNANCE_IMPLEMENTATION.md)
 
 ## 🚀 Implementation Notes
 

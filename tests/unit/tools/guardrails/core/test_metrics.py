@@ -48,7 +48,7 @@ class TestAnalysisResult:
 
     def test_defaults(self) -> None:
         result = AnalysisResult(
-            analyzer_name="sdd_runtime", timestamp="2026-06-12T00:00:00"
+            analyzer_name="providence_runtime", timestamp="2026-06-12T00:00:00"
         )
         assert result.files == []
         assert result.summary == {}

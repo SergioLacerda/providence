@@ -167,10 +167,10 @@ def gate_test_isolation_preflight(mode: str) -> GateResult:
     )
 
 
-def gate_repo_sdd_mutation_guard(mode: str) -> GateResult:
+def gate_repo_providence_mutation_guard(mode: str) -> GateResult:
     root = Path.cwd()
     result = subprocess.run(  # nosec B603
-        ["git", "status", "--porcelain", ".sdd"],
+        ["git", "status", "--porcelain", ".providence"],
         cwd=root,
         check=False,
         capture_output=True,
@@ -178,41 +178,46 @@ def gate_repo_sdd_mutation_guard(mode: str) -> GateResult:
     )
     if result.returncode != 0:
         return GateResult(
-            gate="repo-sdd-mutation-guard",
+            gate="repo-providence-mutation-guard",
             mode=mode,
             ok=False,
             code="TEST_POLICY_VIOLATION",
-            message="Could not evaluate repository .sdd status",
+            message="Could not evaluate repository .providence status",
             details={"stderr": result.stderr.strip()},
         )
     dirty = [line for line in result.stdout.splitlines() if line.strip()]
     if dirty:
         return GateResult(
-            gate="repo-sdd-mutation-guard",
+            gate="repo-providence-mutation-guard",
             mode=mode,
             ok=False,
             code="TEST_POLICY_VIOLATION",
-            message="Repository .sdd mutation detected",
+            message="Repository .providence mutation detected",
             details={"entries": dirty[:20]},
         )
     return GateResult(
-        gate="repo-sdd-mutation-guard",
+        gate="repo-providence-mutation-guard",
         mode=mode,
         ok=True,
         code="OK",
-        message="Repository .sdd is clean",
+        message="Repository .providence is clean",
         details={},
     )
+
+
+# Compatibility alias: "repo-sdd-mutation-guard" is the pre-rename gate id.
+# Keep it importable/callable under the old name until a deprecation plan lands.
+gate_repo_sdd_mutation_guard = gate_repo_providence_mutation_guard
 
 
 def gate_runtime_seed_drift_check(mode: str) -> GateResult:
     """Detect drift in managed runtime/seed artifacts."""
     root = Path.cwd()
     targets = [
-        ".sdd/runtime",
-        ".sdd/trust",
-        ".sdd/commands/registry.json",
-        ".sdd/skills/registry.json",
+        ".providence/runtime",
+        ".providence/trust",
+        ".providence/commands/registry.json",
+        ".providence/skills/registry.json",
         "CLAUDE.md",
         ".claude",
         ".gemini",
@@ -287,7 +292,7 @@ def gate_telemetry_path_scope_check(mode: str) -> GateResult:
 def gate_trusted_keyring_precedence_check(mode: str) -> GateResult:
     sig_mode = os.environ.get("SDD_SIGNATURE_MODE", "warn").strip().lower()
     override = os.environ.get("SDD_TRUSTED_KEYRING", "").strip()
-    canonical = Path(".sdd/trust/trusted-keys.json")
+    canonical = Path(".providence/trust/trusted-keys.json")
     if sig_mode == "strict" and override and not canonical.exists():
         return GateResult(
             gate="trusted-keyring-precedence-check",
@@ -345,7 +350,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
             "env-boundary-lint",
             "workspace-root-resolution-check",
             "test-isolation-preflight",
-            "repo-sdd-mutation-guard",
+            "repo-providence-mutation-guard",
+            "repo-sdd-mutation-guard",  # compatibility alias, see gate_repo_sdd_mutation_guard
             "runtime-seed-drift-check",
             "telemetry-path-scope-check",
             "trusted-keyring-precedence-check",
@@ -367,8 +373,8 @@ def main(argv: list[str] | None = None) -> int:
         return _emit(gate_workspace_root_resolution_check(args.mode))
     if args.gate == "test-isolation-preflight":
         return _emit(gate_test_isolation_preflight(args.mode))
-    if args.gate == "repo-sdd-mutation-guard":
-        return _emit(gate_repo_sdd_mutation_guard(args.mode))
+    if args.gate in ("repo-providence-mutation-guard", "repo-sdd-mutation-guard"):
+        return _emit(gate_repo_providence_mutation_guard(args.mode))
     if args.gate == "runtime-seed-drift-check":
         return _emit(gate_runtime_seed_drift_check(args.mode))
     if args.gate == "telemetry-path-scope-check":

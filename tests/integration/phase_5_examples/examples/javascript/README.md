@@ -20,7 +20,7 @@ node --version
 ### INTEGRATION Flow Test
 
 ```bash
-cd /home/sergio/dev/sdd-harness
+cd /home/sergio/dev/providence
 
 node tests/integration/phase_5_examples/examples/javascript/test-integration-flow.js
 ```
@@ -37,7 +37,7 @@ node tests/integration/phase_5_examples/examples/javascript/test-integration-flo
   ✅ Created directory: .vscode/
   ✅ Created directory: .cursor/
   ✅ Created directory: scripts/
-  ✅ Created directory: .sdd/
+  ✅ Created directory: .providence/
   ✅ STEP 1 PASSED: All directories created
 
 ... (steps 2-5) ...
@@ -291,7 +291,7 @@ const frameworkDir = path.join(__dirname, '../../..');
 ```javascript
 console.log('Script dir:', __dirname);
 console.log('Framework dir:', frameworkDir);
-console.log('Templates dir:', path.join(frameworkDir, 'packages/features/sdd_integration/src/sdd_integration/templates'));
+console.log('Templates dir:', path.join(frameworkDir, 'packages/features/providence_integration/src/providence_integration/templates'));
 
 // Then adjust relative path as needed
 ```

@@ -1,0 +1,276 @@
+/* Providence — Selector theme (design-system restyle)
+ * Drop-in replacement for the selector template's style.css. Targets the exact
+ * markup emitted by selector_compiler / selector.js — no DOM or JS changes.
+ *
+ * Where it goes (in the providence repo):
+ *   packages/interfaces/providence_wizard/src/providence_wizard/templates/selector/style.css
+ * Then rebuild:  make selector-build  (compiler copies it to docs/selector/).
+ *
+ * Self-contained: pulls IBM Plex from Google Fonts; all brand values inlined.
+ */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  --indigo-50: #eef0fb;  --indigo-100: #d8dcf4;  --indigo-300: #8b96da;
+  --indigo-500: #4453bd; --indigo-600: #3a45a6; --indigo-700: #303a8c;
+
+  --ink-900: #111726; --ink-800: #1c2333; --ink-700: #2b3550;
+  --ink-500: #5a6885; --ink-400: #7c89a6; --ink-300: #a6b1c8; --ink-200: #c8d0e0;
+
+  --canvas: #f5f7fb; --surface: #fff; --sunken: #eef1f8;
+  --border: #d5dcec; --border-strong: #c2cbe0; --border-subtle: #e6eaf3;
+
+  --mandate: #3b82f6;  --mandate-bg: #dbeafe; --mandate-fg: #1e40af;
+  --guideline: #10b981; --guideline-bg: #d1fae5; --guideline-fg: #065f46;
+
+  --pill-bg: #e7eefc; --pill-fg: #283173;
+  --shadow-sm: 0 1px 2px rgba(28,35,51,.06), 0 1px 1px rgba(28,35,51,.04);
+  --shadow-md: 0 2px 8px rgba(28,35,51,.08), 0 1px 2px rgba(28,35,51,.05);
+  --focus: 0 0 0 3px rgba(68,83,189,.4);
+}
+
+[data-theme="dark"] {
+  --canvas: #0f1117;
+  --surface: #1a1f2e;
+  --sunken: #141824;
+  --border: #2a3050;
+  --border-strong: #364070;
+  --border-subtle: #222840;
+  --ink-900: #f0f2f8;
+  --ink-800: #d8dce8;
+  --ink-700: #b0b8d0;
+  --ink-500: #8090b0;
+  --ink-400: #6070a0;
+  --ink-300: #4a5a80;
+  --ink-200: #354070;
+  --pill-bg: #1e2a4a;
+  --pill-fg: #8fa0cc;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.3), 0 1px 1px rgba(0,0,0,.2);
+  --shadow-md: 0 2px 8px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.3);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  background: var(--canvas);
+  color: var(--ink-800);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 20px 56px;
+}
+
+/* ---- Hero (inline .brand-mark SVG lives in index.html) ---- */
+.hero { margin-bottom: 28px; }
+.hero .brand-mark { display: block; width: 56px; height: 56px; margin-bottom: 14px; }
+.hero h1 {
+  margin: 0 0 6px;
+  font-size: 31px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink-900);
+}
+.hero p {
+  margin: 0;
+  color: var(--ink-500);
+  font-size: 16px;
+}
+
+/* ---- Controls ---- */
+.controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.controls input {
+  flex: 1 1 280px;
+  height: 40px;
+  padding: 0 14px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--ink-800);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  outline: none;
+  transition: border-color .12s, box-shadow .12s;
+}
+.controls input::placeholder { color: var(--ink-400); }
+.controls input:focus {
+  border-color: var(--indigo-300);
+  box-shadow: var(--focus);
+}
+
+/* ---- Category filter chips ---- */
+.filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.filters button {
+  height: 32px;
+  padding: 0 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-600);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all .12s;
+}
+.filters button:hover { border-color: var(--indigo-300); color: var(--indigo-600); }
+.filters button.active {
+  background: var(--indigo-500);
+  border-color: var(--indigo-500);
+  color: #fff;
+}
+
+/* ---- Grid + cards ---- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow .18s, transform .18s;
+}
+.card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.card[data-item-type="mandate"]   { border-left: 3px solid var(--mandate); }
+.card[data-item-type="guideline"] { border-left: 3px solid var(--guideline); }
+
+.card label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-800);
+  cursor: pointer;
+  user-select: none;
+}
+.card input[type="checkbox"] {
+  width: 16px; height: 16px;
+  accent-color: var(--indigo-500);
+  cursor: pointer;
+}
+.card[data-item-type="mandate"] input[type="checkbox"]   { accent-color: var(--mandate); }
+.card[data-item-type="guideline"] input[type="checkbox"] { accent-color: var(--guideline); }
+
+.card h2 {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink-900);
+  margin: 10px 0 6px;
+  line-height: 1.3;
+}
+.card p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-500);
+}
+
+/* ---- Pills ---- */
+.meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+.pill {
+  background: var(--pill-bg);
+  color: var(--pill-fg);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 5px 9px;
+  border-radius: 999px;
+}
+.pill--type { text-transform: uppercase; letter-spacing: .04em; font-weight: 600; }
+.pill--mandate   { background: var(--mandate-bg);   color: var(--mandate-fg); }
+.pill--guideline { background: var(--guideline-bg); color: var(--guideline-fg); }
+
+/* ---- Warnings (amber callout) ---- */
+.warnings {
+  background: #fff2c7;
+  border: 1px solid #e0bf4b;
+  border-left: 3px solid #f59e0b;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #8a5a00;
+  line-height: 1.6;
+}
+
+/* ---- Status banners ---- */
+.status {
+  border-radius: 8px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.status[data-kind="success"] { background: #e7f7ec; border: 1px solid #4ca66a; color: #065f46; }
+.status[data-kind="error"]   { background: #fdeaea; border: 1px solid #d36b6b; color: #b91c1c; }
+.status[data-kind="info"]    { background: #e7eefc; border: 1px solid #7f98d6; color: #283173; }
+
+.hidden { display: none; }
+
+/* ---- Footer actions ---- */
+.actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+#summary {
+  margin-right: auto;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ink-500);
+}
+.actions button {
+  height: 40px;
+  padding: 0 16px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+}
+#export {
+  background: var(--indigo-500);
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+}
+#export:hover { background: var(--indigo-600); }
+#import {
+  background: var(--surface);
+  color: var(--ink-800);
+  border-color: var(--border-strong);
+}
+#import:hover { background: var(--sunken); }
+#clear {
+  background: transparent;
+  color: var(--indigo-600);
+}
+#clear:hover { background: var(--indigo-50); }
+
+:focus-visible { outline: 2px solid var(--indigo-500); outline-offset: 2px; }

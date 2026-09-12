@@ -47,7 +47,7 @@ In case of conflict between a local guide (e.g., `README.md`, `HOWTO.md`, `golde
 
 - [ ] I have applied **P004 Pre-Delivery Quality Gate** — detected tooling, ran all mandatory checks, included `[PDQG STATUS]` block.
 - [ ] I have staged my changes but did NOT push them.
-- [ ] I have updated the `.sdd-cache.md` with the reasoning for the human reviewer.
+- [ ] I have updated the `.providence-cache.md` with the reasoning for the human reviewer.
 - [ ] I have notified the user that the work is ready for their "Human-in-the-Loop" approval.
 
 > **Reference:** `docs/spec/canonical/core/policies/P004_PRE_DELIVERY_QUALITY_GATE.md`

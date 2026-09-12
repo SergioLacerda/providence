@@ -1,0 +1,90 @@
+{
+  "gap_version": "1.0",
+  "status": "ACTIVE",
+  "agent_id": "unknown",
+  "spec_fingerprint": "",
+  "mandates_loaded": [],
+  "skill_profile": "default",
+  "confidence": 36.4,
+  "last_check": "2026-07-19T01:25:12.012013",
+  "state": "HEALTHY",
+  "checks": [
+    {
+      "name": ".providence/ directory",
+      "passed": true,
+      "message": "Found at /home/sergio/dev/sdd-harness/packages/interfaces/sdd_cli/.providence",
+      "layer": "DISCOVERY"
+    },
+    {
+      "name": ".providence/profile",
+      "passed": false,
+      "message": "Missing \u2014 run 'sdd init'",
+      "layer": "DISCOVERY"
+    },
+    {
+      "name": "governance-core.json",
+      "passed": false,
+      "message": "Not compiled (optional at this stage)",
+      "layer": "DISCOVERY"
+    },
+    {
+      "name": ".providence/profile readable",
+      "passed": false,
+      "message": "Invalid or missing",
+      "layer": "LINK_VALIDATION"
+    },
+    {
+      "name": ".providence/profile type valid",
+      "passed": false,
+      "message": "type field missing or invalid",
+      "layer": "LINK_VALIDATION"
+    },
+    {
+      "name": "packages framework",
+      "passed": false,
+      "message": "Not found",
+      "layer": "LINK_VALIDATION"
+    },
+    {
+      "name": ".providence/runtime/",
+      "passed": true,
+      "message": "Initialized",
+      "layer": "RUNTIME_VALIDATION"
+    },
+    {
+      "name": "state cache",
+      "passed": true,
+      "message": "Cache initialized",
+      "layer": "RUNTIME_VALIDATION"
+    },
+    {
+      "name": "PHASE 0 setup",
+      "passed": true,
+      "message": "Completed",
+      "layer": "RUNTIME_VALIDATION"
+    },
+    {
+      "name": "governance integrity",
+      "passed": false,
+      "message": "Not compiled",
+      "layer": "GOVERNANCE_HEALTH"
+    },
+    {
+      "name": "compiled artifacts",
+      "passed": false,
+      "message": "No compiled artifacts found \u2014 run 'sdd governance compile'",
+      "layer": "GOVERNANCE_HEALTH"
+    }
+  ],
+  "last_ask": {
+    "ts": "2026-06-10T20:13:20Z",
+    "trace_id": "2b736175-2359-4198-9107-a9baca2e8aae",
+    "context_source": "none",
+    "compiled_fingerprint_used": "",
+    "mandates_loaded": 0,
+    "agent_id": "unknown",
+    "degraded": false,
+    "degraded_reason": "no governance artifacts found",
+    "trust_source": "none"
+  }
+}

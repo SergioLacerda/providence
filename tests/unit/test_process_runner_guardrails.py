@@ -15,13 +15,13 @@ SUBPROCESS_PATTERN = re.compile(
 
 ALLOWED_PACKAGES = {
     # process.py is the public facade; subprocess lives in the private submodules below
-    "packages/core/sdd_core/src/sdd_core/utils/_process_runner.py",
-    "packages/core/sdd_core/src/sdd_core/utils/_process_runner_support.py",
-    "packages/core/sdd_core/src/sdd_core/utils/_process_types.py",
+    "packages/core/providence_core/src/providence_core/utils/_process_runner.py",
+    "packages/core/providence_core/src/providence_core/utils/_process_runner_support.py",
+    "packages/core/providence_core/src/providence_core/utils/_process_types.py",
     # PROMPT_SUBMIT_HOOK_SCRIPT is a template string written out as a standalone
     # hook script for external CLIs (Claude/Codex/Gemini hooks) — the subprocess
-    # call runs in that generated script's own process, not in sdd_wizard's.
-    "packages/interfaces/sdd_wizard/src/sdd_wizard/orchestration/prompt_submit_hooks.py",
+    # call runs in that generated script's own process, not in providence_wizard's.
+    "packages/interfaces/providence_wizard/src/providence_wizard/orchestration/prompt_submit_hooks.py",
 }
 
 ALLOWED_TOOLS = {

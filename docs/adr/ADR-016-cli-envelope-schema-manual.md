@@ -10,8 +10,8 @@
 ## Context
 
 ADR-006 made `CommandResult` and `CommandError` the canonical JSON envelope for
-`sdd_cli` output. The implementation uses frozen dataclasses in
-`packages/interfaces/sdd_cli/src/sdd_cli/shared/contracts.py`.
+`providence_cli` output. The implementation uses frozen dataclasses in
+`packages/interfaces/providence_cli/src/providence_cli/shared/contracts.py`.
 
 The residual A1 work asked whether the envelope should move to Pydantic with a
 generated schema or stay as dataclasses with a manually maintained schema.
@@ -46,5 +46,5 @@ the runtime shape stable while giving consumers a concrete schema artifact.
 ## Links
 
 - Superset decision: [ADR-006](ADR-006-cli-canonical-json-envelope.md)
-- Runtime model: `packages/interfaces/sdd_cli/src/sdd_cli/shared/contracts.py`
+- Runtime model: `packages/interfaces/providence_cli/src/providence_cli/shared/contracts.py`
 - Schema: `tests/contract/schemas/cli_command_envelope.schema.json`

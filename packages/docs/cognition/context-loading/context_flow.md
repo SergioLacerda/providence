@@ -24,8 +24,8 @@ flowchart TD
     CANON[📚 CANONICAL\nRules / ADRs / Specs]
     REAL[🔍 REALITY\nCurrent state / issues]
     DEV[🟢 DEVELOPMENT\nActive work]
-    AICTX[🧠 .sdd/context-aware\nSummaries / tasks]
-    RUNTIME[⚡ .sdd/runtime\nIndexes / keywords]
+    AICTX[🧠 .providence/context-aware\nSummaries / tasks]
+    RUNTIME[⚡ .providence/runtime\nIndexes / keywords]
     RUNBOOKS[📖 RUNBOOKS\nOperational procedures]
 
     %% Query

@@ -54,7 +54,7 @@ mkdir -p .github .vscode .cursor scripts
 | `.vscode/` | VS Code configuration (AI rules) |
 | `.cursor/` | Cursor IDE configuration |
 | `scripts/` | Utility scripts (pre-commit setup) |
-| `.sdd/` | SDD infrastructure (created by PHASE 0 later) |
+| `.providence/` | SDD infrastructure (created by PHASE 0 later) |
 
 ### 3. Verify Structure
 
@@ -88,7 +88,7 @@ your-project/
 ├── .vscode/        ← empty (will fill in Step 2)
 ├── .cursor/        ← empty (will fill in Step 2)
 ├── scripts/        ← empty (will fill in Step 2)
-├── .sdd/            ← empty (will fill in Step 4)
+├── .providence/            ← empty (will fill in Step 4)
 ├── src/            ← your existing code
 ├── tests/          ← your existing tests
 ├── .gitignore      ← existing

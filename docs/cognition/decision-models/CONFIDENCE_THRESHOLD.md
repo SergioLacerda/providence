@@ -54,4 +54,4 @@ A fast wrong answer is more expensive than a slow right one.
 
 - Anti-pattern: [`anti-patterns/PREMATURE_EXECUTION.md`](../anti-patterns/PREMATURE_EXECUTION.md)
 - ADR process: [`spec/decisions/`](../../spec/decisions/)
-- SDD Governance Gate: [`AGENT_ENTRYPOINT.md`](../../spec/canonical/core/generated/AGENT_ENTRYPOINT.md) — includes the governed bootstrap flow and confidence-aligned execution protocol.
+- Providence Governance Gate: [`AGENT_ENTRYPOINT.md`](../../spec/canonical/core/generated/AGENT_ENTRYPOINT.md) — includes the governed bootstrap flow and confidence-aligned execution protocol.

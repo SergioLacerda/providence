@@ -24,7 +24,7 @@ from typing import Any, cast
 SKIP_MARKERS = ("site-packages", ".venv", "__pycache__", ".egg", "generated", "tests")
 # Exact path-segment match, not a substring — "build" as a substring would also
 # hit real source like .../builders/pipeline_builder.py. Excludes gitignored
-# build-output directories (e.g. packages/interfaces/sdd_cli/build/lib/...),
+# build-output directories (e.g. packages/interfaces/providence_cli/build/lib/...),
 # never hand-maintained source.
 SKIP_SEGMENTS = ("build",)
 ALLOWLIST_FILE = "tools/architecture/class_size_allowlist.json"

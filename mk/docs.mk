@@ -13,7 +13,7 @@ $(DOCS_TASKS):
 docs-build: build-web ## Build composed site (Astro + MkDocs + Selector)
 	$(PYTHON) tools/maintenance/make_tasks.py docs-build
 
-docs-serve: docs-build ## Build full site (docs + selector) and serve on http://localhost:8000/sdd-harness/
+docs-serve: docs-build ## Build full site (docs + selector) and serve on http://localhost:8000/providence/
 	$(PYTHON) tools/maintenance/make_tasks.py docs-serve
 
 # --- Namespaced aliases (additive, non-breaking; see proposal.md Decision D2) ---

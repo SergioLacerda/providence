@@ -44,7 +44,7 @@ for the topology decision.
 | `make build-web` | Builds the Astro landing app (`apps/landing/`) into `build/site/` |
 | `make docs-build` | Runs `build-web`, then `mkdocs build --strict` (writes to `build/site/docs/`), then the Selector compiler directly to `build/site/selector/` |
 | `make docs-serve` | Runs `docs-build`, then serves `build/site/` on `http://127.0.0.1:8000/` — landing at `/`, docs at `/docs/`, Selector at `/selector/` |
-| `python -m sdd_wizard.orchestration.wizard.selector_compiler --output-dir <dir>` | Standalone compiler; `--repo-root` defaults to `.` |
+| `python -m providence_wizard.orchestration.wizard.selector_compiler --output-dir <dir>` | Standalone compiler; `--repo-root` defaults to `.` |
 
 ## Build and Open
 

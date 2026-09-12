@@ -130,7 +130,7 @@ convention `<ID>_<SLUG>.md` where:
 
 - Deserialises to the same structure as the compiled JSON
 - Used at runtime by `AgentHandshakeProtocol` Layer 1 and Layer 4
-- File integrity is verified by checking `fingerprint` against `.sdd/profile core_hash[:16]`
+- File integrity is verified by checking `fingerprint` against `.providence/profile core_hash[:16]`
 
 ### 5. Compiler Invariants (breaking change definition)
 
@@ -181,9 +181,9 @@ with the documented update command in the module docstring.
 
 ## References
 
-- `packages/features/sdd_integration/src/sdd_integration/builders/governance/pipeline_builder.py` — PHASE 1
+- `packages/features/providence_integration/src/providence_integration/builders/governance/pipeline_builder.py` — PHASE 1
 - `packages/core/sdd_compiler/src/sdd_compiler/governance_compiler.py` — PHASE 2
-- `packages/core/sdd_core/src/sdd_core/governance_orchestrator.py` — PHASE 3 coordinator
+- `packages/core/providence_core/src/providence_core/governance_orchestrator.py` — PHASE 3 coordinator
 - `tests/contract/test_governance_schema.py` — executable contract tests
 - `docs/spec/canonical/specifications/compiler_io_contract.md` — precise Compiler I/O contract
 - `tests/contract/fixtures/governance_core.golden.json` — golden file

@@ -142,12 +142,12 @@ jobs:
           context: .
           file: ./infrastructure/docker/Dockerfile
           load: true
-          tags: local/sdd-release:scan
+          tags: local/providence-release:scan
 
       - name: Trivy scan (blocking)
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
-          image-ref: local/sdd-release:scan
+          image-ref: local/providence-release:scan
           format: table
           vuln-type: os,library
           severity: CRITICAL,HIGH

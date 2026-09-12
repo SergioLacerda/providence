@@ -3,7 +3,7 @@
 **Authority:** SPEC v2.1 (Immutable Specification)
 **Status:** Mandatory for all projects
 **Location:** Framework templates at `docs/indices/`
-**Project Copies:** `.sdd/source/` (each project)
+**Project Copies:** `.providence/source/` (each project)
 **Updated:** April 19, 2026
 
 ---
@@ -34,7 +34,7 @@ Specify the 3 runtime indices that agents create during PHASE 0 to enable effici
 
 ### Project Tier
 
-**Location:** `.sdd/source/` (in each project)
+**Location:** `.providence/source/` (in each project)
 **Files:** Same names as framework tier
 **Purpose:** Each project maintains its own runtime indices
 **Updated:** Per-project basis (can diverge from framework)
@@ -44,7 +44,7 @@ Specify the 3 runtime indices that agents create during PHASE 0 to enable effici
 
 ```
 1. SPEC framework provides template indices at docs/indices/
-2. During project initialization (PHASE 0), templates copied to .sdd/source/
+2. During project initialization (PHASE 0), templates copied to .providence/source/
 3. Projects customize their indices as needed
 4. Framework indices serve as reference defaults
 ```
@@ -57,7 +57,7 @@ Specify the 3 runtime indices that agents create during PHASE 0 to enable effici
 
 **Purpose:** Quick reference to all CANONICAL authority documents
 **Framework Location:** `docs/indices/spec-canonical-index.md`
-**Project Location:** `.sdd/source/spec-canonical-index.md`
+**Project Location:** `.providence/source/spec-canonical-index.md`
 **Created by:** PHASE 0 automation
 **Updated:** Quarterly (when CANONICAL changes)
 
@@ -89,7 +89,7 @@ Specify the 3 runtime indices that agents create during PHASE 0 to enable effici
 
 **Purpose:** Quick reference to all operational guides
 **Framework Location:** `docs/indices/spec-guides-index.md`
-**Project Location:** `.sdd/source/spec-guides-index.md`
+**Project Location:** `.providence/source/spec-guides-index.md`
 **Created by:** PHASE 0 automation
 **Updated:** Monthly (when guides added/changed)
 
@@ -120,7 +120,7 @@ Specify the 3 runtime indices that agents create during PHASE 0 to enable effici
 
 **Purpose:** Keyword-to-document mapping for on-demand discovery
 **Framework Location:** `docs/indices/search-keywords.md`
-**Project Location:** `.sdd/source/search-keywords.md`
+**Project Location:** `.providence/source/search-keywords.md`
 **Created by:** PHASE 0 automation
 **Updated:** As new patterns emerge
 
@@ -171,11 +171,11 @@ ls -la docs/indices/
 # In PHASE 0 automation script:
 SPEC_PATH=$(grep spec_path .spec.config | cut -d' ' -f3)
 
-# Create .sdd/source if needed
-mkdir -p .sdd/source/
+# Create .providence/source if needed
+mkdir -p .providence/source/
 
 # Copy indices templates
-cp $SPEC_PATH/docs/indices/*.md .sdd/source/
+cp $SPEC_PATH/docs/indices/*.md .providence/source/
 
 echo "✅ Runtime indices initialized"
 ```
@@ -184,24 +184,24 @@ echo "✅ Runtime indices initialized"
 
 ```bash
 # Copy templates one by one
-cp docs/indices/search-keywords.md .sdd/source/
-cp docs/indices/spec-canonical-index.md .sdd/source/
-cp docs/indices/spec-guides-index.md .sdd/source/
+cp docs/indices/search-keywords.md .providence/source/
+cp docs/indices/spec-canonical-index.md .providence/source/
+cp docs/indices/spec-guides-index.md .providence/source/
 
 # Verify copied
-ls -la .sdd/source/
+ls -la .providence/source/
 ```
 
 ### Step 3: Verify Setup
 
 ```bash
 # Check all 3 exist
-[ -f .sdd/source/spec-canonical-index.md ] && echo "✅ CANONICAL index"
-[ -f .sdd/source/spec-guides-index.md ] && echo "✅ Guides index"
-[ -f .sdd/source/search-keywords.md ] && echo "✅ Keywords index"
+[ -f .providence/source/spec-canonical-index.md ] && echo "✅ CANONICAL index"
+[ -f .providence/source/spec-guides-index.md ] && echo "✅ Guides index"
+[ -f .providence/source/search-keywords.md ] && echo "✅ Keywords index"
 
 # Verify they have content
-wc -l .sdd/source/*.md
+wc -l .providence/source/*.md
 # Expected: each > 50 lines
 ```
 
@@ -214,7 +214,7 @@ wc -l .sdd/source/*.md
 ```
 Agent: "Where's the rule about testing?"
 
-1. Agent opens: .sdd/source/search-keywords.md
+1. Agent opens: .providence/source/search-keywords.md
 2. Search for: "testing"
 3. Find: CANONICAL/specifications/definition_of_done.md
 4. Read: Testing section
@@ -225,7 +225,7 @@ Agent: "Where's the rule about testing?"
 ```
 Agent: "How do I add a new project?"
 
-1. Agent opens: .sdd/source/spec-guides-index.md
+1. Agent opens: .providence/source/spec-guides-index.md
 2. Search for: "Adding new project"
 3. Find: guides/operational/ADDING_NEW_PROJECT.md
 4. Follow: Step-by-step instructions
@@ -236,7 +236,7 @@ Agent: "How do I add a new project?"
 ```
 Agent: "Why is thread isolation mandatory?"
 
-1. Agent opens: .sdd/source/spec-canonical-index.md
+1. Agent opens: .providence/source/spec-canonical-index.md
 2. Search for: "thread isolation"
 3. Find: CANONICAL/decisions/ADR-005
 4. Read: Architecture decision and rationale
@@ -250,20 +250,20 @@ Agent: "Why is thread isolation mandatory?"
 
 ```bash
 # ✅ All 3 files exist
-ls .sdd/source/search-keywords.md && echo "✅"
-ls .sdd/source/spec-canonical-index.md && echo "✅"
-ls .sdd/source/spec-guides-index.md && echo "✅"
+ls .providence/source/search-keywords.md && echo "✅"
+ls .providence/source/spec-canonical-index.md && echo "✅"
+ls .providence/source/spec-guides-index.md && echo "✅"
 
 # ✅ Each has substantial content (> 50 lines)
-[ $(wc -l < .sdd/source/search-keywords.md) -gt 50 ] && echo "✅"
-[ $(wc -l < .sdd/source/spec-canonical-index.md) -gt 50 ] && echo "✅"
-[ $(wc -l < .sdd/source/spec-guides-index.md) -gt 50 ] && echo "✅"
+[ $(wc -l < .providence/source/search-keywords.md) -gt 50 ] && echo "✅"
+[ $(wc -l < .providence/source/spec-canonical-index.md) -gt 50 ] && echo "✅"
+[ $(wc -l < .providence/source/spec-guides-index.md) -gt 50 ] && echo "✅"
 
 # ✅ Links point to real files
-grep "core/mandates/" .sdd/source/spec-canonical-index.md && echo "✅"
+grep "core/mandates/" .providence/source/spec-canonical-index.md && echo "✅"
 
 # ✅ Can read them
-head -20 .sdd/source/search-keywords.md && echo "✅"
+head -20 .providence/source/search-keywords.md && echo "✅"
 ```
 
 ---
@@ -276,7 +276,7 @@ No maintenance needed. Indices are read-only after creation.
 
 ### Monthly
 
-- Check if new guides added to SPEC → update .sdd/source/ copies
+- Check if new guides added to SPEC → update .providence/source/ copies
 - Check if new patterns discovered → add keywords
 - Commit updates in regular checkpoints
 
@@ -297,15 +297,15 @@ No maintenance needed. Indices are read-only after creation.
 1. SPEC changes (new ADR, guide, spec, etc.)
 2. Framework updates: docs/indices/
 3. Projects should re-copy during PHASE re-validation
-4. Each project: cp docs/indices/* .sdd/source/
-5. Projects customize .sdd/source/ for project-specific needs
+4. Each project: cp docs/indices/* .providence/source/
+5. Projects customize .providence/source/ for project-specific needs
 ```
 
 ### When New Patterns Discovered
 
 ```
 1. Agent discovers new keyword/pattern during work
-2. Adds to .sdd/source/search-keywords.md (project-local)
+2. Adds to .providence/source/search-keywords.md (project-local)
 3. Documents which file teaches this pattern
 4. Commits in regular checkpoint
 5. Next agent benefits from discovery (project-local knowledge)
@@ -322,7 +322,7 @@ Indices are working correctly if:
 ✅ **Completeness:** All CANONICAL docs indexed, all guides indexed
 ✅ **Freshness:** Framework indices updated quarterly
 ✅ **Usability:** Clear keyword mapping, easy navigation
-✅ **Customization:** Projects maintain own .sdd/source/ versions
+✅ **Customization:** Projects maintain own .providence/source/ versions
 
 ---
 
@@ -352,7 +352,7 @@ Agent: "Where do I find the rules?"
 
 ```
 Agent: "Where do I find the rules?"
-→ Agent opens .sdd/source/search-keywords.md
+→ Agent opens .providence/source/search-keywords.md
 → Searches "rules" in file
 → Finds: ia-rules.md in CANONICAL/rules/
 → Takes 1 minute to find answer
@@ -363,17 +363,17 @@ Agent: "Where do I find the rules?"
 
 ## 🎓 Common Questions
 
-**Q: Can projects modify their .sdd/source/ indices?**
+**Q: Can projects modify their .providence/source/ indices?**
 A: Yes! Each project customizes for its needs. Just don't break links to framework docs.
 
 **Q: How often are framework indices (docs/indices/) updated?**
 A: Quarterly, when SPEC framework changes significantly.
 
-**Q: What if a project's .sdd/source/ gets out of sync with framework?**
-A: Normal. Projects diverge. Re-sync during quarterly SPEC updates or use: `cp docs/indices/* .sdd/source/`
+**Q: What if a project's .providence/source/ gets out of sync with framework?**
+A: Normal. Projects diverge. Re-sync during quarterly SPEC updates or use: `cp docs/indices/* .providence/source/`
 
 **Q: Who maintains the indices?**
-A: Automated scripts in PHASE 0; then projects maintain their own .sdd/source/ copies.
+A: Automated scripts in PHASE 0; then projects maintain their own .providence/source/ copies.
 
 ---
 

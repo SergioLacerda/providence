@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Thin wrapper around sdd_core.governance.handshake for CLI/tool usage.
+Thin wrapper around providence_core.governance.handshake for CLI/tool usage.
 
 The canonical implementation lives in:
-    packages/core/sdd_core/src/sdd_core/governance/handshake.py
+    packages/core/providence_core/src/providence_core/governance/handshake.py
 
 This file re-exports all public symbols for backwards compatibility with
 scripts and tools that import directly from this path.
@@ -13,33 +13,33 @@ import sys
 from pathlib import Path
 
 
-def _bootstrap_sdd_core() -> None:
-    """Add sdd_core src to sys.path when running as a script (not installed)."""
+def _bootstrap_providence_core() -> None:
+    """Add providence_core src to sys.path when running as a script (not installed)."""
     # Walk up from this file's location looking for the monorepo root
-    # (identified by packages/core/sdd_core/src existing)
+    # (identified by packages/core/providence_core/src existing)
     here = Path(__file__).resolve()
     for candidate in [here.parent, *here.parents]:
-        src = candidate / "packages" / "core" / "sdd_core" / "src"
+        src = candidate / "packages" / "core" / "providence_core" / "src"
         if src.is_dir():
             if str(src) not in sys.path:
                 sys.path.insert(0, str(src))
             return
 
     raise ImportError(
-        "Could not locate packages/core/sdd_core/src from any parent of "
-        f"{__file__}. Install sdd-core or run from the repo root."
+        "Could not locate packages/core/providence_core/src from any parent of "
+        f"{__file__}. Install providence-core or run from the repo root."
     )
 
 
 try:
-    from sdd_core.governance.handshake import (
+    from providence_core.governance.handshake import (
         AgentHandshakeProtocol,
         HandshakeReport,
         ValidationResult,
     )
 except ModuleNotFoundError:
-    _bootstrap_sdd_core()
-    from sdd_core.governance.handshake import (  # noqa: E402
+    _bootstrap_providence_core()
+    from providence_core.governance.handshake import (  # noqa: E402
         AgentHandshakeProtocol,
         HandshakeReport,
         ValidationResult,

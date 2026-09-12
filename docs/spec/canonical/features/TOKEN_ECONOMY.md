@@ -49,10 +49,10 @@ class SimulatedTokenCapture:
 
 ```bash
 # Pass tokens explicitly
-sdd ask "query" --full --tokens-input 150 --tokens-output 50
+providence ask "query" --full --tokens-input 150 --tokens-output 50
 
 # Or via environment variables (picked up automatically if --tokens-* not provided)
-SDD_TOKENS_INPUT=150 SDD_TOKENS_OUTPUT=50 sdd ask "query" --full
+SDD_TOKENS_INPUT=150 SDD_TOKENS_OUTPUT=50 providence ask "query" --full
 ```
 
 **Integration:**
@@ -181,7 +181,7 @@ class BudgetEstimate:
 
 **Graceful degradation:** Network failure → returns degraded result (no compression, max budget estimate), never raises.
 
-**Implementation:** `packages/core/sdd_runtime/src/sdd_runtime/providers/http_provider.py`
+**Implementation:** `packages/core/providence_runtime/src/providence_runtime/providers/http_provider.py`
 
 ---
 
@@ -195,7 +195,7 @@ class BudgetEstimate:
 
 **Complexity scoring:** `node_count / 100` (capped at 1.0).
 
-**Implementation:** `packages/core/sdd_runtime/src/sdd_runtime/providers/ast_provider.py`
+**Implementation:** `packages/core/providence_runtime/src/providence_runtime/providers/ast_provider.py`
 
 ---
 
@@ -209,7 +209,7 @@ class BudgetEstimate:
 
 **Budget estimation:** `query_length * 8 bytes` heuristic.
 
-**Implementation:** `packages/core/sdd_runtime/src/sdd_runtime/providers/tfidf_provider.py`
+**Implementation:** `packages/core/providence_runtime/src/providence_runtime/providers/tfidf_provider.py`
 
 ---
 
@@ -226,7 +226,7 @@ class BudgetEstimate:
 3. Truncate to fit budget
 4. Always keep at least 1 item
 
-**Implementation:** `packages/core/sdd_runtime/src/sdd_runtime/intelligence.py`
+**Implementation:** `packages/core/providence_runtime/src/providence_runtime/intelligence.py`
 
 ---
 
@@ -248,7 +248,7 @@ class BudgetEstimate:
 - Compression ALWAYS succeeds (degradation guaranteed)
 - Never raises exception on `compress_context()`
 
-**Implementation:** `packages/core/sdd_runtime/src/sdd_runtime/intelligence.py:ProviderRegistry`
+**Implementation:** `packages/core/providence_runtime/src/providence_runtime/intelligence.py:ProviderRegistry`
 
 ---
 
@@ -285,7 +285,7 @@ result = loader.load_result(request)
 
 ## 🚨 BudgetBreachError Contract
 
-**Exception type:** `packages/core/sdd_runtime/src/sdd_runtime/context.py:BudgetBreachError`
+**Exception type:** `packages/core/providence_runtime/src/providence_runtime/context.py:BudgetBreachError`
 
 **When raised:** `ContextLoader.load_result()` when `budget_utilization_pct >= 100`
 
@@ -299,7 +299,7 @@ result = loader.load_result(request)
 **Example:**
 
 ```python
-from sdd_runtime.context import ContextLoader, BudgetBreachError, ContextRequest
+from providence_runtime.context import ContextLoader, BudgetBreachError, ContextRequest
 
 loader = ContextLoader()
 request = ContextRequest(query="...", budget_utilization_pct=105.0)
@@ -340,5 +340,5 @@ All token economy data flows into `RuntimeEvent` telemetry:
 - `→ economy/execution-budget.md` — budget ceilings, zones, circuit-breaker rules
 - `→ economy/efficiency-policy.md` — compression obligations, retry/reflection ceilings
 - `→ economy/metrics.md` — canonical field names and OTEL attributes
-- `→ packages/core/sdd_runtime/src/sdd_runtime/telemetry.py` — RuntimeEvent schema
-- `→ packages/core/sdd_runtime/src/sdd_runtime/context.py` — ContextLoader integration
+- `→ packages/core/providence_runtime/src/providence_runtime/telemetry.py` — RuntimeEvent schema
+- `→ packages/core/providence_runtime/src/providence_runtime/context.py` — ContextLoader integration

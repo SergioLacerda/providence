@@ -19,7 +19,7 @@ Circumventing mandates, policies, or rules by using workarounds, hacks, or "just
 
 ## Examples
 
-- ❌ Skipping `sdd governance validate` before delivery
+- ❌ Skipping `providence governance validate` before delivery
 - ❌ Disabling tests with `# pragma: no cover` when they should pass
 - ❌ Hardcoding credentials instead of using environment variables (violates security mandate)
 - ❌ Importing infrastructure into domain layer because "it's convenient"
@@ -67,7 +67,7 @@ Circumventing mandates, policies, or rules by using workarounds, hacks, or "just
 2. **Document** why you thought bypass was necessary
 3. **Find** the compliant path (escalate to human if needed)
 4. **Implement** the compliant solution
-5. **Verify** `sdd governance validate` passes
+5. **Verify** `providence governance validate` passes
 
 **Long-term:**
 

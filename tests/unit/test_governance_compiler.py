@@ -1,4 +1,4 @@
-"""Unit tests for sdd_integration.builders.governance.compile.GovernanceCompiler."""
+"""Unit tests for providence_integration.builders.governance.compile.GovernanceCompiler."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ pytestmark = pytest.mark.unit
 
 
 def _make_compiler(tmp_path: Path) -> Any:
-    from sdd_integration.builders.governance.compile import GovernanceCompiler
+    from providence_integration.builders.governance.compile import GovernanceCompiler
 
     return GovernanceCompiler(str(tmp_path / "core"))
 
@@ -254,7 +254,7 @@ class TestPrintSummary:
         c.client_items = []
         c.all_items = c.core_items.copy()
         with caplog.at_level(
-            logging.DEBUG, logger="sdd_integration.builders.governance.compile"
+            logging.DEBUG, logger="providence_integration.builders.governance.compile"
         ):
             c.print_summary()
         assert "M001" in caplog.text
@@ -267,7 +267,7 @@ class TestPrintSummary:
         c.client_items = []
         c.all_items = c.core_items.copy()
         with caplog.at_level(
-            logging.DEBUG, logger="sdd_integration.builders.governance.compile"
+            logging.DEBUG, logger="providence_integration.builders.governance.compile"
         ):
             c.print_summary()
         assert "more" in caplog.text

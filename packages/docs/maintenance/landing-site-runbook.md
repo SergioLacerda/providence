@@ -16,9 +16,9 @@ why this is plain text, not a link):
 
 | Piece | Source | Publishes to | Key files |
 |---|---|---|---|
-| Landing app | `apps/landing/` (Astro 7 + React 19) | `/` | `astro.config.mjs` (`base: '/sdd-harness/'`), `src/pages/index.astro`, `src/components/Landing.tsx`, `src/lib/i18n.ts`, `src/layouts/BaseLayout.astro` |
+| Landing app | `apps/landing/` (Astro 7 + React 19) | `/` | `astro.config.mjs` (`base: '/providence/'`), `src/pages/index.astro`, `src/components/Landing.tsx`, `src/lib/i18n.ts`, `src/layouts/BaseLayout.astro` |
 | Docs | `docs/` (MkDocs) | `/docs/` | `mkdocs.yml` (`site_dir: build/site/docs`), `docs/README.md` (navigation index) |
-| Selector | compiled by `selector_compiler_cli.py` | `/selector/` | `packages/interfaces/sdd_wizard/src/sdd_wizard/orchestration/wizard/selector_compiler_cli.py` |
+| Selector | compiled by `selector_compiler_cli.py` | `/selector/` | `packages/interfaces/providence_wizard/src/providence_wizard/orchestration/wizard/selector_compiler_cli.py` |
 
 `apps/landing/` currently has no `README.md` of its own — this runbook is the closest
 thing to one; the landing app's build/lint/test commands are covered in §2.
@@ -34,9 +34,9 @@ All commands are `Makefile` targets (`Makefile:180-193` at time of writing):
 | `make docs-link-check` / `make docs-link-fix` | Link validation/fix via `tools/maintenance/make_tasks.py` |
 | `make install-web` / `build-web` / `lint-web` (`astro check`) / `test-web` / `cover-web` | Astro app-specific install/build/lint/test/coverage |
 
-`make docs-serve` mounts `build/site` under `build/serve-root/sdd-harness` (a symlink)
-and serves at **`http://localhost:8000/sdd-harness/`**, not the server root — this
-matches the Astro app's `base: '/sdd-harness/'` config used for GitHub Pages sub-path
+`make docs-serve` mounts `build/site` under `build/serve-root/providence` (a symlink)
+and serves at **`http://localhost:8000/providence/`**, not the server root — this
+matches the Astro app's `base: '/providence/'` config used for GitHub Pages sub-path
 deployment, so local links/assets resolve the same way they do in production.
 
 Before serving, `docs-serve` checks `build/site/selector/index.html` exists and fails
@@ -51,7 +51,7 @@ mode described in §5.
 1. Installs Node dependencies for `apps/landing`, lints and tests it.
 2. Runs `make docs-build` — the same target used locally (no separate CI-only build
    logic; this was previously a source of drift, see §7).
-3. Validates the docs search index (`sdd_pages.selector.DocumentIndexer`).
+3. Validates the docs search index (`providence_pages.selector.DocumentIndexer`).
 4. Gzip-compresses assets.
 5. Deploys via `actions/deploy-pages`.
 

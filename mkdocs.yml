@@ -1,7 +1,7 @@
-site_name: SDD Harness
+site_name: Providence
 site_description: Executable governance platform for AI agents — compile, validate and audit architecture compliance at runtime
 site_author: Sergio Lacerda
-site_url: https://sergiolacerda.github.io/sdd-harness/docs/
+site_url: https://sergiolacerda.github.io/providence/docs/
 # Nested under docs/ within the shared publication root so the Astro landing
 # app (apps/landing/) can own the root `/` — see
 # .analysis/archived/selector-landing-mkdocs-refinement-20260702-adr.md.
@@ -10,7 +10,7 @@ site_dir: build/site/docs
 theme:
   name: material
   language: en
-  # + IBM Plex (SDD Harness design system type pairing)
+  # + IBM Plex (Providence design system type pairing)
   font:
     text: IBM Plex Sans
     code: IBM Plex Mono
@@ -82,7 +82,7 @@ nav:
   #   directly to build/site/selector/, alongside this MkDocs build and the
   #   Astro landing app) and restyled by the design-system theme (see
   #   selector-theme/). See docs/guides/FRONTEND_SELECTOR.md.
-  - Selector: https://sergiolacerda.github.io/sdd-harness/selector/
+  - Selector: https://sergiolacerda.github.io/providence/selector/
   - Getting Started:
     - Client Onboarding: guides/CLIENT_ONBOARDING.md
     - Contributing Setup: guides/ONBOARDING.md
@@ -92,7 +92,7 @@ nav:
     - Runtime API Integration: guides/RUNTIME_API_INTEGRATION.md
     - Frontend Selector: guides/FRONTEND_SELECTOR.md
     - Agent Entry Point Guide: guides/AGENT_GUIDE.md
-    - .sdd/ Folder Reference: guides/SDD_FOLDER_REFERENCE.md
+    - .providence/ Folder Reference: guides/SDD_FOLDER_REFERENCE.md
   - Reference:
     - CLI Commands: spec/reference/commands/cli.md
     - Security Policy: spec/reference/SECURITY.md

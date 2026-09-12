@@ -1,27 +1,27 @@
-# SDD Governance Projection for Claude Code
+# Providence Governance Projection for Claude Code
 
-Generates a self-contained, zero-SDD-mention Claude Code governance configuration
+Generates a self-contained, zero-Providence-mention Claude Code governance configuration
 from curated, static content, in **Soft/Standalone** profile. This is the Claude
-Code analogue of `sdd devin build --standalone` and `sdd copilot build` — same
+Code analogue of `providence devin build --standalone` and `providence copilot build` — same
 criteria, same curated/generic (not repo-specific) content approach, adapted to
 Claude Code's own real file conventions.
 
 This is a different mechanism from two pre-existing, unrelated Claude-specific
 integrations: the per-skill `AdapterGenerator` (writing `.claude/commands/*.md`
-from `.sdd/skills/`, wizard-integrated, SDD-branded), and the `sdd governance
+from `.providence/skills/`, wizard-integrated, Providence-branded), and the `providence governance
 generate` wizard subsystem that produces this repository's own root `CLAUDE.md`.
 This projection is additive and does not touch either.
 
 ## What Soft/Standalone means
 
-- Works without SDD Harness, without network, without any runtime dependency in
+- Works without Providence, without network, without any runtime dependency in
   the consuming project.
-- Content is curated and generic — not parsed from this repository's own `.sdd/`
+- Content is curated and generic — not parsed from this repository's own `.providence/`
   governance sources — so it is reusable in any project, the same design choice
   `DevinPluginGenerator.generate_standalone()` and
   `CopilotStandaloneGenerator.generate_standalone()` already make. It never
   mentions "sdd" (verified by test).
-- Is never represented as equivalent to a connected, governed SDD Harness session.
+- Is never represented as equivalent to a connected, governed Providence session.
 
 ## Two scope decisions (see the mission ADR for full rationale)
 
@@ -38,14 +38,14 @@ This projection is additive and does not touch either.
 ## Build
 
 ```bash
-sdd claude build
-# optional: sdd claude build --dest ./some/other/path
+providence claude build
+# optional: providence claude build --dest ./some/other/path
 ```
 
 Or from Python:
 
 ```python
-from sdd_adapters.claude import ClaudeStandaloneGenerator
+from providence_adapters.claude import ClaudeStandaloneGenerator
 
 ClaudeStandaloneGenerator().generate_standalone(output_dir=repo_root)
 ```

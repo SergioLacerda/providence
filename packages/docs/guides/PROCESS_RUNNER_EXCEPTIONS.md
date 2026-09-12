@@ -3,11 +3,11 @@
 Date: 2026-05-16
 
 Direct `subprocess` usage is blocked by default. The canonical execution path is
-`sdd_core.utils.process.SafeProcessRunner`.
+`providence_core.utils.process.SafeProcessRunner`.
 
 ## Allowed Exceptions
 
-- `packages/core/sdd_core/src/sdd_core/utils/process.py`
+- `packages/core/providence_core/src/providence_core/utils/process.py`
   - Reason: canonical governed process implementation (`subprocess` wrapper layer).
 
 ## Enforced Guardrails

@@ -35,8 +35,8 @@ Which packages or components are affected? How many users would see the change?
 
 Example:
 
-- Affects: sdd_compiler (artifact generation), sdd_runtime (artifact loading), sdd_cli (output)
-- Scope: All users who run `sdd ask` or `sdd compile`
+- Affects: sdd_compiler (artifact generation), providence_runtime (artifact loading), providence_cli (output)
+- Scope: All users who run `providence ask` or `sdd compile`
 
 ---
 
@@ -92,7 +92,7 @@ Example:
 
 - Artifact load time reduces from 15ms to 5ms (benchmark shows 3x speedup)
 - Artifact file size reduces by 50%, saving disk space on long-lived deployments
-- No public API change; artifact loading is internal to sdd_runtime
+- No public API change; artifact loading is internal to providence_runtime
 
 ### Negative ⚠️
 
@@ -101,7 +101,7 @@ Example:
 
 Example:
 
-- Users cannot directly inspect artifacts with `cat` or text editors (must use `sdd runtime inspect`)
+- Users cannot directly inspect artifacts with `cat` or text editors (must use `providence runtime inspect`)
 - New dependency on `msgpack` library adds ~50KB to the wheel
 
 ### Risks 🚨
@@ -139,7 +139,7 @@ Example:
 
 1. Create `sdd_compiler/serialization.py` with `serialize_to_msgpack()` and `deserialize_from_msgpack()`
 2. Modify `sdd_compiler/integrate.py` to call the new serialization functions
-3. Modify `sdd_runtime/context.py` to deserialize MessagePack instead of JSON
+3. Modify `providence_runtime/context.py` to deserialize MessagePack instead of JSON
 4. Update tests in `tests/unit/compiler/test_integration.py` and `tests/unit/runtime/test_context.py`
 5. Add performance benchmark in `tests/perf/benchmark_*.py`
 6. Update COMPATIBILITY.md to document breaking change (move to next major version)

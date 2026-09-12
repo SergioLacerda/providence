@@ -32,7 +32,7 @@ def test_class_at_limit_passes(tmp_path: Path) -> None:
     repo = _mk_repo(tmp_path)
     _write_class(
         repo,
-        "packages/core/sdd_core/src/sdd_core/limit_case.py",
+        "packages/core/providence_core/src/providence_core/limit_case.py",
         "LimitCase",
         399,
     )  # class size = 400 lines (including class line)
@@ -45,7 +45,7 @@ def test_class_above_limit_fails(tmp_path: Path) -> None:
     repo = _mk_repo(tmp_path)
     _write_class(
         repo,
-        "packages/core/sdd_core/src/sdd_core/too_big.py",
+        "packages/core/providence_core/src/providence_core/too_big.py",
         "TooBig",
         400,
     )  # class size = 401
@@ -57,7 +57,7 @@ def test_class_above_limit_fails(tmp_path: Path) -> None:
 def test_allowlist_skips_violation(tmp_path: Path) -> None:
     validate_class_size = _load_module()
     repo = _mk_repo(tmp_path)
-    rel = "packages/core/sdd_core/src/sdd_core/allowed.py"
+    rel = "packages/core/providence_core/src/providence_core/allowed.py"
     _write_class(repo, rel, "AllowedBig", 500)
     allowlist_path = repo / "tools" / "architecture" / "class_size_allowlist.json"
     allowlist_path.parent.mkdir(parents=True, exist_ok=True)
@@ -79,7 +79,7 @@ def test_allowlist_skips_violation(tmp_path: Path) -> None:
 def test_allowlist_windows_separator_is_normalized(tmp_path: Path) -> None:
     validate_class_size = _load_module()
     repo = _mk_repo(tmp_path)
-    rel = "packages/core/sdd_core/src/sdd_core/allowed_windows.py"
+    rel = "packages/core/providence_core/src/providence_core/allowed_windows.py"
     _write_class(repo, rel, "AllowedWindows", 500)
     allowlist_path = repo / "tools" / "architecture" / "class_size_allowlist.json"
     allowlist_path.parent.mkdir(parents=True, exist_ok=True)
@@ -87,7 +87,7 @@ def test_allowlist_windows_separator_is_normalized(tmp_path: Path) -> None:
         json.dumps(
             {
                 "allowlist": {
-                    "packages\\core\\sdd_core\\src\\sdd_core\\allowed_windows.py:AllowedWindows": "windows-style path",
+                    "packages\\core\\providence_core\\src\\providence_core\\allowed_windows.py:AllowedWindows": "windows-style path",
                 }
             }
         ),
@@ -110,7 +110,9 @@ def test_module_above_limit_fails(tmp_path: Path) -> None:
     """ADR-019: module-size violations are blocking, unlike the pre-ADR-019 warn-only behavior."""
     validate_class_size = _load_module()
     repo = _mk_repo(tmp_path)
-    _write_module(repo, "packages/core/sdd_core/src/sdd_core/too_big_module.py", 500)
+    _write_module(
+        repo, "packages/core/providence_core/src/providence_core/too_big_module.py", 500
+    )
     report = validate_class_size._scan_modules(repo, 400, {})
     assert report["ok"] is False
     assert report["warnings_count"] == 1
@@ -119,7 +121,7 @@ def test_module_above_limit_fails(tmp_path: Path) -> None:
 def test_module_allowlist_grandfathers_violation(tmp_path: Path) -> None:
     validate_class_size = _load_module()
     repo = _mk_repo(tmp_path)
-    rel = "packages/core/sdd_core/src/sdd_core/grandfathered_module.py"
+    rel = "packages/core/providence_core/src/providence_core/grandfathered_module.py"
     _write_module(repo, rel, 500)
     allowlist_path = repo / "tools" / "architecture" / "module_size_allowlist.json"
     allowlist_path.parent.mkdir(parents=True, exist_ok=True)
@@ -139,7 +141,7 @@ def test_build_directory_excluded_from_module_scan(tmp_path: Path) -> None:
     repo = _mk_repo(tmp_path)
     _write_module(
         repo,
-        "packages/interfaces/sdd_cli/build/lib/sdd_cli/commands/docs.py",
+        "packages/interfaces/providence_cli/build/lib/providence_cli/commands/docs.py",
         500,
     )
     report = validate_class_size._scan_modules(repo, 400, {})
@@ -152,7 +154,7 @@ def test_build_directory_excluded_from_class_scan(tmp_path: Path) -> None:
     repo = _mk_repo(tmp_path)
     _write_class(
         repo,
-        "packages/interfaces/sdd_cli/build/lib/sdd_cli/commands/governance.py",
+        "packages/interfaces/providence_cli/build/lib/providence_cli/commands/governance.py",
         "TooBigInBuild",
         400,
     )
@@ -168,7 +170,7 @@ def test_builders_directory_is_not_excluded(tmp_path: Path) -> None:
     repo = _mk_repo(tmp_path)
     _write_module(
         repo,
-        "packages/features/sdd_integration/src/sdd_integration/builders/governance/pipeline_builder.py",
+        "packages/features/providence_integration/src/providence_integration/builders/governance/pipeline_builder.py",
         500,
     )
     report = validate_class_size._scan_modules(repo, 400, {})

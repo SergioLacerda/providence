@@ -42,12 +42,12 @@ Agents MUST enforce the following budget zones on every task:
 
 ## 🛠️ Implementation
 
-- **Runtime module:** `packages/core/sdd_runtime/src/sdd_runtime/telemetry.py`
+- **Runtime module:** `packages/core/providence_runtime/src/providence_runtime/telemetry.py`
   - `TelemetrySink._maybe_emit_zone_event()` — zone detection and event emission
   - `_ZONE_YELLOW_PCT = 70.0`, `_ZONE_RED_PCT = 90.0`, `_ZONE_BREACH_PCT = 100.0`
-- **Circuit breaker:** `packages/core/sdd_runtime/src/sdd_runtime/context.py`
+- **Circuit breaker:** `packages/core/providence_runtime/src/providence_runtime/context.py`
   - `RetryBudget` — retry ceiling enforcement
-- **Entropy scoring:** `packages/core/sdd_runtime/src/sdd_runtime/entropy.py`
+- **Entropy scoring:** `packages/core/providence_runtime/src/providence_runtime/entropy.py`
   - `EntropyScore.compute(retry_count, reflection_count, budget_utilization_pct)`
 
 ---
@@ -93,4 +93,4 @@ compression at YELLOW, explicit warning at RED, hard block at BREACH.
 - Normative KPI contract: [`economy/metrics.md`](../economy/metrics.md)
 - Zone table: [`economy/execution-budget.md`](../economy/execution-budget.md)
 - Efficiency policy: [`economy/efficiency-policy.md`](../economy/efficiency-policy.md)
-- Runtime telemetry tests: `packages/core/sdd_runtime/tests/test_economy.py`
+- Runtime telemetry tests: `packages/core/providence_runtime/tests/test_economy.py`

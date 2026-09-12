@@ -46,14 +46,14 @@ COPY --from=go-builder /build/sdd-compile /usr/local/bin/sdd-compile
 
 # Pre-compile governance artifacts so tests don't rebuild from a different source path
 ENV PATH="/app/.venv/bin:${PATH}"
-RUN sdd governance compile
+RUN providence governance compile
 
 # Stage 2: Runtime
 FROM python:3.14-slim
 
-LABEL org.opencontainers.image.title="SDD Agentic OS" \
+LABEL org.opencontainers.image.title="Providence Agentic OS" \
       org.opencontainers.image.description="Professional AI-first Agentic Operating System Architecture" \
-      org.opencontainers.image.vendor="sdd-harness" \
+      org.opencontainers.image.vendor="providence" \
       org.opencontainers.image.version="1.0.0"
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -91,7 +91,7 @@ COPY --from=go-builder /build/sdd-compile /usr/local/bin/sdd-compile
 COPY --from=builder /app/.venv /app/.venv
 
 # Overlay pre-compiled governance artifacts from builder (not in git)
-COPY --from=builder --chown=sdd:sdd /app/.sdd/compiled /app/.sdd/compiled
+COPY --from=builder --chown=sdd:sdd /app/.providence/compiled /app/.providence/compiled
 
 COPY --chown=sdd:sdd infrastructure/docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh && \
@@ -121,4 +121,4 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 USER 1000
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD ["sh", "-c", "sdd --help || exit 1"]
+    CMD ["sh", "-c", "providence --help || exit 1"]

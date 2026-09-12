@@ -17,7 +17,7 @@ var validateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		dir, _ := cmd.Flags().GetString("dir")
 		if dir == "" {
-			dir = ".sdd/compiled"
+			dir = ".providence/compiled"
 		}
 
 		vr := govcompiler.New(dir).ValidateCompilationDetailed(dir)
@@ -46,5 +46,5 @@ var validateCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(validateCmd)
-	validateCmd.Flags().StringP("dir", "d", "", "Directory containing compiled artifacts to validate (default: .sdd/compiled)")
+	validateCmd.Flags().StringP("dir", "d", "", "Directory containing compiled artifacts to validate (default: .providence/compiled)")
 }

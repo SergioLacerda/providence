@@ -1,7 +1,7 @@
 """Verify internal dependencies of every built wheel resolve within dist/.
 
 Release gate: the workspace packages depend on each other by name
-(`sdd-core`, `sdd-wizard`, ...). Inside the uv workspace or the `--no-index`
+(`providence-core`, `providence-wizard`, ...). Inside the uv workspace or the `--no-index`
 wheelhouse this is safe, but nothing structurally guaranteed that a release's
 dist/ set is complete and version-aligned. This check reads each wheel's
 METADATA `Requires-Dist` entries and requires that every internal dependency
@@ -17,7 +17,7 @@ import zipfile
 from email.parser import Parser
 from pathlib import Path
 
-_INTERNAL_PREFIX = "sdd-"
+_INTERNAL_PREFIX = "providence-"
 _REQUIRES_NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*")
 
 
@@ -42,9 +42,9 @@ def _requires_dist(wheel: Path) -> list[str]:
 
 
 def verify_wheel_dependency_coupling(dist_dir: str | Path = "dist") -> None:
-    wheels = sorted(Path(dist_dir).glob("sdd_*.whl"))
+    wheels = sorted(Path(dist_dir).glob("providence_*.whl"))
     if not wheels:
-        raise SystemExit(f"no sdd_* wheels found in {dist_dir}")
+        raise SystemExit(f"no providence_* wheels found in {dist_dir}")
 
     built = {
         _wheel_name_version(wheel)[0]: _wheel_name_version(wheel)[1] for wheel in wheels

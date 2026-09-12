@@ -4,7 +4,7 @@ Git symlinks (mode 120000) are checked out as plain text files containing the
 link target on Windows clones without symlink support (`core.symlinks=false`,
 the Windows default). Any code that ships or reads such a file — package data,
 templates, specs — then silently consumes a path stub instead of the real
-content. This broke client onboarding on Windows when the sdd_core packaged
+content. This broke client onboarding on Windows when the providence_core packaged
 mandate.spec/guidelines.dsl were symlinks: the wizard copied the stub and the
 governance pipeline parsed zero mandates. Tracked symlinks are therefore
 banned repo-wide; ship real files instead.

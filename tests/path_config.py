@@ -18,7 +18,7 @@ CLIENT_GENERATED = GENERATED_DIR / "client"
 
 # Internal Framework Paths
 CORE = CORE_DIR / "core"
-WIZARD = CORE_DIR / "interfaces" / "sdd_wizard"
+WIZARD = CORE_DIR / "interfaces" / "providence_wizard"
 
 # Decision and Spec Paths
 CANONICAL_SPEC = SPEC_DIR / "canonical"

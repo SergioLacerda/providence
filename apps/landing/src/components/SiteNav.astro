@@ -1,0 +1,57 @@
+---
+import BrandLogo from './BrandLogo.astro';
+import { SITE_NAV } from '../lib/i18n';
+
+const BASE_URL = import.meta.env.BASE_URL;
+const currentPath = Astro.url.pathname;
+const isActive = (path: string) => currentPath === path || currentPath === `${path}/`;
+
+// Server-rendered in Portuguese by default (matches <html lang="pt-BR"> in
+// BaseLayout); the client-side lang bridge (lib/lang-bridge.ts) swaps these
+// labels post-hydration if the visitor's stored preference is 'en'.
+const nav = SITE_NAV.pt;
+---
+<nav>
+  <div class="wrap">
+    <BrandLogo />
+    <div class="navlinks">
+      <a href={`${BASE_URL}detalhe-tecnico`} aria-current={isActive(`${BASE_URL}detalhe-tecnico`) ? 'page' : undefined} data-i18n="detalheTecnico">{nav.detalheTecnico}</a>
+      <a href={`${BASE_URL}instalacao`} aria-current={isActive(`${BASE_URL}instalacao`) ? 'page' : undefined} data-i18n="instalacao">{nav.instalacao}</a>
+      <a href="#">
+        <span data-i18n="selector">{nav.selector}</span> <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+    <div class="navright">
+      <div class="langtoggle" role="group" aria-label="Language">
+        <button type="button" class="active" data-lang-btn="pt">BR</button>
+        <button type="button" data-lang-btn="en">EN</button>
+      </div>
+      <a class="github-btn" href="https://github.com/SergioLacerda/providence" target="_blank" rel="noreferrer" aria-label={nav.github}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.9.57.1.78-.25.78-.55v-2.15c-3.2.7-3.87-1.35-3.87-1.35-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.24 3.33.95.1-.74.4-1.24.72-1.53-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.18-3.08-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 5.74 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.58.23 2.75.11 3.04.74.8 1.18 1.83 1.18 3.08 0 4.41-2.7 5.39-5.27 5.67.42.36.78 1.07.78 2.15v3.19c0 .3.21.66.79.55A11.5 11.5 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"></path></svg>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<script>
+  import { SITE_NAV } from '../lib/i18n';
+  import { getLang, setLang, onLangChange } from '../lib/lang-bridge';
+
+  const langButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-lang-btn]'));
+  const i18nEls = Array.from(document.querySelectorAll<HTMLElement>('[data-i18n]'));
+
+  function applyLang(lang: 'pt' | 'en') {
+    const nav = SITE_NAV[lang];
+    langButtons.forEach((btn) => btn.classList.toggle('active', btn.dataset.langBtn === lang));
+    i18nEls.forEach((el) => {
+      const key = el.dataset.i18n as keyof typeof nav | undefined;
+      if (key && key in nav) el.textContent = nav[key];
+    });
+  }
+
+  applyLang(getLang());
+  onLangChange(applyLang);
+  langButtons.forEach((btn) => {
+    btn.addEventListener('click', () => setLang(btn.dataset.langBtn === 'en' ? 'en' : 'pt'));
+  });
+</script>

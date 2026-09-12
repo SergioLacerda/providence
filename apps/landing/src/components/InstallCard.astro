@@ -1,0 +1,43 @@
+---
+// Command/link block with copy-to-clipboard. Direct port from the design
+// handoff (ADR-023). Copy-button wiring lives inline on instalacao.astro
+// (needs to run once per page after all cards are rendered).
+export interface Props {
+  label: string;
+  command?: string;
+  linkHref?: string;
+  linkText?: string;
+  note?: string;
+  copyLabel?: string;
+  openLabel?: string;
+}
+const { label, command, linkHref, linkText, note, copyLabel = 'copy', openLabel = 'open ↗' } = Astro.props;
+---
+<div class="install-card">
+  <div class="card-label">{label}</div>
+  <div class="card-row">
+    {command && <code>{command}</code>}
+    {linkHref && <a href={linkHref} class="card-link">{linkText}</a>}
+    {command
+      ? <button class="copybtn" data-copy={command}>{copyLabel}</button>
+      : <a class="copybtn" href={linkHref} target="_blank" rel="noreferrer">{openLabel}</a>}
+  </div>
+  {note && <p class="card-note">{note}</p>}
+</div>
+
+<style>
+  .install-card{border:1px solid var(--line-strong); border-radius:4px; margin-bottom:14px; background:var(--panel);}
+  .card-label{padding:10px 16px; font-family:var(--mono); font-size:10.5px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:0.04em; border-bottom:1px solid var(--line);}
+  .card-row{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 16px; flex-wrap:wrap;}
+  .card-row code{font-family:var(--mono); font-size:12.5px; color:var(--ink); word-break:break-all;}
+  .card-link{font-family:var(--mono); font-size:12.5px; color:var(--bronze-bright); text-decoration:underline;}
+  .card-note{font-size:12px; color:var(--ink-faint); padding:0 16px 16px; margin:0;}
+  .copybtn{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:0.03em; text-transform:uppercase;
+    border:1px solid var(--line-strong); background:transparent; color:var(--ink-dim);
+    padding:7px 14px; border-radius:3px; cursor:pointer; transition:all .15s; flex:none;
+    display:inline-flex; align-items:center; text-decoration:none;
+  }
+  .copybtn:hover{border-color:var(--bronze); color:var(--bronze-bright);}
+  .copybtn.copied{border-color:var(--bronze); color:var(--bronze-bright);}
+</style>

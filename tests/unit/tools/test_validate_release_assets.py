@@ -67,11 +67,11 @@ def test_sha256sums_missing_entry_fails(tmp_path: Path) -> None:
 
 def test_sha256sums_missing_cli_entry_fails(tmp_path: Path) -> None:
     dist = _write_valid_dist(tmp_path)
-    remaining = [a for a in _ALL_REQUIRED_BINARIES if a != "sdd-darwin-arm64"]
+    remaining = [a for a in _ALL_REQUIRED_BINARIES if a != "providence-darwin-arm64"]
     sums = "\n".join(f"{_DIGEST}  {asset}" for asset in remaining)
     (dist / "SHA256SUMS").write_text(sums + "\n", encoding="utf-8")
 
-    with pytest.raises(ReleaseAssetValidationError, match="sdd-darwin-arm64"):
+    with pytest.raises(ReleaseAssetValidationError, match="providence-darwin-arm64"):
         validate_release_assets(dist)
 
 
@@ -95,5 +95,5 @@ def test_required_assets_includes_sums_file() -> None:
 def test_required_cli_assets_has_no_darwin_amd64() -> None:
     # PyInstaller can't cross-compile; macos-latest runners are arm64-only —
     # see the comment in validate_release_assets.py.
-    assert "sdd-darwin-amd64" not in REQUIRED_CLI_ASSETS
-    assert "sdd-darwin-arm64" in REQUIRED_CLI_ASSETS
+    assert "providence-darwin-amd64" not in REQUIRED_CLI_ASSETS
+    assert "providence-darwin-arm64" in REQUIRED_CLI_ASSETS

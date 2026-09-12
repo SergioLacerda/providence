@@ -1,8 +1,8 @@
 {
   "metadata": {
     "version": "1.0",
-    "title": "SDD Architecture Foundation Quiz",
-    "description": "Assessment of understanding for SDD Architecture governance, seedlings, phases, and health validation",
+    "title": "Providence Architecture Foundation Quiz",
+    "description": "Assessment of understanding for Providence Architecture governance, seedlings, phases, and health validation",
     "pass_threshold": 70,
     "total_questions": 12,
     "created": "2026-04-26",
@@ -20,7 +20,7 @@
       "id": 1,
       "topic": "governance",
       "difficulty": "easy",
-      "question": "What is the primary purpose of SDD Architecture governance?",
+      "question": "What is the primary purpose of Providence Architecture governance?",
       "options": [
         "To restrict developer freedom and enforce bureaucracy",
         "To provide semantic structure, authority definitions, and operational framework for domain-driven systems",
@@ -28,13 +28,13 @@
         "To automatically generate code without human intervention"
       ],
       "correct_answer": 1,
-      "explanation": "SDD governance establishes authority definitions, seedling templates, and operational phases to create semantic structure for domain-driven systems."
+      "explanation": "Providence governance establishes authority definitions, seedling templates, and operational phases to create semantic structure for domain-driven systems."
     },
     {
       "id": 2,
       "topic": "seedlings",
       "difficulty": "medium",
-      "question": "What is a seedling in SDD Architecture?",
+      "question": "What is a seedling in Providence Architecture?",
       "options": [
         "A small plant used as decoration in the office",
         "A template for domain specialization that can be reused across projects",
@@ -48,7 +48,7 @@
       "id": 3,
       "topic": "phases",
       "difficulty": "easy",
-      "question": "What is the purpose of PHASE 0 in SDD Architecture?",
+      "question": "What is the purpose of PHASE 0 in Providence Architecture?",
       "options": [
         "To deploy to production immediately",
         "To initialize the agent and governance structure before technical work",
@@ -98,13 +98,13 @@
         "Running checks based on a timer schedule"
       ],
       "correct_answer": 1,
-      "explanation": "Semantic triggering detects technical keywords (e.g., 'estou conectado', '.sdd') while suppressing on casual phrases (e.g., 'oi', 'obrigado'), avoiding noisy execution."
+      "explanation": "Semantic triggering detects technical keywords (e.g., 'estou conectado', '.providence') while suppressing on casual phrases (e.g., 'oi', 'obrigado'), avoiding noisy execution."
     },
     {
       "id": 7,
       "topic": "architecture",
       "difficulty": "medium",
-      "question": "Which of the following is NOT a core validation engine in the SDD Architecture health system?",
+      "question": "Which of the following is NOT a core validation engine in the Providence Architecture health system?",
       "options": [
         "health_check.py (explicit 10-check validation)",
         "agent_confidence.py (confidence scoring)",
@@ -146,7 +146,7 @@
       "id": 10,
       "topic": "ai-integration",
       "difficulty": "medium",
-      "question": "How does VS Code Copilot integrate with the SDD Architecture health system?",
+      "question": "How does VS Code Copilot integrate with the Providence Architecture health system?",
       "options": [
         "It replaces all manual health checks with automatic AI checks",
         "It runs the AHP silently when you ask technical questions, then adapts responses based on confidence",
@@ -160,7 +160,7 @@
       "id": 11,
       "topic": "governance",
       "difficulty": "hard",
-      "question": "What is the relationship between seedlings and specializations in SDD Architecture?",
+      "question": "What is the relationship between seedlings and specializations in Providence Architecture?",
       "options": [
         "Seedlings and specializations are the same thing",
         "Seedlings are templates; specializations are project-specific instantiations of seedlings",
@@ -168,7 +168,7 @@
         "They are unrelated concepts"
       ],
       "correct_answer": 1,
-      "explanation": "Seedlings (e.g., .sdd/seedlings/rpg-narrative-server/) are reusable templates. Specializations are customizations derived from seedlings for specific project domains."
+      "explanation": "Seedlings (e.g., .providence/seedlings/rpg-narrative-server/) are reusable templates. Specializations are customizations derived from seedlings for specific project domains."
     },
     {
       "id": 12,
@@ -176,13 +176,13 @@
       "difficulty": "hard",
       "question": "What is agnóstic design in the context of AHP?",
       "options": [
-        "The system works only with SDD Architecture projects",
+        "The system works only with Providence Architecture projects",
         "The health check system is independent of specific domains and can be adapted to any governed system",
         "The system requires no configuration",
         "The system cannot be customized"
       ],
       "correct_answer": 1,
-      "explanation": "Agnóstic design means AHP is not SDD-specific - it can validate health for any project with governance structure, enabling broader adoption and reusability."
+      "explanation": "Agnóstic design means AHP is not Providence-specific - it can validate health for any project with governance structure, enabling broader adoption and reusability."
     }
   ]
 }

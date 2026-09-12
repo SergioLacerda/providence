@@ -1,4 +1,4 @@
-"""Unit tests for `sdd governance adherence` command."""
+"""Unit tests for `providence governance adherence` command."""
 
 from __future__ import annotations
 
@@ -41,22 +41,23 @@ def _make_adherence_result(
 
 
 class TestAdherenceCommand:
-    """sdd governance adherence exits with correct code per score vs threshold."""
+    """providence governance adherence exits with correct code per score vs threshold."""
 
     def test_exits_0_when_score_above_threshold(self, tmp_path: Path) -> None:
         result_data = _make_adherence_result(score=85)
         with (
             patch(
-                "sdd_core.utils.environment.find_workspace_root", return_value=tmp_path
+                "providence_core.utils.environment.find_workspace_root",
+                return_value=tmp_path,
             ),
             patch(
-                "sdd_core.governance.compliance.compute_governance_adherence",
+                "providence_core.governance.compliance.compute_governance_adherence",
                 return_value=result_data,
             ),
         ):
             from typer.testing import CliRunner
 
-            from sdd_cli.commands import governance as gov_mod
+            from providence_cli.commands import governance as gov_mod
 
             r = CliRunner().invoke(gov_mod.app, ["adherence", "--threshold", "80"])
         assert r.exit_code == 0
@@ -66,14 +67,15 @@ class TestAdherenceCommand:
         result_data = _make_adherence_result(score=60)
         with (
             patch(
-                "sdd_core.utils.environment.find_workspace_root", return_value=tmp_path
+                "providence_core.utils.environment.find_workspace_root",
+                return_value=tmp_path,
             ),
             patch(
-                "sdd_core.governance.compliance.compute_governance_adherence",
+                "providence_core.governance.compliance.compute_governance_adherence",
                 return_value=result_data,
             ),
         ):
-            from sdd_cli.commands import governance as gov_mod
+            from providence_cli.commands import governance as gov_mod
 
             r = CliRunner().invoke(gov_mod.app, ["adherence", "--threshold", "80"])
         assert r.exit_code == 1
@@ -85,14 +87,15 @@ class TestAdherenceCommand:
         )
         with (
             patch(
-                "sdd_core.utils.environment.find_workspace_root", return_value=tmp_path
+                "providence_core.utils.environment.find_workspace_root",
+                return_value=tmp_path,
             ),
             patch(
-                "sdd_core.governance.compliance.compute_governance_adherence",
+                "providence_core.governance.compliance.compute_governance_adherence",
                 return_value=result_data,
             ),
         ):
-            from sdd_cli.commands import governance as gov_mod
+            from providence_cli.commands import governance as gov_mod
 
             r = CliRunner().invoke(gov_mod.app, ["adherence", "--verbose"])
         assert r.exit_code == 0
@@ -104,14 +107,15 @@ class TestAdherenceCommand:
         result_data = _make_adherence_result(score=70, structural=False)
         with (
             patch(
-                "sdd_core.utils.environment.find_workspace_root", return_value=tmp_path
+                "providence_core.utils.environment.find_workspace_root",
+                return_value=tmp_path,
             ),
             patch(
-                "sdd_core.governance.compliance.compute_governance_adherence",
+                "providence_core.governance.compliance.compute_governance_adherence",
                 return_value=result_data,
             ),
         ):
-            from sdd_cli.commands import governance as gov_mod
+            from providence_cli.commands import governance as gov_mod
 
             r = CliRunner().invoke(
                 gov_mod.app, ["adherence", "--verbose", "--threshold", "0"]
@@ -122,14 +126,15 @@ class TestAdherenceCommand:
     def test_error_in_compute_exits_1(self, tmp_path: Path) -> None:
         with (
             patch(
-                "sdd_core.utils.environment.find_workspace_root", return_value=tmp_path
+                "providence_core.utils.environment.find_workspace_root",
+                return_value=tmp_path,
             ),
             patch(
-                "sdd_core.governance.compliance.compute_governance_adherence",
+                "providence_core.governance.compliance.compute_governance_adherence",
                 side_effect=RuntimeError("disk full"),
             ),
         ):
-            from sdd_cli.commands import governance as gov_mod
+            from providence_cli.commands import governance as gov_mod
 
             r = CliRunner().invoke(gov_mod.app, ["adherence"])
         assert r.exit_code == 1
@@ -144,14 +149,15 @@ class TestAdherenceCommand:
 
         with (
             patch(
-                "sdd_core.utils.environment.find_workspace_root", return_value=tmp_path
+                "providence_core.utils.environment.find_workspace_root",
+                return_value=tmp_path,
             ),
             patch(
-                "sdd_core.governance.compliance.compute_governance_adherence",
+                "providence_core.governance.compliance.compute_governance_adherence",
                 side_effect=_capture,
             ),
         ):
-            from sdd_cli.commands import governance as gov_mod
+            from providence_cli.commands import governance as gov_mod
 
             CliRunner().invoke(gov_mod.app, ["adherence", "--window", "48"])
 

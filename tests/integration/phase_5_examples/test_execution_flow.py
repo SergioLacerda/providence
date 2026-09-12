@@ -205,7 +205,7 @@ class TestExecutionFlow:
 
         root_dir = self.framework_root
 
-        ai_files = [".sdd-index.md", "README.md"]
+        ai_files = [".providence-index.md", "README.md"]
 
         for ai_file in ai_files:
             path = root_dir / ai_file

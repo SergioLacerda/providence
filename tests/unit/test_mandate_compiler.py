@@ -1,4 +1,4 @@
-"""Unit tests for sdd_wizard.orchestration.mandate_compiler.MandateCompiler."""
+"""Unit tests for providence_wizard.orchestration.mandate_compiler.MandateCompiler."""
 
 from __future__ import annotations
 
@@ -45,14 +45,14 @@ guideline G002 {
 
 class TestParseMandateSpec:
     def test_parses_count(self) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         compiler = MandateCompiler()
         count, mandates = compiler.parse_mandate_spec(MANDATE_SPEC_SAMPLE)
         assert count == 2
 
     def test_parses_mandate_ids(self) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         compiler = MandateCompiler()
         _, mandates = compiler.parse_mandate_spec(MANDATE_SPEC_SAMPLE)
@@ -61,7 +61,7 @@ class TestParseMandateSpec:
         assert "M002" in ids
 
     def test_parses_mandate_fields(self) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         compiler = MandateCompiler()
         _, mandates = compiler.parse_mandate_spec(MANDATE_SPEC_SAMPLE)
@@ -72,7 +72,7 @@ class TestParseMandateSpec:
         assert m1["criticality"] == "OBRIGATÓRIO"
 
     def test_parses_id_num(self) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         compiler = MandateCompiler()
         _, mandates = compiler.parse_mandate_spec(MANDATE_SPEC_SAMPLE)
@@ -80,7 +80,7 @@ class TestParseMandateSpec:
         assert m1["id_num"] == 1
 
     def test_empty_text_returns_zero_count(self) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         compiler = MandateCompiler()
         count, mandates = compiler.parse_mandate_spec("")
@@ -88,7 +88,7 @@ class TestParseMandateSpec:
         assert mandates == []
 
     def test_missing_fields_use_defaults(self) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         text = "mandate M003 { }"
         compiler = MandateCompiler()
@@ -101,14 +101,14 @@ class TestParseMandateSpec:
 
 class TestParseGuidelinesDsl:
     def test_parses_count(self) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         compiler = MandateCompiler()
         count, guidelines = compiler.parse_guidelines_dsl(GUIDELINES_DSL_SAMPLE)
         assert count == 2
 
     def test_parses_guideline_ids(self) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         compiler = MandateCompiler()
         _, guidelines = compiler.parse_guidelines_dsl(GUIDELINES_DSL_SAMPLE)
@@ -117,7 +117,7 @@ class TestParseGuidelinesDsl:
         assert "G002" in ids
 
     def test_parses_guideline_fields(self) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         compiler = MandateCompiler()
         _, guidelines = compiler.parse_guidelines_dsl(GUIDELINES_DSL_SAMPLE)
@@ -127,7 +127,7 @@ class TestParseGuidelinesDsl:
         assert g1["category"] == "quality"
 
     def test_empty_text_returns_zero(self) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         compiler = MandateCompiler()
         count, guidelines = compiler.parse_guidelines_dsl("")
@@ -135,7 +135,7 @@ class TestParseGuidelinesDsl:
         assert guidelines == []
 
     def test_missing_category_defaults_to_general(self) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         text = 'guideline G005 { title: "X" }'
         compiler = MandateCompiler()
@@ -145,7 +145,7 @@ class TestParseGuidelinesDsl:
 
 class TestCompileMandateSpec:
     def test_compiles_successfully_to_file(self, tmp_path: Path) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         input_file = tmp_path / "mandate.spec"
         input_file.write_text(MANDATE_SPEC_SAMPLE, encoding="utf-8")
@@ -159,7 +159,7 @@ class TestCompileMandateSpec:
         assert output_file.exists()
 
     def test_returns_false_when_input_missing(self, tmp_path: Path) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         compiler = MandateCompiler()
         result = compiler.compile_mandate_spec(
@@ -170,7 +170,7 @@ class TestCompileMandateSpec:
         assert result is False
 
     def test_verbose_does_not_crash(self, tmp_path: Path, capsys: Any) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         input_file = tmp_path / "mandate.spec"
         input_file.write_text(MANDATE_SPEC_SAMPLE, encoding="utf-8")
@@ -183,7 +183,7 @@ class TestCompileMandateSpec:
 
 class TestCompileGuidelinesDsl:
     def test_compiles_successfully(self, tmp_path: Path) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         input_file = tmp_path / "guidelines.dsl"
         input_file.write_text(GUIDELINES_DSL_SAMPLE, encoding="utf-8")
@@ -198,7 +198,7 @@ class TestCompileGuidelinesDsl:
 
     def test_returns_true_when_input_missing(self, tmp_path: Path) -> None:
         # Guidelines are optional — missing source returns True
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         compiler = MandateCompiler()
         result = compiler.compile_guidelines_dsl(
@@ -209,7 +209,7 @@ class TestCompileGuidelinesDsl:
         assert result is True
 
     def test_verbose_log_is_called(self, tmp_path: Path, capsys: Any) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         input_file = tmp_path / "guidelines.dsl"
         input_file.write_text(GUIDELINES_DSL_SAMPLE, encoding="utf-8")
@@ -226,7 +226,7 @@ class TestCompileToBinary:
     def test_msgpack_format_returns_packed_bytes(self) -> None:
         import msgpack
 
-        from sdd_wizard.orchestration.mandate_compiler import compile_to_binary
+        from providence_wizard.orchestration.mandate_compiler import compile_to_binary
 
         mandates = [{"id": "M001", "type": "HARD"}]
         binary_data = compile_to_binary(mandates, format="msgpack")
@@ -239,7 +239,7 @@ class TestCompileToBinary:
 
 class TestCompileMandateSpecEdgeCases:
     def test_logs_when_no_mandates_found(self, tmp_path: Path, capsys: Any) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         input_file = tmp_path / "mandate.spec"
         input_file.write_text("# no mandates here\n", encoding="utf-8")
@@ -257,8 +257,8 @@ class TestCompileMandateSpecEdgeCases:
     def test_returns_false_on_compile_error(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        from sdd_wizard.orchestration import mandate_compiler
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration import mandate_compiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         input_file = tmp_path / "mandate.spec"
         input_file.write_text(MANDATE_SPEC_SAMPLE, encoding="utf-8")
@@ -279,7 +279,7 @@ class TestCompileMandateSpecEdgeCases:
 
 class TestCompileGuidelinesDslEdgeCases:
     def test_compiles_successfully_with_msgpack_default(self, tmp_path: Path) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         input_file = tmp_path / "guidelines.dsl"
         input_file.write_text(GUIDELINES_DSL_SAMPLE, encoding="utf-8")
@@ -294,8 +294,8 @@ class TestCompileGuidelinesDslEdgeCases:
     def test_returns_false_on_compile_error(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        from sdd_wizard.orchestration import mandate_compiler
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration import mandate_compiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         input_file = tmp_path / "guidelines.dsl"
         input_file.write_text(GUIDELINES_DSL_SAMPLE, encoding="utf-8")
@@ -314,7 +314,7 @@ class TestCompileGuidelinesDslEdgeCases:
 
 class TestMandateCompilerLog:
     def test_log_prints_when_verbose(self, capsys: Any) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         compiler = MandateCompiler(verbose=True)
         compiler.log("hello world")
@@ -322,7 +322,7 @@ class TestMandateCompilerLog:
         assert "hello world" in captured.out
 
     def test_log_silent_when_not_verbose(self, capsys: Any) -> None:
-        from sdd_wizard.orchestration.mandate_compiler import MandateCompiler
+        from providence_wizard.orchestration.mandate_compiler import MandateCompiler
 
         compiler = MandateCompiler(verbose=False)
         compiler.log("should not appear")

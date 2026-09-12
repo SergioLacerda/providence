@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from sdd_runtime import SkillEngine
+from providence_runtime import SkillEngine
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SECTION = "\n" + "=" * 60

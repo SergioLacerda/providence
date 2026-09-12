@@ -416,7 +416,7 @@ class TestAnalyzeAllEndToEnd:
         data = json.loads(
             (tmp_path / "out" / "analysis.json").read_text(encoding="utf-8")
         )
-        assert data["analyzer_name"] == "sdd_telemetry"
+        assert data["analyzer_name"] == "providence_telemetry"
         assert set(data["summary"]) >= {
             "total_files",
             "performance",

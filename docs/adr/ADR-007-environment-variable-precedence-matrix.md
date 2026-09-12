@@ -9,10 +9,10 @@
 
 ## Context
 
-Path resolution across `sdd_core`, `sdd_runtime`, `sdd_cli`, and `sdd_compiler` was
+Path resolution across `providence_core`, `providence_runtime`, `providence_cli`, and `sdd_compiler` was
 ad-hoc: each module resolved workspace root, telemetry sinks, and keyring paths
 independently, with different fallback strategies and no shared contract. This caused
-tests to accidentally write to the real `.sdd/` tree, CI results to differ from local
+tests to accidentally write to the real `.providence/` tree, CI results to differ from local
 runs, and integration tests to interfere with each other.
 
 ---
@@ -46,12 +46,12 @@ R = required · O = optional · F = forbidden (fail-fast if present)
 
 ### Telemetry/compliance path precedence
 
-- `SDD_COMPLIANCE_EVENTS_PATH` → context default (`<workspace>/.sdd/runtime/compliance-events.jsonl`) → in test: redirect to `SDD_TEST_OUTPUT_DIR`
+- `SDD_COMPLIANCE_EVENTS_PATH` → context default (`<workspace>/.providence/runtime/compliance-events.jsonl`) → in test: redirect to `SDD_TEST_OUTPUT_DIR`
 - `SDD_TELEMETRY_PATH` → workspace default path
 
 ### Trusted keyring precedence
 
-1. Canonical path `<workspace>/.sdd/trust/trusted-keys.json`
+1. Canonical path `<workspace>/.providence/trust/trusted-keys.json`
 2. `SDD_TRUSTED_KEYRING` (non-strict fallback only)
 3. In strict mode: absence of canonical path blocks.
 

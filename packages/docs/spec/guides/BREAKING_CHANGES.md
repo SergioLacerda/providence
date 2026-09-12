@@ -8,8 +8,8 @@ Any change that could require users to update their code or governance artifacts
 
 ### CLI/Commands
 
-- Removing a command (e.g., `sdd governance compile` deleted)
-- Renaming a command (e.g., `sdd ask` → `sdd query`)
+- Removing a command (e.g., `providence governance compile` deleted)
+- Renaming a command (e.g., `providence ask` → `sdd query`)
 - Removing a required flag
 - Changing output format without `--format` backward-compat option
 - Changing exit code behavior
@@ -37,7 +37,7 @@ Any change that could require users to update their code or governance artifacts
 
 ### Policies
 
-- Changing storage paths (e.g., `.sdd/` directory moved to `.sdd/runtime/`)
+- Changing storage paths (e.g., `.providence/` directory moved to `.providence/runtime/`)
 - Changing artifact serialization format (e.g., JSON → msgpack without backwards compat)
 
 ---
@@ -65,7 +65,7 @@ Any change that could require users to update their code or governance artifacts
 [RFC] Breaking Change: <short description>
 
 Example:
-[RFC] Breaking Change: Remove --verbose flag from sdd governance compile
+[RFC] Breaking Change: Remove --verbose flag from providence governance compile
 ```
 
 **Required in issue body:**
@@ -88,11 +88,11 @@ How will existing users migrate? Provide step-by-step instructions.
 Example:
 ```bash
 # Old (v0.1.0):
-sdd governance compile --verbose
+providence governance compile --verbose
 
 # New (v1.0.0):
-sdd governance compile
-sdd runtime status --verbose  # use the new command instead
+providence governance compile
+providence runtime status --verbose  # use the new command instead
 ```
 
 ## Deprecation Window
@@ -138,8 +138,8 @@ Add to CHANGELOG.md under `[Unreleased]` → `Breaking Changes` section:
 ## [Unreleased]
 
 ### Breaking Changes
-- **CLI:** Removed `--verbose` flag from `sdd governance compile`
-  - Migration: Use `sdd runtime status --verbose` instead (see #123)
+- **CLI:** Removed `--verbose` flag from `providence governance compile`
+  - Migration: Use `providence runtime status --verbose` instead (see #123)
 ```
 
 ### Step 5: Implement & Test
@@ -171,17 +171,17 @@ GitHub Release notes must include:
 ```markdown
 ## ⚠️ Breaking Changes
 
-### Removed: `--verbose` flag from sdd governance compile
-Replaced by `sdd runtime status --verbose`.
+### Removed: `--verbose` flag from providence governance compile
+Replaced by `providence runtime status --verbose`.
 
 **Migration:**
 ```bash
 # Before:
-sdd governance compile --verbose
+providence governance compile --verbose
 
 # After:
-sdd governance compile
-sdd runtime status --verbose
+providence governance compile
+providence runtime status --verbose
 ```
 
 ```
@@ -190,7 +190,7 @@ sdd runtime status --verbose
 
 ## Example: Full RFC Workflow
 
-### Scenario: Remove `--old-format` flag from `sdd ask`
+### Scenario: Remove `--old-format` flag from `providence ask`
 
 **Date:** May 1, 2026
 
@@ -198,7 +198,7 @@ sdd runtime status --verbose
 
 ```
 
-Title: [RFC] Breaking Change: Remove --old-format flag from sdd ask
+Title: [RFC] Breaking Change: Remove --old-format flag from providence ask
 
 Body:
 
@@ -212,17 +212,17 @@ Simplify CLI; JSON is now the standard. The flag is undocumented.
 
 ## Impact Analysis
 
-- Affected: CLI (sdd ask command)
+- Affected: CLI (providence ask command)
 - Users likely impacted: ~10% (flag is undocumented)
 - Migration effort: Low (1 line change in scripts)
 
 ## Migration Path
 
-Users with `sdd ask --old-format` should remove the flag:
+Users with `providence ask --old-format` should remove the flag:
 
 ```bash
-# Old: sdd ask --old-format <query>
-# New: sdd ask <query>
+# Old: providence ask --old-format <query>
+# New: providence ask <query>
 ```
 
 ## Deprecation Window

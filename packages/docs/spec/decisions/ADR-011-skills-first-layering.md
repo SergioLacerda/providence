@@ -5,7 +5,7 @@
 
 ## Context
 
-The project introduced capability-oriented commands (`sdd skills ...`) and awakening seeds.
+The project introduced capability-oriented commands (`providence skills ...`) and awakening seeds.
 Without a strict boundary, capability execution can leak into CLI command modules,
 causing policy drift and coupling.
 
@@ -17,8 +17,8 @@ Adopt this layering model:
 2. Internal architecture: `CLI adapter -> Skill Runtime -> Core/Runtime packages`.
 3. Governed fallback: `skills -> CLI primitives`.
 
-`SkillEngine` in `sdd_runtime` is the canonical execution authority for capabilities.
-`sdd_cli` remains an adapter for input/output and structured response rendering.
+`SkillEngine` in `providence_runtime` is the canonical execution authority for capabilities.
+`providence_cli` remains an adapter for input/output and structured response rendering.
 
 ## Consequences
 

@@ -19,7 +19,7 @@ workspace links for the duration of the run and always removes them afterward
 Usage:
     make mutation-python                                  # run all registered targets
     uv run python tools/testing/run_mutation_python.py     # same, direct invocation
-    uv run python tools/testing/run_mutation_python.py --target sdd_runtime_gate_evaluation
+    uv run python tools/testing/run_mutation_python.py --target providence_runtime_gate_evaluation
 """
 
 from __future__ import annotations
@@ -44,7 +44,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 class MutationTarget:
     """One package + file scoped for mutation testing.
 
-    `package_dir` is repo-root-relative (e.g. "packages/core/sdd_runtime").
+    `package_dir` is repo-root-relative (e.g. "packages/core/providence_runtime").
     `only_mutate` entries are relative to that package's own `src/`.
     `ignore_test_files` lists test files, relative to the package's own
     `tests/` dir, to exclude from this run — reserve this for files that
@@ -78,19 +78,19 @@ class WorkspaceLink:
 
 
 TARGETS: dict[str, MutationTarget] = {
-    "sdd_runtime_gate_evaluation": MutationTarget(
-        name="sdd_runtime_gate_evaluation",
-        package_dir="packages/core/sdd_runtime",
-        only_mutate=["sdd_runtime/_skill_executor/_gate_rules/_evaluation.py"],
+    "providence_runtime_gate_evaluation": MutationTarget(
+        name="providence_runtime_gate_evaluation",
+        package_dir="packages/core/providence_runtime",
+        only_mutate=["providence_runtime/_skill_executor/_gate_rules/_evaluation.py"],
         ignore_test_files=["test_properties.py"],
         extra_deselect=[
             "test_skills_runtime_does_not_fallback_to_subprocess_run",
         ],
     ),
-    "sdd_core_process_authorization": MutationTarget(
-        name="sdd_core_process_authorization",
-        package_dir="packages/core/sdd_core",
-        only_mutate=["sdd_core/utils/_process_auth.py"],
+    "providence_core_process_authorization": MutationTarget(
+        name="providence_core_process_authorization",
+        package_dir="packages/core/providence_core",
+        only_mutate=["providence_core/utils/_process_auth.py"],
         # Both genuinely misbehave under mutmut's mutants/ cwd, unrelated to
         # _process_auth.py — not a blanket exclusion, see each reason below.
         ignore_test_files=[
@@ -102,9 +102,9 @@ TARGETS: dict[str, MutationTarget] = {
             "test_package_data.py",
         ],
     ),
-    "sdd_wizard_selector_dsl_parsing": MutationTarget(
-        name="sdd_wizard_selector_dsl_parsing",
-        package_dir="packages/interfaces/sdd_wizard",
+    "providence_wizard_selector_dsl_parsing": MutationTarget(
+        name="providence_wizard_selector_dsl_parsing",
+        package_dir="packages/interfaces/providence_wizard",
         # NOTE: selector_compiler.py itself (the original candidate for this
         # target) is a @dataclass-decorated class — confirmed by direct
         # inspection that mutmut 3.7.0 does not inject trampolines into any
@@ -114,7 +114,7 @@ TARGETS: dict[str, MutationTarget] = {
         # targeting the plain-function parsing module it delegates to
         # instead, which covers the same "source selection" doc-04 category
         # without hitting the dataclass limitation.
-        only_mutate=["sdd_wizard/orchestration/wizard/_selector_dsl_parsing.py"],
+        only_mutate=["providence_wizard/orchestration/wizard/_selector_dsl_parsing.py"],
         # Both unrelated to this target, deselected by name rather than by
         # file (each file has dozens of other, unaffected tests):
         extra_deselect=[
@@ -134,11 +134,11 @@ TARGETS: dict[str, MutationTarget] = {
             "test_non_callable_non_prompter_returns_make_prompter",
         ],
     ),
-    "sdd_runtime_signatures_validate": MutationTarget(
-        name="sdd_runtime_signatures_validate",
-        package_dir="packages/core/sdd_runtime",
-        only_mutate=["sdd_runtime/signatures/_validate.py"],
-        # Same package as sdd_runtime_gate_evaluation above, so the same two
+    "providence_runtime_signatures_validate": MutationTarget(
+        name="providence_runtime_signatures_validate",
+        package_dir="packages/core/providence_runtime",
+        only_mutate=["providence_runtime/signatures/_validate.py"],
+        # Same package as providence_runtime_gate_evaluation above, so the same two
         # package-wide (not module-specific) pitfalls apply here too:
         ignore_test_files=["test_properties.py"],
         extra_deselect=[
@@ -192,7 +192,7 @@ def _write_mutmut_config(src_dir: Path, target: MutationTarget) -> Path:
     # phase (runs from src_dir/mutants, one level deeper) — a relative path
     # here would need to mean two different things depending on which phase
     # is active. package_dir/tests is the package's own test suite, e.g.
-    # packages/core/sdd_runtime/tests/, not the repo-root tests/ directory
+    # packages/core/providence_runtime/tests/, not the repo-root tests/ directory
     # (which the src/tests and src/docs symlinks below exist to make
     # importable, not collectible).
     test_selection = str(src_dir.parent / "tests")

@@ -75,7 +75,7 @@ def main() -> int:
         print("Legacy path guard failed. Found forbidden legacy references (.ai/.ia):")
         for item in violations:
             print(f" - {item}")
-        print("Use '.sdd' as single source of truth.")
+        print("Use '.providence' as single source of truth.")
         return 1
 
     print("Legacy path guard passed: no '.ai' or '.ia' references found.")

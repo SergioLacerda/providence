@@ -1,4 +1,9 @@
-from sdd_runtime.policy import SEVERITY_HARD, SEVERITY_NONE, SEVERITY_SOFT, PolicyEngine
+from providence_runtime.policy import (
+    SEVERITY_HARD,
+    SEVERITY_NONE,
+    SEVERITY_SOFT,
+    PolicyEngine,
+)
 
 
 class DummyArtifact:

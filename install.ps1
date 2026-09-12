@@ -1,14 +1,14 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-  One-command installer for the standalone `sdd` CLI binary (Windows).
+  One-command installer for the standalone `providence` CLI binary (Windows).
 
 .DESCRIPTION
-  Installs `sdd` only — it does not fetch or manage `sdd-compile`. `sdd`
+  Installs `providence` only — it does not fetch or manage `sdd-compile`. `sdd`
   resolves `sdd-compile` on its own at runtime (env var, local build, PATH,
   wheel-bundled asset, or a verified version-tagged download), unchanged by
   this installer. See
-  packages/core/sdd_core/src/sdd_core/utils/compiler_runner.py.
+  packages/core/providence_core/src/providence_core/utils/compiler_runner.py.
 
   Versioning: defaults to the latest GitHub release. Pass -Version <tag> to
   pin a specific release. Rollback is re-running this script with
@@ -19,10 +19,10 @@
 
 .PARAMETER InstallDir
   Install location. Defaults to $env:SDD_INSTALL_DIR, or
-  "$env:LOCALAPPDATA\sdd\bin" if unset.
+  "$env:LOCALAPPDATA\providence\bin" if unset.
 
 .EXAMPLE
-  irm https://raw.githubusercontent.com/SergioLacerda/sdd-harness/main/install.ps1 | iex
+  irm https://raw.githubusercontent.com/SergioLacerda/providence/main/install.ps1 | iex
 .EXAMPLE
   ./install.ps1 -Version v1.2.3
 #>
@@ -34,8 +34,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$Repo = "SergioLacerda/sdd-harness"
-$Asset = "sdd-windows-amd64.exe"
+$Repo = "SergioLacerda/providence"
+$Asset = "providence-windows-amd64.exe"
 # Override point for CI smoke coverage (see install.sh's matching comment).
 # Unset in normal use — real installs always hit the real GitHub release.
 $BaseUrlOverride = $env:SDD_INSTALL_BASE_URL
@@ -74,7 +74,7 @@ function Main {
         $baseUrl = "https://github.com/$Repo/releases/download/$tag"
     }
 
-    Write-Host "Installing sdd $tag ($Asset) to $InstallDir"
+    Write-Host "Installing providence $tag ($Asset) to $InstallDir"
 
     $tmpDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
     New-Item -ItemType Directory -Path $tmpDir | Out-Null
@@ -101,10 +101,10 @@ function Main {
         Write-Host "Checksum verified."
 
         New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
-        $destPath = Join-Path $InstallDir "sdd.exe"
+        $destPath = Join-Path $InstallDir "providence.exe"
         Copy-Item -Path $assetPath -Destination $destPath -Force
 
-        Write-Host "Installed sdd $tag to $destPath"
+        Write-Host "Installed providence $tag to $destPath"
 
         $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
         if ($userPath -notlike "*$InstallDir*") {

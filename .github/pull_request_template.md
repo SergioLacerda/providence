@@ -14,7 +14,7 @@ Human Review: [Signed-off]
 
 ### TDD (M002 — mandatory, not customizable)
 
-`.sdd/source/mandates/mandates.md` requires writing tests before implementation
+`.providence/source/mandates/mandates.md` requires writing tests before implementation
 (Red-Green-Refactor). CI's "Validate Test Coverage (M002)" step runs
 `tools/ci/check_tdd_diff_coverage.py`, which flags production changes with no
 test file touched in the same diff.
@@ -28,7 +28,7 @@ test file touched in the same diff.
 
 ### Health & Compliance
 
-- [ ] `uv run python -m sdd_cli governance validate --skip-handshake` passes
+- [ ] `uv run python -m providence_cli governance validate --skip-handshake` passes
 - [ ] No governance violations or mandate breaks
 
 ### Code Quality
@@ -58,7 +58,7 @@ test file touched in the same diff.
 **Key areas for reviewers to check:**
 
 1. **TDD** — Does every production change carry a test in this diff?
-2. **Governance** — Does this respect the active mandates (`.sdd/source/mandates/mandates.md`)?
+2. **Governance** — Does this respect the active mandates (`.providence/source/mandates/mandates.md`)?
 3. **Testing** — Are tests comprehensive and maintainable?
 4. **Documentation** — Is the change clearly documented?
 

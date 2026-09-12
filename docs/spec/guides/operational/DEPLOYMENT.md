@@ -39,10 +39,10 @@ git status
 # Expected: "On branch main, nothing to commit, working tree clean"
 
 # Check critical paths
-ls -d .sdd-core
-ls -d .sdd-wizard
-ls -d .sdd-compiler
-ls -d .sdd-integration
+ls -d .providence-core
+ls -d .providence-wizard
+ls -d .providence-compiler
+ls -d .providence-integration
 
 echo "✅ Environment ready"
 ```
@@ -59,7 +59,7 @@ echo "✅ Environment ready"
 
 ```bash
 # Validate current governance
-sdd governance validate
+providence governance validate
 
 # Expected output:
 # ✅ Core governance valid
@@ -75,7 +75,7 @@ sdd governance validate
 
 ```bash
 # Run full test suite
-cd .sdd-wizard
+cd .providence-wizard
 python -m pytest tests/ -v
 
 # Expected: 124/124 tests passing
@@ -97,9 +97,9 @@ BACKUP_DIR="/backups/sdd-deployment-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$BACKUP_DIR"
 
 # Backup current deployment
-cp -r .sdd-core "$BACKUP_DIR/"
-cp -r .sdd-wizard/compiled "$BACKUP_DIR/"
-cp -r .sdd-integration "$BACKUP_DIR/"
+cp -r .providence-core "$BACKUP_DIR/"
+cp -r .providence-wizard/compiled "$BACKUP_DIR/"
+cp -r .providence-integration "$BACKUP_DIR/"
 cp CHANGELOG.md "$BACKUP_DIR/"
 
 # Store backup location
@@ -120,15 +120,15 @@ echo "✅ Backup created: $BACKUP_DIR"
 ```bash
 # Verify source files
 echo "=== Source Files Check ==="
-ls -lh .sdd-core/CANONICAL/
+ls -lh .providence-core/CANONICAL/
 # Expected files:
 # - mandate.spec (governance core rules)
 # - guidelines.dsl (governance client rules)
 # - metadata.json (framework metadata)
 
 # Verify structure
-file .sdd-core/CANONICAL/mandate.spec
-file .sdd-core/CANONICAL/guidelines.dsl
+file .providence-core/CANONICAL/mandate.spec
+file .providence-core/CANONICAL/guidelines.dsl
 
 echo "✅ Source files verified"
 ```
@@ -137,7 +137,7 @@ echo "✅ Source files verified"
 
 ```bash
 # Fresh compilation from source
-cd .sdd-wizard
+cd .providence-wizard
 python compile_artifacts.py
 
 # Expected output:
@@ -169,18 +169,18 @@ echo "✅ Artifacts compiled"
 ```bash
 # Binary already included in dist/
 # Make executable
-chmod +x ./dist/sdd
+chmod +x ./dist/providence
 
 # Verify binary works
-./dist/sdd version
+./dist/providence version
 # Expected: "SDD Framework v3.0"
 
 # Optionally add to PATH
-sudo ln -sf $(pwd)/dist/sdd /usr/local/bin/sdd
+sudo ln -sf $(pwd)/dist/providence /usr/local/bin/providence
 
 # Verify system-wide availability
 which sdd
-sdd version
+providence version
 
 echo "✅ CLI binary deployed"
 ```
@@ -198,7 +198,7 @@ python -m cli --help
 alias sdd="python -m cli"
 
 # Verify alias works
-sdd version
+providence version
 
 echo "✅ CLI installed from source"
 ```
@@ -208,18 +208,18 @@ echo "✅ CLI installed from source"
 ```bash
 # Test compilation
 echo "=== Compilation Test ==="
-cd .sdd-wizard
+cd .providence-wizard
 python -c "from compile_artifacts import compile_artifacts; compile_artifacts()"
 echo "✅ Compilation test passed"
 
 # Test governance loading
 echo "=== Governance Load Test ==="
-sdd governance load
+providence governance load
 # Expected: Shows core + client items
 
 # Test artifact validation
 echo "=== Validation Test ==="
-sdd governance validate
+providence governance validate
 # Expected: All 8 checks pass
 
 # Test wizard phases
@@ -239,10 +239,10 @@ echo "✅ All deployment validations passed"
 ```bash
 # Verify CLI is accessible
 which sdd
-sdd version
+providence version
 
 # Quick governance check
-sdd governance validate | grep -E "(✅|✗)"
+providence governance validate | grep -E "(✅|✗)"
 
 # Check no errors in system logs
 journalctl -n 20 | grep -i error || echo "No errors found"
@@ -261,7 +261,7 @@ cd /tmp/sdd-test-project
 sdd new --project-name "test-deployment" --language python
 
 # Verify project structure
-if [ -d ".sdd/CANONICAL" ] && [ -d "src" ]; then
+if [ -d ".providence/CANONICAL" ] && [ -d "src" ]; then
     echo "✅ Project creation successful"
 else
     echo "❌ Project creation failed"
@@ -280,15 +280,15 @@ rm -rf /tmp/sdd-test-project
 echo "=== Performance Baseline ==="
 
 # Load time
-time sdd governance load > /dev/null
+time providence governance load > /dev/null
 # Expected: <200ms
 
 # Validate time
-time sdd governance validate > /dev/null
+time providence governance validate > /dev/null
 # Expected: <300ms
 
 # Generate time
-time sdd governance generate > /dev/null
+time providence governance generate > /dev/null
 # Expected: <500ms
 
 echo "✅ Performance baseline established"
@@ -301,7 +301,7 @@ echo "✅ Performance baseline established"
 cat >> deployment_log.txt << EOF
 
 ## Deployment: $(date)
-- Version: $(sdd version)
+- Version: $(providence version)
 - Environment: $(uname -a)
 - Backup location: $BACKUP_DIR
 - CLI location: $(which sdd)
@@ -330,10 +330,10 @@ echo "✅ Documentation updated"
 # (Usually none - deployment is atomic)
 
 # Check what failed
-sdd governance validate
+providence governance validate
 
 # Investigate error
-cat .sdd-wizard/compile_artifacts.log
+cat .providence-wizard/compile_artifacts.log
 
 # If corruption detected:
 echo "❌ Deployment validation failed"
@@ -351,23 +351,23 @@ BACKUP_DIR="/backups/sdd-deployment-YYYYMMDD-HHMMSS"
 pkill -f "sdd\|wizard"
 
 # Step 2: Remove corrupted artifacts
-rm -rf .sdd-core/CANONICAL/*
-rm -rf .sdd-wizard/compiled/*
+rm -rf .providence-core/CANONICAL/*
+rm -rf .providence-wizard/compiled/*
 
 # Step 3: Restore from backup
-cp -r "$BACKUP_DIR"/.sdd-core/CANONICAL .sdd-core/
-cp -r "$BACKUP_DIR"/.sdd-wizard/compiled .sdd-wizard/
+cp -r "$BACKUP_DIR"/.providence-core/CANONICAL .providence-core/
+cp -r "$BACKUP_DIR"/.providence-wizard/compiled .providence-wizard/
 
 # Step 4: Validate restoration
-sdd governance validate
+providence governance validate
 
 # Step 5: Verify it works
-sdd governance load
+providence governance load
 
 echo "✅ Rollback complete"
 
 # Step 6: Investigate what went wrong
-git diff .sdd-core/
+git diff .providence-core/
 ```
 
 ### If Rollback Needed Post-Deployment
@@ -377,18 +377,18 @@ git diff .sdd-core/
 BACKUP_DIR="/backups/sdd-deployment-YYYYMMDD-HHMMSS"
 
 # Backup current state (for investigation)
-mv .sdd-core .sdd-core.failed.$(date +%s)
-mv .sdd-wizard .sdd-wizard.failed.$(date +%s)
+mv .providence-core .providence-core.failed.$(date +%s)
+mv .providence-wizard .providence-wizard.failed.$(date +%s)
 
 # Restore everything
-cp -r "$BACKUP_DIR"/.sdd-core .
-cp -r "$BACKUP_DIR"/.sdd-wizard .
+cp -r "$BACKUP_DIR"/.providence-core .
+cp -r "$BACKUP_DIR"/.providence-wizard .
 
 # Verify
-sdd governance validate
+providence governance validate
 
 # Alert team
-echo "🚨 ROLLBACK COMPLETED - Investigate .sdd-core.failed and .sdd-wizard.failed"
+echo "🚨 ROLLBACK COMPLETED - Investigate .providence-core.failed and .providence-wizard.failed"
 ```
 
 ---
@@ -449,8 +449,8 @@ EOF
 cd /path/to/dev-workspace
 
 # Fresh setup
-python .sdd-wizard/compile_artifacts.py
-sdd governance validate
+python .providence-wizard/compile_artifacts.py
+providence governance validate
 
 # Note: No backup needed in dev
 ```
@@ -462,16 +462,16 @@ sdd governance validate
 cd /path/to/staging-workspace
 
 # Run full pre-deployment checklist
-sdd governance validate
+providence governance validate
 pytest tests/ -v
 
 # Create backup
 BACKUP_DIR="/backups/staging-$(date +%Y%m%d-%H%M%S)"
-cp -r .sdd-* "$BACKUP_DIR/"
+cp -r .providence-* "$BACKUP_DIR/"
 
 # Deploy
-python .sdd-wizard/compile_artifacts.py
-sdd governance validate
+python .providence-wizard/compile_artifacts.py
+providence governance validate
 
 # Document
 git tag -a "staging-$(date +%Y%m%d)" -m "Staging deployment"
@@ -513,17 +513,17 @@ git push --tags
 
 ```bash
 # Check source files
-ls -lh .sdd-core/CANONICAL/
+ls -lh .providence-core/CANONICAL/
 
 # Verify file format
-file .sdd-core/CANONICAL/mandate.spec
-file .sdd-core/CANONICAL/guidelines.dsl
+file .providence-core/CANONICAL/mandate.spec
+file .providence-core/CANONICAL/guidelines.dsl
 
 # Check for syntax errors
-python -m py_compile .sdd-wizard/compile_artifacts.py
+python -m py_compile .providence-wizard/compile_artifacts.py
 
 # Run with verbose output
-cd .sdd-wizard
+cd .providence-wizard
 python compile_artifacts.py --verbose
 
 # If still failing: Rollback to previous backup
@@ -549,11 +549,11 @@ python -m cli --help
 
 ```bash
 # Run detailed validation
-sdd governance validate --verbose
+providence governance validate --verbose
 
 # Check fingerprints
-cat .sdd-wizard/compiled/metadata-core.json | grep fingerprint
-cat .sdd-wizard/compiled/metadata-client-template.json | grep fingerprint
+cat .providence-wizard/compiled/metadata-core.json | grep fingerprint
+cat .providence-wizard/compiled/metadata-client-template.json | grep fingerprint
 
 # Compare with expected
 cat CHANGELOG.md | grep -i "fingerprint\|35efc54"

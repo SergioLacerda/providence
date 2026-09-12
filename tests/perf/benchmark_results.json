@@ -20,7 +20,7 @@
     }
   },
   "ask_latency": {
-    "error": "No module named 'sdd_skills'"
+    "error": "No module named 'providence_skills'"
   },
   "timestamp": "2026-06-10T01:43:21Z",
   "target_metrics": {

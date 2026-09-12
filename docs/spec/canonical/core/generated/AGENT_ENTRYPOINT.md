@@ -2,7 +2,7 @@
 
 > Generated mirror notice: this page is a publication mirror for runtime agent
 > protocol material. Edit the classified source under `docs/`; regenerate
-> `.sdd/` runtime outputs instead of editing generated runtime files directly.
+> `.providence/` runtime outputs instead of editing generated runtime files directly.
 
 # 🧠 AGENT ENTRYPOINT --- SDD Execution Kernel
 
@@ -19,7 +19,7 @@ No execution without governance awareness.
 1. ENVIRONMENT DETECTION
 
 - Check `.spec.config`
-- Check `.sdd/source/` If missing → DEGRADED MODE
+- Check `.providence/source/` If missing → DEGRADED MODE
 
 1. HANDSHAKE
 

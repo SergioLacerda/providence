@@ -1,9 +1,9 @@
-"""Standalone benchmark for `sdd_wizard`'s Phase 4-6 generation pipeline.
+"""Standalone benchmark for `providence_wizard`'s Phase 4-6 generation pipeline.
 
 Measures `run_phase_4_5_6_generator` wall time across multiple spec sizes.
 Useful for ad-hoc profiling when investigating the `< 250ms` full-pipeline
 performance target documented in
-`.analysis/refined/2026-06-08-sdd-wizard-final-refactor/benchmark-results.md`.
+`.analysis/refined/2026-06-08-providence-wizard-final-refactor/benchmark-results.md`.
 
 Usage:
     python tests/perf/benchmark_wizard_pipeline.py
@@ -19,16 +19,16 @@ from pathlib import Path
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 for _src in (
     _REPO_ROOT,
-    _REPO_ROOT / "packages/interfaces/sdd_wizard/src",
-    _REPO_ROOT / "packages/interfaces/sdd_cli/src",
-    _REPO_ROOT / "packages/core/sdd_core/src",
-    _REPO_ROOT / "packages/features/sdd_integration/src",
-    _REPO_ROOT / "packages/features/sdd_adapters/src",
+    _REPO_ROOT / "packages/interfaces/providence_wizard/src",
+    _REPO_ROOT / "packages/interfaces/providence_cli/src",
+    _REPO_ROOT / "packages/core/providence_core/src",
+    _REPO_ROOT / "packages/features/providence_integration/src",
+    _REPO_ROOT / "packages/features/providence_adapters/src",
 ):
     if str(_src) not in sys.path:
         sys.path.insert(0, str(_src))
 
-from sdd_wizard.orchestration.phase_4_5_6_generator import (  # noqa: E402
+from providence_wizard.orchestration.phase_4_5_6_generator import (  # noqa: E402
     run_phase_4_5_6_generator,
 )
 from tests.perf.wizard_pipeline_fixtures import (  # noqa: E402

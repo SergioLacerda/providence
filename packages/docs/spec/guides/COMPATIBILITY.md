@@ -1,4 +1,4 @@
-# Compatibility Matrix — SDD Harness
+# Compatibility Matrix — Providence
 
 **Status:** Version 0.1.0+ (all packages synchronized via git tag)
 
@@ -33,33 +33,33 @@
 ## Package Interdependencies
 
 ```
-sdd-cli
-  └─ sdd-wizard
-      └─ sdd-integration
-          ├─ sdd-runtime
-          │   └─ sdd-core
+providence-cli
+  └─ providence-wizard
+      └─ providence-integration
+          ├─ providence-runtime
+          │   └─ providence-core
           └─ sdd-compiler
-              └─ sdd-core
+              └─ providence-core
 
-sdd-telemetry
-  └─ sdd-runtime
-      └─ sdd-core
+providence-telemetry
+  └─ providence-runtime
+      └─ providence-core
 ```
 
 **Installation:**
 
 - **End-users (official channel):** download the `dist/` wheelhouse from a
-  tagged [GitHub Release](https://github.com/SergioLacerda/sdd-harness/releases)
-  and install with `pip install --no-index --find-links <dist-dir> sdd-cli`.
+  tagged [GitHub Release](https://github.com/SergioLacerda/providence/releases)
+  and install with `pip install --no-index --find-links <dist-dir> providence-cli`.
   This exact flow is verified on `windows-latest` and `ubuntu-latest` by
   `.github/workflows/release.yml` before a release is published.
 - **End-users (source/development install):** `uv tool install
-  "git+https://github.com/SergioLacerda/sdd-harness#subdirectory=packages/interfaces/sdd_cli"`
+  "git+https://github.com/SergioLacerda/providence#subdirectory=packages/interfaces/providence_cli"`
   tracks branch code rather than a released version.
 - **Developers:** `uv sync` in monorepo root (all packages in editable mode)
 
-There is no published `sdd-harness` package on PyPI; do not reference `pip
-install sdd-harness` until PyPI publishing is implemented and proven in CI.
+There is no published `providence` package on PyPI; do not reference `pip
+install providence` until PyPI publishing is implemented and proven in CI.
 
 ---
 
@@ -84,7 +84,7 @@ install sdd-harness` until PyPI publishing is implemented and proven in CI.
 
 Examples:
 
-- `sdd governance compile` → `sdd compile` (command rename)
+- `providence governance compile` → `sdd compile` (command rename)
 - Removing `--verbose` flag without replacement
 - Changing `RuntimeEvent` schema (removing fields)
 
@@ -97,7 +97,7 @@ Examples:
 
 Examples:
 
-- Adding `sdd ask` command
+- Adding `providence ask` command
 - Adding `--format json` output option
 - Adding new `economy.*` event types
 
@@ -133,7 +133,7 @@ When a feature must be removed, follow this process:
 
 Example:
 
-- v1.5.0: Deprecate `sdd governance --old-flag` with warning message
+- v1.5.0: Deprecate `providence governance --old-flag` with warning message
 - v1.6.0, v1.7.0, etc.: Flag still works with warning
 - v2.0.0: Remove `--old-flag` entirely
 
@@ -185,7 +185,7 @@ Future enhancement (Phase 5.3): Add CI matrix to test:
 
 Found a compatibility problem?
 
-1. Check [GitHub Issues](https://github.com/SergioLacerda/sdd-harness/issues) for existing report
+1. Check [GitHub Issues](https://github.com/SergioLacerda/providence/issues) for existing report
 2. If new: open issue with:
    - Python version
    - Platform (Linux/Windows/macOS)

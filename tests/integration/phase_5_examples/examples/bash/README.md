@@ -20,7 +20,7 @@ bash --version
 ### INTEGRATION Flow Test
 
 ```bash
-cd /home/sergio/dev/sdd-harness
+cd /home/sergio/dev/providence
 
 # Make script executable
 chmod +x tests/integration/phase_5_examples/examples/bash/test-integration-flow.sh
@@ -41,7 +41,7 @@ bash tests/integration/phase_5_examples/examples/bash/test-integration-flow.sh
   ✅ Created directory: .vscode/
   ✅ Created directory: .cursor/
   ✅ Created directory: scripts/
-  ✅ Created directory: .sdd/
+  ✅ Created directory: .providence/
   ✅ STEP 1 PASSED: All directories created
 
 ... (steps 2-5) ...
@@ -155,7 +155,7 @@ mkdir -p "$TEST_DIR/$d"
 # Bash:
 cat > "$file_path" << 'EOF'
 [spec]
-spec_path = ../sdd-harness
+spec_path = ../providence
 EOF
 ```
 

@@ -19,7 +19,7 @@ import pytest
 from tests.helpers.text_io import read_text_utf8, write_text_utf8
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
-_REPO_SDD_ROOT = (_REPO_ROOT / ".sdd").resolve()
+_REPO_SDD_ROOT = (_REPO_ROOT / ".providence").resolve()
 _SDD_SNAPSHOT_START: dict[str, str] = {}
 _TEST_WORKSPACE_ROOT = (
     Path(tempfile.gettempdir()) / f"sdd-shadow-workspace-{os.getpid()}"
@@ -49,7 +49,7 @@ def get_governance_config() -> dict[str, str]:
     if not pyproject.exists() or tomllib is None:
         return {
             "source_root": "docs/spec/canonical/core/policies",
-            "compiled_output": ".sdd/compiled",
+            "compiled_output": ".providence/compiled",
         }
 
     with open(pyproject, "rb") as f:
@@ -124,14 +124,14 @@ def _governance_artifacts_valid(paths: dict[str, Path]) -> bool:
 
 
 def _canonical_compiled_valid() -> bool:
-    """Return True if .sdd/compiled/governance-core.json is present and valid.
+    """Return True if .providence/compiled/governance-core.json is present and valid.
 
     Used to skip the legacy GovernanceOrchestrator rebuild when the CI bootstrap
-    action has already produced artifacts at the canonical .sdd/compiled/ path.
+    action has already produced artifacts at the canonical .providence/compiled/ path.
     """
     import json as _json
 
-    from sdd_cli.utils.sdd_authority import compiled_active_dir
+    from providence_cli.utils.providence_authority import compiled_active_dir
 
     compiled_dir = compiled_active_dir()
     canonical = compiled_dir / "governance-core.json"
@@ -198,11 +198,11 @@ def _sync_compiled_dirs(master_compiled: Path, client_compiled: Path) -> None:
 
 
 def _ensure_test_workspace() -> Path:
-    from sdd_core.utils.environment import write_profile
+    from providence_core.utils.environment import write_profile
 
     os.environ["SDD_WORKSPACE_ROOT"] = str(_TEST_WORKSPACE_ROOT)
     os.environ["SDD_TEST_ISOLATED_WORKSPACE"] = "1"
-    if not (_TEST_WORKSPACE_ROOT / ".sdd" / "profile").exists():
+    if not (_TEST_WORKSPACE_ROOT / ".providence" / "profile").exists():
         write_profile(_TEST_WORKSPACE_ROOT, "client", "test-workspace")
     return _TEST_WORKSPACE_ROOT
 
@@ -210,8 +210,8 @@ def _ensure_test_workspace() -> Path:
 def _bootstrap_governance(
     repo_root: Path, workspace_root: Path, paths: dict[str, Path]
 ) -> None:
-    from sdd_core.deployment_manager import DeploymentManager
-    from sdd_core.governance_orchestrator import GovernanceOrchestrator
+    from providence_core.deployment_manager import DeploymentManager
+    from providence_core.governance_orchestrator import GovernanceOrchestrator
 
     orchestrator = GovernanceOrchestrator(
         repo_root=str(repo_root),
@@ -241,7 +241,7 @@ def pytest_sessionstart(session: object) -> None:  # noqa: ARG001
     test_output.mkdir(parents=True, exist_ok=True)
     os.environ.setdefault("SDD_TEST_OUTPUT_DIR", str(test_output))
     # In shadow-repo container checks we intentionally allow local workspace
-    # telemetry paths (tmp_path/.sdd/runtime/...) to preserve test semantics.
+    # telemetry paths (tmp_path/.providence/runtime/...) to preserve test semantics.
     if os.environ.get("SDD_ALLOW_REPO_SDD_MUTATION", "").strip().lower() not in {
         "1",
         "true",
@@ -254,7 +254,7 @@ def pytest_sessionstart(session: object) -> None:  # noqa: ARG001
         )
     workspace_root = _ensure_test_workspace()
 
-    from sdd_core.utils.environment import get_sdd_paths
+    from providence_core.utils.environment import get_sdd_paths
 
     paths = get_sdd_paths(repo_root=root, workspace_root=workspace_root)
     required = [
@@ -268,7 +268,7 @@ def pytest_sessionstart(session: object) -> None:  # noqa: ARG001
     global _SDD_SNAPSHOT_START
 
     if _canonical_compiled_valid() or _governance_artifacts_valid(paths):
-        # .sdd/compiled/ populated by `sdd governance compile` (CI bootstrap path),
+        # .providence/compiled/ populated by `providence governance compile` (CI bootstrap path),
         # or legacy generated/ artifacts present — skip rebuild.
         _SDD_SNAPSHOT_START = _snapshot_repo_sdd_tree()
         return
@@ -319,7 +319,7 @@ def pytest_pyfunc_call(pyfuncitem: pytest.Function) -> bool | None:
 
 
 def pytest_sessionfinish(session: object, exitstatus: int) -> None:  # noqa: ARG001
-    """Fail session when repository .sdd tree changed during tests."""
+    """Fail session when repository .providence tree changed during tests."""
     del exitstatus
     if os.environ.get("SDD_ALLOW_REPO_SDD_MUTATION", "").strip().lower() in {
         "1",
@@ -341,7 +341,8 @@ def pytest_sessionfinish(session: object, exitstatus: int) -> None:  # noqa: ARG
         )
         diff_preview = f"added={added[:5]} removed={removed[:5]} changed={changed[:5]}"
         raise RuntimeError(
-            "TEST POLICY: repository .sdd mutated during test session. " + diff_preview
+            "TEST POLICY: repository .providence mutated during test session. "
+            + diff_preview
         )
 
 
@@ -349,9 +350,9 @@ _SDD_RUNTIME_DIR = (_REPO_SDD_ROOT / "runtime").resolve()
 
 
 def _snapshot_repo_sdd_tree() -> dict[str, str]:
-    """Return deterministic snapshot of repository .sdd content.
+    """Return deterministic snapshot of repository .providence content.
 
-    .sdd/runtime/ is excluded — it holds session-scoped state files
+    .providence/runtime/ is excluded — it holds session-scoped state files
     (governance-state.json, compliance-events.jsonl, etc.) that are
     gitignored and expected to be created/modified at runtime.
     """
@@ -399,9 +400,9 @@ def _is_format_tolerant_sdd_json(path: Path) -> bool:
     """Allow formatting-only drift for known JSON artifact files."""
     rel = str(path.relative_to(_REPO_ROOT))
     return rel in {
-        ".sdd/compiled/governance-core.json.sig",
-        ".sdd/compiled/governance-client.json.sig",
-        ".sdd/trust/trusted-keys.json",
+        ".providence/compiled/governance-core.json.sig",
+        ".providence/compiled/governance-client.json.sig",
+        ".providence/trust/trusted-keys.json",
     }
 
 
@@ -431,14 +432,23 @@ def _is_repo_sdd_path(target: Any) -> bool:
 def _guard_repo_sdd_write(target: Any, op: str) -> None:
     if _is_repo_sdd_path(target):
         raise RuntimeError(
-            f"TEST POLICY: write to repository .sdd is forbidden "
+            f"TEST POLICY: write to repository .providence is forbidden "
             f"(op={op}, path={target})"
         )
 
 
 @pytest.fixture(autouse=True)
 def _forbid_repo_sdd_writes(monkeypatch: pytest.MonkeyPatch) -> Any:  # noqa: C901
-    """Hard-fail any test-time write mutation under repository .sdd."""
+    """Hard-fail any test-time write mutation under repository .providence.
+
+    Scoped to the `tests/` subtree only (conftest.py fixtures only apply to
+    tests inside their own directory subtree). `packages/**/tests/**` needs
+    its own coverage: the repository-root `conftest.py` provides a narrower,
+    handshake-file-only guard for those trees — see its module docstring for
+    why it does not reuse this broader per-path check (doing so broke
+    unrelated, pre-existing `.providence/runtime/` usage in package test
+    suites that don't inherit this module's `SDD_WORKSPACE_ROOT` isolation).
+    """
     original_open = builtins.open
 
     def guarded_builtin_open(file: Any, mode: str = "r", *args: Any, **kwargs: Any):
@@ -604,7 +614,7 @@ def mock_repo(tmp_path: Path) -> Path:
     write_text_utf8(compiled_dir / "metadata-client.json", '{"version": "1.0.0"}')
 
     # Bootstrap defaults for Phase 1 existence check
-    sdd_dir = tmp_path / ".sdd"
+    sdd_dir = tmp_path / ".providence"
     sdd_dir.mkdir(parents=True, exist_ok=True)
     write_text_utf8(sdd_dir / "governance-core.json", core_json)
     write_text_utf8(sdd_dir / "governance-client.json", client_json)

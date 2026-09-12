@@ -47,7 +47,9 @@ def main() -> int:
         print("CI command policy failed. Found forbidden SDD command usage:")
         for item in violations:
             print(f" - {item}")
-        print("Use 'uv run python -m sdd_cli ...' or dedicated tools/*.py scripts.")
+        print(
+            "Use 'uv run python -m providence_cli ...' or dedicated tools/*.py scripts."
+        )
         return 1
 
     print("CI command policy passed: no forbidden 'sdd' command usage found.")

@@ -1,4 +1,4 @@
-# 🔵 SDD FULL — Complete Governance Adoption
+# 🔵 Providence FULL — Complete Governance Adoption
 
 **For:** Production teams, strict quality requirements, regulated industries
 **Setup Time:** 40 minutes
@@ -321,7 +321,7 @@ Before marking PR as "ready to merge":
 
 ## Integration with AI Agents
 
-SDD FULL supports complete AI agent autonomy:
+Providence FULL supports complete AI agent autonomy:
 
 - All rules explicit in code
 - Governance enforced via CI/CD

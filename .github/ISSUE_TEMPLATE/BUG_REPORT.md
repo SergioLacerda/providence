@@ -63,7 +63,7 @@ git status && git log --oneline -3
 
 - [ ] Ran: `python3 packages/health_check.py --force-recheck`
 - [ ] Ran: `python3 packages/tools/governance_compliance.py --fix-steps`
-- [ ] Cleared cache: `rm -f packages/.sdd/agent_state.json`
+- [ ] Cleared cache: `rm -f packages/.providence/agent_state.json`
 - [ ] Pulled latest: `git pull origin main`
 - [ ] Checked docs: TROUBLESHOOTING.md
 

@@ -9,7 +9,7 @@
 
 ## Threat Model
 
-`sdd-harness` processes user-supplied specs (YAML/TOML), executes wizard scripts, and
+`providence` processes user-supplied specs (YAML/TOML), executes wizard scripts, and
 compiles governance artifacts. The primary attack surface is **input parsing**:
 
 - Path traversal in spec source roots and compiled output paths
@@ -20,7 +20,7 @@ compiles governance artifacts. The primary attack surface is **input parsing**:
 
 **Do not open a public GitHub issue for security vulnerabilities.**
 
-Report vulnerabilities via GitHub's private [Security Advisories](https://github.com/SergioLacerda/sdd-harness/security/advisories/new).
+Report vulnerabilities via GitHub's private [Security Advisories](https://github.com/SergioLacerda/providence/security/advisories/new).
 
 Please include:
 

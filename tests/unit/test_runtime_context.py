@@ -1,6 +1,6 @@
 import pytest
-from sdd_runtime.artifacts import CompiledArtifact, GovernanceItem
-from sdd_runtime.context import BudgetBreachError, ContextLoader, ContextRequest
+from providence_runtime.artifacts import CompiledArtifact, GovernanceItem
+from providence_runtime.context import BudgetBreachError, ContextLoader, ContextRequest
 
 
 def make_artifact():

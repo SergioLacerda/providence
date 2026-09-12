@@ -2,15 +2,15 @@
 
 .PHONY: plugin-claude
 plugin-claude: ## Build the Claude Code standalone governance projection (dist/claude-standalone/)
-	$(PYTHON) -m sdd_cli claude build
+	$(PYTHON) -m providence_cli claude build
 
 .PHONY: plugin-copilot
 plugin-copilot: ## Build the Copilot standalone governance projection (dist/copilot-standalone/)
-	$(PYTHON) -m sdd_cli copilot build
+	$(PYTHON) -m providence_cli copilot build
 
 .PHONY: plugin-devin
 plugin-devin: ## Build the Devin standalone governance projection (dist/devin-standalone/)
-	$(PYTHON) -m sdd_cli devin build --standalone
+	$(PYTHON) -m providence_cli devin build --standalone
 
 .PHONY: plugins-standalone
 plugins-standalone: plugin-claude plugin-copilot plugin-devin ## Build all standalone governance projections (Claude, Copilot, Devin)

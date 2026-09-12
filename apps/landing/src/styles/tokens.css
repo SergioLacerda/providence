@@ -1,6 +1,6 @@
 /*
- * SDD Harness — design tokens
- * Ported from the SDD Harness Design System (`tokens/colors.css`,
+ * Providence — design tokens
+ * Ported from the Providence Design System (`tokens/colors.css`,
  * `typography.css`, `spacing.css`, `elevation.css`). Values copied verbatim.
  * If/when the team publishes these as a shared package, replace this file
  * with an import of the canonical source instead of maintaining a copy.
@@ -202,4 +202,28 @@
   --duration-fast: 120ms;
   --duration-base: 180ms;
   --duration-slow: 260ms;
+
+  /* ---- Providentian brand (ADR-023) — bronze/dark identity ----
+   * Ported from the design handoff (.analysis/pending/design_handoff_providentia/).
+   * Site-wide default theme as of the T-2–T-6 migration; the legacy indigo/ink-9xx
+   * scale above is kept because GovernanceFooter/Terminal's `--term-*` tokens and a
+   * few remaining inline styles still reference it directly.
+   */
+  --bg:           #0b0f14;
+  --panel:        #12171f;
+  --panel-2:      #171d26;
+  --ink:          #e7e9ec;
+  --ink-dim:      #8f98a3;
+  --ink-faint:    #565f6a;
+  --bronze:       #c19a5e;
+  --bronze-dim:   #8a6d43;
+  --bronze-bright:#dcb87c;
+  --steel:        #66809a;
+  --clean:        #7fa079;
+  --line:         rgba(231, 233, 236, 0.07);
+  --line-strong:  rgba(231, 233, 236, 0.14);
+  --line-bronze:  rgba(193, 154, 94, 0.4);
+  --serif: 'Fraunces', Georgia, serif;
+  --sans:  'Inter', -apple-system, sans-serif;
+  --mono:  'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 }

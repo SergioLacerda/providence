@@ -1,4 +1,4 @@
-"""Unit tests for sdd_integration runners (filesystem, git, command, config)."""
+"""Unit tests for providence_integration runners (filesystem, git, command, config)."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from sdd_integration.engine.types import (
+from providence_integration.engine.types import (
     CommandExecInputs,
     ConfigValidateInputs,
     FilesystemCopyInputs,
@@ -61,24 +61,24 @@ class TestFilesystemRunnerIsSafePath:
     """Tests for _is_safe_path helper."""
 
     def test_child_is_safe(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.filesystem_runner import _is_safe_path
+        from providence_integration.runners.filesystem_runner import _is_safe_path
 
         child = tmp_path / "subdir" / "file.txt"
         assert _is_safe_path(tmp_path, child) is True
 
     def test_base_itself_is_safe(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.filesystem_runner import _is_safe_path
+        from providence_integration.runners.filesystem_runner import _is_safe_path
 
         assert _is_safe_path(tmp_path, tmp_path) is True
 
     def test_traversal_outside_is_unsafe(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.filesystem_runner import _is_safe_path
+        from providence_integration.runners.filesystem_runner import _is_safe_path
 
         outside = tmp_path.parent / "other"
         assert _is_safe_path(tmp_path, outside) is False
 
     def test_absolute_sibling_is_unsafe(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.filesystem_runner import _is_safe_path
+        from providence_integration.runners.filesystem_runner import _is_safe_path
 
         sibling = tmp_path.parent / "sibling_dir"
         assert _is_safe_path(tmp_path, sibling) is False
@@ -88,7 +88,7 @@ class TestRunFilesystemCreateStructure:
     """Tests for run_filesystem_create_structure."""
 
     def test_creates_directories(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.filesystem_runner import (
+        from providence_integration.runners.filesystem_runner import (
             run_filesystem_create_structure,
         )
 
@@ -102,7 +102,7 @@ class TestRunFilesystemCreateStructure:
         assert (tmp_path / "d" / "e").is_dir()
 
     def test_empty_directories_list_is_noop(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.filesystem_runner import (
+        from providence_integration.runners.filesystem_runner import (
             run_filesystem_create_structure,
         )
 
@@ -112,7 +112,7 @@ class TestRunFilesystemCreateStructure:
         # No error, no dirs created (beyond tmp_path itself)
 
     def test_path_traversal_raises_permission_error(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.filesystem_runner import (
+        from providence_integration.runners.filesystem_runner import (
             run_filesystem_create_structure,
         )
 
@@ -125,7 +125,7 @@ class TestRunFilesystemCreateStructure:
             run_filesystem_create_structure(inputs, context, tmp_path)
 
     def test_uses_cwd_when_no_working_dir_in_context(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.filesystem_runner import (
+        from providence_integration.runners.filesystem_runner import (
             run_filesystem_create_structure,
         )
 
@@ -140,7 +140,7 @@ class TestRunFilesystemCopy:
     """Tests for run_filesystem_copy."""
 
     def test_copies_file(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.filesystem_runner import run_filesystem_copy
+        from providence_integration.runners.filesystem_runner import run_filesystem_copy
 
         src_file = tmp_path / "src" / "hello.txt"
         src_file.parent.mkdir(parents=True)
@@ -155,7 +155,7 @@ class TestRunFilesystemCopy:
         assert (tmp_path / "dst" / "hello.txt").read_text(encoding="utf-8") == "content"
 
     def test_copies_directory(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.filesystem_runner import run_filesystem_copy
+        from providence_integration.runners.filesystem_runner import run_filesystem_copy
 
         src_dir = tmp_path / "mysrc"
         src_dir.mkdir()
@@ -169,7 +169,7 @@ class TestRunFilesystemCopy:
         assert (tmp_path / "mydst" / "a.txt").read_text(encoding="utf-8") == "a"
 
     def test_destination_path_traversal_raises(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.filesystem_runner import run_filesystem_copy
+        from providence_integration.runners.filesystem_runner import run_filesystem_copy
 
         src_file = tmp_path / "file.txt"
         src_file.write_text("data", encoding="utf-8")
@@ -196,7 +196,7 @@ class TestRunCommandExec:
         """Mock SafeProcessRunner to allow test binaries (echo, false) in test environment."""
         import subprocess
 
-        from sdd_core.utils.process import ProcessResult, SafeProcessRunner
+        from providence_core.utils.process import ProcessResult, SafeProcessRunner
 
         original_run = SafeProcessRunner.run
 
@@ -250,7 +250,7 @@ class TestRunCommandExec:
             assert "last_exit_code" not in context
 
     def test_missing_command_key_is_noop(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.command_runner import run_command_exec
+        from providence_integration.runners.command_runner import run_command_exec
 
         context: dict[str, Any] = {"working_dir": tmp_path}
         # Missing command key should raise validation error, so we catch it
@@ -265,7 +265,7 @@ class TestRunCommandExec:
         assert "last_exit_code" not in context
 
     def test_successful_command_sets_exit_code_zero(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.command_runner import run_command_exec
+        from providence_integration.runners.command_runner import run_command_exec
 
         context: dict[str, Any] = {"working_dir": tmp_path}
         # Use the current interpreter as a portable stand-in for `echo`:
@@ -280,7 +280,7 @@ class TestRunCommandExec:
         assert "hello" in context["last_stdout"]
 
     def test_failing_command_sets_nonzero_exit_code(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.command_runner import run_command_exec
+        from providence_integration.runners.command_runner import run_command_exec
 
         context: dict[str, Any] = {"working_dir": tmp_path}
         python_exe = sys.executable.replace("\\", "/")
@@ -291,7 +291,7 @@ class TestRunCommandExec:
         assert context["last_exit_code"] != 0
 
     def test_uses_subprocess_run_with_correct_cwd(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.command_runner import run_command_exec
+        from providence_integration.runners.command_runner import run_command_exec
 
         context: dict[str, Any] = {"working_dir": tmp_path}
         mock_result = MagicMock()
@@ -309,7 +309,7 @@ class TestRunCommandExec:
             )
 
     def test_stderr_captured(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.command_runner import run_command_exec
+        from providence_integration.runners.command_runner import run_command_exec
 
         context: dict[str, Any] = {"working_dir": tmp_path}
         # Python command to write to stderr
@@ -330,15 +330,15 @@ class TestRunConfigValidate:
     """Tests for run_config_validate."""
 
     def test_missing_file_sets_empty_config(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.config_runner import run_config_validate
+        from providence_integration.runners.config_runner import run_config_validate
 
         context: dict[str, Any] = {"working_dir": tmp_path}
-        inputs = make_config_validate_inputs({"file": ".sdd/profile"})
+        inputs = make_config_validate_inputs({"file": ".providence/profile"})
         run_config_validate(inputs, context, tmp_path)
         assert context["config"] == {}
 
     def test_reads_ini_file(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.config_runner import run_config_validate
+        from providence_integration.runners.config_runner import run_config_validate
 
         config_file = tmp_path / "myconfig.ini"
         config_file.write_text("[section]\nkey = value\nfoo = bar\n", encoding="utf-8")
@@ -349,7 +349,7 @@ class TestRunConfigValidate:
         assert context["config"]["foo"] == "bar"
 
     def test_multiple_sections_flattened(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.config_runner import run_config_validate
+        from providence_integration.runners.config_runner import run_config_validate
 
         config_file = tmp_path / "multi.ini"
         config_file.write_text("[a]\nk1 = v1\n[b]\nk2 = v2\n", encoding="utf-8")
@@ -360,18 +360,18 @@ class TestRunConfigValidate:
         assert context["config"]["k2"] == "v2"
 
     def test_default_file_path_used_when_not_specified(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.config_runner import run_config_validate
+        from providence_integration.runners.config_runner import run_config_validate
 
-        # Default is .sdd/profile — missing → empty config
+        # Default is .providence/profile — missing → empty config
         context: dict[str, Any] = {"working_dir": tmp_path}
         inputs = make_config_validate_inputs({})
         run_config_validate(inputs, context, tmp_path)
         assert context["config"] == {}
 
     def test_creates_real_sdd_profile(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.config_runner import run_config_validate
+        from providence_integration.runners.config_runner import run_config_validate
 
-        sdd_dir = tmp_path / ".sdd"
+        sdd_dir = tmp_path / ".providence"
         sdd_dir.mkdir()
         profile = sdd_dir / "profile"
         profile.write_text("[sdd]\ntype = client\nname = test\n", encoding="utf-8")
@@ -392,7 +392,7 @@ class TestRunGitCommit:
     """Tests for run_git_commit."""
 
     def test_calls_git_with_correct_args(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.git_runner import run_git_commit
+        from providence_integration.runners.git_runner import run_git_commit
 
         inputs = make_git_commit_inputs({"message": "test commit"})
         context: dict[str, Any] = {"working_dir": tmp_path}
@@ -409,7 +409,7 @@ class TestRunGitCommit:
             assert any("commit" in cmd for cmd in commands)
 
     def test_initializes_repo_when_no_git_dir(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.git_runner import run_git_commit
+        from providence_integration.runners.git_runner import run_git_commit
 
         inputs = make_git_commit_inputs({"message": "init"})
         context: dict[str, Any] = {"working_dir": tmp_path}
@@ -425,7 +425,7 @@ class TestRunGitCommit:
             assert any("init" in cmd for cmd in commands)
 
     def test_skips_init_when_git_dir_exists(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.git_runner import run_git_commit
+        from providence_integration.runners.git_runner import run_git_commit
 
         git_dir = tmp_path / ".git"
         git_dir.mkdir()
@@ -443,7 +443,7 @@ class TestRunGitCommit:
             assert not any("init" in cmd for cmd in commands)
 
     def test_uses_default_message_when_not_provided(self, tmp_path: Path) -> None:
-        from sdd_integration.runners.git_runner import run_git_commit
+        from providence_integration.runners.git_runner import run_git_commit
 
         inputs = make_git_commit_inputs({})
         context: dict[str, Any] = {"working_dir": tmp_path}

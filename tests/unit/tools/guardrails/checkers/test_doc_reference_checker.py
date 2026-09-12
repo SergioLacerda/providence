@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from sdd_core.utils.text_io import write_text_utf8
+from providence_core.utils.text_io import write_text_utf8
 from tools.guardrails.checkers.doc_reference_checker import (
     DocReferenceChecker,
     _doc_references_detector,
@@ -71,7 +71,7 @@ class TestFindCodeReferences:
         assert refs == []
 
     def test_ignores_unrelated_backtick_paths(self, tmp_path: Path) -> None:
-        content = "See `docs/README.md` or `packages/interfaces/sdd_cli/cli.py`."
+        content = "See `docs/README.md` or `packages/interfaces/providence_cli/cli.py`."
         refs = find_code_references(content, tmp_path)
 
         assert refs == []
@@ -149,8 +149,10 @@ class TestDocReferencesDetector:
 def repo(tmp_path: Path) -> Path:
     """A synthetic repo_root with docs/, packages/core/, tools/sdd-compile/."""
     root = tmp_path / "repo"
-    (root / "packages" / "core" / "sdd_core").mkdir(parents=True)
-    write_text_utf8(root / "packages" / "core" / "sdd_core" / "foo.py", "x = 1\n")
+    (root / "packages" / "core" / "providence_core").mkdir(parents=True)
+    write_text_utf8(
+        root / "packages" / "core" / "providence_core" / "foo.py", "x = 1\n"
+    )
     (root / "tools" / "sdd-compile" / "cmd").mkdir(parents=True)
     write_text_utf8(
         root / "tools" / "sdd-compile" / "cmd" / "main.go", "package main\n"
@@ -161,15 +163,15 @@ def repo(tmp_path: Path) -> Path:
     write_text_utf8(
         docs / "guide.md",
         "# Guide\n\n"
-        "Valid: `packages/core/sdd_core/foo.py`\n\n"
-        "Broken: `packages/core/sdd_core/missing.py`\n\n"
+        "Valid: `packages/core/providence_core/foo.py`\n\n"
+        "Broken: `packages/core/providence_core/missing.py`\n\n"
         "Valid with line: `tools/sdd-compile/cmd/main.go:10`\n\n"
         "Broken: `tools/sdd-compile/cmd/missing.go`\n\n"
-        "Bare mention (ignored): see packages/core/sdd_core/foo.py directly.\n",
+        "Bare mention (ignored): see packages/core/providence_core/foo.py directly.\n",
     )
     write_text_utf8(
         docs / "clean.md",
-        "# Clean\n\nEverything here is fine: `packages/core/sdd_core/foo.py`.\n",
+        "# Clean\n\nEverything here is fine: `packages/core/providence_core/foo.py`.\n",
     )
 
     return root
@@ -210,11 +212,11 @@ class TestAnalyzeAllEndToEnd:
             encoding="utf-8"
         )
 
-        assert "packages/core/sdd_core/missing.py" in analysis
+        assert "packages/core/providence_core/missing.py" in analysis
         assert "tools/sdd-compile/cmd/missing.go" in analysis
-        assert "packages/core/sdd_core/missing.py" in recommendations
+        assert "packages/core/providence_core/missing.py" in recommendations
         # the bare (non-backtick) prose mention must never be flagged
-        assert analysis.count("packages/core/sdd_core/foo.py") == 0
+        assert analysis.count("packages/core/providence_core/foo.py") == 0
 
     def test_clean_file_has_no_findings(self, repo: Path, tmp_path: Path) -> None:
         checker = DocReferenceChecker(

@@ -2,7 +2,7 @@ name: Reusable Release Build
 
 # Shared build steps for release.yml (real release) and release-dry-run.yml
 # (validation-only dry run). Both workflows need the exact same sequence:
-# cross-compile the sdd-compile binaries, stage them into the sdd-core wheel,
+# cross-compile the sdd-compile binaries, stage them into the providence-core wheel,
 # build every package, download the runtime wheelhouse, and compile
 # governance artifacts. Keeping this in one place is what prevents a bug (or
 # a future change) from having to be applied twice, in sync, in two
@@ -129,7 +129,7 @@ jobs:
             GOOS="$goos" GOARCH="$goarch" go build -C tools/sdd-compile -ldflags "$LDFLAGS" -o "$(pwd)/$out" .
           done
 
-      - name: Stage packaged compiler assets for sdd-core wheel
+      - name: Stage packaged compiler assets for providence-core wheel
         shell: bash
         run: python -m tools.release.stage_packaged_compiler_assets dist
 
@@ -155,7 +155,7 @@ jobs:
           (cd dist && sha256sum sdd-compile-* *.whl > SHA256SUMS)
           cat dist/SHA256SUMS
 
-      - name: Verify sdd-core wheel bundles native compiler binaries
+      - name: Verify providence-core wheel bundles native compiler binaries
         shell: bash
         run: python -m tools.release.verify_wheel_native_assets dist
 
@@ -191,7 +191,7 @@ jobs:
             --implementation cp \
             --python-version 312 \
             --abi cp312 \
-            dist/sdd_cli-*.whl
+            dist/providence_cli-*.whl
           python -m pip download \
             --dest dist \
             --find-links dist \
@@ -200,7 +200,7 @@ jobs:
             --implementation cp \
             --python-version 312 \
             --abi cp312 \
-            dist/sdd_cli-*.whl
+            dist/providence_cli-*.whl
           python -m pip download \
             --dest dist \
             --find-links dist \
@@ -209,7 +209,7 @@ jobs:
             --implementation cp \
             --python-version 312 \
             --abi cp312 \
-            dist/sdd_cli-*.whl
+            dist/providence_cli-*.whl
           python -m pip download \
             --dest dist \
             --only-binary=:all: \
@@ -224,32 +224,32 @@ jobs:
           # one — so .venv may already exist by the time we get here.
           uv venv --clear
           uv sync --all-groups
-          uv pip install -e packages/core/sdd_core \
-            && uv pip install -e packages/core/sdd_telemetry \
-            && uv pip install -e packages/features/sdd_skills \
-            && uv pip install -e packages/core/sdd_runtime \
-            && uv pip install -e packages/features/sdd_adapters \
-            && uv pip install -e packages/features/sdd_integration \
-            && uv pip install -e packages/features/sdd_pages \
-            && uv pip install -e packages/interfaces/sdd_wizard \
-            && uv pip install -e packages/interfaces/sdd_cli
+          uv pip install -e packages/core/providence_core \
+            && uv pip install -e packages/core/providence_telemetry \
+            && uv pip install -e packages/features/providence_skills \
+            && uv pip install -e packages/core/providence_runtime \
+            && uv pip install -e packages/features/providence_adapters \
+            && uv pip install -e packages/features/providence_integration \
+            && uv pip install -e packages/features/providence_pages \
+            && uv pip install -e packages/interfaces/providence_wizard \
+            && uv pip install -e packages/interfaces/providence_cli
 
       - name: Compile governance artifacts
         shell: bash
         run: |
           set -euo pipefail
-          uv run python -m sdd_cli governance compile --profile client
+          uv run python -m providence_cli governance compile --profile client
           cp generated/client/build/governance-core.json dist/governance-core.json
           cp generated/client/build/governance-client.json dist/governance-client.json
-          mkdir -p generated/client/build/final-template/.sdd
-          cp generated/client/build/governance-core.json generated/client/build/final-template/.sdd/governance-core.json
-          cp generated/client/build/governance-client.json generated/client/build/final-template/.sdd/governance-client.json
+          mkdir -p generated/client/build/final-template/.providence
+          cp generated/client/build/governance-core.json generated/client/build/final-template/.providence/governance-core.json
+          cp generated/client/build/governance-client.json generated/client/build/final-template/.providence/governance-client.json
 
       - name: Upload artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
           # Intermediate name: merge-release-assets (below) downloads this
-          # plus the per-OS sdd CLI binaries, regenerates SHA256SUMS over the
+          # plus the per-OS providence CLI binaries, regenerates SHA256SUMS over the
           # combined set, and re-uploads under inputs.artifact-name — the
           # name every downstream job (release.yml, release-dry-run.yml)
           # actually consumes. Kept distinct so this job's own upload can
@@ -258,7 +258,7 @@ jobs:
           path: dist/
 
   build-cli-binaries:
-    name: Build sdd CLI binary (${{ matrix.os }})
+    name: Build providence CLI binary (${{ matrix.os }})
     # Independent of `build` — installs the workspace packages directly from
     # source on each native runner (PyInstaller cannot cross-compile the way
     # `go build` can, so unlike the sdd-compile matrix above, this genuinely
@@ -275,11 +275,11 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            asset_name: sdd-linux-amd64
+            asset_name: providence-linux-amd64
           - os: macos-latest
-            asset_name: sdd-darwin-arm64
+            asset_name: providence-darwin-arm64
           - os: windows-latest
-            asset_name: sdd-windows-amd64.exe
+            asset_name: providence-windows-amd64.exe
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
@@ -306,38 +306,38 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p cli-dist
-          for pkg_dir in packages/core/sdd_core packages/core/sdd_runtime packages/core/sdd_telemetry packages/features/sdd_adapters packages/features/sdd_integration packages/features/sdd_pages packages/features/sdd_skills packages/interfaces/sdd_wizard packages/interfaces/sdd_cli; do
+          for pkg_dir in packages/core/providence_core packages/core/providence_runtime packages/core/providence_telemetry packages/features/providence_adapters packages/features/providence_integration packages/features/providence_pages packages/features/providence_skills packages/interfaces/providence_wizard packages/interfaces/providence_cli; do
             python -m build --wheel "$pkg_dir" --outdir cli-dist
           done
-          python -m pip install --find-links cli-dist sdd-cli
+          python -m pip install --find-links cli-dist providence-cli
 
-      - name: Build standalone sdd binary with PyInstaller
+      - name: Build standalone providence binary with PyInstaller
         shell: bash
         run: |
           set -euo pipefail
-          # --collect-submodules is required for sdd_cli (lazy command loading
-          # via importlib.import_module in _command_group.py) and sdd_wizard
+          # --collect-submodules is required for providence_cli (lazy command loading
+          # via importlib.import_module in _command_group.py) and providence_wizard
           # (same pattern in contracts.py / _phase_runtime_core.py) — neither
           # is visible to PyInstaller's static import analysis. The rest are
-          # included defensively for the same reason. --copy-metadata sdd-cli
+          # included defensively for the same reason. --copy-metadata providence-cli
           # is required separately: CompilerRunner._installed_cli_version()
-          # calls importlib.metadata.version("sdd-cli"), which raises
+          # calls importlib.metadata.version("providence-cli"), which raises
           # PackageNotFoundError inside a frozen binary unless the wheel's
           # dist-info is explicitly bundled — confirmed by a local build
-          # during this task; omitting this flag breaks `sdd doctor compiler`
+          # during this task; omitting this flag breaks `providence doctor compiler`
           # silently (no build-time error, only a runtime resolution failure).
-          ENTRYPOINT=$(python3 -c "import sdd_cli.main as m; print(m.__file__)")
-          pyinstaller --onefile --name sdd \
-            --collect-submodules sdd_cli \
-            --collect-submodules sdd_wizard \
-            --collect-submodules sdd_core \
-            --collect-submodules sdd_integration \
-            --collect-submodules sdd_pages \
-            --collect-submodules sdd_skills \
-            --collect-submodules sdd_adapters \
-            --collect-submodules sdd_runtime \
-            --collect-submodules sdd_telemetry \
-            --copy-metadata sdd-cli \
+          ENTRYPOINT=$(python3 -c "import providence_cli.main as m; print(m.__file__)")
+          pyinstaller --onefile --name providence \
+            --collect-submodules providence_cli \
+            --collect-submodules providence_wizard \
+            --collect-submodules providence_core \
+            --collect-submodules providence_integration \
+            --collect-submodules providence_pages \
+            --collect-submodules providence_skills \
+            --collect-submodules providence_adapters \
+            --collect-submodules providence_runtime \
+            --collect-submodules providence_telemetry \
+            --copy-metadata providence-cli \
             "$ENTRYPOINT"
 
       - name: Stage and smoke-test the built binary
@@ -348,9 +348,9 @@ jobs:
           # step also stages the renamed asset into, so rename in place
           # before staging rather than copying dist onto itself.
           if [ "${{ runner.os }}" = "Windows" ]; then
-            mv dist/sdd.exe "dist/${{ matrix.asset_name }}"
+            mv dist/providence.exe "dist/${{ matrix.asset_name }}"
           else
-            mv dist/sdd "dist/${{ matrix.asset_name }}"
+            mv dist/providence "dist/${{ matrix.asset_name }}"
             chmod +x "dist/${{ matrix.asset_name }}"
           fi
           "./dist/${{ matrix.asset_name }}" --help
@@ -377,7 +377,7 @@ jobs:
           name: ${{ inputs.artifact-name }}-base
           path: dist/
 
-      - name: Download sdd CLI binaries
+      - name: Download providence CLI binaries
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
         with:
           pattern: cli-binary-*
@@ -388,7 +388,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          (cd dist && sha256sum sdd-compile-* sdd-linux-* sdd-darwin-* sdd-windows-* *.whl > SHA256SUMS)
+          (cd dist && sha256sum sdd-compile-* providence-linux-* providence-darwin-* providence-windows-* *.whl > SHA256SUMS)
           cat dist/SHA256SUMS
 
       - name: Upload merged artifacts

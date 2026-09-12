@@ -5,8 +5,8 @@ from pathlib import Path
 
 MANDATORY_PATTERNS = (
     re.compile(r"tools/governance/compliance\.py\s+[^\n]*--verify"),
-    re.compile(r"python(?:3)?\s+-m\s+sdd_cli\s+governance\s+compile"),
-    re.compile(r"python(?:3)?\s+-m\s+sdd_cli\s+governance\s+validate"),
+    re.compile(r"python(?:3)?\s+-m\s+providence_cli\s+governance\s+compile"),
+    re.compile(r"python(?:3)?\s+-m\s+providence_cli\s+governance\s+validate"),
 )
 
 CONTINUE_ON_ERROR_TRUE = re.compile(r"^\s*continue-on-error:\s*true\s*$")

@@ -1,11 +1,11 @@
 {
   "allowlist": {
-    "packages/interfaces/sdd_wizard/src/sdd_wizard/orchestration/seedlings/governance_seeds.py:GovernanceSeedsGenerator": "Legacy generator under active decomposition plan.",
-    "packages/core/sdd_core/src/sdd_core/governance/handshake.py:AgentHandshakeProtocol": "Extracted _emit_governance_event() and _resolve_signature_status(); requires further decomposition of validate() and cache shortcut logic.",
-    "packages/interfaces/sdd_wizard/src/sdd_wizard/src/interactive_mode.py:InteractiveWizard": "High-coupling orchestrator pending extraction by wizard phases.",
-    "packages/interfaces/sdd_wizard/src/sdd_wizard/orchestration/wizard/phase3_compiler.py:Phase3Compiler": "Compiler pipeline consolidation in progress.",
-    "packages/interfaces/sdd_wizard/src/sdd_wizard/orchestration/phase5_source_writer.py:SddSourceWriter": "Source writer split scheduled after artifact pipeline hardening.",
-    "packages/core/sdd_telemetry/src/sdd_telemetry/engine/patterns.py:ExtendedPatterns": "Pattern catalog kept centralized for deterministic lookups.",
-    "packages/interfaces/sdd_wizard/src/sdd_wizard/orchestration/wizard/phase1_generator.py:Phase1Generator": "Phase generator refactor queued with onboarding stream."
+    "packages/interfaces/providence_wizard/src/providence_wizard/orchestration/seedlings/governance_seeds.py:GovernanceSeedsGenerator": "Legacy generator under active decomposition plan.",
+    "packages/core/providence_core/src/providence_core/governance/handshake.py:AgentHandshakeProtocol": "Extracted _emit_governance_event() and _resolve_signature_status(); requires further decomposition of validate() and cache shortcut logic.",
+    "packages/interfaces/providence_wizard/src/providence_wizard/src/interactive_mode.py:InteractiveWizard": "High-coupling orchestrator pending extraction by wizard phases.",
+    "packages/interfaces/providence_wizard/src/providence_wizard/orchestration/wizard/phase3_compiler.py:Phase3Compiler": "Compiler pipeline consolidation in progress.",
+    "packages/interfaces/providence_wizard/src/providence_wizard/orchestration/phase5_source_writer.py:SddSourceWriter": "Source writer split scheduled after artifact pipeline hardening.",
+    "packages/core/providence_telemetry/src/providence_telemetry/engine/patterns.py:ExtendedPatterns": "Pattern catalog kept centralized for deterministic lookups.",
+    "packages/interfaces/providence_wizard/src/providence_wizard/orchestration/wizard/phase1_generator.py:Phase1Generator": "Phase generator refactor queued with onboarding stream."
   }
 }

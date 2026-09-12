@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-// governance-data.server.ts resolves .sdd/metadata.json from its own module
+// governance-data.server.ts resolves .providence/metadata.json from its own module
 // location (import.meta.url) with no injectable override, and modifying it
 // is outside this mission's approved scope (see
 // .analysis/refined/vitest-landing-testing-20260702/proposal.md). That

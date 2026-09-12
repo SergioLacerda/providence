@@ -25,7 +25,7 @@ Before declaring work done, scan the project for available quality tooling:
 |---|---|
 | `Makefile` has `lint` target | `make lint` |
 | `Makefile` has `test` target | `make test` |
-| `sdd lint` available (SDD projects) | `sdd lint spec --validate-all-anchors` |
+| `providence lint` available (Providence projects) | `providence lint spec --validate-all-anchors` |
 | `[tool.ruff]` in `pyproject.toml` | `ruff check --fix .` then `ruff check .` |
 | `[tool.mypy]` in `pyproject.toml` | `mypy .` |
 | `[tool.pytest]` in `pyproject.toml` | `pytest` |
@@ -146,7 +146,7 @@ Every agent handoff message MUST include a PDQG status block:
 
 ---
 
-## 🗂️ For This Project (sdd-harness)
+## 🗂️ For This Project (providence)
 
 Detected tooling class: **EQUIPPED**
 
@@ -155,7 +155,7 @@ Detected tooling class: **EQUIPPED**
 | Lint | `make lint` | MANDATORY |
 | Tests | `make test` | MANDATORY |
 | Pre-delivery (combined) | `make pre-delivery` | MANDATORY |
-| SDD governance | `sdd lint spec` | MANDATORY (included in `make lint`) |
+| Providence governance | `providence lint spec` | MANDATORY (included in `make lint`) |
 
 - [ ] Ran `make pre-delivery` (or `make lint` + `make test`) — zero errors
 - [ ] Applied auto-fix pipeline (`ruff check --fix .` + format + re-run)

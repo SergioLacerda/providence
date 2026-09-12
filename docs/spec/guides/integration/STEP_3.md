@@ -1,6 +1,6 @@
 # ⚙️ STEP 3 — Configure .spec.config
 
-**Goal:** Point `.spec.config` to sdd-harness (just 2 lines!)
+**Goal:** Point `.spec.config` to providence (just 2 lines!)
 **Duration:** 2 minutes
 **Complexity:** Simple (edit 1 file)
 **Prerequisites:** Step 2 complete (templates copied)
@@ -14,7 +14,7 @@ You have:
 
 - ✅ Project directories created (Step 1)
 - ✅ Template files copied (Step 2)
-- ❓ Need to edit `.spec.config` to point to sdd-harness
+- ❓ Need to edit `.spec.config` to point to providence
 
 You're about to:
 
@@ -34,14 +34,14 @@ You're about to:
 
 ```ini
 [spec]
-spec_path = ../sdd-harness
+spec_path = ../providence
 ```
 
 **Later (STEP 6):** You'll add:
 
 ```ini
 [spec]
-spec_path = ../sdd-harness
+spec_path = ../providence
 adoption_level = lite
 ```
 
@@ -64,7 +64,7 @@ Then edit:
 
 ```ini
 [spec]
-spec_path = ../sdd-harness
+spec_path = ../providence
 ```
 
 Save: `Ctrl+O`, then `Enter`, then `Ctrl+X`
@@ -80,7 +80,7 @@ Edit the file to:
 
 ```ini
 [spec]
-spec_path = ../sdd-harness
+spec_path = ../providence
 ```
 
 Save: `Ctrl+S` or `Cmd+S`
@@ -91,41 +91,41 @@ Open `.spec.config` in your favorite editor and edit to:
 
 ```ini
 [spec]
-spec_path = ../sdd-harness
+spec_path = ../providence
 ```
 
 ---
 
 ## ⚙️ Choosing the Right spec_path
 
-### Case 1: sdd-harness is a Sibling Directory (Recommended)
+### Case 1: providence is a Sibling Directory (Recommended)
 
 Your directory structure:
 
 ```
 home/
-├── sdd-harness/     ← SDD framework
+├── providence/     ← SDD framework
 └── your-project/        ← Your project
     └── .spec.config
 ```
 
-**Use:** `spec_path = ../sdd-harness`
+**Use:** `spec_path = ../providence`
 
-### Case 2: sdd-harness is Elsewhere
+### Case 2: providence is Elsewhere
 
 Your directory structure:
 
 ```
 /home/username/
 ├── dev/
-│   ├── sdd-harness/
+│   ├── providence/
 │   └── your-project/
 │       └── .spec.config
 ```
 
-**Use:** `spec_path = ../sdd-harness` (still works!)
+**Use:** `spec_path = ../providence` (still works!)
 
-### Case 3: sdd-harness is Far Away
+### Case 3: providence is Far Away
 
 Your directory structure:
 
@@ -133,23 +133,23 @@ Your directory structure:
 /home/username/work/projects/myapp/
 └── .spec.config
 
-/opt/frameworks/sdd-harness/
+/opt/frameworks/providence/
 └── (SDD framework here)
 ```
 
-**Use:** `spec_path = /opt/frameworks/sdd-harness` (absolute path)
+**Use:** `spec_path = /opt/frameworks/providence` (absolute path)
 
-### Case 4: sdd-harness is in a Different Location
+### Case 4: providence is in a Different Location
 
 ```bash
-# Find where sdd-harness actually is
-find ~ -type d -name "sdd-harness" 2>/dev/null
-# Shows: /home/username/frameworks/sdd-harness
+# Find where providence actually is
+find ~ -type d -name "providence" 2>/dev/null
+# Shows: /home/username/frameworks/providence
 
 # Then use relative path from your project
 # If your project is /home/username/my-project
-# and sdd-harness is /home/username/frameworks/sdd-harness
-# Use: spec_path = ../frameworks/sdd-harness
+# and providence is /home/username/frameworks/providence
+# Use: spec_path = ../frameworks/providence
 ```
 
 ---
@@ -166,14 +166,14 @@ Should show:
 
 ```ini
 [spec]
-spec_path = ../sdd-harness
+spec_path = ../providence
 ```
 
 Or if you used absolute path:
 
 ```ini
 [spec]
-spec_path = /path/to/sdd-harness
+spec_path = /path/to/providence
 ```
 
 ### Test the Path
@@ -183,7 +183,7 @@ spec_path = /path/to/sdd-harness
 cat .spec.config | grep spec_path | cut -d' ' -f3
 
 # Should output:
-# ../sdd-harness
+# ../providence
 # (or your absolute path)
 
 # Then verify the path actually exists
@@ -201,8 +201,8 @@ ls
 ```bash
 # The spec_path you entered doesn't exist
 
-# Solution 1: Find where sdd-harness really is
-find ~ -type d -name "sdd-harness" 2>/dev/null
+# Solution 1: Find where providence really is
+find ~ -type d -name "providence" 2>/dev/null
 
 # Solution 2: Update .spec.config with correct path
 nano .spec.config
@@ -218,7 +218,7 @@ nano .spec.config
 ls -la .spec.config
 
 # If not, copy it manually
-cp ../sdd-harness/INTEGRATION/templates/.spec.config .
+cp ../providence/INTEGRATION/templates/.spec.config .
 
 # Then edit it
 nano .spec.config
@@ -244,23 +244,23 @@ nano .spec.config
 
 ```ini
 [spec]
-# Points to ../sdd-harness (one level up, then sdd-harness folder)
-spec_path = ../sdd-harness
+# Points to ../providence (one level up, then providence folder)
+spec_path = ../providence
 
 # Alternative: absolute path
-# spec_path = /home/sergio/dev/sdd-harness
+# spec_path = /home/sergio/dev/providence
 ```
 
 ### Example 2: With Comments
 
 ```ini
 [spec]
-# Framework source: https://github.com/user/sdd-harness
+# Framework source: https://github.com/user/providence
 # This tells your project where to find PHASE 0, AGENT_HARNESS, etc.
-spec_path = ../sdd-harness
+spec_path = ../providence
 
 # You can also use absolute path:
-# spec_path = /opt/sdd-harness
+# spec_path = /opt/providence
 ```
 
 ---
@@ -280,8 +280,8 @@ Run validation script to verify everything works.
 In Step 4, the validation script will:
 
 1. Read `.spec.config`
-2. Find sdd-harness at the specified `spec_path`
-3. Create `.sdd/` infrastructure
+2. Find providence at the specified `spec_path`
+3. Create `.providence/` infrastructure
 4. Run VALIDATION_QUIZ to verify knowledge
 
 ---

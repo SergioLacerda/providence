@@ -1,4 +1,4 @@
-"""Stage native sdd-compile binaries into the sdd-core wheel package data."""
+"""Stage native sdd-compile binaries into the providence-core wheel package data."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from pathlib import Path
 
 from tools.release.validate_release_assets import REQUIRED_COMPILER_ASSETS
 
-PACKAGE_NATIVE_DIR = Path("packages/core/sdd_core/src/sdd_core/_native")
+PACKAGE_NATIVE_DIR = Path("packages/core/providence_core/src/providence_core/_native")
 
 
 def stage_packaged_compiler_assets(dist_dir: str | Path = "dist") -> None:

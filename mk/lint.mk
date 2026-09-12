@@ -17,7 +17,7 @@ lint-fix-go: ## Auto-fix Go lint issues (golangci-lint --fix)
 	$(PYTHON) tools/maintenance/make_tasks.py lint-fix-go
 
 .PHONY: lint-web lint-fix-web
-lint-web: install-web ## Run landing app diagnostics (astro check)
+lint-web: install-web ## Run npm audit fix, then landing app diagnostics (astro check)
 	$(PYTHON) tools/maintenance/make_tasks.py lint-web
 
 lint-fix-web: install-web ## Auto-fix landing app lint issues (no-op: astro check has no --fix)

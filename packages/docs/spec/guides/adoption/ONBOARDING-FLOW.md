@@ -273,7 +273,7 @@ Follow phases (3 for LITE, 7 for FULL)
 
 ### After "Setup Complete" (EXECUTION: PHASE_0)
 
-- ✅ `.sdd/` fully configured for your level
+- ✅ `.providence/` fully configured for your level
 - ✅ Pre-commit hooks installed
 - ✅ Documentation available (LITE or FULL)
 - ✅ Developer can start implementing

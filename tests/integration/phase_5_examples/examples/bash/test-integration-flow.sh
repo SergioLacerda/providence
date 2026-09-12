@@ -45,7 +45,7 @@ test_step_1_setup() {
     echo ""
     echo "📋 TEST STEP 1: Setup Project Structure"
 
-    local dirs=(".github" ".vscode" ".cursor" "scripts" ".sdd")
+    local dirs=(".github" ".vscode" ".cursor" "scripts" ".providence")
     local all_created=true
 
     for d in "${dirs[@]}"; do
@@ -79,7 +79,7 @@ test_step_2_templates() {
     # Find framework root and templates directory
     local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     local framework_dir="$script_dir/../../../.."
-    local templates_dir="$framework_dir/packages/features/sdd_integration/src/sdd_integration/templates"
+    local templates_dir="$framework_dir/packages/features/providence_integration/src/providence_integration/templates"
 
     if [ ! -d "$templates_dir" ]; then
         echo "  ${YELLOW}⚠️${NC}  WARNING: Framework templates not found at $templates_dir"
@@ -93,7 +93,7 @@ test_step_2_templates() {
         ".vscode/ai-rules.md"
         ".vscode/settings.json"
         ".cursor/rules/spec.mdc"
-        ".sdd/README.md"
+        ".providence/README.md"
     )
 
     local all_found=true
@@ -148,7 +148,7 @@ test_step_4_validate() {
     echo ""
     echo "📋 TEST STEP 4: Run Validation"
 
-    local ai_dir="$TEST_DIR/.sdd"
+    local ai_dir="$TEST_DIR/.providence"
     local subdirs=("context-aware" "runtime")
     local all_created=true
 
@@ -157,9 +157,9 @@ test_step_4_validate() {
         mkdir -p "$sub_path"
 
         if [ -d "$sub_path" ]; then
-            echo "  ${GREEN}✅${NC} Created: .sdd/$subdir/"
+            echo "  ${GREEN}✅${NC} Created: .providence/$subdir/"
         else
-            echo "  ${RED}❌${NC} Failed to create .sdd/$subdir"
+            echo "  ${RED}❌${NC} Failed to create .providence/$subdir"
             all_created=false
         fi
     done
@@ -183,7 +183,7 @@ test_step_5_commit() {
         ".spec.config"
         ".github/copilot-instructions.md"
         ".vscode/ai-rules.md"
-        ".sdd/README.md"
+        ".providence/README.md"
     )
 
     local all_ready=true

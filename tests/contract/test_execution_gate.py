@@ -1,10 +1,10 @@
-"""Contract tests for execution_gate and governance_mode fields in sdd ask output."""
+"""Contract tests for execution_gate and governance_mode fields in providence ask output."""
 
 from __future__ import annotations
 
 import pytest
 
-from sdd_cli.services.ask_payload import build_ask_json_data
+from providence_cli.services.ask_payload import build_ask_json_data
 
 pytestmark = pytest.mark.unit
 
@@ -20,7 +20,7 @@ def _base_kwargs(**overrides):
         degraded=False,
         degraded_reason="",
         drift_detected=False,
-        governance_footer="SDD GOVERNANCE: drift=ok | governance=ok | profile=master",
+        governance_footer="PROVIDENCE GOVERNANCE: drift=ok | governance=ok | profile=master",
         intake_index_mode="none",
         intake_chunks=0,
         intake_retrieval="indexed_only",
@@ -89,7 +89,7 @@ class TestExecutionGateAllowed:
 
 class TestGovernanceMode:
     def test_governance_mode_hard_present_in_output(self):
-        """governance_mode=hard is always present in sdd ask output."""
+        """governance_mode=hard is always present in providence ask output."""
         payload = build_ask_json_data(
             **_base_kwargs(),
             governance_mode="hard",

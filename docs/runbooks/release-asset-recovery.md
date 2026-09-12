@@ -14,7 +14,7 @@ Verification state: documented
 1. Check the release workflow result.
 2. Confirm whether the wheel bundles native compiler binaries.
 3. Inspect the release assets for the expected platform binary.
-4. For client failures, collect `sdd doctor compiler` output.
+4. For client failures, collect `providence doctor compiler` output.
 
 ## Resolution Steps
 
@@ -40,7 +40,7 @@ Verification state: documented
 - release workflow URL
 - asset list
 - wheel contents
-- client `sdd doctor compiler` output
+- client `providence doctor compiler` output
 - smoke install logs
 
 ## Sources

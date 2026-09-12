@@ -58,8 +58,8 @@ The `SDDIntegrator.check_incremental_compilation()` method is called during the 
 
 **Files:**
 
-- `packages/core/sdd_runtime/src/sdd_runtime/cache.py` — LRU cache manager
-- `packages/core/sdd_runtime/src/sdd_runtime/context.py` — Integration into ContextLoader
+- `packages/core/providence_runtime/src/providence_runtime/cache.py` — LRU cache manager
+- `packages/core/providence_runtime/src/providence_runtime/context.py` — Integration into ContextLoader
 
 ### Cache Configuration
 
@@ -73,7 +73,7 @@ The `SDDIntegrator.check_incremental_compilation()` method is called during the 
 ### Cache API
 
 ```python
-from sdd_runtime.cache import get_context_cache
+from providence_runtime.cache import get_context_cache
 
 cache = get_context_cache()
 stats = cache.stats()

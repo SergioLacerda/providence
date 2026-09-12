@@ -100,7 +100,7 @@ def test_release_verify_step_checks_every_package_via_built_wheel() -> None:
     """Every package is dynamically versioned (hatch-vcs) and has no static
     `version = "..."` line to grep. The actual version of every built package
     is confirmed after the build, via its wheel filename — not just
-    sdd_cli's."""
+    providence_cli's."""
     workflow = _load_workflow(REUSABLE_BUILD_WORKFLOW)
     build_steps = _jobs(workflow)["build"]["steps"]
     verify_step = _step_run_block(
@@ -120,7 +120,7 @@ def test_release_build_verifies_wheel_bundles_native_binaries() -> None:
     workflow = _load_workflow(REUSABLE_BUILD_WORKFLOW)
     build_steps = _jobs(workflow)["build"]["steps"]
     verify_step = _step_run_block(
-        build_steps, "Verify sdd-core wheel bundles native compiler binaries"
+        build_steps, "Verify providence-core wheel bundles native compiler binaries"
     )
 
     assert "tools.release.verify_wheel_native_assets" in verify_step
@@ -173,14 +173,14 @@ def test_release_workflows_smoke_the_git_install_channel_on_both_oses() -> None:
 
         steps_text = "\n".join(step.get("run", "") for step in job["steps"])
         assert "uv tool install" in steps_text
-        assert "./packages/interfaces/sdd_cli" in steps_text
+        assert "./packages/interfaces/providence_cli" in steps_text
         assert "--with-editable" not in steps_text
-        assert "sdd install --wizard --non-interactive" in steps_text
-        assert "sdd init --default" in steps_text
-        assert "sdd governance validate" in steps_text
-        # The checkout is itself an SDD workspace (.sdd/ is committed): running
+        assert "providence install --wizard --non-interactive" in steps_text
+        assert "providence init --default" in steps_text
+        assert "providence governance validate" in steps_text
+        # The checkout is itself an SDD workspace (.providence/ is committed): running
         # the client bootstrap inside it trips the nested-workspace guard in
-        # `sdd init`, so the smoke project must live outside the checkout.
+        # `providence init`, so the smoke project must live outside the checkout.
         assert 'SMOKE_DIR="$RUNNER_TEMP/git-smoke-project"' in steps_text
 
 
@@ -207,7 +207,7 @@ def test_release_gate_requires_git_install_smoke() -> None:
 
 def test_release_smoke_asserts_doctor_toolchain_report() -> None:
     """The wheelhouse smoke must prove ldflags version injection and the
-    CLI<->binary handshake end-to-end via `sdd doctor compiler`."""
+    CLI<->binary handshake end-to-end via `providence doctor compiler`."""
     workflow = _load_workflow(RELEASE_WORKFLOW)
     smoke_steps = _jobs(workflow)["release-install-smoke"]["steps"]
     doctor_step = _step_run_block(
@@ -292,7 +292,7 @@ def test_runtime_image_satisfies_hadolint_entrypoint_policy() -> None:
     assert "\nUSER 1000\n" in dockerfile
     assert "CMD []" not in dockerfile
     assert 'ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]' in dockerfile
-    assert 'CMD ["sh", "-c", "sdd --help || exit 1"]' in dockerfile
+    assert 'CMD ["sh", "-c", "providence --help || exit 1"]' in dockerfile
 
 
 def test_docker_build_paths_use_buildkit_buildx() -> None:
@@ -308,7 +308,7 @@ def test_docker_build_paths_use_buildkit_buildx() -> None:
     assert 'env["DOCKER_BUILDKIT"] = "1"' in make_tasks
     assert '"buildx"' in make_tasks
     assert '"--load"' in make_tasks
-    assert "docker build -t sdd-harness" not in makefile
+    assert "docker build -t providence" not in makefile
 
     security_steps = _jobs(security)["container-scan"]["steps"]
     security_runs = "\n".join(step.get("run", "") for step in security_steps)
@@ -321,8 +321,8 @@ def test_docker_build_paths_use_buildkit_buildx() -> None:
     container_runs = "\n".join(step.get("run", "") for step in container_steps)
     container_uses = "\n".join(step.get("uses", "") for step in container_steps)
     assert "docker/setup-buildx-action" in container_uses
-    assert "docker buildx build --load -t sdd-harness:latest" in container_runs
-    assert "docker build -t sdd-harness:latest" not in container_runs
+    assert "docker buildx build --load -t providence:latest" in container_runs
+    assert "docker build -t providence:latest" not in container_runs
 
 
 def test_release_dry_run_resolves_tag_without_sync_versions() -> None:
@@ -405,10 +405,12 @@ def test_release_workflows_use_canonical_governance_compile_command() -> None:
     # compile step only needs to be checked once, not per caller.
     workflow = _load_workflow(REUSABLE_BUILD_WORKFLOW)
     steps = "\n".join(step.get("run", "") for step in _jobs(workflow)["build"]["steps"])
-    assert "uv run python -m sdd_cli governance compile --profile client" in steps
-    assert "uv run python -m sdd_cli compile" not in steps
+    assert (
+        "uv run python -m providence_cli governance compile --profile client" in steps
+    )
+    assert "uv run python -m providence_cli compile" not in steps
     assert "cp generated/client/build/governance-core.json" in steps
-    assert "mkdir -p generated/client/build/final-template/.sdd" in steps
+    assert "mkdir -p generated/client/build/final-template/.providence" in steps
 
 
 def test_release_workflow_smoke_install_uses_local_dist_only() -> None:
@@ -430,7 +432,7 @@ def test_release_workflows_build_cross_platform_runtime_wheelhouse() -> None:
     assert "--platform win_amd64" in steps
     assert "--python-version 312" in steps
     assert "--find-links dist" in steps
-    assert "dist/sdd_cli-*.whl" in steps
+    assert "dist/providence_cli-*.whl" in steps
     assert '"colorama>=0.4.6"' in steps
 
 

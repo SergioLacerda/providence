@@ -5,27 +5,27 @@ sources:
     status: active
     path: docs/spec/canonical/features/CLEAN_ARCHITECTURE.md
     outputs:
-      - .sdd/metadata.json
-      - .sdd/compiled/governance-core.json
-      - .sdd/source/mandates/mandates.md
+      - .providence/metadata.json
+      - .providence/compiled/governance-core.json
+      - .providence/source/mandates/mandates.md
   - id: M002
     type: mandate
     status: active
     path: docs/spec/canonical/features/TDD.md
     outputs:
-      - .sdd/metadata.json
-      - .sdd/compiled/governance-core.json
-      - .sdd/source/mandates/mandates.md
+      - .providence/metadata.json
+      - .providence/compiled/governance-core.json
+      - .providence/source/mandates/mandates.md
   - id: M003
     type: mandate
     status: active
     path: docs/spec/canonical/core/mandates/M003_CONTEXT_AWARENESS.md
     outputs: &mandate_outputs
-      - .sdd/metadata.json
-      - .sdd/compiled/governance-core.json
-      - .sdd/source/governance-core.json
-      - .sdd/source/mandate.md
-      - .sdd/source/mandates/mandates.md
+      - .providence/metadata.json
+      - .providence/compiled/governance-core.json
+      - .providence/source/governance-core.json
+      - .providence/source/mandate.md
+      - .providence/source/mandates/mandates.md
   - id: M005
     type: mandate
     status: active
@@ -97,10 +97,10 @@ sources:
     status: active
     path: docs/guidelines/languages/python.md
     outputs: &guideline_outputs
-      - .sdd/compiled/governance-client.json
-      - .sdd/source/governance-client.json
-      - .sdd/source/guidelines.dsl
-      - .sdd/source/guidelines/general.md
+      - .providence/compiled/governance-client.json
+      - .providence/source/governance-client.json
+      - .providence/source/guidelines.dsl
+      - .providence/source/guidelines/general.md
   - id: G02
     type: guideline
     status: active
@@ -236,7 +236,7 @@ sources:
       max_tokens: 700
       require_relevance_reason: true
     outputs:
-      - .sdd/source/handbook/context-loading/context-flow.yaml
+      - .providence/source/handbook/context-loading/context-flow.yaml
 
   - id: HBK-RUNBOOK-CONSULTATION
     type: handbook
@@ -251,7 +251,7 @@ sources:
       max_tokens: 900
       require_relevance_reason: true
     outputs:
-      - .sdd/source/handbook/runbooks/index.yaml
+      - .providence/source/handbook/runbooks/index.yaml
 
   - id: ADR-INDEX
     type: docs_only
@@ -286,4 +286,4 @@ sources:
     source_doc: docs/governance-runtime-model.md
     refs: [M003]
     outputs:
-      - .sdd/source/README.md
+      - .providence/source/README.md

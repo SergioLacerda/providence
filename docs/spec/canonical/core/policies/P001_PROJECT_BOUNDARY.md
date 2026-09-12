@@ -12,8 +12,8 @@ Go to section: **"⚠️ Project Boundary: This Is The SDD Framework Itself"**
 
 - This is the **SDD Framework v3.0 Final** repository (PHASE 7 Complete)
 - Framework structure:
-  - `.sdd-core/` — Source code, pipeline, compiler, deployment, specs, operational guides (110 files)
-  - `.sdd-integration/` — Integration templates and guides (50 files)
+  - `.providence-core/` — Source code, pipeline, compiler, deployment, specs, operational guides (110 files)
+  - `.providence-integration/` — Integration templates and guides (50 files)
 - Do: Framework development, governance rules, integration guides, CLI tooling, operational procedures
 - Don't: Reference external projects, modify governance core immutably
 - Authority flow: Framework → Projects (one-directional only)

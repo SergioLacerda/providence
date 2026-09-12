@@ -2,7 +2,7 @@
 # /// script
 # dependencies = []
 # ///
-"""Governance compliance validator for SDD Architecture."""
+"""Governance compliance validator for Providence Architecture."""
 
 import argparse
 import base64
@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 try:
-    from tools.lib.sdd_env import detect_repo_root, get_sdd_paths
+    from tools.lib.providence_env import detect_repo_root, get_sdd_paths
 except ImportError:
     # Fallback if lib is not found (unlikely in standard structure)
     def detect_repo_root() -> Path:
@@ -31,31 +31,33 @@ except ImportError:
 
 
 try:
-    from sdd_core.utils.process import SafeProcessRunner
+    from providence_core.utils.process import SafeProcessRunner
 except ImportError:
     _fallback_root = Path(__file__).resolve().parents[2]
-    _fallback_src = _fallback_root / "packages" / "core" / "sdd_core" / "src"
+    _fallback_src = _fallback_root / "packages" / "core" / "providence_core" / "src"
     if str(_fallback_src) not in sys.path:
         sys.path.insert(0, str(_fallback_src))
-    from sdd_core.utils.process import SafeProcessRunner
+    from providence_core.utils.process import SafeProcessRunner
 
 
 class GovernanceComplianceValidator:
     """Validates governance file integrity and compliance rules."""
 
-    GOVERNANCE_FILE = ".sdd/source/governance-core.json"
+    GOVERNANCE_FILE = ".providence/source/governance-core.json"
 
     def __init__(self, project_dir: Path | None = None) -> None:
         self.project_dir = Path(project_dir) if project_dir else detect_repo_root()
-        sdd_core_src = self.project_dir / "packages" / "core" / "sdd_core" / "src"
-        if str(sdd_core_src) not in sys.path:
-            sys.path.insert(0, str(sdd_core_src))
+        providence_core_src = (
+            self.project_dir / "packages" / "core" / "providence_core" / "src"
+        )
+        if str(providence_core_src) not in sys.path:
+            sys.path.insert(0, str(providence_core_src))
         self.paths = get_sdd_paths()
         self.integrity_requested: bool = False
 
         # Canonical names (relative to project/repo root)
         self.SOURCE_GOVERNANCE = self.GOVERNANCE_FILE
-        self.SIGNATURE_FILE = ".sdd/source/.governance-signature.json"
+        self.SIGNATURE_FILE = ".providence/source/.governance-signature.json"
 
         self.governance_file = self._resolve_governance_file()
         self.signature_file = self.project_dir / self.SIGNATURE_FILE
@@ -73,7 +75,7 @@ class GovernanceComplianceValidator:
         return Path(candidates[0])
 
     def _is_project_governance(self, data: dict[str, Any]) -> bool:
-        """Return True when validating generated project governance under .sdd/source."""
+        """Return True when validating generated project governance under .providence/source."""
         required = {"seedlings", "authority", "policies", "phases"}
         return required.issubset(data.keys())
 
@@ -139,13 +141,13 @@ class GovernanceComplianceValidator:
                 ]
 
             # 2. Verify Ed25519 signature using openssl
-            # We need the public key. We look in .sdd/trust/
+            # We need the public key. We look in .providence/trust/
             key_id = manifest.get("key_id", "unknown")
-            pub_key = self.project_dir / ".sdd" / "trust" / f"{key_id}.pub.pem"
+            pub_key = self.project_dir / ".providence" / "trust" / f"{key_id}.pub.pem"
 
             if not pub_key.exists():
                 return [
-                    f"Integrity Failure: public key for '{key_id}' not found in .sdd/trust/"
+                    f"Integrity Failure: public key for '{key_id}' not found in .providence/trust/"
                 ]
 
             # Use openssl pkeyutl to verify (World Class standard)

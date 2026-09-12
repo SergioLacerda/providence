@@ -1,5 +1,5 @@
 import pytest
-from sdd_runtime.budget import (
+from providence_runtime.budget import (
     ReflectionCapReachedError,
     RetryBudget,
     RetryCapReachedError,
@@ -59,7 +59,7 @@ def test_retry_budget_emit_event_called(monkeypatch):
         events.append(event)
 
     # Import the real telemetry module to patch the correct namespace
-    import sdd_runtime.telemetry as telemetry_mod
+    import providence_runtime.telemetry as telemetry_mod
 
     class DummyEvent:
         def __init__(self, **kwargs):

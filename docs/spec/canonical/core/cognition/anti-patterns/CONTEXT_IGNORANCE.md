@@ -8,7 +8,7 @@ Agent executes without loading runtime context.
 
 ## ❌ Behavior
 
-- Skips `.sdd/source/`
+- Skips `.providence/source/`
 - Uses only prompt memory
 - Ignores search indices
 

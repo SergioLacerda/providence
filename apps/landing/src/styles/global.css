@@ -1,13 +1,18 @@
 @import './tokens.css';
 
+html {
+  scroll-behavior: smooth;
+}
+
 html, body {
   margin: 0;
-  background: #fff;
 }
 
 body {
-  font-family: var(--font-sans);
-  color: var(--text-body);
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -15,21 +20,253 @@ body {
   box-sizing: border-box;
 }
 
+::selection {
+  background: var(--bronze);
+  color: var(--bg);
+}
+
+a {
+  color: inherit;
+}
+
+.wrap {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
 /*
- * "Guardian" motif — a very subtle breathing halo, a slow-rotating dashed
- * ring, and a couple of drifting light motes around the SDD Harness mark.
- * Intentionally understated: this is governance tooling, not a game.
+ * "Guardian" motif — a very subtle breathing halo, a dashed frame, and a
+ * couple of drifting light motes around the Providentian brand mark (see
+ * BrandLogo.astro). Intentionally understated: this is governance tooling,
+ * not a game. Ported from the design handoff (ADR-023).
  */
 @keyframes guardianHalo {
   0%, 100% { opacity: .45; transform: scale(1); }
-  50%      { opacity: .85; transform: scale(1.07); }
+  50%      { opacity: .85; transform: scale(1.02); }
 }
-@keyframes guardianRing {
-  to { transform: rotate(360deg); }
+@keyframes guardianFrame {
+  0%, 100% { opacity: .3; }
+  50%      { opacity: .65; }
 }
 @keyframes guardianMote {
   0%   { opacity: 0;   transform: translateY(0) scale(.6); }
-  18%  { opacity: .6; }
-  82%  { opacity: .2; }
-  100% { opacity: 0;   transform: translateY(-42px) scale(1); }
+  18%  { opacity: .85; }
+  82%  { opacity: .35; }
+  100% { opacity: 0;   transform: translateY(-16px) scale(1); }
+}
+
+/* ---- Site nav (SiteNav.astro / BrandLogo.astro) ---- */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  border-bottom: 1px solid var(--line-strong);
+  background: rgba(11, 15, 20, 0.92);
+  backdrop-filter: blur(8px);
+}
+nav .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  height: 72px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 600;
+  position: relative;
+  padding: 8px 14px;
+  margin: -8px -14px;
+  text-decoration: none;
+  color: var(--ink);
+}
+.brand-mark {
+  position: relative;
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--bronze);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--bronze);
+  flex-shrink: 0;
+}
+.brand-halo {
+  position: absolute;
+  inset: -2px;
+  border-radius: 10px;
+  background: radial-gradient(120% 140% at 50% 50%, rgba(193, 154, 94, .14) 0%, rgba(193, 154, 94, 0) 72%);
+  animation: guardianHalo 6s ease-in-out infinite;
+  pointer-events: none;
+}
+.brand-frame {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  border: 1px dashed var(--bronze-dim);
+  animation: guardianFrame 6s ease-in-out infinite;
+  pointer-events: none;
+}
+.brand-mote {
+  position: absolute;
+  border-radius: 999px;
+  animation: guardianMote 7s ease-in-out infinite;
+  pointer-events: none;
+}
+.navlinks {
+  display: flex;
+  gap: 28px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-dim);
+  letter-spacing: 0.01em;
+}
+.navlinks a {
+  text-decoration: none;
+  transition: color .15s;
+}
+.navlinks a:hover {
+  color: var(--ink);
+}
+.navlinks a[aria-current='page'] {
+  color: var(--bronze-bright);
+}
+.navright {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.langtoggle {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  display: flex;
+  border: 1px solid var(--line-strong);
+  border-radius: 100px;
+  padding: 3px;
+  gap: 2px;
+}
+.langtoggle button {
+  padding: 5px 12px;
+  border-radius: 100px;
+  color: var(--ink-faint);
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+  border: none;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+}
+.langtoggle button.active {
+  background: var(--panel-2);
+  color: var(--ink);
+}
+.github-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-dim);
+  transition: all .15s;
+  flex: none;
+}
+.github-btn:hover {
+  border-color: var(--bronze);
+  color: var(--bronze-bright);
+}
+@media (max-width: 860px) {
+  .navlinks { display: none; }
+}
+
+/* ---- Shared section rhythm (index / detalhe-tecnico / instalacao) ----
+ * min-height, not fixed height (docs/migration/2026-09-07-fullheight-
+ * sections-nav.md) — `capacidades` (CapabilitiesPanel, 4 tabs) can be taller
+ * than one viewport; a fixed height would clip it. Horizontal padding stays
+ * off this rule (unlike the spec's own optional `88px 32px` draft) because
+ * every section already wraps its content in `.wrap` (`padding: 0 32px`) —
+ * adding it here too would double the horizontal gutter.
+ */
+section {
+  min-height: 100vh;
+  padding: 88px 0;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+}
+section:last-of-type {
+  border-bottom: none;
+}
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--bronze-dim);
+  margin: 0 0 14px;
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+}
+section h2 {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(26px, 3.4vw, 34px);
+  margin: 0 0 16px;
+  letter-spacing: -0.01em;
+  max-width: 26ch;
+  color: var(--ink);
+}
+section > .wrap > p.intro {
+  color: var(--ink-dim);
+  max-width: 58ch;
+  margin: 0 0 52px;
+  font-size: 15.5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+th {
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--ink-faint);
+  text-transform: lowercase;
+  padding: 0 16px 12px 0;
+  border-bottom: 1px solid var(--line-strong);
+  letter-spacing: 0.02em;
+}
+td {
+  padding: 14px 16px 14px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-dim);
+  vertical-align: top;
+  transition: color .12s;
+}
+tr:hover td {
+  color: var(--ink);
+}
+td:first-child, th:first-child {
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 12.5px;
+}
+tr:hover td:first-child {
+  color: var(--bronze-bright);
 }

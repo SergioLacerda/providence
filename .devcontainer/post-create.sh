@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "🚀 Configurando ambiente SDD Harness..."
+echo "🚀 Configurando ambiente Providence..."
 
 # Instala uv via pip (sem curl-pipe-to-shell; PyPI verifica assinaturas do pacote)
 python3 -m pip install --quiet uv
@@ -14,12 +14,12 @@ uv run pre-commit install --install-hooks
 
 # Verifica se o SDD CLI está funcionando
 echo "✅ Verificando SDD CLI..."
-uv run sdd --version || echo "⚠️  SDD CLI ainda não instalado como pacote editável"
+uv run providence --version || echo "⚠️  SDD CLI ainda não instalado como pacote editável"
 
 echo "=========================================="
-echo "✅ Ambiente SDD Harness configurado com sucesso!"
+echo "✅ Ambiente Providence configurado com sucesso!"
 echo "Comandos úteis:"
-echo "   uv run sdd doctor run"
-echo "   uv run sdd governance compile"
+echo "   uv run providence doctor run"
+echo "   uv run providence governance compile"
 echo "   make help"
 echo "=========================================="

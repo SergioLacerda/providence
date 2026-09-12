@@ -1,10 +1,10 @@
-# SDD Harness
+# Providence
 
-> **📖 [Documentation](https://sergiolacerda.github.io/sdd-harness/)** &nbsp;·&nbsp; **🧭 [Selector](https://sergiolacerda.github.io/sdd-harness/selector/)**
+> **📖 [Documentation](https://sergiolacerda.github.io/providence/)** &nbsp;·&nbsp; **🧭 [Selector](https://sergiolacerda.github.io/providence/selector/)**
 
 **Executable governance platform for agentic systems**
 
-SDD Harness turns architectural and governance specifications into executable
+Providence turns architectural and governance specifications into executable
 runtime contracts. It compiles governed source artifacts, validates drift,
 enforces runtime policies, and records compliance evidence for AI-assisted
 systems.
@@ -13,12 +13,12 @@ systems.
 
 | Pipeline | Quality | Ecosystem |
 |:---:|:---:|:---:|
-| [![Health](https://github.com/SergioLacerda/sdd-harness/actions/workflows/health.yml/badge.svg?branch=main)](https://github.com/SergioLacerda/sdd-harness/actions/workflows/health.yml) | [![CodeQL](https://github.com/SergioLacerda/sdd-harness/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/SergioLacerda/sdd-harness/actions/workflows/codeql.yml) | [![Built with uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv) |
-| [![Validation](https://github.com/SergioLacerda/sdd-harness/actions/workflows/sdd-validation.yml/badge.svg?branch=main)](https://github.com/SergioLacerda/sdd-harness/actions/workflows/sdd-validation.yml) | [![Release](https://github.com/SergioLacerda/sdd-harness/actions/workflows/release.yml/badge.svg)](https://github.com/SergioLacerda/sdd-harness/actions/workflows/release.yml) | [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/) |
-| [![Docs](https://github.com/SergioLacerda/sdd-harness/actions/workflows/docs.yml/badge.svg?branch=main)](https://github.com/SergioLacerda/sdd-harness/actions/workflows/docs.yml) | [![Governance: SDD](https://img.shields.io/badge/governance-SDD-blueviolet)](docs/spec/canonical/core/) | [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE) |
-| | [![Coverage](https://codecov.io/gh/SergioLacerda/sdd-harness/branch/main/graph/badge.svg)](https://codecov.io/gh/SergioLacerda/sdd-harness) | |
+| [![Health](https://github.com/SergioLacerda/providence/actions/workflows/health.yml/badge.svg?branch=main)](https://github.com/SergioLacerda/providence/actions/workflows/health.yml) | [![CodeQL](https://github.com/SergioLacerda/providence/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/SergioLacerda/providence/actions/workflows/codeql.yml) | [![Built with uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv) |
+| [![Validation](https://github.com/SergioLacerda/providence/actions/workflows/sdd-validation.yml/badge.svg?branch=main)](https://github.com/SergioLacerda/providence/actions/workflows/sdd-validation.yml) | [![Release](https://github.com/SergioLacerda/providence/actions/workflows/release.yml/badge.svg)](https://github.com/SergioLacerda/providence/actions/workflows/release.yml) | [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/) |
+| [![Docs](https://github.com/SergioLacerda/providence/actions/workflows/docs.yml/badge.svg?branch=main)](https://github.com/SergioLacerda/providence/actions/workflows/docs.yml) | [![Governance: SDD](https://img.shields.io/badge/governance-SDD-blueviolet)](docs/spec/canonical/core/) | [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE) |
+| | [![Coverage](https://codecov.io/gh/SergioLacerda/providence/branch/main/graph/badge.svg)](https://codecov.io/gh/SergioLacerda/providence) | |
 
-**[Documentation](https://sergiolacerda.github.io/sdd-harness/)** •
+**[Documentation](https://sergiolacerda.github.io/providence/)** •
 **[Client Onboarding](docs/guides/CLIENT_ONBOARDING.md)** •
 **[CLI Reference](docs/spec/reference/commands/cli.md)** •
 **[Technical Guide](docs/guides/TECHNICAL_GUIDE.md)** •
@@ -30,7 +30,7 @@ systems.
 
 ## Overview
 
-SDD Harness provides four core functions:
+Providence provides four core functions:
 
 - compile governed specifications into machine-consumable artifacts
 - validate governance integrity and specification drift
@@ -49,7 +49,7 @@ Specification-driven governance for AI systems commonly breaks down in practice:
 - compliance is checked late, often after execution
 - operational evidence is inconsistent or missing
 
-SDD Harness addresses this by compiling governed source material into executable
+Providence addresses this by compiling governed source material into executable
 artifacts, validating them before use, and enforcing a fail-closed model where
 required governance conditions must hold before sensitive execution proceeds.
 
@@ -59,9 +59,9 @@ At a high level, the platform is organized into three layers:
 
 | Layer | Purpose | Examples |
 |---|---|---|
-| Core | runtime contracts, telemetry, governance primitives | `sdd_core`, `sdd_runtime`, `sdd_telemetry` |
-| Features | compilation, integration, skill and adapter workflows | `sdd_compiler`, `sdd_integration`, `sdd_skills` |
-| Interfaces | user-facing entrypoints | `sdd_cli`, `sdd_wizard` |
+| Core | runtime contracts, telemetry, governance primitives | `providence_core`, `providence_runtime`, `providence_telemetry` |
+| Features | compilation, integration, skill and adapter workflows | `sdd_compiler`, `providence_integration`, `providence_skills` |
+| Interfaces | user-facing entrypoints | `providence_cli`, `providence_wizard` |
 
 Outside `packages/`, `apps/landing/` is the public landing page (Astro +
 React), published at the site root (`/`) alongside the MkDocs docs
@@ -89,13 +89,19 @@ For deeper architecture material, see `docs/architecture/README.md` and
 ### Client / Adopter Flow
 
 The official, CI-proven install channel is the GitHub Release wheelhouse: download
-the `dist/` assets from a tagged [GitHub Release](https://github.com/SergioLacerda/sdd-harness/releases)
-and install `sdd-cli` from those local files, e.g.:
+the `dist/` assets from a tagged [GitHub Release](https://github.com/SergioLacerda/providence/releases)
+and install `providence-cli` from those local files, e.g.:
 
 ```bash
-python -m venv .sdd-cli
-# Windows: .sdd-cli\Scripts\python.exe ; Linux/macOS: .sdd-cli/bin/python
-.sdd-cli/bin/python -m pip install --no-index --find-links <path-to-downloaded-dist> sdd-cli
+python -m venv .providence-cli
+.providence-cli/bin/python -m pip install --no-index --find-links <path-to-downloaded-dist> providence-cli
+```
+
+On Windows PowerShell, use the venv's Windows entrypoint instead:
+
+```powershell
+python -m venv .providence-cli
+.\.providence-cli\Scripts\python.exe -m pip install --no-index --find-links <path-to-downloaded-dist> providence-cli
 ```
 
 `.github/workflows/release.yml` installs from these exact release artifacts on
@@ -115,35 +121,48 @@ sha256sum -c SHA256SUMS --ignore-missing
 
 # Sigstore signature (requires the sigstore CLI: pip install sigstore)
 python -m sigstore verify github \
-  --cert-identity "https://github.com/SergioLacerda/sdd-harness/.github/workflows/release.yml@refs/tags/<tag>" \
+  --cert-identity "https://github.com/SergioLacerda/providence/.github/workflows/release.yml@refs/tags/<tag>" \
   dist/sdd-compile-linux-amd64
 ```
 
 Every release also carries a [SLSA build provenance
 attestation](https://slsa.dev/) over the full `dist/` directory, verifiable with
 the GitHub CLI: `gh attestation verify dist/<file> --repo
-SergioLacerda/sdd-harness`.
+SergioLacerda/providence`.
 
 > **Current scope:** checksums and Sigstore signatures above cover the standalone
 > `sdd-compile` binaries. Python wheel coverage
-> (`sdd_cli-*.whl` and friends) is tracked separately — see the release pipeline's
+> (`providence_cli-*.whl` and friends) is tracked separately — see the release pipeline's
 > own CI configuration for the latest status before relying on wheel-level
 > verification.
 
 The Git-subdirectory install below is a source/development install path — it
-installs the code at a specific tag rather than a released wheel. Replace `v1.0.13`
+installs the code at a specific tag rather than a released wheel. Replace `v1.0.14`
 with the tag you want; omitting the `@<tag>` ref (not recommended) installs
 whatever the default branch head currently is:
 
 ```bash
-uv tool install "git+https://github.com/SergioLacerda/sdd-harness@v1.0.13#subdirectory=packages/interfaces/sdd_cli"
+uv tool install "git+https://github.com/SergioLacerda/providence@v1.0.14#subdirectory=packages/interfaces/providence_cli"
 cd your-project
-sdd install --wizard
-sdd init --default
-sdd governance validate
+providence install --wizard
+providence init --default
+providence governance validate
 ```
 
-`sdd install --wizard` runs a single guided flow (language, hook mode, agent
+If PowerShell reports `providence : O termo 'providence' nao e reconhecido`,
+the CLI is not on that shell's `PATH`. Either reopen the terminal after
+installation, add the install directory to `PATH`, or run from a source checkout
+with `uv`:
+
+```powershell
+$env:UV_CACHE_DIR = "$PWD\.uv-cache"
+uv run providence install --wizard
+```
+
+Setting `UV_CACHE_DIR` inside the checkout is optional, but it avoids failures
+when the global `uv` cache under `%LOCALAPPDATA%\uv\cache` is not writable.
+
+`providence install --wizard` runs a single guided flow (language, hook mode, agent
 selection, then generate) — no phase menu to navigate. Useful flags:
 
 - `--only-template` — generate the final template bundle without deploying it
@@ -154,7 +173,7 @@ selection, then generate) — no phase menu to navigate. Useful flags:
   sane defaults
 - `--output-dir <path>` — change where the generated template lands
 
-`sdd wizard run` still works as a legacy alias and deploys the generated files
+`providence wizard run` still works as a legacy alias and deploys the generated files
 into the project root by default.
 
 The wizard's final output tells you the exact next command to run to
@@ -167,13 +186,13 @@ Detailed walkthrough: `docs/guides/CLIENT_ONBOARDING.md`
 
 ### Contributor Flow
 
-Use this path when working on the SDD Harness repository itself:
+Use this path when working on the Providence repository itself:
 
 ```bash
-git clone https://github.com/SergioLacerda/sdd-harness.git
-cd sdd-harness
-uv run sdd setup run
-uv run sdd init --default
+git clone https://github.com/SergioLacerda/providence.git
+cd providence
+uv run providence setup run
+uv run providence init --default
 make hooks-install
 make pre-delivery
 ```
@@ -195,21 +214,21 @@ plugin first (e.g. `sudo pacman -S docker-buildx` on Arch/Manjaro, or
 ### Governance
 
 ```bash
-sdd governance compile
-sdd governance validate
-sdd governance score --verbose
-sdd governance keygen --key-id my-org-01
-sdd governance sign --key-id my-org-01
+providence governance compile
+providence governance validate
+providence governance score --verbose
+providence governance keygen --key-id my-org-01
+providence governance sign --key-id my-org-01
 ```
 
-`sdd governance sign --key-id <id>` reads `.sdd/trust/<id>.key` unless
+`providence governance sign --key-id <id>` reads `.providence/trust/<id>.key` unless
 `--key-path` is provided. Full bootstrap and client onboarding use `dev-01` by
-default, so a bootstrap log can mention `.sdd/trust/dev-01.key` even when a
+default, so a bootstrap log can mention `.providence/trust/dev-01.key` even when a
 separate direct signing flow uses another key id.
 
-`sdd governance sign` and runtime signature verification use a native Ed25519
+`providence governance sign` and runtime signature verification use a native Ed25519
 backend (the `sdd-compile` binary) and do not require `openssl.exe` on
-Windows or any other platform. `sdd governance keygen` still shells out to
+Windows or any other platform. `providence governance keygen` still shells out to
 OpenSSL to generate the key pair; if keygen fails with `[WinError 2]` while
 running `openssl`, verify the dependency first:
 
@@ -218,15 +237,15 @@ where openssl
 openssl version
 ```
 
-Install OpenSSL or update `PATH` before rerunning `sdd governance keygen`.
+Install OpenSSL or update `PATH` before rerunning `providence governance keygen`.
 
 ### Runtime and Audit
 
 ```bash
-sdd runtime status
-sdd audit
-sdd skills list
-sdd skills describe sdd-validate-governance
+providence runtime status
+providence audit
+providence skills list
+providence skills describe sdd-validate-governance
 ```
 
 ## Agent Onboarding After Governance Activation
@@ -235,31 +254,31 @@ After governance artifacts are active in a project, use the governed skills
 interface to inspect and validate the runtime before delegating work to agents:
 
 ```bash
-sdd skills list
-sdd skills describe sdd-validate-governance
-sdd skills run sdd-validate-governance
+providence skills list
+providence skills describe sdd-validate-governance
+providence skills run sdd-validate-governance
 ```
 
 ### Quality Gates
 
 ```bash
-sdd test run
-sdd lint run
+providence test run
+providence lint run
 make pre-delivery
 ```
 
 Complete command reference: `docs/spec/reference/commands/cli.md`
 
-`sdd ask` is the single governed entrypoint for governance queries and agent
+`providence ask` is the single governed entrypoint for governance queries and agent
 handoff decisions. Prompt-submit hooks and `/sdd-ask` adapters route through the
 CLI decision instead of classifying intent themselves. An implementation handoff
-from `sdd ask` is guidance for the calling agent to use an authorized execution
+from `providence ask` is guidance for the calling agent to use an authorized execution
 path; it is not provider delegation, provider binding, or evidence that
 implementation already ran.
 
 ## Security and Trust Model
 
-SDD Harness uses a fail-closed governance model for sensitive execution paths.
+Providence uses a fail-closed governance model for sensitive execution paths.
 
 - governance artifacts can be signed with Ed25519 keys
 - runtime validation can reject missing or invalid signatures
@@ -288,7 +307,7 @@ Choose the shortest path for your intent:
 | understand architecture | `docs/architecture/README.md` |
 | inspect CLI commands | `docs/spec/reference/commands/cli.md` |
 | navigate the documentation system | `docs/README.md` |
-| view the published docs site | <https://sergiolacerda.github.io/sdd-harness/> |
+| view the published docs site | <https://sergiolacerda.github.io/providence/> |
 
 ## Contributing Workflow
 
@@ -305,7 +324,7 @@ set in `docs/spec/canonical/core/`.
 
 This project is licensed under the **MIT License**.
 
-- Repository: <https://github.com/SergioLacerda/sdd-harness>
-- Published docs: <https://sergiolacerda.github.io/sdd-harness/>
+- Repository: <https://github.com/SergioLacerda/providence>
+- Published docs: <https://sergiolacerda.github.io/providence/>
 - License text: `LICENSE`
 - Attribution and professional services notice: `NOTICE.md`

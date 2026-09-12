@@ -45,8 +45,8 @@ mkdir -p "$BACKUP_DIR"
 
 # Backup critical files
 echo "Backing up governance..."
-cp -r .sdd-core/CANONICAL "$BACKUP_DIR/"
-cp -r .sdd-wizard/compiled "$BACKUP_DIR/"
+cp -r .providence-core/CANONICAL "$BACKUP_DIR/"
+cp -r .providence-wizard/compiled "$BACKUP_DIR/"
 cp CHANGELOG.md "$BACKUP_DIR/"
 
 # Record backup
@@ -118,8 +118,8 @@ echo "=== Weekly Cleanup ==="
 
 # Remove old test artifacts
 echo "Removing test artifacts older than 7 days..."
-find . -name "sdd-generated" -type d -mtime +7 -exec rm -rf {} \;
-REMOVED=$(find . -name "sdd-generated" -type d -mtime +7 | wc -l)
+find . -name "providence-generated" -type d -mtime +7 -exec rm -rf {} \;
+REMOVED=$(find . -name "providence-generated" -type d -mtime +7 | wc -l)
 [ $REMOVED -gt 0 ] && echo "  Removed: $REMOVED directories"
 
 # Clean Python cache
@@ -165,17 +165,17 @@ if [ ! -f "metrics/baseline.txt" ]; then
         echo "# Performance Baseline"
         echo "Generated: $(date)"
         echo ""
-        echo "Load time: $(( SECONDS=0; sdd governance load > /dev/null; echo $SECONDS )ms"
-        echo "Validate time: $(( SECONDS=0; sdd governance validate > /dev/null; echo $SECONDS )ms"
-        echo "Generate time: $(( SECONDS=0; sdd governance generate > /dev/null; echo $SECONDS )ms"
+        echo "Load time: $(( SECONDS=0; providence governance load > /dev/null; echo $SECONDS )ms"
+        echo "Validate time: $(( SECONDS=0; providence governance validate > /dev/null; echo $SECONDS )ms"
+        echo "Generate time: $(( SECONDS=0; providence governance generate > /dev/null; echo $SECONDS )ms"
     } > metrics/baseline.txt
 fi
 
 # Compare with baseline
 echo "Current performance:"
-echo "Load time: $(( SECONDS=0; sdd governance load > /dev/null; echo $SECONDS )ms"
-echo "Validate time: $(( SECONDS=0; sdd governance validate > /dev/null; echo $SECONDS )ms"
-echo "Generate time: $(( SECONDS=0; sdd governance generate > /dev/null; echo $SECONDS )ms"
+echo "Load time: $(( SECONDS=0; providence governance load > /dev/null; echo $SECONDS )ms"
+echo "Validate time: $(( SECONDS=0; providence governance validate > /dev/null; echo $SECONDS )ms"
+echo "Generate time: $(( SECONDS=0; providence governance generate > /dev/null; echo $SECONDS )ms"
 
 echo ""
 echo "✅ Performance review complete"
@@ -198,24 +198,24 @@ echo "=== Monthly Artifact Refresh ==="
 # Backup current artifacts
 BACKUP_DIR="/backups/monthly/artifacts-$(date +%Y%m%d)"
 mkdir -p "$BACKUP_DIR"
-cp -r .sdd-wizard/compiled "$BACKUP_DIR/"
+cp -r .providence-wizard/compiled "$BACKUP_DIR/"
 echo "Backed up to: $BACKUP_DIR"
 
 # Fresh compilation
 echo ""
 echo "Recompiling artifacts..."
-cd .sdd-wizard
+cd .providence-wizard
 python compile_artifacts.py
 
 # Verify new artifacts
 echo ""
 echo "Verifying new artifacts..."
-if sdd governance validate; then
+if providence governance validate; then
     echo "✅ New artifacts valid"
 else
     echo "❌ New artifacts invalid - restoring backup"
-    rm -rf .sdd-wizard/compiled
-    cp -r "$BACKUP_DIR/compiled" .sdd-wizard/
+    rm -rf .providence-wizard/compiled
+    cp -r "$BACKUP_DIR/compiled" .providence-wizard/
     exit 1
 fi
 
@@ -239,7 +239,7 @@ echo "=== Monthly Capacity Review ==="
 
 # Current usage
 echo "Current Usage:"
-du -sh .sdd-* | sort -h
+du -sh .providence-* | sort -h
 
 echo ""
 echo "Disk Status:"
@@ -277,7 +277,7 @@ echo "=== Monthly Security Audit ==="
 
 # 1. File permissions
 echo "1. File Permissions:"
-find .sdd-core -type f ! -perm 644 | while read f; do
+find .providence-core -type f ! -perm 644 | while read f; do
     echo "  ⚠️  $f has unusual permissions"
 done
 echo "  ✅ Permissions verified"
@@ -285,17 +285,17 @@ echo "  ✅ Permissions verified"
 # 2. Unauthorized changes
 echo ""
 echo "2. Unauthorized Changes:"
-if git diff-index --quiet HEAD -- .sdd-core/CANONICAL/mandate.spec; then
+if git diff-index --quiet HEAD -- .providence-core/CANONICAL/mandate.spec; then
     echo "  ✅ Core rules unchanged"
 else
     echo "  ⚠️  Core rules modified"
-    git diff .sdd-core/CANONICAL/mandate.spec
+    git diff .providence-core/CANONICAL/mandate.spec
 fi
 
 # 3. Fingerprint verification
 echo ""
 echo "3. Fingerprint Verification:"
-sdd governance validate | grep -i fingerprint
+providence governance validate | grep -i fingerprint
 
 # 4. Access logs
 echo ""
@@ -319,18 +319,18 @@ echo "=== Monthly Compliance Check ==="
 
 # 1. Governance compliance
 echo "1. Governance Compliance:"
-sdd governance validate | grep "Compliance\|SALT"
+providence governance validate | grep "Compliance\|SALT"
 
 # 2. Documentation
 echo ""
 echo "2. Documentation:"
-ls -d .sdd-core/OPERATIONS.md .sdd-core/DEPLOYMENT.md .sdd-core/MONITORING.md 2>/dev/null && echo "  ✅ Operational docs present" || echo "  ❌ Missing docs"
+ls -d .providence-core/OPERATIONS.md .providence-core/DEPLOYMENT.md .providence-core/MONITORING.md 2>/dev/null && echo "  ✅ Operational docs present" || echo "  ❌ Missing docs"
 
 # 3. Test results
 echo ""
 echo "3. Test Coverage:"
-if [ -d ".sdd-wizard/tests" ]; then
-    TEST_COUNT=$(find .sdd-wizard/tests -name "test_*.py" | wc -l)
+if [ -d ".providence-wizard/tests" ]; then
+    TEST_COUNT=$(find .providence-wizard/tests -name "test_*.py" | wc -l)
     echo "  Tests: $TEST_COUNT files"
 fi
 
@@ -360,7 +360,7 @@ echo "🚨 Corruption Recovery Procedure"
 
 # Step 1: Isolate the problem
 echo "Step 1: Identifying corruption..."
-sdd governance validate
+providence governance validate
 
 # Step 2: Find backup
 echo ""
@@ -383,13 +383,13 @@ fi
 echo ""
 echo "Step 4: Restoring from backup..."
 cd -
-rm -rf .sdd-wizard/compiled
-cp -r "$BACKUP/compiled" .sdd-wizard/
+rm -rf .providence-wizard/compiled
+cp -r "$BACKUP/compiled" .providence-wizard/
 
 # Step 5: Verify restoration
 echo ""
 echo "Step 5: Verifying restoration..."
-if sdd governance validate; then
+if providence governance validate; then
     echo "  ✅ Restoration successful"
     exit 0
 else
@@ -408,8 +408,8 @@ echo "=== Performance Diagnostics ==="
 
 # 1. Baseline comparison
 echo "1. Current Performance:"
-time sdd governance load > /dev/null
-time sdd governance validate > /dev/null
+time providence governance load > /dev/null
+time providence governance validate > /dev/null
 
 # 2. System resources
 echo ""
@@ -422,7 +422,7 @@ iostat -x 1 2 | tail -5
 # 3. Artifact analysis
 echo ""
 echo "3. Artifact Analysis:"
-ls -lh .sdd-wizard/compiled/
+ls -lh .providence-wizard/compiled/
 
 # 4. Process monitoring
 echo ""
@@ -470,19 +470,19 @@ pip install --upgrade -r requirements-cli.txt
 # Recompile artifacts
 echo ""
 echo "Recompiling with new framework..."
-cd .sdd-wizard
+cd .providence-wizard
 python compile_artifacts.py
 
 # Post-update validation
 echo ""
 echo "Post-update validation..."
-sdd governance validate
-sdd version
+providence governance validate
+providence version
 
 # Run tests
 echo ""
 echo "Running test suite..."
-pytest .sdd-wizard/tests/ -v
+pytest .providence-wizard/tests/ -v
 
 echo ""
 echo "✅ Quarterly update complete"
@@ -499,7 +499,7 @@ echo "=== Quarterly Load Testing ==="
 # Test 1: Rapid validations
 echo "Test 1: Rapid validations (100 iterations)..."
 for i in {1..100}; do
-    sdd governance validate > /dev/null &
+    providence governance validate > /dev/null &
 done
 wait
 echo "  ✅ Passed"
@@ -508,7 +508,7 @@ echo "  ✅ Passed"
 echo ""
 echo "Test 2: Concurrent operations (10 parallel)..."
 for i in {1..10}; do
-    sdd governance generate > /dev/null &
+    providence governance generate > /dev/null &
 done
 wait
 echo "  ✅ Passed"
@@ -553,7 +553,7 @@ echo ""
 echo "Scenario 3: Full system restore simulation"
 echo "  Creating test snapshot..."
 SNAP=$(mktemp -d)
-cp -r .sdd-* "$SNAP/"
+cp -r .providence-* "$SNAP/"
 echo "  Snapshot created: $SNAP"
 echo "  ✅ Scenario passed"
 rm -rf "$SNAP"

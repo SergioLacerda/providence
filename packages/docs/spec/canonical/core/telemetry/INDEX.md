@@ -13,7 +13,7 @@ Telemetry is:
 - **Mandatory**: Every governance-aware action must be recorded.
 - **Fail-Closed (Audit)**: If local persistence fails, the operation must be aborted.
 - **Best-Effort (Export)**: External OTEL export is asynchronous and non-blocking.
-- **Single Source of Truth**: The local `.sdd/audit-trail/compliance-events.jsonl` is the canonical audit trail.
+- **Single Source of Truth**: The local `.providence/audit-trail/compliance-events.jsonl` is the canonical audit trail.
 
 ---
 
@@ -65,6 +65,6 @@ When OpenTelemetry export is active, agents MUST provide valid `trace_id` and `s
 
 ## ⚙️ Runtime Binding
 
-- **Source**: `packages/core/sdd_runtime/src/sdd_runtime/telemetry.py`
-- **OTEL Bridge**: `packages/core/sdd_runtime/src/sdd_runtime/otel.py`
-- **Default Sink Path**: `.sdd/audit-trail/compliance-events.jsonl`
+- **Source**: `packages/core/providence_runtime/src/providence_runtime/telemetry.py`
+- **OTEL Bridge**: `packages/core/providence_runtime/src/providence_runtime/otel.py`
+- **Default Sink Path**: `.providence/audit-trail/compliance-events.jsonl`

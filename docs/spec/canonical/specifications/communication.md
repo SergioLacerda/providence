@@ -21,7 +21,7 @@ Every feature gets a checkpoint entry. This is THE source of truth.
 
 ### Location
 
-File: `.sdd/source/execution-state/_current.md`
+File: `.providence/source/execution-state/_current.md`
 
 ### Template
 

@@ -21,10 +21,10 @@ from tests.helpers.text_io import read_text_utf8
 
 # Add packages to path
 project_root = Path(__file__).parent.parent.parent.parent
-wizard_src = project_root / "packages/interfaces/sdd_wizard/src"
+wizard_src = project_root / "packages/interfaces/providence_wizard/src"
 sys.path.insert(0, str(wizard_src))
 
-from sdd_wizard.orchestration.intelligent_seedlings_generator import (  # noqa: E402
+from providence_wizard.orchestration.intelligent_seedlings_generator import (  # noqa: E402
     IntelligentSeedlingsGenerator,
 )
 
@@ -113,7 +113,7 @@ def test_intelligent_seedlings_generator() -> None:  # noqa: C901
 
         # Test 3: Verify seedlings directory created
         print("\n✓ Test 3: Verify seedlings directory structure")
-        seedlings_dir = project_root / ".sdd" / "seedlings"
+        seedlings_dir = project_root / ".providence" / "seedlings"
         if not seedlings_dir.exists():
             print(f"  ❌ Seedlings directory not created: {seedlings_dir}")
             raise AssertionError("Test failed")
@@ -164,7 +164,7 @@ def test_intelligent_seedlings_generator() -> None:  # noqa: C901
         print("\n✓ Test 4c: Verify agnostic and native hooks")
         native_files = [
             ("AGENTS.md", "Agent Bootstrap Contract"),
-            (".sdd/agent-instructions.md", "Agnostic Instructions"),
+            (".providence/agent-instructions.md", "Agnostic Instructions"),
             (".github/copilot-instructions.md", "Copilot Instructions"),
             (".gemini/gemini-instructions.md", "Gemini Instructions"),
             ("GEMINI.md", "Gemini Root Pointer"),
@@ -342,7 +342,7 @@ def test_phase6_integration() -> None:
     # Check that SeedlingsOrchestrator has the generate method
     print("\n✓ Test 1: Verify SeedlingsOrchestrator.generate method exists")
     try:
-        from sdd_wizard.orchestration.phase6_seedlings_orchestrator import (
+        from providence_wizard.orchestration.phase6_seedlings_orchestrator import (
             SeedlingsOrchestrator,
         )
 

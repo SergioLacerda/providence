@@ -74,7 +74,7 @@ The following are NEVER permitted without an explicit RFC approved by the human 
 
 - The `SkillEngine` MUST reject any handshake that declares intent to regress a guardrail without an active RFC token.
 - The code review guardrail (`test_guardrail_code_review.py`) MUST include a test case for this mandate.
-- Violations are logged to `.sdd/audit-trail/compliance-events.jsonl` with `severity=critical`.
+- Violations are logged to `.providence/audit-trail/compliance-events.jsonl` with `severity=critical`.
 
 ---
 
@@ -113,6 +113,6 @@ The asymmetry is the key: a guardrail that got stronger is invisible (no inciden
 
 ## See Also
 
-- `packages/core/sdd_core/tests/execution/test_guardrail_code_review.py`
-- `.sdd/source/mandates/mandates.md`
-- `.sdd/audit-trail/compliance-events.jsonl`
+- `packages/core/providence_core/tests/execution/test_guardrail_code_review.py`
+- `.providence/source/mandates/mandates.md`
+- `.providence/audit-trail/compliance-events.jsonl`

@@ -1,6 +1,6 @@
 from types import SimpleNamespace
 
-from sdd_runtime.validator import (
+from providence_runtime.validator import (
     SchemaCompatibilityResult,
     SchemaValidator,
     TraceabilityValidator,
@@ -44,7 +44,7 @@ def test_schema_validator_unsupported_version():
 def test_schema_validator_event_version_mismatch():
     validator = SchemaValidator()
     # EVENT_SCHEMA_VERSION real
-    from sdd_runtime.telemetry import EVENT_SCHEMA_VERSION
+    from providence_runtime.telemetry import EVENT_SCHEMA_VERSION
 
     class DummyEvent:
         event_schema_version = "X.Y"

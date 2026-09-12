@@ -5,7 +5,7 @@ Verification state: documented
 ## Symptoms
 
 - Context utilization enters RED or BREACH.
-- `sdd ask --full` exits with a budget breach.
+- `providence ask --full` exits with a budget breach.
 - The agent begins loading broad documentation instead of task-specific leaves.
 - Output quality degrades because too much context was loaded.
 

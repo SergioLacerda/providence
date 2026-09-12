@@ -1,8 +1,8 @@
-"""Unit tests for sdd_core.governance.compliance_mode_policy."""
+"""Unit tests for providence_core.governance.compliance_mode_policy."""
 
 import pytest
 
-from sdd_core.governance.compliance_mode_policy import (
+from providence_core.governance.compliance_mode_policy import (
     LOGGING_MODE_ACTIVE,
     LOGGING_MODE_PASSIVE,
     LOGGING_MODE_STRICT,

@@ -33,7 +33,7 @@
 
 ```bash
 # 1. Backup current configuration
-cp -r .sdd/ .ai-backup-lite/
+cp -r .providence/ .ai-backup-lite/
 cp .pre-commit-config.yaml .pre-commit-config-lite.yaml
 
 # 2. Create FULL branch
@@ -76,7 +76,7 @@ git checkout -b upgrade/lite-to-full
 - Operations (runbooks, incident response)
 ```
 
-Update `.sdd/constitution.yaml`:
+Update `.providence/constitution.yaml`:
 
 ```yaml
 # Old LITE rules (keep)
@@ -214,7 +214,7 @@ git push origin upgrade/lite-to-full
 ### Notify Team
 
 ```markdown
-## 🚀 Upgrading to SDD FULL
+## 🚀 Upgrading to Providence FULL
 
 We're upgrading governance to comprehensive level. Here's what changes:
 
@@ -245,7 +245,7 @@ If something breaks:
 git revert <commit-hash>
 
 # Or restore from backup
-cp -r .ai-backup-lite/ .sdd/
+cp -r .ai-backup-lite/ .providence/
 cp .pre-commit-config-lite.yaml .pre-commit-config.yaml
 
 # Reinit pre-commit

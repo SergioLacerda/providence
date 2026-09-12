@@ -14,7 +14,7 @@
 ### 2. Governance (The "Spec" Gate)
 
 - [ ] Did I follow the selected PATH (A-F) strictly?
-- [ ] Did I update the `.sdd-cache.md`?
+- [ ] Did I update the `.providence-cache.md`?
 - [ ] Does the code violate any Core Mandate (M001-M003)?
 
 ### 3. Documentation (The "Reality" Gate)

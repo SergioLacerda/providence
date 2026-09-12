@@ -1,13 +1,13 @@
-/* SDD Harness — shared dynamic site header
+/* Providence — shared dynamic site header
  * Mounted by site-header.js on Selector and Docs (MkDocs). The landing page
  * keeps its own React header unchanged; this module exists so those two
  * other static/MkDocs surfaces render the same visual language.
  *
- * All rules are scoped under .sdd-site-header to avoid bleeding into either
+ * All rules are scoped under .providence-site-header to avoid bleeding into either
  * host page's own styles (Selector's design-system CSS, MkDocs Material's
  * global theme CSS).
  */
-.sdd-site-header {
+.providence-site-header {
   --sdd-indigo-50: #eef0fb;
   --sdd-indigo-200: #b3bbe9;
   --sdd-indigo-300: #8b96da;
@@ -38,9 +38,9 @@
   font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   box-sizing: border-box;
 }
-.sdd-site-header * { box-sizing: border-box; }
+.providence-site-header * { box-sizing: border-box; }
 
-.sdd-site-header-brand {
+.providence-site-header-brand {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -48,7 +48,7 @@
   left: 24px;
   text-decoration: none;
 }
-.sdd-site-header-mark {
+.providence-site-header-mark {
   position: relative;
   width: 28px;
   height: 28px;
@@ -57,13 +57,13 @@
   justify-content: center;
   flex: none;
 }
-.sdd-site-header-mark img {
+.providence-site-header-mark img {
   position: relative;
   z-index: 1;
   display: block;
   flex: none;
 }
-.sdd-site-header-halo {
+.providence-site-header-halo {
   position: absolute;
   width: 44px;
   height: 44px;
@@ -72,7 +72,7 @@
   animation: sddGuardianHalo 6s ease-in-out infinite;
   pointer-events: none;
 }
-.sdd-site-header-ring {
+.providence-site-header-ring {
   position: absolute;
   width: 42px;
   height: 42px;
@@ -81,18 +81,18 @@
   animation: sddGuardianRing 70s linear infinite;
   pointer-events: none;
 }
-.sdd-site-header-mote {
+.providence-site-header-mote {
   position: absolute;
   border-radius: 999px;
   animation: sddGuardianMote 7s ease-in-out infinite;
   pointer-events: none;
 }
-.sdd-site-header-mote-a { left: 2px; top: 3px; width: 4px; height: 4px; background: var(--sdd-blue-500); animation-duration: 7s; animation-delay: 0s; }
-.sdd-site-header-mote-b { right: 4px; bottom: 3px; width: 3.5px; height: 3.5px; background: var(--sdd-green-500); animation-duration: 8.5s; animation-delay: -3s; }
-.sdd-site-header-mote-c { left: 34px; top: -2px; width: 3px; height: 3px; background: var(--sdd-indigo-400); animation-duration: 6.5s; animation-delay: -1.5s; }
-.sdd-site-header-mote-d { right: 46px; bottom: -2px; width: 3px; height: 3px; background: var(--sdd-blue-400); animation-duration: 9s; animation-delay: -5s; }
-.sdd-site-header-mote-e { left: 50%; top: -3px; width: 2.5px; height: 2.5px; background: var(--sdd-green-400); animation-duration: 7.8s; animation-delay: -2.4s; }
-.sdd-site-header-mote-f { right: 8px; top: 1px; width: 2.5px; height: 2.5px; background: var(--sdd-indigo-300); animation-duration: 8s; animation-delay: -6.2s; }
+.providence-site-header-mote-a { left: 2px; top: 3px; width: 4px; height: 4px; background: var(--sdd-blue-500); animation-duration: 7s; animation-delay: 0s; }
+.providence-site-header-mote-b { right: 4px; bottom: 3px; width: 3.5px; height: 3.5px; background: var(--sdd-green-500); animation-duration: 8.5s; animation-delay: -3s; }
+.providence-site-header-mote-c { left: 34px; top: -2px; width: 3px; height: 3px; background: var(--sdd-indigo-400); animation-duration: 6.5s; animation-delay: -1.5s; }
+.providence-site-header-mote-d { right: 46px; bottom: -2px; width: 3px; height: 3px; background: var(--sdd-blue-400); animation-duration: 9s; animation-delay: -5s; }
+.providence-site-header-mote-e { left: 50%; top: -3px; width: 2.5px; height: 2.5px; background: var(--sdd-green-400); animation-duration: 7.8s; animation-delay: -2.4s; }
+.providence-site-header-mote-f { right: 8px; top: 1px; width: 2.5px; height: 2.5px; background: var(--sdd-indigo-300); animation-duration: 8s; animation-delay: -6.2s; }
 
 @keyframes sddGuardianHalo {
   0%, 100% { opacity: .45; transform: scale(1); }
@@ -107,15 +107,15 @@
   82%  { opacity: .2; }
   100% { opacity: 0;   transform: translateY(-42px) scale(1); }
 }
-.sdd-site-header-brand-text {
+.providence-site-header-brand-text {
   font-size: 16px;
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--sdd-ink-900);
 }
-.sdd-site-header-brand-text .dim { font-weight: 400; color: var(--sdd-ink-500); }
+.providence-site-header-brand-text .dim { font-weight: 400; color: var(--sdd-ink-500); }
 
-.sdd-site-header-nav {
+.providence-site-header-nav {
   display: flex;
   align-items: center;
   gap: 24px;
@@ -126,34 +126,34 @@
   justify-content: center;
   max-width: 60vw;
 }
-.sdd-site-header-nav a {
+.providence-site-header-nav a {
   color: var(--sdd-ink-500);
   text-decoration: none;
   padding: 0 0 4px;
   border-bottom: 1px solid transparent;
   white-space: nowrap;
 }
-.sdd-site-header-nav a:hover { color: var(--sdd-ink-900); }
-.sdd-site-header-nav a[aria-current="page"] {
+.providence-site-header-nav a:hover { color: var(--sdd-ink-900); }
+.providence-site-header-nav a[aria-current="page"] {
   color: var(--sdd-ink-900);
   border-bottom-color: var(--sdd-indigo-600);
 }
 
-.sdd-site-header-actions {
+.providence-site-header-actions {
   position: absolute;
   right: 24px;
   display: inline-flex;
   align-items: center;
   gap: 10px;
 }
-.sdd-site-header-lang-group {
+.providence-site-header-lang-group {
   display: inline-flex;
   gap: 2px;
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 11px;
   letter-spacing: .04em;
 }
-.sdd-site-header-lang {
+.providence-site-header-lang {
   padding: 4px 9px;
   cursor: pointer;
   border: none;
@@ -162,11 +162,11 @@
   border-bottom: 1px solid transparent;
   font: inherit;
 }
-.sdd-site-header-lang[aria-current="true"] {
+.providence-site-header-lang[aria-current="true"] {
   color: var(--sdd-ink-900);
   border-bottom-color: var(--sdd-indigo-600);
 }
-.sdd-site-header-icon {
+.providence-site-header-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -178,18 +178,18 @@
   color: var(--sdd-ink-500);
   cursor: pointer;
 }
-.sdd-site-header-icon:hover { background: var(--sdd-indigo-50); color: var(--sdd-ink-900); }
+.providence-site-header-icon:hover { background: var(--sdd-indigo-50); color: var(--sdd-ink-900); }
 
 @media (max-width: 860px) {
-  .sdd-site-header { gap: 16px; padding: 12px 16px; }
-  .sdd-site-header-brand { position: static; }
-  .sdd-site-header-nav { max-width: none; gap: 14px; }
-  .sdd-site-header-actions { position: static; margin-left: auto; }
+  .providence-site-header { gap: 16px; padding: 12px 16px; }
+  .providence-site-header-brand { position: static; }
+  .providence-site-header-nav { max-width: none; gap: 14px; }
+  .providence-site-header-actions { position: static; margin-left: auto; }
 }
 
 /* MkDocs-only: the native header's logo/title and the tabs bar duplicate
  * this shared header's brand and nav, so they are hidden. Suppressed
- * unconditionally (not gated behind body.sdd-header-active) so nothing
+ * unconditionally (not gated behind body.providence-header-active) so nothing
  * paints before site-header.js runs and adds that class — gating this on
  * the JS-added class let Material's title/tabs flash briefly on first
  * paint and on every docs page navigation. These selectors only ever

@@ -25,7 +25,7 @@ governance artifacts, security posture, or user data.
 - Prefer read-only checks before write actions.
 - Document rollback or state restoration before risky steps.
 - Link the source docs used to derive the runbook.
-- State whether `.sdd/` is an output to regenerate, not an authored source to edit.
+- State whether `.providence/` is an output to regenerate, not an authored source to edit.
 
 ## Verification State
 

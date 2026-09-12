@@ -1,4 +1,4 @@
-# ADR-012 — AskRuntimeContext: Dependency-Injection Seam for `sdd ask` Testing
+# ADR-012 — AskRuntimeContext: Dependency-Injection Seam for `providence ask` Testing
 
 **Status:** Accepted
 **Date:** 2026-06-10
@@ -9,12 +9,12 @@
 
 ## Context
 
-`packages/interfaces/sdd_cli/src/sdd_cli/commands/_ask_backend.py` is the only
-source file in `sdd_cli` still over the Wave 8 ≤300-line gate (1060 lines after
+`packages/interfaces/providence_cli/src/providence_cli/commands/_ask_backend.py` is the only
+source file in `providence_cli` still over the Wave 8 ≤300-line gate (1060 lines after
 the `_emit_ask_json_response`/`_emit_ask_text_response`/`_build_json_dossier_lines`
 extraction into `services/ask_response.py`). Its test suite relies on ~121
-`unittest.mock.patch("sdd_cli.commands._ask_backend.<symbol>")` call sites
-across 9 files (8 in `sdd_cli/tests/`, plus `sdd_core/tests/cli/test_ask_command.py`
+`unittest.mock.patch("providence_cli.commands._ask_backend.<symbol>")` call sites
+across 9 files (8 in `providence_cli/tests/`, plus `providence_core/tests/cli/test_ask_command.py`
 and `test_ask_security.py`), targeting 15-22 distinct symbols
 (`_resolve_workspace_root`, `_get_profile_state`, `_emit_ask_telemetry`,
 `_run_organize_intake`, `build_governed_ask_snapshot`, `_guard_budget_breach`,
@@ -25,7 +25,7 @@ and `test_ask_security.py`), targeting 15-22 distinct symbols
 `unittest.mock.patch("module.X", ...)` rewrites `X` in the *caller's* global
 namespace at call time. This means every one of these ~121 patches assumes the
 patched symbol's *call site* remains a global lookup inside
-`sdd_cli.commands._ask_backend`. Moving an orchestration helper's call site to
+`providence_cli.commands._ask_backend`. Moving an orchestration helper's call site to
 another module — even when the symbol's definition is re-exported by name —
 breaks the patch for that call site, because the moved code resolves the name
 in its new module's namespace instead.
@@ -47,7 +47,7 @@ module-global-patched collaborators as explicit fields/callables, and have
 as an explicit parameter instead of doing bare module-global lookups.
 
 - Tests construct an `AskRuntimeContext` with fakes/stubs for the collaborators
-  under test, instead of `mock.patch`-ing `sdd_cli.commands._ask_backend.<name>`.
+  under test, instead of `mock.patch`-ing `providence_cli.commands._ask_backend.<name>`.
 - A default-wired `AskRuntimeContext` (using the real implementations) is
   constructed by `_ask_cli_cmd`/`ask_cmd` for production use, so the public CLI
   behavior is unchanged.
@@ -79,8 +79,8 @@ discovery + refinement mission, executed before or alongside the remaining
   `AskRuntimeContext` construction (new). This is intentional — it allows
   test-file-by-test-file migration, but adds short-term cognitive overhead
   (two ways to stub the same collaborator).
-- **New public-ish type** (`AskRuntimeContext`) added to `sdd_cli`'s internal
-  surface. Cross-package impact: `sdd_core/tests/cli/test_ask_command.py` and
+- **New public-ish type** (`AskRuntimeContext`) added to `providence_cli`'s internal
+  surface. Cross-package impact: `providence_core/tests/cli/test_ask_command.py` and
   `test_ask_security.py` (a security-relevant suite) patch `_ask_backend`
   symbols and would eventually migrate too — this raises the review bar per
   CLAUDE.md security guidance.
@@ -101,7 +101,7 @@ discovery + refinement mission, executed before or alongside the remaining
 - **Full rewrite of `_ask_backend.py` + its ~121 test assertions.** Rejected:
   cost asymmetry (no incremental checkpoints), coverage-provenance risk
   (years of accumulated edge-case knowledge encoded in existing patches), and
-  `sdd ask` is a security-relevant, cross-package surface
+  `providence ask` is a security-relevant, cross-package surface
   (`test_ask_security.py`) — raising the bar against a from-scratch rewrite.
 - **Pure "extract + re-export" without a context object** (the pattern used
   for every other Wave 8 file). Works only up to the point where a helper's
@@ -115,4 +115,4 @@ discovery + refinement mission, executed before or alongside the remaining
 ## Links
 
 - `.analysis/pending/2026-06-10-ask-backend-decomposition-discovery.md` (origin of this decision)
-- `packages/interfaces/sdd_cli/REFACTOR_NOTES.md` (Wave 1 / Wave 8 — `_ask_backend.py` blocker history)
+- `packages/interfaces/providence_cli/REFACTOR_NOTES.md` (Wave 1 / Wave 8 — `_ask_backend.py` blocker history)

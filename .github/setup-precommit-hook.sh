@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# SDD Hook Setup
-# Installs SDD shell hooks and pre-commit framework hooks for this repository.
+# Providence Hook Setup
+# Installs Providence shell hooks and pre-commit framework hooks for this repository.
 
 set -euo pipefail
 
@@ -40,7 +40,7 @@ else
     exit 1
 fi
 
-echo "Installing SDD shell hooks from ${HOOKS_SRC}"
+echo "Installing Providence shell hooks from ${HOOKS_SRC}"
 for hook_name in pre-commit pre-push commit-msg post-merge; do
     src="${HOOKS_SRC}/${hook_name}"
     dest="${HOOKS_DEST}/${hook_name}"
@@ -51,7 +51,7 @@ for hook_name in pre-commit pre-push commit-msg post-merge; do
     fi
 
     if [ -e "${dest}" ] || [ -L "${dest}" ]; then
-        backup="${dest}.backup-sdd-${TIMESTAMP}"
+        backup="${dest}.backup-providence-${TIMESTAMP}"
         mv "${dest}" "${backup}"
         echo "WARN: Backed up existing hook ${dest} -> ${backup}"
     fi
@@ -102,10 +102,10 @@ if [ -x "${FRAMEWORK_HOOK}" ]; then
 fi
 EOF
 chmod +x "${CHAIN_HOOK}"
-echo "OK: Installed chained pre-commit hook (SDD + pre-commit framework)"
+echo "OK: Installed chained pre-commit hook (Providence + pre-commit framework)"
 
 echo ""
-echo "SDD hooks installed successfully."
+echo "Providence hooks installed successfully."
 echo "Verification:"
 echo "  ls -la .git/hooks/pre-commit .git/hooks/pre-push .git/hooks/commit-msg .git/hooks/post-merge"
 echo "  pre-commit run --all-files"

@@ -25,6 +25,23 @@ Before tagging a new release, verify:
 
 ## [Unreleased]
 
+## [1.0.14] — 2026-09-12
+
+### Changed
+- Rebranded the project and CLI from `sdd` to `providence`, including core
+  infrastructure, pipeline orchestration, and governance documentation.
+- Extended the managed-block convention (preserving hand-edited content
+  during regeneration) to Copilot and Antigravity instructions files.
+
+### Added
+- Added post-merge and pre-push git hooks to the tools scripts.
+
+### Fixed
+- Fixed handshake strict-mode exit propagation and drift-detection logic to
+  compare against previous session states.
+- Fixed repo-root resolution to avoid falling back to the harness source
+  directory, and added validation for empty client governance artifacts.
+
 ## [1.0.13] — 2026-09-02
 
 ### Fixed
@@ -75,7 +92,7 @@ Before tagging a new release, verify:
   soft-standalone governance projections, with specialized governance rules,
   project-level configuration templates, and governance summary snapshots
   integrated into its generated output.
-- Added `--language` support to `sdd init`, persisting and bridging the
+- Added `--language` support to `providence init`, persisting and bridging the
   user's language preference across the generated workspace.
 - Added `GateLatencyCollector` to track guardrail latency metrics, with the
   underlying percentile math modularized into its own helper.
@@ -89,7 +106,7 @@ Before tagging a new release, verify:
   (this is the class of bug that produced the two Fixed entries below).
 
 ### Changed
-- Decomposed `sdd-cli`'s CLI commands into modular sub-apps, and its `init`
+- Decomposed `providence-cli`'s CLI commands into modular sub-apps, and its `init`
   orchestration into modular services, adding telemetry and `ask-backend`
   pipeline enhancements along the way.
 - Bumped dependencies across the workspace (`crewai`, `setuptools`,
@@ -148,14 +165,14 @@ Before tagging a new release, verify:
   `make docker.build`) for every existing target. No existing target name,
   recipe, or CI/documentation reference changes.
 - Standardized Dependabot grouping/configuration and cleaned up internal
-  import styles across the `sdd_runtime` and `sdd_cli` packages.
-- Simplified `sdd_core`'s TOML backend imports, taught
+  import styles across the `providence_runtime` and `providence_cli` packages.
+- Simplified `providence_core`'s TOML backend imports, taught
   `tools/ci/check_no_sdd_ci_commands.py` to ignore comments when scanning for
   disallowed CI commands, and added `--all-packages` to the `uv-sync-retry`
   GitHub Action.
 
 ### Fixed
-- Fixed a circular import between `sdd_cli`'s ask-backend helpers/response
+- Fixed a circular import between `providence_cli`'s ask-backend helpers/response
   service and `ask_hash` by removing a redundant re-export; also added a
   Docker build-time check that fails the build if a known-vulnerable
   `msgpack`/`setuptools` version resurfaces at runtime.
@@ -168,12 +185,12 @@ Before tagging a new release, verify:
   runs as numeric UID `1000` with an exec-form healthcheck, with unit test
   coverage added for both.
 - Fixed `tools/docs/check_links.py` raising `ModuleNotFoundError: No module
-  named 'sdd_core'` whenever workspace packages aren't installed as editables
+  named 'providence_core'` whenever workspace packages aren't installed as editables
   — added the same `sys.path` guard `tools/maintenance/lint_all.py` already
   uses.
 - Fixed `make docs-build`'s selector-compiler step and the pre-commit hook's
   canonical spec-lint step failing the same way (`No module named
-  'sdd_wizard'`/`'sdd_cli'`) when invoked via `python -m`, which can't use a
+  'providence_wizard'`/`'providence_cli'`) when invoked via `python -m`, which can't use a
   per-script `sys.path` guard — both now export a `WORKSPACE_PYTHONPATH`
   matching `pyproject.toml`'s own pytest `pythonpath` list.
 - Fixed `PREV_WHEEL_NAME: unbound variable` in `release.yml`'s "Upgrade/
@@ -182,10 +199,10 @@ Before tagging a new release, verify:
   then read back within the same step — this failed on every OS, not just
   Windows, and had never been exercised by a real release before `v1.0.5`.
   Now captured into a local env file and `source`d in the same shell.
-- Fixed `sdd --version` (`Error: No such option '--version'`) — the flag was
+- Fixed `providence --version` (`Error: No such option '--version'`) — the flag was
   never implemented, despite a release-smoke step assuming it existed. Added
   it as an eager option resolving the real installed version via
-  `importlib.metadata`, and fixed the separate `sdd version` subcommand's
+  `importlib.metadata`, and fixed the separate `providence version` subcommand's
   hardcoded `1.0.0` output the same way.
 - Fixed a broken doc link to `governance_fetcher.py` (deleted in an earlier
   refactor, commit `e75bf5d`) in `ADDING_NEW_PROJECT.md`.
@@ -197,7 +214,7 @@ Before tagging a new release, verify:
   split, so the "no inline `python -c`/`sh -c`" and selector-artifact checks
   keep covering the full effective Makefile instead of just the root file.
 - Fixed `release.yml`'s "Upgrade/rollback smoke" step installing the previous
-  release's wheel without `--force-reinstall`: `sdd-cli` was already
+  release's wheel without `--force-reinstall`: `providence-cli` was already
   installed at the new dist version from an earlier step, so plain `pip
   install` saw the requirement as already satisfied and silently skipped the
   downgrade (`ERROR: expected previous version 1.0.4, got 1.0.6`) instead of
@@ -212,22 +229,22 @@ Before tagging a new release, verify:
   rollback in that step, verified against a throwaway dummy-package
   reproduction before applying.
 - Fixed `tools/release/resolve_vcs_version.py` raising `ModuleNotFoundError:
-  No module named 'sdd_core'` when invoked as `python -m
+  No module named 'providence_core'` when invoked as `python -m
   tools.release.resolve_vcs_version` (as `release.yml`/`Makefile` do) without
-  `sdd_core` installed as an editable — it was the one script in
+  `providence_core` installed as an editable — it was the one script in
   `tools/release/` missing the `sys.path` guard already caught by
   `test_release_scripts_module_invocation.py`'s regression test. Also
   hardened `test_skills_dry_run_module_entrypoint_preserves_exit_code` (a
-  separate test spawning `python -m sdd_cli ...` as a real subprocess, which
+  separate test spawning `python -m providence_cli ...` as a real subprocess, which
   does not inherit pytest's own `pythonpath` sys.path injection) to forward
   the same workspace `PYTHONPATH` explicitly, instead of depending on
-  `sdd_cli` being installed in whichever venv runs the suite.
+  `providence_cli` being installed in whichever venv runs the suite.
 
 ## [1.0.4] — 2026-07-31
 
 ### Fixed
-- Fixed `sdd audit` drift-rate calculations inflating detected-drift counts
-  by roughly 7x: `governance.ask.phase` sub-events (each `sdd ask`
+- Fixed `providence audit` drift-rate calculations inflating detected-drift counts
+  by roughly 7x: `governance.ask.phase` sub-events (each `providence ask`
   invocation emits ~6) inherit `drift_detected` from their parent
   `governance.ask` event, and were being counted as independent drifts in
   both the base summary and the windowed correlation calculation. A new
@@ -238,14 +255,14 @@ Before tagging a new release, verify:
   applied to drift *counts*.
 - Fixed the release smoke test creating its client project
   (`git-smoke-project`) inside the checked-out repository, which is itself
-  an SDD workspace (`.sdd/` is committed) — `sdd init`'s nested-workspace
+  an SDD workspace (`.providence/` is committed) — `providence init`'s nested-workspace
   guard could treat the checkout as a blocking parent workspace. Both
   `release.yml` and `release-dry-run.yml` now create the smoke project
   under `$RUNNER_TEMP` instead. Also fixed two related regressions
-  surfaced by the same investigation: `sdd init`'s parent-workspace guard
-  now requires `.sdd/profile` to exist before treating a directory as a
-  blocking workspace (a bare `.sdd/`, such as the compiler-binary cache at
-  `~/.sdd/bin`, no longer falsely blocks `sdd init`), and
+  surfaced by the same investigation: `providence init`'s parent-workspace guard
+  now requires `.providence/profile` to exist before treating a directory as a
+  blocking workspace (a bare `.providence/`, such as the compiler-binary cache at
+  `~/.providence/bin`, no longer falsely blocks `providence init`), and
   `ask_telemetry`'s fallback token estimator no longer returns `0` — which
   downstream telemetry cannot distinguish from "no measurement" — for
   non-empty query/output text shorter than 4 characters; it now floors at
@@ -254,7 +271,7 @@ Before tagging a new release, verify:
 ## [1.0.3] — 2026-07-20
 
 ### Fixed
-- Fixed standalone `sdd governance compile`/`sdd governance generate` failing
+- Fixed standalone `providence governance compile`/`providence governance generate` failing
   with "No sdd-compile release binary found" for any install built from a dev
   checkout between two release tags. `hatch-vcs`'s default version scheme
   (`guess-next-dev`) reports dev builds under a *guessed, unreleased* next
@@ -273,9 +290,9 @@ Before tagging a new release, verify:
   onboarding flow from an unpinned branch ref, on every platform. `v1.0.2` was
   never fixable in place (release assets are immutable); this release
   supersedes it as the version the dev-build fallback resolves to.
-- Fixed standalone `sdd governance generate` for wizard/client installs that use
-  a development `sdd-cli` version without matching GitHub release assets by
-  staging native `sdd-compile` binaries into the `sdd-core` wheel during the
+- Fixed standalone `providence governance generate` for wizard/client installs that use
+  a development `providence-cli` version without matching GitHub release assets by
+  staging native `sdd-compile` binaries into the `providence-core` wheel during the
   release build and resolving packaged binaries before attempting release
   downloads. The staged package assets are generated by the release pipeline,
   not committed source files.
@@ -296,7 +313,7 @@ Before tagging a new release, verify:
   input (default `true`) that the dry-run explicitly disables.
 
 ### Changed
-- **`sdd audit` token metrics are now scoped to `governance.ask` invocations.**
+- **`providence audit` token metrics are now scoped to `governance.ask` invocations.**
   Previously `token_comparison.events_missing_tokens` (and the "events without
   tokens" summary line) counted every event in the compliance log, including
   `governance.ask.phase` latency sub-events and compile/lifecycle events that
@@ -310,7 +327,7 @@ Before tagging a new release, verify:
   gate. Consumers of `events_missing_tokens` should expect the value to drop
   accordingly (semantics change, same field name).
 - Migrated all 9 workspace packages to `hatch-vcs` dynamic versioning
-  (previously only `sdd-cli` used it; the other 8 had a static `version =
+  (previously only `providence-cli` used it; the other 8 had a static `version =
   "..."` rewritten in place by `tools/release/sync_versions.py`, which is now
   removed). Every package resolves its version directly from the release tag
   at build time; the release workflow verifies this by matching each built
@@ -318,7 +335,7 @@ Before tagging a new release, verify:
   Removing the in-place rewrite also removed the need for the
   `SETUPTOOLS_SCM_PRETEND_VERSION` workaround that compensated for the dirty
   working tree it left behind.
-- `sdd_core`'s package build now produces wheel-only distributions (no
+- `providence_core`'s package build now produces wheel-only distributions (no
   sdist): its governance spec files (`mandate.spec`, `guidelines.dsl`) are
   symlinks to a shared `_spec/` directory, and a stray broken symlink
   (`spec.CANONICAL.link`) made `hatchling`'s default sdist fail during
@@ -347,25 +364,25 @@ Before tagging a new release, verify:
 ## [1.0.2] — 2026-07-16
 
 ### Added
-- `check_module_available()` (in `sdd_core.utils.process`) and `require_dev_module()` (in `sdd_cli.utils.dev_deps`): governance-safe (no `python -c`) checks that give an actionable error instead of a raw `ModuleNotFoundError` traceback when an optional dev tool (`ruff`, `mypy`, `bandit`, `build`) or the `sdd_cli` package itself is missing from the active interpreter, applied to `sdd lint`, `sdd audit` (compliance pack), and `sdd release`.
+- `check_module_available()` (in `providence_core.utils.process`) and `require_dev_module()` (in `providence_cli.utils.dev_deps`): governance-safe (no `python -c`) checks that give an actionable error instead of a raw `ModuleNotFoundError` traceback when an optional dev tool (`ruff`, `mypy`, `bandit`, `build`) or the `providence_cli` package itself is missing from the active interpreter, applied to `providence lint`, `providence audit` (compliance pack), and `providence release`.
 
 ### Changed
-- Breaking change: `sdd_runtime.SkillEngine` no longer accepts legacy short skill aliases (for example `diagnose`, `validate-governance`); only canonical `sdd-*` names are valid, and legacy alias calls now return `legacy_alias_removed` with a canonical-name suggestion.
-- Promoted `uv run sdd setup run` as the primary cross-platform local-setup path in `README.md` (works without a pre-existing `.venv` or shell activation on Linux, macOS, and Windows); `make install` is documented as the CI/automation equivalent. Added a PATH-shadowing warning for contributors who also have `sdd-cli` installed globally via `uv tool install`.
+- Breaking change: `providence_runtime.SkillEngine` no longer accepts legacy short skill aliases (for example `diagnose`, `validate-governance`); only canonical `sdd-*` names are valid, and legacy alias calls now return `legacy_alias_removed` with a canonical-name suggestion.
+- Promoted `uv run providence setup run` as the primary cross-platform local-setup path in `README.md` (works without a pre-existing `.venv` or shell activation on Linux, macOS, and Windows); `make install` is documented as the CI/automation equivalent. Added a PATH-shadowing warning for contributors who also have `providence-cli` installed globally via `uv tool install`.
 - Fixed `Makefile`'s `VENV_PYTHON` detection to also find `.venv/Scripts/python.exe` (Windows venv layout), not just `.venv/bin/python`.
 
 ### Removed
 - Removed `install.sh` and the legacy `curl | sh` global-install instructions from `README.md` and `docs/guides/CLIENT_ONBOARDING.md`, to avoid ambiguity with the local/`uv`-based install paths.
-- Removed client-facing Git hook/pre-commit setup from `sdd setup`, `sdd init --default`, wizard seedling selection, and generated templates.
+- Removed client-facing Git hook/pre-commit setup from `providence setup`, `providence init --default`, wizard seedling selection, and generated templates.
 
 ---
 
 ## [1.0.1] — 2026-07-10
 
 ### Fixed
-- Fixed release workflows to invoke the canonical `sdd governance compile --profile client` command and prepare `generated/client/build/final-template/.sdd` before copying generated governance artifacts.
-- Added release wheelhouse dependencies for offline `pip install --no-index --find-links dist sdd-cli` smoke tests on Linux and Windows.
-- Fixed standalone `sdd init --default` compiler execution by authorizing official platform-suffixed `sdd-compile-*` release assets as governed compiler binaries.
+- Fixed release workflows to invoke the canonical `providence governance compile --profile client` command and prepare `generated/client/build/final-template/.providence` before copying generated governance artifacts.
+- Added release wheelhouse dependencies for offline `pip install --no-index --find-links dist providence-cli` smoke tests on Linux and Windows.
+- Fixed standalone `providence init --default` compiler execution by authorizing official platform-suffixed `sdd-compile-*` release assets as governed compiler binaries.
 - Fixed wizard cleanup reporting when standalone install smoke uses a project root outside the generated client build directory.
 
 ---
@@ -373,16 +390,16 @@ Before tagging a new release, verify:
 ## [0.1.0] — 2026-05-09
 
 ### Added
-- `sdd init` command — initialises workspace `.sdd/profile` (INI, schema v1) with `--type`, `--name`, `--force` flags; guards against nested workspace creation
-- `sdd runtime status` command — shows AHP (Agent Handshake Protocol) + GAP (Governance Activation Protocol) state with exit codes per AHP state
-- `sdd governance score` subcommand — weighted governance score formula (profile 30 + artifacts 30 + AHP confidence 20 + core_hash 20 = 100); `--verbose` table, `--threshold` gate
-- `sdd doctor run --score-threshold` — aborts if score falls below threshold before running spec diagnostics
-- `sdd governance generate` now writes `.github/copilot-instructions.md` from real governance content (MANDATEs, GUIDELINEs, DECISIONs)
-- `sdd governance compile` now persists `core_hash[:16]` into `.sdd/profile` after compilation
+- `providence init` command — initialises workspace `.providence/profile` (INI, schema v1) with `--type`, `--name`, `--force` flags; guards against nested workspace creation
+- `providence runtime status` command — shows AHP (Agent Handshake Protocol) + GAP (Governance Activation Protocol) state with exit codes per AHP state
+- `providence governance score` subcommand — weighted governance score formula (profile 30 + artifacts 30 + AHP confidence 20 + core_hash 20 = 100); `--verbose` table, `--threshold` gate
+- `providence doctor run --score-threshold` — aborts if score falls below threshold before running spec diagnostics
+- `providence governance generate` now writes `.github/copilot-instructions.md` from real governance content (MANDATEs, GUIDELINEs, DECISIONs)
+- `providence governance compile` now persists `core_hash[:16]` into `.providence/profile` after compilation
 - `governance_gate()` injected into `LazyCommandGroup.invoke()` — runs AHP on every CLI invocation (exempt: `init`, `version`, `help`)
-- `sdd_core.governance.compliance` — append-only JSONL audit log at `.sdd/runtime/compliance-events.jsonl`; events: `WORKSPACE_INIT`, `GOVERNANCE_CHECKED`, `COMPILE_COMPLETE`, `VIOLATION`
-- `sdd_core.governance.handshake` — canonical AHP implementation migrated from `tools/`; `tools/governance/agent_handshake.py` becomes a thin wrapper
-- `sdd_core.utils.environment`: `WorkspaceNotInitializedError`, `ProfileContext`, `find_workspace_root()`, `resolve_profile()`, `write_profile()`
+- `providence_core.governance.compliance` — append-only JSONL audit log at `.providence/runtime/compliance-events.jsonl`; events: `WORKSPACE_INIT`, `GOVERNANCE_CHECKED`, `COMPILE_COMPLETE`, `VIOLATION`
+- `providence_core.governance.handshake` — canonical AHP implementation migrated from `tools/`; `tools/governance/agent_handshake.py` becomes a thin wrapper
+- `providence_core.utils.environment`: `WorkspaceNotInitializedError`, `ProfileContext`, `find_workspace_root()`, `resolve_profile()`, `write_profile()`
 - `SECURITY.md` — vulnerability disclosure policy and response timeline
 - `conftest.py` (root) — `pytest_sessionstart` hook ensures governance compiled artifacts exist before any test session
 - `make coverage` target — HTML + terminal-missing report
@@ -393,7 +410,7 @@ Before tagging a new release, verify:
 ### Changed
 - `make check` now invokes `pytest tests packages` directly (previously `python3 scripts/run_all_tests.py`)
 - `--import-mode=importlib` and all `--ignore-glob` flags moved from `scripts/run_all_tests.py` into `[tool.pytest.ini_options] addopts`
-- `sdd doctor run` now exits 1 with an actionable message when invoked outside an initialised workspace
+- `providence doctor run` now exits 1 with an actionable message when invoked outside an initialised workspace
 - `LazyCommandGroup.invoke()` raises `click.UsageError` on `WorkspaceNotInitializedError` (was silently swallowed)
 - `[tool.ruff.lint.mccabe] max-complexity` lowered from 10 → 7
 - Root package version bumped from `0.0.0` → `1.0.0` to align with package sub-versions
@@ -402,7 +419,7 @@ Before tagging a new release, verify:
 ### Removed
 - `pylint` dependency and `[tool.pylint.*]` configuration (superseded by ruff)
 - `"build"` removed from `[tool.uv.workspace].members` (dead entry, namespace collision risk)
-- `.spec.config` as profile source — replaced by `.sdd/profile` (INI schema v1)
+- `.spec.config` as profile source — replaced by `.providence/profile` (INI schema v1)
 
 ### Fixed
 - AHP `_extract_governance_core()` now searches `generated/*/compiled/` (was wrong path)
@@ -417,16 +434,16 @@ Before tagging a new release, verify:
 
 Initial stable release of the multi-package workspace structure.
 
-- `sdd_core`, `sdd_compiler`, `sdd_telemetry`, `sdd_integration`, `sdd_cli`, `sdd_wizard` as separate uv workspace members
+- `providence_core`, `sdd_compiler`, `providence_telemetry`, `providence_integration`, `providence_cli`, `providence_wizard` as separate uv workspace members
 - Governance spec compilation pipeline (`GovernanceOrchestrator` + `DeploymentManager`)
 - Agent Handshake Protocol (AHP) v1 — 4-layer validation, 5 states
-- `sdd lint spec`, `sdd governance compile`, `sdd governance generate`, `sdd doctor run`
+- `providence lint spec`, `providence governance compile`, `providence governance generate`, `providence doctor run`
 - MkDocs documentation site
 
-[Unreleased]: https://github.com/SergioLacerda/sdd-harness/compare/v1.0.4...HEAD
-[1.0.4]: https://github.com/SergioLacerda/sdd-harness/releases/tag/v1.0.4
-[1.0.3]: https://github.com/SergioLacerda/sdd-harness/releases/tag/v1.0.3
-[1.0.2]: https://github.com/SergioLacerda/sdd-harness/releases/tag/v1.0.2
-[1.0.1]: https://github.com/SergioLacerda/sdd-harness/releases/tag/v1.0.1
-[0.1.0]: https://github.com/SergioLacerda/sdd-harness/releases/tag/v0.1.0
-[1.0.0]: https://github.com/SergioLacerda/sdd-harness/releases/tag/v1.0.0
+[Unreleased]: https://github.com/SergioLacerda/providence/compare/v1.0.4...HEAD
+[1.0.4]: https://github.com/SergioLacerda/providence/releases/tag/v1.0.4
+[1.0.3]: https://github.com/SergioLacerda/providence/releases/tag/v1.0.3
+[1.0.2]: https://github.com/SergioLacerda/providence/releases/tag/v1.0.2
+[1.0.1]: https://github.com/SergioLacerda/providence/releases/tag/v1.0.1
+[0.1.0]: https://github.com/SergioLacerda/providence/releases/tag/v0.1.0
+[1.0.0]: https://github.com/SergioLacerda/providence/releases/tag/v1.0.0

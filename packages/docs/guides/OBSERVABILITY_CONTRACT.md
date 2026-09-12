@@ -16,9 +16,9 @@ All governed command telemetry should support correlation using:
 
 ## Signal Surfaces
 
-1. Runtime events (`.sdd/runtime/compliance-events.jsonl` or configured sink)
+1. Runtime events (`.providence/runtime/compliance-events.jsonl` or configured sink)
 2. Metrics summary path (`sdd metrics summary`)
-3. Trace-compatible attribute mapping (`sdd_telemetry.to_otel_attributes`)
+3. Trace-compatible attribute mapping (`providence_telemetry.to_otel_attributes`)
 
 ## Operator Query Path (MVP)
 

@@ -49,7 +49,7 @@ same synthetic input: 400 mandates, matching the existing Go regression test
 - **Python**: the deleted `sdd_compiler` source was checked out from the parent of the
   deletion commit (`git worktree add <path> d48706d^`) and `sdd_compiler.dsl_compiler.compile_string`
   was called directly (5 runs, after 1 warmup run), with no other dependency (`sdd_compiler`'s
-  compiler module has no runtime dependency on `sdd_core`/`sdd_telemetry`).
+  compiler module has no runtime dependency on `providence_core`/`providence_telemetry`).
 
 ## Results
 

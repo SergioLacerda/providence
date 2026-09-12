@@ -46,7 +46,7 @@ You need to set up your development environment with SDD governance.
 - LITE: 5 essential rules + 10 DoD
 - FULL: 16 mandatory rules + 45 DoD
 
-*Output: `.sdd/` infrastructure created with your adoption level, you're ready to work*
+*Output: `.providence/` infrastructure created with your adoption level, you're ready to work*
 
 **Time:** 15 min (LITE) or 40 min (FULL) + PHASE_0
 
@@ -142,7 +142,7 @@ PHASE 1: Lock to Rules (10-15 min)
   → Pass VALIDATION_QUIZ (≥80%)
 
 PHASE 2: Check Execution State (5 min)
-  → Look at .sdd/context-aware/
+  → Look at .providence/context-aware/
   → Make sure no one else is working on this
 
 PHASE 3: Choose PATH (5 min)
@@ -153,12 +153,12 @@ PHASE 3: Choose PATH (5 min)
 
 PHASE 4: Load Context (5-20 min)
   LITE:  → Read simplified docs for your PATH
-  FULL:  → Search .sdd/runtime/search-keywords.md
+  FULL:  → Search .providence/runtime/search-keywords.md
   → Read only docs for your PATH
 
 PHASE 5: Implement (1-8 hours)
   → Write code + tests (TDD)
-  → Track progress in .sdd/context-aware/task-progress/
+  → Track progress in .providence/context-aware/task-progress/
 
 PHASE 6: Validate (5-15 min)
   → All tests pass
@@ -181,9 +181,9 @@ PHASE 7: Checkpoint (5-10 min)
 Before continuing, confirm:
 
 - ✅ You have `.spec.config` in project root
-- ✅ It points to sdd-harness (check: `cat .spec.config`)
-- ✅ You have `.sdd/runtime/` directory
-- ✅ PHASE 0 has been run (creates `.sdd/` infrastructure)
+- ✅ It points to providence (check: `cat .spec.config`)
+- ✅ You have `.providence/runtime/` directory
+- ✅ PHASE 0 has been run (creates `.providence/` infrastructure)
 
 If something is missing → [PHASE_0_SETUP.md](.docs/spec/guides/onboarding/PHASE-0-AGENT-ONBOARDING.md)
 

@@ -38,7 +38,7 @@ here rather than silently missing:
 | M006 | RFC Process for Breaking Changes | [../../guides/M006_RFC_PROCESS.md](../../guides/M006_RFC_PROCESS.md) |
 
 The full active mandate set is the union of this table and the one above —
-see `.sdd/source/mandates/mandates.md` for the canonical, generated register.
+see `.providence/source/mandates/mandates.md` for the canonical, generated register.
 
 ---
 

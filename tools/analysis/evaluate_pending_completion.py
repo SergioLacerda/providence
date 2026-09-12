@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SDD Analysis Pending Items Completion Evaluator
+Providence Analysis Pending Items Completion Evaluator
 
 Workflow para avaliar se pendências foram implementadas e movê-las para .analysis/done
 
@@ -24,10 +24,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from sdd_core.utils.text_io import read_text_utf8, write_text_utf8
+from providence_core.utils.text_io import read_text_utf8, write_text_utf8
 
 # Configuração
-ANALYSIS_DIR = Path("/home/sergio/dev/sdd-harness/.analysis")
+ANALYSIS_DIR = Path("/home/sergio/dev/providence/.analysis")
 PENDING_DIR = ANALYSIS_DIR / "pending"
 DONE_DIR = ANALYSIS_DIR / "done"
 WORKFLOW_LOG = ANALYSIS_DIR / ".completion_audit.log"
@@ -389,7 +389,7 @@ class CompletionEvaluator:
             return
 
         print(f"\n{'=' * 70}")
-        print("SDD Analysis Completion Evaluator")
+        print("Providence Analysis Completion Evaluator")
         print(f"{'=' * 70}")
         print(f"📁 Scanning: {PENDING_DIR}")
         print(f"Dry-run: {'Yes' if dry_run else 'No'}")

@@ -1,5 +1,5 @@
 # LITE Constitution Template
-# Copy this file to .sdd/constitution.yaml and customize for your project
+# Copy this file to .providence/constitution.yaml and customize for your project
 #
 # Version: 2.1-lite
 # Time to customize: 10 minutes
@@ -73,7 +73,7 @@ principles:
         - Import rules (what imports are allowed where)
 
       example: |
-        # .sdd/rules.md or ARCHITECTURE.md
+        # .providence/rules.md or ARCHITECTURE.md
         ## Import Rules
         - ✅ Allowed: from domain.entities import User
         - ✅ Allowed: from adapters.database import UserRepository

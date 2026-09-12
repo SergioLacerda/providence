@@ -33,7 +33,7 @@ Answer these questions about your project. **Be honest.** These aren't trick que
 
 ### Question 1: Team Size & Composition
 
-**"How many people will be developing with SDD?"**
+**"How many people will be developing with Providence?"**
 
 - A: 1-5 people
 - B: 5-20 people
@@ -149,7 +149,7 @@ Now that you know your adoption level, update `.spec.config`:
 
 ```ini
 [spec]
-spec_path = ../sdd-harness
+spec_path = ../providence
 ```
 
 ### New State (Add Your Level)
@@ -158,7 +158,7 @@ spec_path = ../sdd-harness
 
 ```ini
 [spec]
-spec_path = ../sdd-harness
+spec_path = ../providence
 adoption_level = lite
 ```
 
@@ -166,7 +166,7 @@ adoption_level = lite
 
 ```ini
 [spec]
-spec_path = ../sdd-harness
+spec_path = ../providence
 adoption_level = full
 ```
 
@@ -191,7 +191,7 @@ echo "adoption_level = full" >> .spec.config
 cat .spec.config
 # Should show both lines:
 # [spec]
-# spec_path = ../sdd-harness
+# spec_path = ../providence
 # adoption_level = lite  (or full)
 ```
 
@@ -199,7 +199,7 @@ cat .spec.config
 
 ## 🔄 Document Your Intention
 
-### Option 1: In `.sdd/README.md` (Recommended)
+### Option 1: In `.providence/README.md` (Recommended)
 
 Add a section:
 
@@ -217,14 +217,14 @@ Add a section:
 ### Option 2: In Your Project README
 
 ```markdown
-## SDD Governance
+## Providence Governance
 
-This project uses **SDD LITE** (or FULL) governance.
+This project uses **Providence LITE** (or FULL) governance.
 - Setup time: 15 minutes (or 40)
 - Rules: 5 essential (or 16 mandatory)
 - DoD Criteria: 10 items (or 45 items)
 
-See [SDD Adoption Guide](../adoption/LITE-ADOPTION.md)
+See [Providence Adoption Guide](../adoption/LITE-ADOPTION.md)
 ```
 
 ---
@@ -236,7 +236,7 @@ After this step:
 - ✅ You answered the 5 questions honestly
 - ✅ You know whether you need LITE or FULL
 - ✅ `.spec.config` includes `adoption_level`
-- ✅ Your intention is documented (in `.sdd/README.md` or project README)
+- ✅ Your intention is documented (in `.providence/README.md` or project README)
 - ✅ Team is aligned on the choice
 - ✅ Ready to move to EXECUTION
 
@@ -249,7 +249,7 @@ After this step:
 1. Commit your changes
 
    ```bash
-   git add .spec.config .sdd/README.md
+   git add .spec.config .providence/README.md
    git commit -m "docs: set adoption level to LITE (or FULL)"
    ```
 
@@ -290,7 +290,7 @@ After this step:
 
 **LITE Projects:**
 
-- Team learning SDD for the first time
+- Team learning Providence for the first time
 - Side project, hobby, personal tools
 - Internal utilities, < 5 people
 - Proof of concepts, MVPs

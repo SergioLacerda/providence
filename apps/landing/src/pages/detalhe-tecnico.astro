@@ -1,0 +1,108 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteNav from '../components/SiteNav.astro';
+import ScrollSectionNav from '../components/ScrollSectionNav.astro';
+import { CapabilitiesPanel } from '../components/ds/CapabilitiesPanel';
+import { DETAIL_INTRO_CONTENT } from '../lib/i18n';
+import { loadGovernanceStats } from '../lib/governance-data.server';
+
+const stats = loadGovernanceStats();
+const intro = DETAIL_INTRO_CONTENT.pt;
+---
+<BaseLayout title="Providentian — Detalhe técnico" description="Como o harness Providentian funciona: camadas, virtudes e prova em runtime.">
+  <SiteNav />
+
+  <main>
+    <section id="resumo">
+      <div class="wrap">
+        <p class="eyebrow" data-i18n="intro.eyebrow">{intro.eyebrow}</p>
+        <h1 data-i18n="intro.title">{intro.title}</h1>
+
+        <div class="layer-flow" data-i18n="intro.layerFlow">{intro.layerFlow}</div>
+
+        <dl class="layers">
+          {intro.layers.map((l) => (
+            <div class="layer-row">
+              <dt data-i18n-layer-name>{l.name}</dt>
+              <dd data-i18n-layer-desc>{l.desc}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <section id="virtudes-resumo">
+      <div class="wrap">
+        <p class="virtues-caption" data-i18n="intro.virtuesCaption">{intro.virtuesCaption}</p>
+        <table>
+          <thead>
+            <tr><th>virtude</th><th>em termos simples</th></tr>
+          </thead>
+          <tbody id="virtues-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="capacidades">
+      <div class="wrap">
+        <CapabilitiesPanel client:visible stats={stats} />
+      </div>
+    </section>
+  </main>
+
+  <ScrollSectionNav sectionIds={['resumo', 'virtudes-resumo', 'capacidades']} />
+</BaseLayout>
+
+<style>
+  h1{font-family:var(--serif); font-weight:600; font-size:clamp(30px,4vw,42px); margin:0 0 32px; max-width:none;}
+  .layer-flow{
+    font-family:var(--mono); font-size:13px; color:var(--bronze-bright);
+    background:var(--panel); border:1px solid var(--line-strong); border-radius:4px;
+    padding:16px 18px; margin:0 0 40px; overflow-x:auto; white-space:pre;
+  }
+  .layers{margin:0; display:flex; flex-direction:column;}
+  .layer-row{display:grid; grid-template-columns:260px 1fr; gap:24px; padding:16px 0; border-top:1px solid var(--line);}
+  .layer-row dt{margin:0; font-family:var(--serif); font-weight:600; font-style:italic; color:var(--ink); font-size:15px;}
+  .layer-row dd{margin:0; color:var(--ink-dim); font-size:14px; line-height:1.55;}
+  .virtues-caption{font-family:var(--mono); font-size:12.5px; color:var(--ink-faint); margin:0 0 20px; text-transform:lowercase;}
+</style>
+
+<script>
+  import { DETAIL_INTRO_CONTENT, VIRTUES_CONTENT } from '../lib/i18n';
+  import { getLang, onLangChange } from '../lib/lang-bridge';
+
+  const eyebrowEl = document.querySelector('[data-i18n="intro.eyebrow"]');
+  const titleEl = document.querySelector('[data-i18n="intro.title"]');
+  const flowEl = document.querySelector('[data-i18n="intro.layerFlow"]');
+  const captionEl = document.querySelector('[data-i18n="intro.virtuesCaption"]');
+  const nameEls = Array.from(document.querySelectorAll('[data-i18n-layer-name]'));
+  const descEls = Array.from(document.querySelectorAll('[data-i18n-layer-desc]'));
+  const tbody = document.getElementById('virtues-table-body');
+
+  function apply(lang: 'pt' | 'en') {
+    const intro = DETAIL_INTRO_CONTENT[lang];
+    if (eyebrowEl) eyebrowEl.textContent = intro.eyebrow;
+    if (titleEl) titleEl.textContent = intro.title;
+    if (flowEl) flowEl.textContent = intro.layerFlow;
+    if (captionEl) captionEl.textContent = intro.virtuesCaption;
+    intro.layers.forEach((l, i) => {
+      if (nameEls[i]) nameEls[i].textContent = l.name;
+      if (descEls[i]) descEls[i].textContent = l.desc;
+    });
+    if (tbody) {
+      tbody.innerHTML = '';
+      VIRTUES_CONTENT[lang].forEach((v) => {
+        const tr = document.createElement('tr');
+        const th = document.createElement('td');
+        th.textContent = v.name;
+        const td = document.createElement('td');
+        td.textContent = v.quote;
+        tr.append(th, td);
+        tbody.appendChild(tr);
+      });
+    }
+  }
+
+  apply(getLang());
+  onLangChange(apply);
+</script>

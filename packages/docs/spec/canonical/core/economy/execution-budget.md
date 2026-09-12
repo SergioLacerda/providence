@@ -65,7 +65,7 @@ Rule 3 ("MUST NOT load additional context once BREACH is reached") is enforced a
 - The exception carries `utilization_pct` and optional `path_id` for logging/escalation
 - **Caller responsibility:** catch this exception and escalate to a human checkpoint
 - No further calls to `ContextLoader.load_result()` are permitted in the session
-- Implementation: `packages/core/sdd_runtime/src/sdd_runtime/context.py:BudgetBreachError`
+- Implementation: `packages/core/providence_runtime/src/providence_runtime/context.py:BudgetBreachError`
 
 ---
 
@@ -81,7 +81,7 @@ Rule 3 ("MUST NOT load additional context once BREACH is reached") is enforced a
   (see Programmatic Enforcement above) reflects this taxonomy only when a caller
   explicitly passes it.
 - **Tool-internal routing labels** — some CLI commands emit their own `path_id`-shaped
-  telemetry label for unrelated per-call routing decisions (e.g. `sdd ask` uses
+  telemetry label for unrelated per-call routing decisions (e.g. `providence ask` uses
   `PATH_A`/`PATH_B` to record whether a query triggered heavy `sdd-organize` intake).
   These labels answer a different question than the canonical PATH classification
   above and must never be mapped onto it — doing so would misclassify the agent's
@@ -102,7 +102,7 @@ The `ContextCache` (LRU, 128 entries, 5-min TTL) has important economy implicati
 - Cache hits do NOT re-trigger the YELLOW zone compression path
 - If a cached result was computed when budget utilization was GREEN, it will be returned as-is even if current utilization is YELLOW
 - **Policy:** Cache statistics and budget utilization are independent; always check current utilization when budget concerns exist
-- Implementation: `packages/core/sdd_runtime/src/sdd_runtime/cache.py:ContextCache`
+- Implementation: `packages/core/providence_runtime/src/providence_runtime/cache.py:ContextCache`
 
 ---
 
@@ -115,7 +115,7 @@ The `ContextLoader` orchestrates compression via a pluggable `ProviderRegistry`:
 - Each provider implements the `IntelligenceProvider` protocol: `compress_context(bundle) → CompressedContext`
 - The first available provider that returns a result is used
 - At YELLOW zone (70–90%), `ContextLoader` targets bringing utilization down to 70% after compression
-- Implementation: `packages/core/sdd_runtime/src/sdd_runtime/context.py:ContextLoader.__init__` and `load_result()`
+- Implementation: `packages/core/providence_runtime/src/providence_runtime/context.py:ContextLoader.__init__` and `load_result()`
 
 ---
 

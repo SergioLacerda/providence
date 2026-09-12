@@ -1,7 +1,7 @@
-/* SDD Harness — MkDocs Material theme + banner styles
+/* Providence — MkDocs Material theme + banner styles
  * Lives at  docs/app/sdd-theme.css  and is referenced from mkdocs.yml via
  *   extra_css: [app/sdd-theme.css]
- * Re-skins MkDocs Material to the SDD Harness design system. Light-scheme
+ * Re-skins MkDocs Material to the Providence design system. Light-scheme
  * surface colors are scoped to [data-md-color-scheme="default"] so DARK MODE
  * (slate) keeps working; only brand hues + type + components apply to both.
  */

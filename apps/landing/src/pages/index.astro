@@ -1,10 +1,99 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { Landing } from '../components/Landing';
+import SiteNav from '../components/SiteNav.astro';
+import VirtuesWheel from '../components/VirtuesWheel.astro';
+import ScrollSectionNav from '../components/ScrollSectionNav.astro';
+import { RuntimeProof } from '../components/ds/RuntimeProof';
+import { MECHANISM_CONTENT, MANIFESTO_CONTENT } from '../lib/i18n';
 import { loadGovernanceStats } from '../lib/governance-data.server';
 
+const BASE_URL = import.meta.env.BASE_URL;
 const stats = loadGovernanceStats();
+const mech = MECHANISM_CONTENT.pt;
+const manifesto = MANIFESTO_CONTENT.pt;
 ---
-<BaseLayout title="SDD Harness — Selector">
-  <Landing client:load stats={stats} />
+<BaseLayout title="Providentian Agent Governance">
+  <SiteNav />
+
+  <VirtuesWheel />
+
+  <section id="mecanismo">
+    <div class="wrap">
+      <p class="eyebrow" data-i18n="mech.eyebrow">{mech.eyebrow}</p>
+      <h2 data-i18n="mech.title">{mech.title}</h2>
+      <p class="intro" data-i18n="mech.intro">{mech.intro}</p>
+
+      <div class="pipeline">
+        {mech.pipeline.map((s) => (
+          <div class="pipe-stage">
+            <p class="pnum" data-i18n-num>{s.num}</p>
+            <p class="plabel">{s.label}</p>
+            <p class="pdesc" data-i18n-desc>{s.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="manifesto">
+    <div class="wrap">
+      <p class="manifesto">
+        <span data-i18n="manifesto.text">{manifesto.text}</span>
+        <span class="attrib" data-i18n="manifesto.attrib">{manifesto.attrib}</span>
+      </p>
+    </div>
+  </section>
+
+  <RuntimeProof client:visible stats={stats} detailHref={`${BASE_URL}detalhe-tecnico`} />
+
+  <ScrollSectionNav sectionIds={['virtudes', 'mecanismo', 'manifesto', 'runtime-proof']} />
 </BaseLayout>
+
+<style>
+  .pipeline{display:grid; grid-template-columns:repeat(4, 1fr); gap:0; border:1px solid var(--line-strong); border-radius:4px; overflow:hidden;}
+  .pipe-stage{padding:22px 20px; border-right:1px solid var(--line); background:var(--panel);}
+  .pipe-stage:last-child{border-right:none;}
+  .pipe-stage .pnum{font-family:var(--mono); font-size:10.5px; color:var(--bronze); margin:0 0 12px; letter-spacing:0.03em;}
+  .pipe-stage .plabel{font-family:var(--serif); font-weight:600; font-size:16px; margin:0 0 6px; color:var(--ink);}
+  .pipe-stage .pdesc{font-size:12px; color:var(--ink-dim); margin:0;}
+  @media (max-width:760px){ .pipeline{grid-template-columns:1fr;} .pipe-stage{border-right:none; border-bottom:1px solid var(--line);} .pipe-stage:last-child{border-bottom:none;} }
+  .manifesto{
+    font-family:var(--serif); font-style:italic; font-weight:500;
+    font-size:clamp(19px, 2.6vw, 25px); line-height:1.55; color:var(--ink);
+    max-width:50ch; margin:0 auto; text-align:center;
+  }
+  .manifesto .attrib{
+    display:block; font-family:var(--mono); font-style:normal; font-size:11.5px;
+    color:var(--bronze); margin-top:28px; letter-spacing:0.03em; text-transform:lowercase;
+  }
+</style>
+
+<script>
+  import { MECHANISM_CONTENT, MANIFESTO_CONTENT } from '../lib/i18n';
+  import { getLang, onLangChange } from '../lib/lang-bridge';
+
+  const eyebrowEl = document.querySelector('[data-i18n="mech.eyebrow"]');
+  const titleEl = document.querySelector('[data-i18n="mech.title"]');
+  const introEl = document.querySelector('[data-i18n="mech.intro"]');
+  const numEls = Array.from(document.querySelectorAll('[data-i18n-num]'));
+  const descEls = Array.from(document.querySelectorAll('[data-i18n-desc]'));
+  const manifestoTextEl = document.querySelector('[data-i18n="manifesto.text"]');
+  const manifestoAttribEl = document.querySelector('[data-i18n="manifesto.attrib"]');
+
+  function apply(lang: 'pt' | 'en') {
+    const mech = MECHANISM_CONTENT[lang];
+    const manifesto = MANIFESTO_CONTENT[lang];
+    if (eyebrowEl) eyebrowEl.textContent = mech.eyebrow;
+    if (titleEl) titleEl.textContent = mech.title;
+    if (introEl) introEl.textContent = mech.intro;
+    mech.pipeline.forEach((s, i) => {
+      if (numEls[i]) numEls[i].textContent = s.num;
+      if (descEls[i]) descEls[i].textContent = s.desc;
+    });
+    if (manifestoTextEl) manifestoTextEl.textContent = manifesto.text;
+    if (manifestoAttribEl) manifestoAttribEl.textContent = manifesto.attrib;
+  }
+
+  apply(getLang());
+  onLangChange(apply);
+</script>

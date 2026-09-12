@@ -1,6 +1,6 @@
 # Sovereign Factory: Support Tools (`tools/`)
 
-Developer and CI utilities for the SDD monorepo.
+Developer and CI utilities for the Providence monorepo.
 These tools follow the **Sovereign Factory** pattern: they are self-contained, deterministic, and environment-agnostic via **PEP 723**.
 
 ---
@@ -10,17 +10,17 @@ These tools follow the **Sovereign Factory** pattern: they are self-contained, d
 All tools should be executed via **uv** to ensure dependency isolation and cross-platform (Windows/Linux) parity.
 
 ### 1. Unified CLI (Recommended)
-The SDD CLI provides a discovery layer for all tools:
+The Providence CLI provides a discovery layer for all tools:
 ```bash
-sdd tools list                         # List public active tools
-sdd tools list --all                   # Include internal, deprecated, and project entries
-sdd tools list --include-deprecated    # Include deprecated entries with replacements
-sdd tools list --json                  # Emit machine-readable registry output
-sdd tools run <tool-id>                # Execute by manifest ID (e.g. maintenance/lint_all)
-sdd tools run <category>/<script>.py   # Legacy path execution remains supported
+providence tools list                         # List public active tools
+providence tools list --all                   # Include internal, deprecated, and project entries
+providence tools list --include-deprecated    # Include deprecated entries with replacements
+providence tools list --json                  # Emit machine-readable registry output
+providence tools run <tool-id>                # Execute by manifest ID (e.g. maintenance/lint_all)
+providence tools run <category>/<script>.py   # Legacy path execution remains supported
 ```
 
-`sdd tools list` is manifest-driven when `tools/registry.yaml` exists. The
+`providence tools list` is manifest-driven when `tools/registry.yaml` exists. The
 manifest is a curated discovery contract: it separates public commands from
 internal helpers, deprecated compatibility scripts, and self-contained tool
 projects. If the manifest is absent, the CLI falls back to recursive Python
@@ -78,7 +78,7 @@ tools/
 │   └── health_check.py           Portable health engine (uv-powered)
 │
 ├── lib/
-│   └── sdd_env.py                Shared repo/path helpers for tools
+│   └── providence_env.py         Shared repo/path helpers for tools
 │
 ├── maintenance/
 │   ├── make_tasks.py             Makefile target implementation router
@@ -118,7 +118,7 @@ tools/
 
 ## Tool Registry Contract
 
-`tools/registry.yaml` is the source of truth for the `sdd tools` discovery
+`tools/registry.yaml` is the source of truth for the `providence tools` discovery
 surface.
 
 Required fields per entry:
@@ -135,7 +135,7 @@ Optional fields include `replacement`, `category`, `tags`, `docs_refs`,
 
 Default list output includes only `visibility: public` and `status: active`
 entries. Internal, deprecated, and project entries require explicit list flags.
-Manifest IDs and legacy relative paths are both accepted by `sdd tools run`
+Manifest IDs and legacy relative paths are both accepted by `providence tools run`
 during the migration period.
 
 ### Placement Rules
@@ -180,10 +180,10 @@ make lint-fix
 To comply with the "Human-in-the-loop" mandate (P003), governance changes must be signed with an Ed25519 key:
 ```bash
 # 1. Generate your auditor key (one-time)
-sdd governance keygen --key-id human-sergio
+providence governance keygen --key-id human-sergio
 
 # 2. Sign the source governance configuration
-sdd governance sign --source --key-id human-sergio
+providence governance sign --source --key-id human-sergio
 ```
 
 ---

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Pre-push Hook — SDD Architecture Framework
+# Pre-push Hook — Providence Architecture Framework
 #
 # Validates health and governance before pushing to remote.
 # Skip only in genuine emergencies: git push --no-verify
@@ -17,9 +17,9 @@ NC='\033[0m'
 echo -e "${YELLOW}[PRE-PUSH] Starting final validation before push...${NC}"
 
 # ── P003: Block AI agent pushes ──────────────────────────────────────────────
-# Requires SDD_AGENT_MODE to be exactly "true" (case-sensitive).
+# Requires PROVIDENCE_AGENT_MODE to be exactly "true" (case-sensitive).
 # Any other value (empty, false, 1) does NOT trigger the block.
-if [ "${SDD_AGENT_MODE:-}" = "true" ]; then
+if [ "${PROVIDENCE_AGENT_MODE:-}" = "true" ]; then
     echo -e "${RED}BLOCKED (P003): Agents are not allowed to push.${NC}"
     echo "Policy P003 (Mandatory Human Review) requires all remote updates"
     echo "to be performed by a human."
@@ -37,15 +37,19 @@ if ! PYTHON_BIN="$(python3 "$PROJECT_ROOT/tools/maintenance/make_tasks.py" check
     exit 1
 fi
 
-# ── Resolve sdd CLI ──────────────────────────────────────────────────────────
-SDD_CMD=""
-if [ -x "$PROJECT_ROOT/.venv/bin/sdd" ]; then
-    SDD_CMD="$PROJECT_ROOT/.venv/bin/sdd"
-elif command -v sdd >/dev/null 2>&1; then
-    SDD_CMD="sdd"
+# ── Resolve Providence CLI ───────────────────────────────────────────────────
+PROVIDENCE_CMD=""
+if [ -x "$PROJECT_ROOT/.venv/Scripts/providence.exe" ]; then
+    PROVIDENCE_CMD="$PROJECT_ROOT/.venv/Scripts/providence.exe"
+elif [ -x "$PROJECT_ROOT/.venv/bin/providence" ]; then
+    PROVIDENCE_CMD="$PROJECT_ROOT/.venv/bin/providence"
+elif command -v providence >/dev/null 2>&1; then
+    PROVIDENCE_CMD="providence"
+elif command -v uv >/dev/null 2>&1; then
+    PROVIDENCE_CMD="uv run providence"
 else
-    echo -e "${RED}ERROR: sdd CLI not found.${NC}"
-    echo "Run ./setup.sh or: pip install -e packages/interfaces/sdd_cli"
+    echo -e "${RED}ERROR: providence CLI not found.${NC}"
+    echo "Run ./setup.sh or: uv sync"
     exit 1
 fi
 
@@ -71,8 +75,13 @@ else
 fi
 
 # ── Governance validation ────────────────────────────────────────────────────
-echo -e "${YELLOW}→ Running governance validation...${NC}"
-if GOV_OUTPUT=$("$SDD_CMD" governance validate 2>&1); then
+# Artifact lane: pre-push checks structure/fingerprints/artifact consistency,
+# not the pusher's live M015 session handshake. Session authorization (M015)
+# is a hard-mode gate for agent execution, not a human-push gate, and the
+# handshake naturally expires or gets rewritten by full-bootstrap/tests
+# between commits — see docs/runbooks/m015-handshake-validation-failure.md.
+echo -e "${YELLOW}→ Running governance validation (artifact lane)...${NC}"
+if GOV_OUTPUT=$($PROVIDENCE_CMD governance validate --skip-handshake 2>&1); then
     echo -e "${GREEN}✓ Governance validation passed${NC}"
 else
     echo -e "${RED}GOVERNANCE VALIDATION FAILED${NC}"

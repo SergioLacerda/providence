@@ -2,7 +2,7 @@
 # /// script
 # dependencies = []
 # ///
-"""SDD Architecture — Health Check Engine."""
+"""Providence Architecture — Health Check Engine."""
 
 import json
 import sys
@@ -12,14 +12,16 @@ from typing import Any
 
 
 class HealthCheckEngine:
-    """Core health check validator for the SDD monorepo."""
+    """Core health check validator for the Providence monorepo."""
 
     def __init__(self, verbose: bool = False) -> None:
         self.verbose = verbose
         self.project_root = self._find_project_root()
-        sdd_core_src = self.project_root / "packages" / "core" / "sdd_core" / "src"
-        if str(sdd_core_src) not in sys.path:
-            sys.path.insert(0, str(sdd_core_src))
+        providence_core_src = (
+            self.project_root / "packages" / "core" / "providence_core" / "src"
+        )
+        if str(providence_core_src) not in sys.path:
+            sys.path.insert(0, str(providence_core_src))
         self.results: dict[str, Any] = {
             "timestamp": datetime.now().isoformat(),
             "project_root": str(self.project_root),
@@ -58,7 +60,7 @@ class HealthCheckEngine:
 
     def check_git_status(self) -> tuple[bool, str]:
         try:
-            from sdd_core.utils.process import SafeProcessRunner
+            from providence_core.utils.process import SafeProcessRunner
 
             r = SafeProcessRunner().run(
                 ["git", "rev-parse", "--git-dir"],
@@ -93,23 +95,29 @@ class HealthCheckEngine:
             f"Python {v.major}.{v.minor}.{v.micro} ({'OK' if ok else 'requires 3.10+'})",
         )
 
-    def check_sdd_compiled(self) -> tuple[bool, str]:
-        compiled = self.project_root / ".sdd" / "compiled"
+    def check_governance_compiled(self) -> tuple[bool, str]:
+        compiled = self.project_root / ".providence" / "compiled"
         if not compiled.is_dir():
-            return False, ".sdd/compiled/ not found — run: sdd governance compile"
+            return (
+                False,
+                ".providence/compiled/ not found — run: providence governance compile",
+            )
         artifacts = list(compiled.glob("*.msgpack")) + list(compiled.glob("*.json"))
         if not artifacts:
-            return False, ".sdd/compiled/ is empty — run: sdd governance compile"
-        return True, f".sdd/compiled/ has {len(artifacts)} artifact(s)"
+            return (
+                False,
+                ".providence/compiled/ is empty — run: providence governance compile",
+            )
+        return True, f".providence/compiled/ has {len(artifacts)} artifact(s)"
 
     def check_venv(self) -> tuple[bool, str]:
         venv = self.project_root / ".venv"
         if not venv.is_dir():
             return False, ".venv not found — run: ./setup.sh"
-        sdd_bin = venv / "bin" / "sdd"
-        if sdd_bin.exists():
-            return True, ".venv exists and sdd CLI is installed"
-        return True, ".venv exists (sdd CLI not yet installed)"
+        providence_bin = venv / "bin" / "providence"
+        if providence_bin.exists():
+            return True, ".venv exists and providence CLI is installed"
+        return True, ".venv exists (providence CLI not yet installed)"
 
     def check_docs_structure(self) -> tuple[bool, str]:
         docs = self.project_root / "docs" / "spec" / "canonical"
@@ -124,7 +132,7 @@ class HealthCheckEngine:
             ("Git Status", self.check_git_status),
             ("Package Structure", self.check_packages_structure),
             ("Python Version", self.check_python_version),
-            ("Compiled Governance", self.check_sdd_compiled),
+            ("Compiled Governance", self.check_governance_compiled),
             ("Virtual Environment", self.check_venv),
             ("Docs Structure", self.check_docs_structure),
         ]

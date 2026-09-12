@@ -10,31 +10,31 @@ Get your SDD workspace running with governed bootstrap and agent command packs.
 
 ## Quick Start (One Command)
 
-> Prerequisite: install the SDD CLI first — see [Step 1](#step-by-step-setup-client-project)
+> Prerequisite: install the Providence CLI first — see [Step 1](#step-by-step-setup-client-project)
 > below if you haven't already.
 
-After `sdd install --wizard` has generated and deployed your project template,
-`sdd init --default` runs the full client bootstrap chain in one step: workspace
+After `providence install --wizard` has generated and deployed your project template,
+`providence init --default` runs the full client bootstrap chain in one step: workspace
 profile, governance generate (`--full-bootstrap`), skills bootstrap
 (`--full-bootstrap --regenerate-seeds`), and runtime validation. It is
-equivalent to `sdd init --type client --name local-dev --language en --force`,
+equivalent to `providence init --type client --name local-dev --language en --force`,
 with any of `--type`/`--name`/`--language`/`--force` you pass explicitly
 taking precedence.
 
 Pass `--language en|pt-BR` (case-insensitive) to persist a client-side
-language preference into `.sdd/profile`; it is bridged into the compiled
-`.sdd/metadata.json`'s `language_context` the next time `sdd governance
-compile` runs, unless a prior `sdd wizard` run already populated it (wizard
+language preference into `.providence/profile`; it is bridged into the compiled
+`.providence/metadata.json`'s `language_context` the next time `providence governance
+compile` runs, unless a prior `providence wizard` run already populated it (wizard
 output always takes precedence).
 
 ```bash
 cd <your-project>
-sdd install --wizard
-sdd init --default
-sdd governance validate
+providence install --wizard
+providence init --default
+providence governance validate
 ```
 
-`sdd install --wizard` deploys generated files into the project root by default.
+`providence install --wizard` deploys generated files into the project root by default.
 Use `--only-template` to stop after producing `generated/client/build/final-template/`.
 It also supports `--from-file <path>` (bring your own governance JSON) and
 `--non-interactive` (skip prompts) — see `docs/spec/reference/commands/cli.md`
@@ -45,55 +45,55 @@ Each step is skipped automatically if it already ran (idempotent re-run); use
 
 ## Step-by-step Setup (Client Project)
 
-**Step 1 — Install the SDD CLI from a released version.** Two supported channels,
+**Step 1 — Install the Providence CLI from a released version.** Two supported channels,
 both pinned to a tag:
 
 ```bash
 # 1a. (Preferred) GitHub Release wheelhouse — the official, CI-proven channel.
 #     Download the dist/ assets attached to the tagged release
-#     (https://github.com/SergioLacerda/sdd-harness/releases), then:
-pip install --no-index --find-links <dist-dir> sdd-cli
+#     (https://github.com/SergioLacerda/providence/releases), then:
+pip install --no-index --find-links <dist-dir> providence-cli
 
 # 1b. (Alternative) Tag-pinned git install — no asset download, needs git + network.
 #     Replace vX.Y.Z with the latest release tag from the releases page:
-uv tool install "git+https://github.com/SergioLacerda/sdd-harness@vX.Y.Z#subdirectory=packages/interfaces/sdd_cli"
+uv tool install "git+https://github.com/SergioLacerda/providence@vX.Y.Z#subdirectory=packages/interfaces/providence_cli"
 ```
 
 `.github/workflows/release.yml` verifies the wheelhouse install on `windows-latest`
 and `ubuntu-latest` before publishing. The wheelhouse wheel bundles the native
-`sdd-compile` binaries (`sdd_core/_native/`), so no runtime download is needed;
+`sdd-compile` binaries (`providence_core/_native/`), so no runtime download is needed;
 the git channel resolves the binary from the release assets at first use.
 
 > **Development installs only:** installing without a tag
 > (`git+https://...#subdirectory=...`) builds the **default branch HEAD** — an
-> unreleased version. Use it only for developing sdd-harness itself, never for
+> unreleased version. Use it only for developing providence itself, never for
 > client onboarding: HEAD code paired with release binaries is exactly the skew
 > class the version handshake exists to reject.
 
 ```bash
 # 2. Enter your project and run the wizard
 cd <your-project>
-sdd install --wizard
+providence install --wizard
 
 # 3. Activate runtime/governance in the generated template
 #    (this single command also runs steps 4-6 below automatically)
-sdd init --type client --name <your-project> --force
+providence init --type client --name <your-project> --force
 
 # 4. Compile + generate + sign + handshake
-sdd governance generate --full-bootstrap
+providence governance generate --full-bootstrap
 
 # 5. Generate skills/commands/seeds for agent entrypoints
-sdd skills --full-bootstrap --regenerate-seeds
+providence skills --full-bootstrap --regenerate-seeds
 
 # 6. Verify runtime/governance health
-sdd runtime status
-sdd governance validate
+providence runtime status
+providence governance validate
 
 # 7. Verify the compiler toolchain (read-only JSON report)
-sdd doctor compiler
+providence doctor compiler
 ```
 
-A healthy `sdd doctor compiler` report shows `binary.resolution_rule` as `packaged`
+A healthy `providence doctor compiler` report shows `binary.resolution_rule` as `packaged`
 (wheelhouse install) or `download` (git install), `handshake.status: "ok"` (or
 `skipped_dev_binary` on dev builds), and `validate.ok: true` once governance has been
 generated. Anything else — see the
@@ -101,13 +101,13 @@ generated. Anything else — see the
 
 ### Windows signing troubleshooting
 
-Key generation (`sdd governance keygen`), signing (`sdd governance sign`,
+Key generation (`providence governance keygen`), signing (`providence governance sign`,
 full bootstrap), and runtime signature verification all use a native Ed25519
 backend (the `sdd-compile` binary) and do not shell out to OpenSSL — Windows
 standalone installs do not require `openssl.exe` on `PATH`.
 
 The `sdd-compile` binary itself is resolved in this order: `SDD_COMPILE_BIN`
-env var → repo-local build → `PATH` → binary bundled in the sdd-core wheel →
+env var → repo-local build → `PATH` → binary bundled in the providence-core wheel →
 download from the matching GitHub Release.
 
 Only wheels built by the release CI bundle the native binaries. A source
@@ -117,7 +117,7 @@ working TLS certificate verification. If that download fails with
 `CERTIFICATE_VERIFY_FAILED`, either:
 
 - install from the release wheelhouse instead (the CI-proven channel above:
-  `pip install --no-index --find-links <dist-dir> sdd-cli`) — the bundled
+  `pip install --no-index --find-links <dist-dir> providence-cli`) — the bundled
   binary makes the download unnecessary; or
 - download `sdd-compile-windows-amd64.exe` from the GitHub Release manually
   and point `SDD_COMPILE_BIN` at it; or
@@ -128,22 +128,22 @@ Full bootstrap and client onboarding use the default key id `dev-01`, so an
 idempotent bootstrap can print:
 
 ```text
-Key dev-01 already exists at .sdd\trust\dev-01.key
+Key dev-01 already exists at .providence\trust\dev-01.key
 ```
 
 That line is informational. A direct command such as
-`sdd governance sign --key-id my-org-01` resolves
-`.sdd\trust\my-org-01.key`; it does not fall back to `dev-01`. To use a custom
+`providence governance sign --key-id my-org-01` resolves
+`.providence\trust\my-org-01.key`; it does not fall back to `dev-01`. To use a custom
 key id directly, generate it first:
 
 ```bash
-sdd governance keygen --key-id my-org-01
-sdd governance sign --key-id my-org-01
+providence governance keygen --key-id my-org-01
+providence governance sign --key-id my-org-01
 ```
 
 ### Zero-state onboarding behavior
 
-`sdd install --wizard` runs a single guided flow in an empty workspace — no
+`providence install --wizard` runs a single guided flow in an empty workspace — no
 phase menu, no manual staging required:
 
 1. Language, hook-mode, and agent-selection prompts (skippable via
@@ -152,7 +152,7 @@ phase menu, no manual staging required:
 3. Compilation and seed generation into `generated/client/build/`
 4. Deployment of the final template into the project root
 
-Runtime activation is intentionally deferred to step 3 (`sdd init` + bootstrap commands).
+Runtime activation is intentionally deferred to step 3 (`providence init` + bootstrap commands).
 
 ### Seedling Selection
 
@@ -177,7 +177,7 @@ mode may add that, but the current behavior never removes files on its own.
 
 ## Agent Custom Commands (Slash/Prompt Packs)
 
-Custom command packs are generated from canonical `.sdd` artifacts.
+Custom command packs are generated from canonical `.providence` artifacts.
 
 - Copilot prompts: `.github/prompts/*.prompt.md`
 - Cursor rules: `.cursor/rules/sdd-commands.mdc`
@@ -186,10 +186,10 @@ Custom command packs are generated from canonical `.sdd` artifacts.
 
 Core aliases include: `/sdd-ask`, `/sdd-organize`, `/sdd-diagnose`.
 
-`/sdd-ask` is a thin adapter over the CLI command `sdd ask`. The CLI is the
+`/sdd-ask` is a thin adapter over the CLI command `providence ask`. The CLI is the
 single governed source of truth for intent classification, execution gate, and
 handoff guidance; slash commands and prompt-submit hooks must not classify or
-route independently. When `sdd ask` reports implementation intent, it emits a
+route independently. When `providence ask` reports implementation intent, it emits a
 governed handoff (`next_valid_path: implementation_handoff`) for the calling
 agent. It does not execute implementation, bind a provider, or invoke an
 analysis skill automatically; the structured fields `delegation_executed` and
@@ -199,7 +199,7 @@ exists.
 To regenerate:
 
 ```bash
-sdd skills --full-bootstrap
+providence skills --full-bootstrap
 ```
 
 ## CLI Reference
@@ -210,14 +210,14 @@ For authoritative flags and command contracts:
 
 ## Telemetry
 
-Compliance events are written to `.sdd/runtime/compliance-events.jsonl` (JSONL, append-only).
+Compliance events are written to `.providence/runtime/compliance-events.jsonl` (JSONL, append-only).
 
 ```bash
 # View latest events
-cat .sdd/runtime/compliance-events.jsonl | tail -20
+cat .providence/runtime/compliance-events.jsonl | tail -20
 
 # Filter violations only
-grep '"event": "VIOLATION"' .sdd/runtime/compliance-events.jsonl
+grep '"event": "VIOLATION"' .providence/runtime/compliance-events.jsonl
 ```
 
 To override the log path: `export SDD_COMPLIANCE_LOG=/path/to/events.jsonl`
@@ -227,15 +227,15 @@ To disable writes: `export SDD_COMPLIANCE_LOG=disabled`
 
 ### `/sdd-ask` returns `API Error: 500`
 
-This usually indicates a provider/IDE API incident, not a local SDD CLI failure.
+This usually indicates a provider/IDE API incident, not a local Providence CLI failure.
 
 1. Stop retrying the same slash command in the IDE for that turn.
 2. Run the local governed fallback in terminal:
 
 ```bash
-sdd runtime status
-sdd governance validate
-sdd ask --full "<your question>"
+providence runtime status
+providence governance validate
+providence ask --full "<your question>"
 ```
 
 1. Capture the `request_id` from the 500 response and report it for incident triage.

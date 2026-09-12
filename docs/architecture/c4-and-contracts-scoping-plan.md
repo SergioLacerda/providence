@@ -10,7 +10,7 @@ backlog.
 ## What Already Exists
 
 `docs/architecture/` already contains C4 Level 1 (Context) and Level 2 (Containers)
-diagrams, plus one Level 3 (Components) diagram for `sdd_runtime`
+diagrams, plus one Level 3 (Components) diagram for `providence_runtime`
 ([`c4-components-runtime.md`](c4-components-runtime.md)). All three are Mermaid, wired
 into `mkdocs.yml` nav, and linked from other docs (e.g.
 `docs/guides/LEARNING_INTEGRATION.md`). `c4-context.md` dates to the initial repo
@@ -25,8 +25,8 @@ surface was found that would justify adding one in this pass.
 
 | Package | Decision | Rationale |
 |---|---|---|
-| `sdd_cli` | **Recommended** | Largest package (~21k source LOC), the primary contributor entrypoint, and the most likely place for a new contributor to get lost. Draft one L3 diagram covering CLI command dispatch → handler → shared envelope flow, mirroring the style of [`c4-components-runtime.md`](c4-components-runtime.md). |
-| `sdd_core` | **Optional, deferred** | Smaller, more stable, narrower authority boundary by design — lower documentation-churn risk if it waits for a future pass. Not committed in this plan's scope. |
+| `providence_cli` | **Recommended** | Largest package (~21k source LOC), the primary contributor entrypoint, and the most likely place for a new contributor to get lost. Draft one L3 diagram covering CLI command dispatch → handler → shared envelope flow, mirroring the style of [`c4-components-runtime.md`](c4-components-runtime.md). |
+| `providence_core` | **Optional, deferred** | Smaller, more stable, narrower authority boundary by design — lower documentation-churn risk if it waits for a future pass. Not committed in this plan's scope. |
 | Context (L1) / Containers (L2) | **No changes** | Both are current and accurate as-is. |
 
 ## Contracts (Per-Component)
@@ -36,7 +36,7 @@ surface was found that would justify adding one in this pass.
 This was a user decision made during scoping discovery, aligned with how governance
 artifacts already work.
 
-1. **Inventory gap**: `packages/interfaces/sdd_cli/src/sdd_cli/shared/contracts.py`
+1. **Inventory gap**: `packages/interfaces/providence_cli/src/providence_cli/shared/contracts.py`
    defines the canonical CLI JSON envelope (`CommandResult`, `CommandError`) as frozen
    dataclasses — not Pydantic. This is the one cross-boundary payload found with no
    Pydantic model backing it. Open decision (see Future Work): keep as dataclasses
@@ -71,11 +71,11 @@ document). Revisit if the repo ever grows a served HTTP API.
 The items below are the resulting backlog — none of them are executed by this plan
 itself:
 
-1. Draft `docs/architecture/c4-components-cli.md` (L3 diagram for `sdd_cli`) and wire
+1. Draft `docs/architecture/c4-components-cli.md` (L3 diagram for `providence_cli`) and wire
    it into `mkdocs.yml` nav.
 2. Decide and implement: keep `CommandResult`/`CommandError` as frozen dataclasses with
    a hand-maintained JSON Schema, or migrate to Pydantic.
 3. Extend `tests/contract/schemas/` + `make generate-schemas` for any new component
    contracts identified by item 2 (and any others surfaced while drafting item 1).
 4. Optional/deferred: `docs/architecture/c4-components-core.md` (L3 diagram for
-   `sdd_core`).
+   `providence_core`).

@@ -24,8 +24,8 @@ environment.
 4. Plugins MUST NOT invent SDD rules that do not exist
 5. Plugins MUST stop or degrade safely when governance context is missing
 6. Plugins operating in governed mode MUST respect all HARD mandates
-7. Internal SDD skills (under `.sdd/skills/`) MUST declare `governance_adherence:` in skill.yaml
-8. External plugins are registered via `.sdd/plugins/registry.yaml` through agent-mediated handshake
+7. Internal SDD skills (under `.providence/skills/`) MUST declare `governance_adherence:` in skill.yaml
+8. External plugins are registered via `.providence/plugins/registry.yaml` through agent-mediated handshake
 9. GovernanceEvent MUST be emitted on registration: `type=PLUGIN_REGISTERED`
 10. GovernanceEvent MUST be emitted on violation: `type=PLUGIN_GOVERNANCE_VIOLATION`
 
@@ -35,7 +35,7 @@ environment.
 
 | Mode | Condition | Behavior |
 |------|-----------|----------|
-| `governed` | Full `.sdd/` governance found | HARD mandates enforced, execution contract required, artifacts validated |
+| `governed` | Full `.providence/` governance found | HARD mandates enforced, execution contract required, artifacts validated |
 | `compatible` | Partial governance found | Adapts to available rules, reports missing context, degrades safely |
 | `standalone` | No governance found | Read-only by default, produces portable artifacts, recommends SDD integration |
 
@@ -43,8 +43,8 @@ environment.
 
 ## Enforcement
 
-Agent-mediated registration writes entries to `.sdd/plugins/registry.yaml`.
-See `.sdd/plugins/handshake-protocol.md` for the full registration flow.
+Agent-mediated registration writes entries to `.providence/plugins/registry.yaml`.
+See `.providence/plugins/handshake-protocol.md` for the full registration flow.
 
 Internal skills declare adherence explicitly in `skill.yaml`:
 
@@ -71,7 +71,7 @@ plugins are both correctly declared (M019) and correctly constrained at runtime 
 ## Enforcement Steps
 
 - Verify plugin has performed governance handshake before execution
-- Verify registry entry exists for plugin in `.sdd/plugins/registry.yaml` (external) or `governance_adherence:` block in `skill.yaml` (internal)
+- Verify registry entry exists for plugin in `.providence/plugins/registry.yaml` (external) or `governance_adherence:` block in `skill.yaml` (internal)
 - Verify plugin respects all HARD mandates when mode=governed
 - Verify GovernanceEvent emitted on registration and on violation
 - Verify internal skills declare `governance_adherence:` in their skill.yaml
@@ -83,6 +83,6 @@ plugins are both correctly declared (M019) and correctly constrained at runtime 
 - M017: Analysis Plugin Compliance (execution enforcement, downstream)
 - M015: Bidirectional Agent Handshake (complementary handshake contract)
 - M016: Guardrail Non-Regression (applies to plugin-produced artifacts)
-- `.sdd/plugins/registry.yaml` (external plugin registry)
-- `.sdd/plugins/plugin-entry.schema.yaml` (registry entry schema)
-- `.sdd/plugins/handshake-protocol.md` (registration flow)
+- `.providence/plugins/registry.yaml` (external plugin registry)
+- `.providence/plugins/plugin-entry.schema.yaml` (registry entry schema)
+- `.providence/plugins/handshake-protocol.md` (registration flow)

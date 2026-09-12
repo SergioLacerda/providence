@@ -1,6 +1,6 @@
 """Guard against DOC-01: mandates.md and INDEX.md silently drifting apart.
 
-`.sdd/source/mandates/mandates.md` is the canonical, generated mandate
+`.providence/source/mandates/mandates.md` is the canonical, generated mandate
 register. `docs/spec/canonical/core/mandates/INDEX.md` only lists mandates
 whose canonical document lives directly under `core/mandates/` — three
 mandates (M001, M002, M006) are documented elsewhere on purpose (as a
@@ -32,7 +32,7 @@ def _read(relpath: str) -> str:
 
 
 def _canonical_mandate_ids() -> set[str]:
-    content = _read(".sdd/source/mandates/mandates.md")
+    content = _read(".providence/source/mandates/mandates.md")
     return set(re.findall(r"^## (M\d+):", content, flags=re.MULTILINE))
 
 
@@ -49,7 +49,7 @@ def test_every_canonical_mandate_is_accounted_for() -> None:
     missing = canonical_ids - accounted_for
     assert not missing, (
         f"mandate(s) {sorted(missing)} exist in "
-        ".sdd/source/mandates/mandates.md but are not listed in INDEX.md "
+        ".providence/source/mandates/mandates.md but are not listed in INDEX.md "
         "nor declared as documented elsewhere — either add them to INDEX.md "
         "or add them to _DOCUMENTED_ELSEWHERE with a canonical cross-reference"
     )

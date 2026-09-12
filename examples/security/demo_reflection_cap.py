@@ -18,8 +18,8 @@ Run from repo root:
 
 from __future__ import annotations
 
-from sdd_runtime.budget import RetryBudget
-from sdd_runtime.exceptions import ReflectionCapReachedError
+from providence_runtime.budget import RetryBudget
+from providence_runtime.exceptions import ReflectionCapReachedError
 
 SECTION = "\n" + "=" * 60
 

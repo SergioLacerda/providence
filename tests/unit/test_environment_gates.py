@@ -60,18 +60,33 @@ def test_telemetry_scope_passes_for_tmp_path(monkeypatch):
     assert result.code == "OK"
 
 
-def test_repo_sdd_mutation_guard_detects_dirty(monkeypatch):
+def test_repo_providence_mutation_guard_detects_dirty(monkeypatch):
     gates = _load_module()
 
     class _FakeCompleted:
         returncode = 0
-        stdout = " M .sdd/trust/trusted-keys.json\n"
+        stdout = " M .providence/trust/trusted-keys.json\n"
+        stderr = ""
+
+    monkeypatch.setattr(subprocess, "run", lambda *args, **kwargs: _FakeCompleted())
+    result = gates.gate_repo_providence_mutation_guard("enforce")
+    assert result.ok is False
+    assert result.code == "TEST_POLICY_VIOLATION"
+    assert result.gate == "repo-providence-mutation-guard"
+
+
+def test_repo_sdd_mutation_guard_alias_matches_canonical(monkeypatch):
+    gates = _load_module()
+
+    class _FakeCompleted:
+        returncode = 0
+        stdout = ""
         stderr = ""
 
     monkeypatch.setattr(subprocess, "run", lambda *args, **kwargs: _FakeCompleted())
     result = gates.gate_repo_sdd_mutation_guard("enforce")
-    assert result.ok is False
-    assert result.code == "TEST_POLICY_VIOLATION"
+    assert result.ok is True
+    assert result.gate == "repo-providence-mutation-guard"
 
 
 def test_runtime_seed_drift_check_detects_dirty(monkeypatch):
@@ -79,7 +94,7 @@ def test_runtime_seed_drift_check_detects_dirty(monkeypatch):
 
     class _FakeCompleted:
         returncode = 0
-        stdout = " M .sdd/runtime/governance-state.json\n M CLAUDE.md\n"
+        stdout = " M .providence/runtime/governance-state.json\n M CLAUDE.md\n"
         stderr = ""
 
     monkeypatch.setattr(subprocess, "run", lambda *args, **kwargs: _FakeCompleted())

@@ -22,16 +22,16 @@
     {
       "criticality": "high",
       "enforcement_steps": [
-        "Verify `.sdd-cache.md` exists in the project root before starting any task",
-        "Read `.sdd-cache.md` (pre-flight sync) and confirm understanding of current state before acting",
-        "Update `.sdd-cache.md` at the end of every sub-task or significant logical block",
+        "Verify `.providence-cache.md` exists in the project root before starting any task",
+        "Read `.providence-cache.md` (pre-flight sync) and confirm understanding of current state before acting",
+        "Update `.providence-cache.md` at the end of every sub-task or significant logical block",
         "Confirm cache content is project-scoped and does not reference state from other repositories",
         "Confirm cache was committed alongside the last code change"
       ],
       "id": "M003",
       "rationale": "- **Parallelism**: Prevents Agent A from breaking assumptions made by Agent B. - **Context Longevity**: Prevents \"forgetting\" the main goal when the token window fills up with implementation details. - **Multi-Repo Safety**: Ensures the agent doesn't mix up rules between two different projects open in the same workspace.",
       "requirements": [
-        "Mandatory Cache File: Every project must maintain a `.sdd-cache.md` (or `.sdd/task-context.json`) in its root.",
+        "Mandatory Cache File: Every project must maintain a `.providence-cache.md` (or `.providence/task-context.json`) in its root.",
         "Sub-task Checkpoint: Agents MUST update this cache at the end of EVERY sub-task or significant logical block.",
         "Pre-flight Sync: Before starting any task, the agent MUST read the cache to synchronize with the current global state of the project, overriding stale memory.",
         "Isolation: The cache is strictly project-scoped. In multi-repository IDEs, agents must treat each repository as a separate context-aware cell."
@@ -92,7 +92,7 @@
     {
       "criticality": "high",
       "enforcement_steps": [
-        "Verify `.sdd/audit-trail/compliance-events.jsonl` exists and has not been modified (only appended)",
+        "Verify `.providence/audit-trail/compliance-events.jsonl` exists and has not been modified (only appended)",
         "Confirm no events have been deleted, reordered, or had timestamps altered",
         "Confirm all new governance events were appended (never overwritten) to the log",
         "Confirm log format is valid JSONL with no corrupted entries",
@@ -103,7 +103,7 @@
       "requirements": null,
       "status": "active",
       "summary_minimal": "Audit Integrity",
-      "summary_runtime": "Preserve and protect the integrity of the audit trail (`.sdd/audit-trail/compliance-events.jsonl`) to ensure forensic capability, regulatory compliance, and accountability for all governance-aware ...",
+      "summary_runtime": "Preserve and protect the integrity of the audit trail (`.providence/audit-trail/compliance-events.jsonl`) to ensure forensic capability, regulatory compliance, and accountability for all governance...",
       "title": "Audit Integrity",
       "type": "MANDATE"
     },
@@ -169,7 +169,7 @@
         "Confirm the agent responded with its `agent_id`, declared `skills_to_use`, and acknowledged active mandate IDs",
         "Verify the `SkillEngine` blocks any skill not explicitly authorized in the handshake response",
         "If `SDD_SIGNATURE_MODE=strict`, confirm execution is blocked when handshake is missing or artifact signatures are unacknowledged",
-        "Confirm the handshake response is stored under `.sdd/runtime/` as an auditable contract"
+        "Confirm the handshake response is stored under `.providence/runtime/` as an auditable contract"
       ],
       "id": "M015",
       "rationale": null,
@@ -261,7 +261,7 @@
       "criticality": "high",
       "enforcement_steps": [
         "Verify plugin has performed governance handshake before execution",
-        "Verify registry entry exists for plugin in `.sdd/plugins/registry.yaml` (external) or `governance_adherence:` block in `skill.yaml` (internal)",
+        "Verify registry entry exists for plugin in `.providence/plugins/registry.yaml` (external) or `governance_adherence:` block in `skill.yaml` (internal)",
         "Verify plugin respects all HARD mandates when mode=governed",
         "Verify GovernanceEvent emitted on registration and on violation",
         "Verify internal skills declare `governance_adherence:` in their skill.yaml"
@@ -275,8 +275,8 @@
         "Plugins MUST NOT invent SDD rules that do not exist",
         "Plugins MUST stop or degrade safely when governance context is missing",
         "Plugins operating in governed mode MUST respect all HARD mandates",
-        "Internal SDD skills (under `.sdd/skills/`) MUST declare `governance_adherence: ` in skill.yaml",
-        "External plugins are registered via `.sdd/plugins/registry.yaml` through agent-mediated handshake",
+        "Internal SDD skills (under `.providence/skills/`) MUST declare `governance_adherence: ` in skill.yaml",
+        "External plugins are registered via `.providence/plugins/registry.yaml` through agent-mediated handshake",
         "GovernanceEvent MUST be emitted on registration: `type=PLUGIN_REGISTERED`",
         "GovernanceEvent MUST be emitted on violation: `type=PLUGIN_GOVERNANCE_VIOLATION`"
       ],
@@ -300,7 +300,7 @@
       "requirements": [
         "Derive all LLM input context from canonical fields (governance state, fingerprint, mandates count). Base form: max 2 lines, key=value compact",
         "Derive all user-facing output from a canonical event (phase, status, decision, artifact_path, next_action). Base output: max 3 lines, max 120 chars per line",
-        "Persist full diagnostic evidence in `.sdd/runtime/` artifacts, not in console output",
+        "Persist full diagnostic evidence in `.providence/runtime/` artifacts, not in console output",
         "Emit DEBUG/TRACE as structured JSON telemetry, bypassing all profile renderers",
         "Deduplicate repeated findings before rendering",
         "Include artifact paths for auditability on every finding or decision event",

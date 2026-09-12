@@ -4,10 +4,10 @@ import ast
 from pathlib import Path
 
 CRITICAL_FILES = (
-    "packages/interfaces/sdd_wizard/src/sdd_wizard/orchestration/seedlings/ai_seeds.py",
+    "packages/interfaces/providence_wizard/src/providence_wizard/orchestration/seedlings/ai_seeds.py",
     "tests/integration/wizard/test_seedlings_e2e.py",
-    "packages/interfaces/sdd_cli/tests/test_governance_output_snapshots.py",
-    "packages/core/sdd_core/tests/execution/test_guardrail_code_review.py",
+    "packages/interfaces/providence_cli/tests/test_governance_output_snapshots.py",
+    "packages/core/providence_core/tests/execution/test_guardrail_code_review.py",
 )
 
 

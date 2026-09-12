@@ -14,7 +14,7 @@ Immutable governance rules enforced at runtime.
 
 | Mandate | Purpose |
 |---|---|
-| [M003: Context Awareness](../spec/canonical/core/mandates/M003_CONTEXT_AWARENESS.md) | Maintain `.sdd-cache.md` per project with execution state |
+| [M003: Context Awareness](../spec/canonical/core/mandates/M003_CONTEXT_AWARENESS.md) | Maintain `.providence-cache.md` per project with execution state |
 | [M005: Token Economy](../spec/canonical/core/mandates/M005_TOKEN_ECONOMY.md) | Enforce budget zones (GREEN/YELLOW/RED/BREACH) per PATH |
 | [M007: Telemetry](../spec/canonical/core/mandates/M007_TELEMETRY.md) | Emit mandatory governance events every session |
 
@@ -170,4 +170,4 @@ Examples (ADR-001 through ADR-010 + DECISIONS_APRIL_2026)
 **Authority:** CORE — Source of Truth
 **Scope:** All projects, all agents, all sessions
 **Mutability:** Immutable (changes require RFC process)
-**Last Updated:** See `.sdd/metadata.json`
+**Last Updated:** See `.providence/metadata.json`

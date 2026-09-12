@@ -321,8 +321,8 @@ Before merge, verify:
 
 ## Update Runtime State
 
-- [ ] `execution-state/_current.md` updated with completion summary (in `.sdd/source/`)
-- [ ] If complex: checkpoint created in `.sdd/source/checkpoints/`
+- [ ] `execution-state/_current.md` updated with completion summary (in `.providence/source/`)
+- [ ] If complex: checkpoint created in `.providence/source/checkpoints/`
 - [ ] Decisions documented
 - [ ] Risks flagged
 - [ ] "Next Actions" updated for next agent

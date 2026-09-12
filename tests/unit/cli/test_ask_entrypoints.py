@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 from click.testing import CliRunner
 
-from sdd_cli.main import app
+from providence_cli.main import app
 
 
 @dataclass
@@ -17,10 +17,12 @@ class _FakeProfileContext:
 
 def _patch_profile_gate(monkeypatch) -> None:
     monkeypatch.setattr(
-        "sdd_core.utils.environment.resolve_profile",
+        "providence_core.utils.environment.resolve_profile",
         lambda override=None: _FakeProfileContext(),
     )
-    monkeypatch.setattr("sdd_cli.utils.profile.governance_gate", lambda _ctx: None)
+    monkeypatch.setattr(
+        "providence_cli.utils.profile.governance_gate", lambda _ctx: None
+    )
 
 
 def test_ask_top_level_invocation_without_duplication(monkeypatch) -> None:
@@ -48,7 +50,7 @@ def test_ask_top_level_invocation_without_duplication(monkeypatch) -> None:
         called["intake_only"] = intake_only
         called["output_json"] = output_json
 
-    monkeypatch.setattr("sdd_cli.commands._ask_backend.ask_cmd", _fake_ask_cmd)
+    monkeypatch.setattr("providence_cli.commands._ask_backend.ask_cmd", _fake_ask_cmd)
 
     result = CliRunner().invoke(app, ["ask", "prompt"])
     assert result.exit_code == 0, result.output
@@ -76,7 +78,7 @@ def test_ask_top_level_noop_when_query_is_empty_or_null(monkeypatch) -> None:
     ) -> None:
         called["count"] += 1
 
-    monkeypatch.setattr("sdd_cli.commands._ask_backend.ask_cmd", _fake_ask_cmd)
+    monkeypatch.setattr("providence_cli.commands._ask_backend.ask_cmd", _fake_ask_cmd)
     runner = CliRunner()
 
     for raw_query in ("", "   ", "null", "NULL", "nula", "NULA"):
@@ -111,7 +113,7 @@ def test_ask_full_flag_passes_full_true_to_ask_cmd(monkeypatch) -> None:
         called["intake_only"] = intake_only
         called["output_json"] = output_json
 
-    monkeypatch.setattr("sdd_cli.commands._ask_backend.ask_cmd", _fake_ask_cmd)
+    monkeypatch.setattr("providence_cli.commands._ask_backend.ask_cmd", _fake_ask_cmd)
 
     result = CliRunner().invoke(app, ["ask", "--full", "prompt"])
     assert result.exit_code == 0, result.output

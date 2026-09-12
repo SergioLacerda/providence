@@ -8,7 +8,7 @@ MAKEFLAGS += --no-builtin-rules --no-builtin-variables
 VENV_PYTHON := $(firstword $(wildcard .venv/bin/python .venv/Scripts/python.exe))
 DOCKER_BUILD_FLAGS ?=
 ifeq ($(OS),Windows_NT)
-  UV := $(firstword $(shell where uv 2>NUL))
+  UV := $(firstword $(shell powershell -NoProfile -Command '$$cmd = Get-Command uv -ErrorAction SilentlyContinue; if ($$cmd) { $$cmd.Source }'))
 else
   UV := $(shell command -v uv 2>/dev/null)
 endif
@@ -28,7 +28,7 @@ endif
 # `python -m` (relative imports require -m, so a per-script sys.path guard
 # like tools/maintenance/lint_all.py's isn't an option there) without relying
 # on those packages being uv-sync-installed as editables first.
-WORKSPACE_PYTHONPATH := packages/core/sdd_core/src:packages/core/sdd_runtime/src:packages/core/sdd_telemetry/src:packages/features/sdd_integration/src:packages/features/sdd_adapters/src:packages/features/sdd_skills/src:packages/features/sdd_pages/src:packages/interfaces/sdd_wizard/src:packages/interfaces/sdd_cli/src
+WORKSPACE_PYTHONPATH := packages/core/providence_core/src:packages/core/providence_runtime/src:packages/core/providence_telemetry/src:packages/features/providence_integration/src:packages/features/providence_adapters/src:packages/features/providence_skills/src:packages/features/providence_pages/src:packages/interfaces/providence_wizard/src:packages/interfaces/providence_cli/src
 
 .DEFAULT_GOAL := help
 

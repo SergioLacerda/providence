@@ -92,15 +92,15 @@ jobs:
           create-venv: "true"
           retry-backoff-seconds: "15"
           editable-packages: |
-            packages/core/sdd_core
-            packages/core/sdd_telemetry
-            packages/features/sdd_skills
-            packages/core/sdd_runtime
-            packages/features/sdd_adapters
-            packages/features/sdd_integration
-            packages/features/sdd_pages
-            packages/interfaces/sdd_wizard
-            packages/interfaces/sdd_cli
+            packages/core/providence_core
+            packages/core/providence_telemetry
+            packages/features/providence_skills
+            packages/core/providence_runtime
+            packages/features/providence_adapters
+            packages/features/providence_integration
+            packages/features/providence_pages
+            packages/interfaces/providence_wizard
+            packages/interfaces/providence_cli
 
       - name: Set up Go
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
@@ -170,7 +170,7 @@ jobs:
         shell: bash
         run: python -m venv .release-smoke
 
-      - name: Install sdd-cli from dist only (no PyPI fallback)
+      - name: Install providence-cli from dist only (no PyPI fallback)
         shell: bash
         run: |
           set -euo pipefail
@@ -180,16 +180,16 @@ jobs:
             PY=".release-smoke/bin/python"
           fi
           "$PY" -m pip install --upgrade pip
-          "$PY" -m pip install --no-index --find-links dist sdd-cli
+          "$PY" -m pip install --no-index --find-links dist providence-cli
 
       - name: Run CLI smoke commands
         shell: bash
         run: |
           set -euo pipefail
           if [ "${{ runner.os }}" = "Windows" ]; then
-            SDD_BIN=".release-smoke/Scripts/sdd.exe"
+            SDD_BIN=".release-smoke/Scripts/providence.exe"
           else
-            SDD_BIN=".release-smoke/bin/sdd"
+            SDD_BIN=".release-smoke/bin/providence"
           fi
           "$SDD_BIN" --help
           "$SDD_BIN" install --help
@@ -200,9 +200,9 @@ jobs:
         run: |
           set -euo pipefail
           if [ "${{ runner.os }}" = "Windows" ]; then
-            SDD_BIN=".release-smoke/Scripts/sdd.exe"
+            SDD_BIN=".release-smoke/Scripts/providence.exe"
           else
-            SDD_BIN=".release-smoke/bin/sdd"
+            SDD_BIN=".release-smoke/bin/providence"
           fi
           mkdir -p .release-smoke/project
           cd .release-smoke/project
@@ -266,31 +266,31 @@ jobs:
           fi
           echo "SDD_COMPILE_BIN=$BIN" >> "$GITHUB_ENV"
 
-      - name: Install sdd-cli from checkout source (documented client channel)
+      - name: Install providence-cli from checkout source (documented client channel)
         shell: bash
         run: |
           set -euo pipefail
-          # sdd-cli's local workspace dependencies (sdd-adapters, sdd-runtime,
+          # providence-cli's local workspace dependencies (providence-adapters, providence-runtime,
           # etc.) aren't published to PyPI, so `uv tool install` needs each of
           # them handed in explicitly via --with — a bare `uv tool install
-          # ./packages/interfaces/sdd_cli` fails with "sdd-adapters was not
+          # ./packages/interfaces/providence_cli` fails with "providence-adapters was not
           # found in the package registry".
-          uv tool install ./packages/interfaces/sdd_cli \
-            --with ./packages/core/sdd_core \
-            --with ./packages/core/sdd_telemetry \
-            --with ./packages/features/sdd_skills \
-            --with ./packages/core/sdd_runtime \
-            --with ./packages/features/sdd_adapters \
-            --with ./packages/features/sdd_integration \
-            --with ./packages/interfaces/sdd_wizard
+          uv tool install ./packages/interfaces/providence_cli \
+            --with ./packages/core/providence_core \
+            --with ./packages/core/providence_telemetry \
+            --with ./packages/features/providence_skills \
+            --with ./packages/core/providence_runtime \
+            --with ./packages/features/providence_adapters \
+            --with ./packages/features/providence_integration \
+            --with ./packages/interfaces/providence_wizard
 
       - name: Run client bootstrap from the source install
         shell: bash
         run: |
           set -euo pipefail
           export PATH="$HOME/.local/bin:$PATH"
-          # Must live outside $GITHUB_WORKSPACE: the sdd-harness checkout is
-          # itself an SDD workspace (tracked .sdd/), so a scratch project
+          # Must live outside $GITHUB_WORKSPACE: the providence checkout is
+          # itself an SDD workspace (tracked .providence/), so a scratch project
           # created inside it trips the nested-workspace guard in sdd's init command.
           if [ "${{ runner.os }}" = "Windows" ]; then
             SMOKE_DIR="$(cygpath -m "$RUNNER_TEMP")/git-smoke-project"
@@ -299,6 +299,10 @@ jobs:
           fi
           mkdir -p "$SMOKE_DIR"
           cd "$SMOKE_DIR"
-          sdd install --wizard --non-interactive
-          sdd init --default  # sdd-ci-policy: allow-client-smoke
-          sdd governance validate  # sdd-ci-policy: allow-client-smoke
+          providence install --wizard --non-interactive
+          providence init --default  # sdd-ci-policy: allow-client-smoke
+          # Session lane: this validates a freshly initialized scratch project's
+          # own handshake, not this repository's. It is not equivalent to the
+          # artifact-lane `governance validate --skip-handshake` used elsewhere
+          # in CI, and must stay plain here to exercise the real M015 handshake path.
+          providence governance validate  # sdd-ci-policy: allow-client-smoke

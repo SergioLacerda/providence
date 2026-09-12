@@ -19,7 +19,7 @@ class TestIntegrationFlow {
   testStep1Setup() {
     console.log('\n📋 TEST STEP 1: Setup Project Structure');
 
-    const expectedDirs = ['.github', '.vscode', '.cursor', 'scripts', '.sdd'];
+    const expectedDirs = ['.github', '.vscode', '.cursor', 'scripts', '.providence'];
     for (const d of expectedDirs) {
       console.log(`  ✅ Would create directory: ${d}/`);
     }
@@ -38,7 +38,7 @@ class TestIntegrationFlow {
       '.vscode/settings.json',
       '.cursor/rules/spec.mdc',
       '.pre-commit-config.yaml',
-      '.sdd/README.md'
+      '.providence/README.md'
     ];
 
     for (const filePath of expectedFiles) {
@@ -67,7 +67,7 @@ class TestIntegrationFlow {
 
     const expectedSubdirs = ['context-aware', 'runtime'];
     for (const subdir of expectedSubdirs) {
-      console.log(`  ✅ Would create: .sdd/${subdir}/`);
+      console.log(`  ✅ Would create: .providence/${subdir}/`);
     }
 
     console.log('  ✅ STEP 4 PASSED: Validation structure confirmed');
@@ -81,7 +81,7 @@ class TestIntegrationFlow {
       '.spec.config',
       '.github/copilot-instructions.md',
       '.vscode/ai-rules.md',
-      '.sdd/README.md'
+      '.providence/README.md'
     ];
 
     for (const filePath of filesToCommit) {

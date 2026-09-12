@@ -1,7 +1,7 @@
 import yaml
 
-from sdd_integration.engine.integration_engine import IntegrationEngine, Report
-from sdd_integration.engine.step_executor import StepResult
+from providence_integration.engine.integration_engine import IntegrationEngine, Report
+from providence_integration.engine.step_executor import StepResult
 
 
 def make_spec_file(tmp_path, steps=None, context=None):
@@ -38,7 +38,7 @@ def test_integration_engine_run_success(monkeypatch, tmp_path):
             return StepResult(step.id or "x", True, ["ok"])
 
     monkeypatch.setattr(
-        "sdd_integration.engine.integration_engine.StepExecutor",
+        "providence_integration.engine.integration_engine.StepExecutor",
         lambda: DummyExecutor(),
     )
     spec_file = make_spec_file(tmp_path)
@@ -66,10 +66,11 @@ def test_integration_engine_run_with_context_override(monkeypatch, tmp_path):
             return StepResult(step.id or "x", True, [str(context.data.get("foo"))])
 
     monkeypatch.setattr(
-        "sdd_integration.engine.integration_engine.ExecutionContext", DummyContext
+        "providence_integration.engine.integration_engine.ExecutionContext",
+        DummyContext,
     )
     monkeypatch.setattr(
-        "sdd_integration.engine.integration_engine.StepExecutor",
+        "providence_integration.engine.integration_engine.StepExecutor",
         lambda: DummyExecutor(),
     )
     spec_file = make_spec_file(tmp_path, context={"foo": "bar"})
@@ -98,10 +99,11 @@ def test_integration_engine_run_cleanup(monkeypatch, tmp_path):
             return StepResult("x", True, ["ok"])
 
     monkeypatch.setattr(
-        "sdd_integration.engine.integration_engine.ExecutionContext", DummyContext
+        "providence_integration.engine.integration_engine.ExecutionContext",
+        DummyContext,
     )
     monkeypatch.setattr(
-        "sdd_integration.engine.integration_engine.StepExecutor",
+        "providence_integration.engine.integration_engine.StepExecutor",
         lambda: DummyExecutor(),
     )
     spec_file = make_spec_file(tmp_path)

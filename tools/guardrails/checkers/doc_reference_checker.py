@@ -16,7 +16,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
-from sdd_core.utils.text_io import write_json_utf8, write_text_utf8
+from providence_core.utils.text_io import write_json_utf8, write_text_utf8
 from tools.guardrails.core.analyzer import GuardrailAnalyzer
 from tools.guardrails.core.config import AnalysisConfig
 from tools.guardrails.core.dimension import AnalysisDimension
@@ -24,16 +24,16 @@ from tools.guardrails.core.metrics import DimensionResult, FileMetrics
 from tools.guardrails.reporters.template import ReportTemplate
 
 try:
-    from tools.lib.sdd_env import detect_repo_root
+    from tools.lib.providence_env import detect_repo_root
 except ImportError:
     try:
-        from sdd_core.utils.environment import detect_repo_root
+        from providence_core.utils.environment import detect_repo_root
     except ImportError:
 
         def detect_repo_root() -> Path:
             current = Path.cwd()
             for parent in [current, *current.parents]:
-                if (parent / ".sdd").exists():
+                if (parent / ".providence").exists():
                     return parent
             return current
 

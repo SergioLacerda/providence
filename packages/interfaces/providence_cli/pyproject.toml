@@ -1,0 +1,41 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+name = "providence-cli"
+dynamic = ["version"]
+description = "Command-line interface for Providence's SDD governance toolchain"
+requires-python = ">=3.10"
+license = {text = "Proprietary"}
+authors = [
+    {name = "Sergio Lacerda", email = "sergio.lacerda.vieira@gmail.com"},
+]
+
+dependencies = [
+    "PyYAML>=6.0",
+    "python-dotenv>=1.0.0",
+    "click>=8.3.3",
+    "typer>=0.9.0",
+    "rich>=13.0.0",
+    "providence-core>=1.0",
+    "providence-wizard>=1.0",
+    "providence-integration>=1.0",
+    "providence-runtime>=1.0",
+    "providence-adapters>=1.0",
+]
+
+[project.scripts]
+providence = "providence_cli.main:main"
+
+[project.urls]
+Repository = "https://github.com/SergioLacerda/providence"
+
+[tool.hatch.version]
+source = "vcs"
+tag-pattern = "[vV](?P<version>[0-9]+\\.[0-9]+\\.[0-9]+)"
+fallback-version = "0.0.0+unknown"
+raw-options = {root = "../../..", version_scheme = "no-guess-dev"}
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/providence_cli"]

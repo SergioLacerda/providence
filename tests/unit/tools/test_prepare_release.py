@@ -45,7 +45,7 @@ with the tag you want; omitting the `@<tag>` ref (not recommended) installs
 whatever the default branch head currently is:
 
 ```bash
-uv tool install "git+https://github.com/SergioLacerda/sdd-harness@v1.0.4#subdirectory=packages/interfaces/sdd_cli"
+uv tool install "git+https://github.com/SergioLacerda/providence@v1.0.4#subdirectory=packages/interfaces/providence_cli"
 ```
 """
 
@@ -117,7 +117,7 @@ def test_prepare_readme_replaces_prose_and_install_tag(tmp_path: Path) -> None:
     assert updated is True
     text = readme.read_text(encoding="utf-8")
     assert "Replace `v1.0.11`" in text
-    assert "@v1.0.11#subdirectory=packages/interfaces/sdd_cli" in text
+    assert "@v1.0.11#subdirectory=packages/interfaces/providence_cli" in text
     assert "v1.0.4" not in text
 
 

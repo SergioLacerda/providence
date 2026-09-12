@@ -1,4 +1,4 @@
-"""Unit tests for sdd_cli.generators._prompt_commands."""
+"""Unit tests for providence_cli.generators._prompt_commands."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from sdd_cli.generators._prompt_commands import generate_agent_prompt_commands
+from providence_cli.generators._prompt_commands import generate_agent_prompt_commands
 
 pytestmark = pytest.mark.unit
 
@@ -26,12 +26,12 @@ def test_generated_prompts_include_soft_governance_footer(tmp_path: Path) -> Non
         gemini_commands,
     ]:
         content = path.read_text(encoding="utf-8")
-        assert "SDD GOVERNANCE CHECK" in content
+        assert "PROVIDENCE GOVERNANCE CHECK" in content
         assert (
-            "SDD GOVERNANCE: drift=${status} | governance=${status} | profile=${profile}"
+            "PROVIDENCE GOVERNANCE: drift=${status} | governance=${status} | profile=${profile}"
             in content
         )
-        assert ".sdd/compiled/audit/*.json" in content
+        assert ".providence/compiled/audit/*.json" in content
 
 
 def test_generated_prompts_do_not_reference_legacy_generated_paths(
@@ -66,8 +66,8 @@ def test_generated_prompts_do_not_contain_duplicate_ask_invocation(
 
     for path in prompt_files:
         content = path.read_text(encoding="utf-8")
-        assert "sdd ask-full ask-full" not in content
-        assert "sdd ask ask" not in content
+        assert "providence ask-full ask-full" not in content
+        assert "providence ask ask" not in content
 
 
 def test_codex_includes_slash_aliases(tmp_path: Path) -> None:

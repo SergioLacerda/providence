@@ -65,8 +65,8 @@ Failures are logged at debug level; the next provider is tried automatically.
 **Example:**
 
 ```python
-from sdd_runtime.providers import TfidfProvider
-from sdd_runtime.intelligence import ContextBundle
+from providence_runtime.providers import TfidfProvider
+from providence_runtime.intelligence import ContextBundle
 
 provider = TfidfProvider()
 bundle = ContextBundle(
@@ -100,8 +100,8 @@ print(f"Compressed: {result.compression_ratio:.2f}")  # e.g., 0.67 → 67% reduc
 **Example:**
 
 ```python
-from sdd_runtime.providers import AstProvider
-from sdd_runtime.intelligence import ContextBundle
+from providence_runtime.providers import AstProvider
+from providence_runtime.intelligence import ContextBundle
 
 provider = AstProvider()
 bundle = ContextBundle(
@@ -138,7 +138,7 @@ print(f"Items: {len(result.items)}")  # 1 or 2, ratio ≤ 1.0
 **Example:**
 
 ```python
-from sdd_runtime.intelligence import LocalIntelligenceProvider, ContextBundle
+from providence_runtime.intelligence import LocalIntelligenceProvider, ContextBundle
 
 provider = LocalIntelligenceProvider()
 bundle = ContextBundle(
@@ -235,7 +235,7 @@ via `budget_utilization_pct` field when budget concerns arise.
 Implement the `IntelligenceProvider` Protocol to create a custom provider:
 
 ```python
-from sdd_runtime.intelligence import (
+from providence_runtime.intelligence import (
     IntelligenceProvider,
     TaskContext,
     AnalysisResult,
@@ -308,9 +308,9 @@ class MyCustomProvider:
 **Register your provider:**
 
 ```python
-from sdd_runtime.context import ContextLoader
-from sdd_runtime.intelligence import ProviderRegistry
-from sdd_runtime.providers import AstProvider, TfidfProvider
+from providence_runtime.context import ContextLoader
+from providence_runtime.intelligence import ProviderRegistry
+from providence_runtime.providers import AstProvider, TfidfProvider
 
 # Create registry with your provider first (highest priority)
 registry = ProviderRegistry(
@@ -338,7 +338,7 @@ result = loader.load_result(request)
 
 ## References
 
-- Implementation: `packages/core/sdd_runtime/src/sdd_runtime/intelligence.py`
-- Providers: `packages/core/sdd_runtime/src/sdd_runtime/providers/`
+- Implementation: `packages/core/providence_runtime/src/providence_runtime/intelligence.py`
+- Providers: `packages/core/providence_runtime/src/providence_runtime/providers/`
 - Budget zones: [`economy/execution-budget.md`](../../spec/canonical/core/economy/execution-budget.md)
 - Efficiency policy: [`economy/efficiency-policy.md`](../../spec/canonical/core/economy/efficiency-policy.md)

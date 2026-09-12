@@ -9,7 +9,7 @@
 
 ## 🎯 Goal
 
-Preserve and protect the integrity of the audit trail (`.sdd/audit-trail/compliance-events.jsonl`) to ensure forensic capability, regulatory compliance, and accountability for all governance-aware actions.
+Preserve and protect the integrity of the audit trail (`.providence/audit-trail/compliance-events.jsonl`) to ensure forensic capability, regulatory compliance, and accountability for all governance-aware actions.
 
 ---
 
@@ -19,7 +19,7 @@ Preserve and protect the integrity of the audit trail (`.sdd/audit-trail/complia
 
 ### What is Protected
 
-- **`.sdd/audit-trail/compliance-events.jsonl`** — Append-only JSONL containing all governance events
+- **`.providence/audit-trail/compliance-events.jsonl`** — Append-only JSONL containing all governance events
 - **Event Schema** — Format and field definitions (see [`governance-events.md`](../telemetry/governance-events.md))
 - **Timestamps** — Original event emission times (never modified retroactively)
 - **Authorship** — Who/what agent triggered each event (never falsified)
@@ -55,7 +55,7 @@ Preserve and protect the integrity of the audit trail (`.sdd/audit-trail/complia
 
 Before merge:
 
-- [ ] `.sdd/audit-trail/compliance-events.jsonl` exists and is append-only
+- [ ] `.providence/audit-trail/compliance-events.jsonl` exists and is append-only
 - [ ] No manual editing of compliance events (only appends)
 - [ ] Log is backed up in `.git/` or external secure storage
 - [ ] CI/CD validates log format (valid JSONL, no corruption)
@@ -77,7 +77,7 @@ Before merge:
 
 **Runtime:**
 
-- All events persisted via `TelemetrySink` to `.sdd/audit-trail/compliance-events.jsonl` (append-only mode)
+- All events persisted via `TelemetrySink` to `.providence/audit-trail/compliance-events.jsonl` (append-only mode)
 - Pre-commit hook validates log format before commit
 - CI/CD gate prevents merge if log modified incorrectly
 
@@ -91,7 +91,7 @@ Before merge:
 
 ## Enforcement Steps
 
-- Verify `.sdd/audit-trail/compliance-events.jsonl` exists and has not been modified (only appended)
+- Verify `.providence/audit-trail/compliance-events.jsonl` exists and has not been modified (only appended)
 - Confirm no events have been deleted, reordered, or had timestamps altered
 - Confirm all new governance events were appended (never overwritten) to the log
 - Confirm log format is valid JSONL with no corrupted entries

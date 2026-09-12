@@ -9,7 +9,7 @@
 
 ## Context
 
-The `sdd_cli` package accumulated a dual-payload pattern during an envelope migration:
+The `providence_cli` package accumulated a dual-payload pattern during an envelope migration:
 every JSON response emitted both a canonical envelope (`status`, `command`, `ok`, `error`, `data`)
 and a mirrored legacy payload at the top level. A `SDD_CLI_ENVELOPE_STRICT` flag controlled
 which shape consumers received.
@@ -58,7 +58,7 @@ snapshots updated in one pass before merge.
 
 ## Consequences
 
-- Consumers of `sdd_cli` JSON output that read top-level payload fields break immediately;
+- Consumers of `providence_cli` JSON output that read top-level payload fields break immediately;
   they must migrate to `data.<field>`.
 - `build_ok_result` and `build_error_result` are the only allowed builders — ad-hoc
   `json.dumps({...})` in command handlers is a policy violation.
@@ -69,5 +69,5 @@ snapshots updated in one pass before merge.
 
 ## Links
 
-- Implementation: `packages/interfaces/sdd_cli/src/sdd_cli/shared/contracts.py`
+- Implementation: `packages/interfaces/providence_cli/src/providence_cli/shared/contracts.py`
 - Related: ADR-001 (Runtime Authority Boundary)

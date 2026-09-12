@@ -31,7 +31,7 @@ Tests are **not tied to a specific language or framework**:
 ### Run Python Tests (Reference Implementation)
 
 ```bash
-cd /home/sergio/dev/sdd-harness
+cd /home/sergio/dev/providence
 
 # Run INTEGRATION flow test
 python tests/integration/phase_5_examples/examples/python/example_integration_flow.py
@@ -46,7 +46,7 @@ bash tests/integration/phase_5_examples/run_all_tests.sh
 ### Run JavaScript Tests
 
 ```bash
-cd /home/sergio/dev/sdd-harness
+cd /home/sergio/dev/providence
 
 # Run INTEGRATION flow test
 node tests/integration/phase_5_examples/examples/javascript/test-integration-flow.js
@@ -58,7 +58,7 @@ node tests/integration/phase_5_examples/examples/javascript/test-execution-flow.
 ### Run Bash Tests
 
 ```bash
-cd /home/sergio/dev/sdd-harness
+cd /home/sergio/dev/providence
 
 # Make scripts executable
 chmod +x tests/integration/phase_5_examples/examples/bash/*.sh
@@ -166,7 +166,7 @@ examples/bash/test-integration-flow.sh
 ✅ Created directory: .vscode/
 ✅ Created directory: .cursor/
 ✅ Created directory: scripts/
-✅ Created directory: .sdd/
+✅ Created directory: .providence/
 ✅ STEP 1 PASSED: All directories created
 ```
 
@@ -201,16 +201,16 @@ done
 Tests the 5-step INTEGRATION onboarding process:
 
 1. **STEP 1:** Setup project structure
-   - Creates: `.github/`, `.vscode/`, `.cursor/`, `scripts/`, `.sdd/`
+   - Creates: `.github/`, `.vscode/`, `.cursor/`, `scripts/`, `.providence/`
 
 2. **STEP 2:** Copy templates
-   - Validates: `packages/features/sdd_integration/src/sdd_integration/templates/` has all 8 template files
+   - Validates: `packages/features/providence_integration/src/providence_integration/templates/` has all 8 template files
 
 3. **STEP 3:** Configure `.spec.config`
    - Creates: `.spec.config` with `spec_path` pointing to framework
 
 4. **STEP 4:** Run validation
-   - Creates: `.sdd/context-aware/`, `.sdd/runtime/`
+   - Creates: `.providence/context-aware/`, `.providence/runtime/`
 
 5. **STEP 5:** Commit to git
    - Verifies: All files ready for `git add`
@@ -258,7 +258,7 @@ Tests the 7-phase EXECUTION workflow structure:
    - Validates link format in key files
 
 7. **AI-First Design**
-   - `.sdd-index.md`, `README.md`, `.spec.config` at root
+   - `.providence-index.md`, `README.md`, `.spec.config` at root
 
 **Expected Result:**
 ```
@@ -377,7 +377,7 @@ cd /tmp/test-project
 # - Step 5: Verify git staging
 
 # Verify success
-ls -la .spec.config .sdd/context-aware/
+ls -la .spec.config .providence/context-aware/
 ```
 
 ### EXECUTION Flow Manual Test
@@ -438,10 +438,10 @@ ls EXECUTION/_START_HERE.md
 **Solution:**
 ```bash
 # Check framework templates/
-ls -la packages/features/sdd_integration/src/sdd_integration/templates/
+ls -la packages/features/providence_integration/src/providence_integration/templates/
 
 # Verify .spec.config template exists
-ls packages/features/sdd_integration/src/sdd_integration/templates/.spec.config
+ls packages/features/providence_integration/src/providence_integration/templates/.spec.config
 ```
 
 ### Python ImportError
@@ -449,7 +449,7 @@ ls packages/features/sdd_integration/src/sdd_integration/templates/.spec.config
 **Solution:**
 ```bash
 # Make sure you're running from repo root
-cd /home/sergio/dev/sdd-harness
+cd /home/sergio/dev/providence
 
 # Check Python version (need 3.8+)
 python3 --version

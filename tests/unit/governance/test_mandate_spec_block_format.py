@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from sdd_integration.builders.governance.pipeline_builder import PipelineBuilder
-from sdd_wizard.validator import SourceValidator
+from providence_integration.builders.governance.pipeline_builder import PipelineBuilder
+from providence_wizard.validator import SourceValidator
 
 
 def test_validate_mandate_spec_accepts_block_format() -> None:

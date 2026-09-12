@@ -1,8 +1,8 @@
 from pydantic import TypeAdapter, ValidationError
 
-from sdd_integration.engine.context import ExecutionContext
-from sdd_integration.engine.step_executor import StepExecutor
-from sdd_integration.engine.types import GenericStep, InvalidStep, StepSpec
+from providence_integration.engine.context import ExecutionContext
+from providence_integration.engine.step_executor import StepExecutor
+from providence_integration.engine.types import GenericStep, InvalidStep, StepSpec
 
 
 def coerce_step(raw_step: dict) -> StepSpec:

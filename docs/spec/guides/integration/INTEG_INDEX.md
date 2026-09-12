@@ -27,12 +27,12 @@ Follow in order (20-30 minutes total):
 
 3. **[STEP_3.md](./STEP_3.md)**
    - Edit `.spec.config` (2 lines!)
-   - Verify path to sdd-harness
+   - Verify path to providence
    - ~2 minutes
 
 4. **[STEP_4.md](./STEP_4.md)**
    - Run validation script
-   - Check .sdd/ infrastructure created
+   - Check .providence/ infrastructure created
    - ~5 minutes
 
 5. **[STEP_5.md](./STEP_5.md)**
@@ -53,7 +53,7 @@ Follow in order (20-30 minutes total):
 | `.cursor/rules/spec.mdc` | Cursor IDE rules | `your-project/.cursor/` |
 | `.pre-commit-config.yaml` | Git hooks | `your-project/` |
 | `.github/setup-precommit-hook.sh` | Hook setup | `your-project/scripts/` |
-| `ai/README.md` | AI infrastructure guide | `your-project/.sdd/` |
+| `ai/README.md` | AI infrastructure guide | `your-project/.providence/` |
 
 ---
 
@@ -62,14 +62,14 @@ Follow in order (20-30 minutes total):
 After completing all 5 steps, verify:
 
 ```
-✅ .spec.config exists and points to ../sdd-harness
+✅ .spec.config exists and points to ../providence
 ✅ .github/copilot-instructions.md copied
 ✅ .vscode/ai-rules.md copied
 ✅ .cursor/rules/spec.mdc copied
 ✅ .pre-commit-config.yaml in place
 ✅ .github/setup-precommit-hook.sh executable
-✅ .sdd/context-aware/ created (empty, ready)
-✅ .sdd/runtime/ created (with search indices)
+✅ .providence/context-aware/ created (empty, ready)
+✅ .providence/runtime/ created (with search indices)
 ✅ All changes git-staged
 ✅ Ready to commit
 ```
@@ -87,19 +87,19 @@ cp -r INTEGRATION/templates/* /path/to/your-project/
 **Edit .spec.config:**
 
 ```bash
-# Edit: spec_path = ../sdd-harness
+# Edit: spec_path = ../providence
 ```
 
 **Run validation:**
 
 ```bash
-python ../sdd-harnessdocs/spec/SCRIPTS/phase-0-agent-onboarding.py
+python ../providencedocs/spec/SCRIPTS/phase-0-agent-onboarding.py
 ```
 
 **Commit:**
 
 ```bash
-git add .spec.config .github/ .vscode/ .cursor/ .pre-commit-config.yaml scripts/ .sdd/
+git add .spec.config .github/ .vscode/ .cursor/ .pre-commit-config.yaml scripts/ .providence/
 git commit -m "feat: Integrate SDD framework governance"
 ```
 

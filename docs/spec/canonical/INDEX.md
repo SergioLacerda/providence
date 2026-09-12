@@ -39,7 +39,7 @@
 - **Go example**: [guides/architecture/examples/go-dependency-direction.md](../../../docs/guides/architecture/examples/go-dependency-direction.md)
 - **Java example**: [guides/architecture/examples/java-dependency-direction.md](../../../docs/guides/architecture/examples/java-dependency-direction.md)
 - **TypeScript example**: [guides/architecture/examples/nodejs-typescript-dependency-direction.md](../../../docs/guides/architecture/examples/nodejs-typescript-dependency-direction.md)
-- **DSL source (G01–G022)**: [.sdd/source/guidelines.dsl](../../../../.sdd/source/guidelines.dsl) — Language adapters plus contextual language-preference guidance
+- **DSL source (G01–G022)**: [.providence/source/guidelines.dsl](../../../../.providence/source/guidelines.dsl) — Language adapters plus contextual language-preference guidance
 
 ## 📐 Language Engineering Guidelines (M018)
 
@@ -59,7 +59,7 @@
 - **Registration Protocol**: [guides/plugins/registration-protocol.md](../../../docs/guides/plugins/registration-protocol.md) — Agent-mediated handshake flow
 - **Entry Reference**: [guides/plugins/plugin-entry-reference.md](../../../docs/guides/plugins/plugin-entry-reference.md) — All registry entry fields
 - **M019 Mandate**: [core/mandates/M019_GOVERNANCE_FEDERATION.md](./core/mandates/M019_GOVERNANCE_FEDERATION.md)
-- **Live registry**: [.sdd/plugins/registry.yaml](../../../../.sdd/plugins/registry.yaml)
+- **Live registry**: [.providence/plugins/registry.yaml](../../../../.providence/plugins/registry.yaml)
 
 ---
-**Note for Agents:** All mandates are strictly enforced via SHA-256 fingerprints compiled into the `.sdd/` control plane. Any modification to `core/meta/` requires running `sdd governance validate` to refresh the session signature.
+**Note for Agents:** All mandates are strictly enforced via SHA-256 fingerprints compiled into the `.providence/` control plane. Any modification to `core/meta/` requires running `providence governance validate` to refresh the session signature.

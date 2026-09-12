@@ -280,8 +280,8 @@ For files marked CRITICAL (architecture, mandate, rules):
 Critical Files:
   - EXECUTION/spec/CANONICAL/decisions/* (ADRs)
   - EXECUTION/spec/CANONICAL/rules/* (mandates)
-  - .sdd-migration/PHASES.md
-  - .sdd-migration/DECISIONS.md
+  - .providence-migration/PHASES.md
+  - .providence-migration/DECISIONS.md
   - Any mandate.spec
 ```
 

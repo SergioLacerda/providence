@@ -1,7 +1,7 @@
 import React from 'react';
 
 /**
- * SDD Harness — Terminal
+ * Providence — Terminal
  * The CLI surface. Dark navy panel with a traffic-light header and a
  * monospace body. Render children, or pass `lines` for token-colored output.
  */

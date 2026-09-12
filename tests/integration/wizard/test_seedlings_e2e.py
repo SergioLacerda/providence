@@ -21,13 +21,13 @@ from tests.helpers.text_io import read_text_utf8, write_text_utf8
 
 # Add packages to path
 project_root = Path(__file__).parent.parent.parent.parent
-wizard_src = project_root / "packages/interfaces/sdd_wizard/src"
+wizard_src = project_root / "packages/interfaces/providence_wizard/src"
 sys.path.insert(0, str(wizard_src))
 
-from sdd_wizard.orchestration.phase4_governance_loader import (  # noqa: E402
+from providence_wizard.orchestration.phase4_governance_loader import (  # noqa: E402
     GovernanceLoader,
 )
-from sdd_wizard.orchestration.phase6_seedlings_orchestrator import (  # noqa: E402
+from providence_wizard.orchestration.phase6_seedlings_orchestrator import (  # noqa: E402
     SeedlingsOrchestrator,
 )
 
@@ -39,8 +39,8 @@ def setup_test_environment(base_path: Path) -> Path:
     sdd_source = base_path / "generated" / "client" / "compiled" / "source"
     sdd_source.mkdir(parents=True, exist_ok=True)
 
-    # Also seed the output_base .sdd/source fallback path
-    sdd_fallback = base_path / "generated-project" / ".sdd" / "source"
+    # Also seed the output_base .providence/source fallback path
+    sdd_fallback = base_path / "generated-project" / ".providence" / "source"
     sdd_fallback.mkdir(parents=True, exist_ok=True)
 
     # Create mock governance-core.json
@@ -201,7 +201,7 @@ def test_full_pipeline() -> None:  # noqa: C901
 
         # Test 4: Verify seedlings created
         print("\n✅ Step 4: Verify seedlings")
-        seedlings_dir = project_root / ".sdd" / "seedlings"
+        seedlings_dir = project_root / ".providence" / "seedlings"
 
         if not seedlings_dir.exists():
             print("   ❌ Seedlings directory not created")
@@ -300,12 +300,14 @@ def main() -> int:
         print("=" * 70)
         print("\n🎉 Intelligent seedlings are ready for production!")
         print("\nWhat was generated:")
-        print("  ✅ .sdd/seedlings/governance.seed.json - GAP v1.0 auto-activation")
-        print("  ✅ .sdd/seedlings/agent-prep.seed.json - IDE integration hooks")
-        print("  ✅ .sdd/seedlings/compliance.seed.json - CI/CD validation")
+        print(
+            "  ✅ .providence/seedlings/governance.seed.json - GAP v1.0 auto-activation"
+        )
+        print("  ✅ .providence/seedlings/agent-prep.seed.json - IDE integration hooks")
+        print("  ✅ .providence/seedlings/compliance.seed.json - CI/CD validation")
         print("\nNext steps:")
         print("  1. Run wizard to generate a test project")
-        print("  2. Verify .sdd/seedlings/ directory in generated project")
+        print("  2. Verify .providence/seedlings/ directory in generated project")
         print("  3. Test auto-loading with SeedlingLoader")
         print("  4. Deploy wizard changes to production")
         return 0
@@ -418,7 +420,7 @@ def test_seedl_gen_idempotent() -> None:
         assert orch1.generate(), "First generation failed"
 
         # Capture all generated files
-        seedlings_dir = project_root / ".sdd" / "seedlings"
+        seedlings_dir = project_root / ".providence" / "seedlings"
         claude_md = project_root / "CLAUDE.md"
         first_run_files = _capture_run_files(seedlings_dir, claude_md)
         print(f"   ✅ First run generated {len(first_run_files)} files")
@@ -480,7 +482,7 @@ def test_seedlings_json_validity() -> None:
         )
         assert orchestrator.generate()
 
-        seedlings_dir = project_root / ".sdd" / "seedlings"
+        seedlings_dir = project_root / ".providence" / "seedlings"
         json_files = list(seedlings_dir.glob("*.json"))
 
         print(f"\n📋 Found {len(json_files)} JSON files to validate")
@@ -501,7 +503,7 @@ def test_seedlings_content_validation() -> None:
     Validate critical content in generated seedlings:
     - CLAUDE.md exists and references governance (format may vary by implementation)
     - agent-instructions.md has 6 sections
-    - All seed.json reference .sdd/ directory
+    - All seed.json reference .providence/ directory
     """
     print("\n" + "=" * 70)
     print("CONTENT VALIDATION TEST: Verify seedling structure and references")
@@ -533,7 +535,7 @@ def test_seedlings_content_validation() -> None:
         assert orchestrator.generate()
 
         print(
-            "\n📄 Validating CLAUDE.md structure (dumb pointer to .sdd/agent-instructions.md)..."
+            "\n📄 Validating CLAUDE.md structure (dumb pointer to .providence/agent-instructions.md)..."
         )
         claude_md = project_root / "CLAUDE.md"
         assert claude_md.exists(), "CLAUDE.md not found"
@@ -541,9 +543,9 @@ def test_seedlings_content_validation() -> None:
         claude_content = read_text_utf8(claude_md)
 
         # CLAUDE.md MUST be the dumb pointer format (from ai_seeds.generate_claude_seed)
-        # This ensures single source of truth in .sdd/agent-instructions.md
+        # This ensures single source of truth in .providence/agent-instructions.md
         assert "agent-instructions.md" in claude_content, (
-            "CLAUDE.md should reference .sdd/agent-instructions.md (dumb pointer format)"
+            "CLAUDE.md should reference .providence/agent-instructions.md (dumb pointer format)"
         )
         assert "## Active Mandates" not in claude_content, (
             "CLAUDE.md should not contain embedded mandate lists (not the rich format)"
@@ -551,13 +553,15 @@ def test_seedlings_content_validation() -> None:
         assert (
             "SDD" in claude_content
             or "sdd" in claude_content
-            or ".sdd" in claude_content
-        ), "CLAUDE.md should contain SDD/sdd/.sdd references"
+            or ".providence" in claude_content
+        ), "CLAUDE.md should contain SDD/sdd/.providence references"
         print(f"   ✅ CLAUDE.md is dumb pointer format ({len(claude_content)} bytes)")
 
         print("\n📄 Validating agent-instructions.md structure...")
-        agent_instructions = project_root / ".sdd" / "agent-instructions.md"
-        assert agent_instructions.exists(), ".sdd/agent-instructions.md not found"
+        agent_instructions = project_root / ".providence" / "agent-instructions.md"
+        assert agent_instructions.exists(), (
+            ".providence/agent-instructions.md not found"
+        )
 
         agent_content = read_text_utf8(agent_instructions)
 
@@ -584,20 +588,22 @@ def test_seedlings_content_validation() -> None:
             f"agent-instructions.md missing sections (found {sections_found_agent}/7)"
         )
 
-        print("\n📋 Validating seed.json references to .sdd/...")
-        seedlings_dir = project_root / ".sdd" / "seedlings"
+        print("\n📋 Validating seed.json references to .providence/...")
+        seedlings_dir = project_root / ".providence" / "seedlings"
         seed_files = list(seedlings_dir.glob("*.json"))
 
         sdd_references_found = 0
         for seed_file in seed_files:
             content = read_text_utf8(seed_file)
-            if ".sdd/" in content:
+            if ".providence/" in content:
                 sdd_references_found += 1
-                print(f"   ✅ {seed_file.name} references .sdd/")
+                print(f"   ✅ {seed_file.name} references .providence/")
 
-        assert sdd_references_found > 0, "No seed.json files reference .sdd/ directory"
+        assert sdd_references_found > 0, (
+            "No seed.json files reference .providence/ directory"
+        )
         print(
-            f"   ✅ {sdd_references_found}/{len(seed_files)} seed files reference .sdd/"
+            f"   ✅ {sdd_references_found}/{len(seed_files)} seed files reference .providence/"
         )
 
         print("\n✅ CONTENT VALIDATION TEST PASSED")
@@ -643,7 +649,9 @@ def test_fingerprint_matches_compiled_governance() -> None:
         print("\n🔐 Computing fingerprints...")
 
         # Read expected fingerprint from compliance.seed.json
-        compliance_seed = project_root / ".sdd" / "seedlings" / "compliance.seed.json"
+        compliance_seed = (
+            project_root / ".providence" / "seedlings" / "compliance.seed.json"
+        )
         assert compliance_seed.exists(), "compliance.seed.json not found"
 
         compliance_data = json.loads(read_text_utf8(compliance_seed))
@@ -669,7 +677,7 @@ def test_fingerprint_matches_compiled_governance() -> None:
         assert expected_fingerprint == actual_fingerprint, (
             f"Fingerprint mismatch: seed has {expected_fingerprint}, "
             f"but compiled governance has {actual_fingerprint}. "
-            "Run 'sdd governance generate' to regenerate seedlings."
+            "Run 'providence governance generate' to regenerate seedlings."
         )
 
         print(f"   ✅ Fingerprints match: {actual_fingerprint}")

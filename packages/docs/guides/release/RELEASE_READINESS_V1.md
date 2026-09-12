@@ -26,9 +26,9 @@ Target-Version: v1.0.0
    including the Windows/Linux install smoke lane
 2. `release.yml` blocks release on validate/build/install-smoke failures
 3. strict golden policy is required in both release paths
-4. `release.yml` install smoke installs `sdd-cli` from `dist/` only
+4. `release.yml` install smoke installs `providence-cli` from `dist/` only
    (`--no-index --find-links dist`) and runs `sdd --help`,
-   `sdd install --help`, and `sdd wizard --list`
+   `providence install --help`, and `providence wizard --list`
 
 ## Rollback Contract
 

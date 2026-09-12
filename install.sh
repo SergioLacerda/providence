@@ -1,23 +1,23 @@
 #!/usr/bin/env bash
-# One-command installer for the standalone `sdd` CLI binary.
+# One-command installer for the standalone `providence` CLI binary.
 #
-# Installs `sdd` only — it does not fetch or manage `sdd-compile`. `sdd`
+# Installs `providence` only — it does not fetch or manage `sdd-compile`. `sdd`
 # resolves `sdd-compile` on its own at runtime (env var, local build, PATH,
 # wheel-bundled asset, or a verified version-tagged download), unchanged by
-# this installer. See packages/core/sdd_core/src/sdd_core/utils/compiler_runner.py.
+# this installer. See packages/core/providence_core/src/providence_core/utils/compiler_runner.py.
 #
 # Versioning: defaults to the latest GitHub release. Pass --version <tag> to
 # pin a specific release. Rollback is re-running this script with
 # --version <previous-tag> — there is no separate rollback command.
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/SergioLacerda/sdd-harness/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/SergioLacerda/providence/main/install.sh | bash
 #   ./install.sh --version v1.2.3
 #   ./install.sh --dir /custom/bin/path
 
 set -euo pipefail
 
-REPO="SergioLacerda/sdd-harness"
+REPO="SergioLacerda/providence"
 INSTALL_DIR="${SDD_INSTALL_DIR:-$HOME/.local/bin}"
 # Override point for CI smoke coverage: release assets don't exist yet at
 # smoke-test time (this script's own release job hasn't published them), so
@@ -68,7 +68,7 @@ detect_asset_name() {
   case "$os" in
     Linux)
       case "$arch" in
-        x86_64|amd64) echo "sdd-linux-amd64" ;;
+        x86_64|amd64) echo "providence-linux-amd64" ;;
         *)
           echo "ERROR: unsupported Linux architecture: $arch (only x86_64 is published)" >&2
           exit 1
@@ -77,11 +77,11 @@ detect_asset_name() {
       ;;
     Darwin)
       case "$arch" in
-        arm64) echo "sdd-darwin-arm64" ;;
+        arm64) echo "providence-darwin-arm64" ;;
         x86_64)
-          echo "ERROR: no sdd-darwin-amd64 asset is published (PyInstaller can't" >&2
+          echo "ERROR: no providence-darwin-amd64 asset is published (PyInstaller can't" >&2
           echo "cross-compile, and GitHub-hosted macOS runners are arm64-only)." >&2
-          echo "Install via 'uv tool install sdd-cli' or pipx instead on Intel Macs." >&2
+          echo "Install via 'uv tool install providence-cli' or pipx instead on Intel Macs." >&2
           exit 1
           ;;
         *)
@@ -141,7 +141,7 @@ main() {
     base_url="https://github.com/${REPO}/releases/download/${tag}"
   fi
 
-  echo "Installing sdd ${tag} (${asset}) to ${INSTALL_DIR}"
+  echo "Installing providence ${tag} (${asset}) to ${INSTALL_DIR}"
 
   tmp_dir="$(mktemp -d)"
   trap 'rm -rf "$tmp_dir"' EXIT
@@ -168,9 +168,9 @@ main() {
   echo "Checksum verified."
 
   mkdir -p "$INSTALL_DIR"
-  install -m 0755 "${tmp_dir}/${asset}" "${INSTALL_DIR}/sdd"
+  install -m 0755 "${tmp_dir}/${asset}" "${INSTALL_DIR}/providence"
 
-  echo "Installed sdd ${tag} to ${INSTALL_DIR}/sdd"
+  echo "Installed providence ${tag} to ${INSTALL_DIR}/providence"
   case ":$PATH:" in
     *":${INSTALL_DIR}:"*) ;;
     *)
@@ -178,7 +178,7 @@ main() {
       echo "  export PATH=\"${INSTALL_DIR}:\$PATH\""
       ;;
   esac
-  "${INSTALL_DIR}/sdd" version
+  "${INSTALL_DIR}/providence" version
 }
 
 main "$@"

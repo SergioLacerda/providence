@@ -8,17 +8,17 @@ import (
 	"sdd-compile/internal/govcompiler"
 )
 
-// sddCompiledDir returns the path to the actual .sdd/compiled directory,
+// sddCompiledDir returns the path to the actual .providence/compiled directory,
 // navigating up from the tests package location.
 func sddCompiledDir(t *testing.T) string {
 	t.Helper()
 	// Walk up from package dir: tools/sdd-compile/tests → ../../../ is repo root
-	dir, err := filepath.Abs("../../../.sdd/compiled")
+	dir, err := filepath.Abs("../../../.providence/compiled")
 	if err != nil {
-		t.Fatalf("resolve .sdd/compiled: %v", err)
+		t.Fatalf("resolve .providence/compiled: %v", err)
 	}
 	if _, err := os.Stat(filepath.Join(dir, "governance-core.json")); err != nil {
-		t.Skipf(".sdd/compiled/governance-core.json not found (%v) — skipping integration test", err)
+		t.Skipf(".providence/compiled/governance-core.json not found (%v) — skipping integration test", err)
 	}
 	return dir
 }

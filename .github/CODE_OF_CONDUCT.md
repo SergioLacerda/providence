@@ -36,7 +36,7 @@ This Code of Conduct applies within all project spaces, and also applies when an
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the project maintainer via [GitHub private advisories](https://github.com/SergioLacerda/sdd-harness/security/advisories/new) or by opening a [private vulnerability report](https://github.com/SergioLacerda/sdd-harness/security).
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the project maintainer via [GitHub private advisories](https://github.com/SergioLacerda/providence/security/advisories/new) or by opening a [private vulnerability report](https://github.com/SergioLacerda/providence/security).
 
 All complaints will be reviewed and investigated promptly and fairly. Maintainers are obligated to maintain confidentiality with regard to the reporter of an incident.
 

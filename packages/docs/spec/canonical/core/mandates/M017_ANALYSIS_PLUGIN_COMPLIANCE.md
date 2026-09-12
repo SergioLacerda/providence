@@ -28,7 +28,7 @@ Ensure that analysis plugins respect SDD-injected base_path, execution_provider,
 
 The `sdd plugin validate` command enforces the registry declaration requirement.
 Runtime violations emit `GovernanceEvent` with `severity=critical` to
-`.sdd/audit-trail/compliance-events.jsonl`.
+`.providence/audit-trail/compliance-events.jsonl`.
 
 ---
 
@@ -55,5 +55,5 @@ enforceable and auditable.
 
 - M010: Delivery Hygiene Enforcement
 - M016: Guardrail Non-Regression
-- `.sdd/plugins/registry.yaml` (plugin registry)
-- `.sdd/contracts/analysis-provider.schema.yaml` (plugin contract schema)
+- `.providence/plugins/registry.yaml` (plugin registry)
+- `.providence/contracts/analysis-provider.schema.yaml` (plugin contract schema)

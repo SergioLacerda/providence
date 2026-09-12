@@ -5,9 +5,9 @@
 `docs/` is the authored source of truth for governance knowledge in this
 repository.
 
-`.sdd/` is runtime/build output. Agents and CLI flows consume `.sdd/`, but
+`.providence/` is runtime/build output. Agents and CLI flows consume `.providence/`, but
 governance documentation changes should be made in `docs/` and then generated
-into `.sdd/`.
+into `.providence/`.
 
 ## Source Registry
 
@@ -26,25 +26,25 @@ validation use this registry instead of scanning the whole docs tree.
 Generated runtime artifacts include:
 
 ```text
-.sdd/metadata.json
-.sdd/compiled/governance-core.json
-.sdd/compiled/governance-client.json
-.sdd/source/mandates/mandates.md
-.sdd/source/guidelines.*
-.sdd/source/handbook/**
+.providence/metadata.json
+.providence/compiled/governance-core.json
+.providence/compiled/governance-client.json
+.providence/source/mandates/mandates.md
+.providence/source/guidelines.*
+.providence/source/handbook/**
 ```
 
 If these outputs disagree with `docs/spec/canonical/governance-sources.yaml`,
 the mismatch is build drift. Fix the source in `docs/` or regenerate runtime
-artifacts; do not treat `.sdd/` as the authored documentation source.
+artifacts; do not treat `.providence/` as the authored documentation source.
 
 ## Runtime Handbook
 
 Consultive runtime guidance is generated from classified handbook docs into:
 
 ```text
-.sdd/source/handbook/index.yaml
-.sdd/source/handbook/**/*.yaml
+.providence/source/handbook/index.yaml
+.providence/source/handbook/**/*.yaml
 ```
 
 The handbook is not an enforcement surface. Compiled mandates and guidelines

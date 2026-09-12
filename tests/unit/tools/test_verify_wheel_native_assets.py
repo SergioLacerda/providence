@@ -19,12 +19,12 @@ def _write_wheel(
     *,
     assets: tuple[str, ...] = REQUIRED_COMPILER_ASSETS,
     empty: frozenset[str] = frozenset(),
-    name: str = "sdd_core-1.0.3-py3-none-any.whl",
+    name: str = "providence_core-1.0.3-py3-none-any.whl",
 ) -> Path:
     dist.mkdir(parents=True, exist_ok=True)
     wheel = dist / name
     with zipfile.ZipFile(wheel, "w") as archive:
-        archive.writestr("sdd_core/__init__.py", "")
+        archive.writestr("providence_core/__init__.py", "")
         for asset in assets:
             payload = b"" if asset in empty else b"binary-bytes"
             archive.writestr(WHEEL_NATIVE_PREFIX + asset, payload)
@@ -54,5 +54,5 @@ def test_fails_when_asset_empty(tmp_path: Path) -> None:
 def test_fails_when_no_wheel_found(tmp_path: Path) -> None:
     (tmp_path / "dist").mkdir()
 
-    with pytest.raises(SystemExit, match="no sdd_core wheel"):
+    with pytest.raises(SystemExit, match="no providence_core wheel"):
         verify_wheel_native_assets(tmp_path / "dist")

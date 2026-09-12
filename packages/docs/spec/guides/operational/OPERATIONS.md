@@ -38,7 +38,7 @@
 | **Core** | 4 immutable governance rules | Cannot be changed; provides foundation |
 | **Client** | 151 customizable guidelines | Teams select which to implement |
 | **SALT** | Fingerprint embedded in metadata | Prevents tampering; enables validation |
-| **Wizard** | Single guided-flow orchestrator (`sdd install --wizard`) | Creates new projects with governance |
+| **Wizard** | Single guided-flow orchestrator (`providence install --wizard`) | Creates new projects with governance |
 | **CLI** | Governance management tool | Loads, validates, generates agent seeds |
 
 ### Architecture Layers
@@ -50,17 +50,17 @@ Governance Layer (Core + Client rules)
          ↓
 Compilation Layer (msgpack artifacts)
          ↓
-Storage Layer (.sdd-wizard/compiled/)
+Storage Layer (.providence-wizard/compiled/)
 ```
 
 ### Final Template Handoff Layout
 
 When Phase 4-6 consolidation is executed, the handoff bundle is organized under
-`generated/client/build/final-template/` with runtime governance artifacts inside `.sdd`:
+`generated/client/build/final-template/` with runtime governance artifacts inside `.providence`:
 
 ```text
 final-template/
-├── .sdd/
+├── .providence/
 │   ├── compiled/
 │   │   ├── governance-core.compiled.msgpack
 │   │   ├── governance-client-template.compiled.msgpack
@@ -85,7 +85,7 @@ Compatibility note: loaders also accept legacy top-level artifact placement in
 
 ```bash
 # Check compiled artifacts exist
-ls -lh .sdd-wizard/compiled/
+ls -lh .providence-wizard/compiled/
 
 # Expected output:
 # - governance-core.compiled.msgpack (2.3 KB)
@@ -95,15 +95,15 @@ ls -lh .sdd-wizard/compiled/
 # - DEPLOYMENT_MANIFEST.json
 
 # Validate integrity
-sdd governance validate
+providence governance validate
 
 # Expected: ✅ All fingerprints verified
 ```
 
 **What to do if artifacts are missing:**
 
-1. Recompile: `cd .sdd-wizard && python compile_artifacts.py`
-2. Verify: `ls .sdd-wizard/compiled/`
+1. Recompile: `cd .providence-wizard && python compile_artifacts.py`
+2. Verify: `ls .providence-wizard/compiled/`
 3. If still missing: See [Troubleshooting](#troubleshooting)
 
 ### 2️⃣ Load Governance Configuration (2 min)
@@ -112,7 +112,7 @@ sdd governance validate
 
 ```bash
 # Display governance configuration
-sdd governance load
+providence governance load
 
 # Output shows:
 # - Core rules (4 items) [IMMUTABLE]
@@ -160,8 +160,8 @@ sdd new --project-name "my-project" --language python
 # Phase 7: Validate output
 
 # Expected result: Generated project structure with:
-# - .sdd/CANONICAL/ (governance files)
-# - .sdd-guidelines/ (customizable rules)
+# - .providence/CANONICAL/ (governance files)
+# - .providence-guidelines/ (customizable rules)
 # - src/ (code scaffolding)
 # - tests/ (test structure)
 # - docs/ (documentation)
@@ -180,7 +180,7 @@ sdd new --project-name "my-project" --language python
 
 ```bash
 # Generate all agent seeds
-sdd governance generate
+providence governance generate
 
 # Generates:
 # - .cursor-instructions.md (Cursor IDE rules)
@@ -188,9 +188,9 @@ sdd governance generate
 # - .agent-generic.md (Generic AI agent rules)
 
 # Or specify target
-sdd governance generate --agent cursor
-sdd governance generate --agent copilot
-sdd governance generate --agent generic
+providence governance generate --agent cursor
+providence governance generate --agent copilot
+providence governance generate --agent generic
 ```
 
 **Output:** Configuration files ready for your IDE/agent
@@ -212,7 +212,7 @@ sdd governance generate --agent generic
 
 ```bash
 # Full governance validation
-sdd governance validate
+providence governance validate
 
 # Output: Validates 8 checks
 # ✅ Core file structure
@@ -229,8 +229,8 @@ cd /path/to/project
 sdd project validate
 
 # Output: Validates project has:
-# ✅ Governance files in .sdd/
-# ✅ Guidelines in .sdd-guidelines/
+# ✅ Governance files in .providence/
+# ✅ Guidelines in .providence-guidelines/
 # ✅ Valid metadata
 # ✅ Specification integrity
 ```
@@ -239,7 +239,7 @@ sdd project validate
 
 ```bash
 # Check compiled artifact sizes
-du -h .sdd-wizard/compiled/
+du -h .providence-wizard/compiled/
 
 # Expected:
 # - Core: 2.3 KB (4 rules)
@@ -247,7 +247,7 @@ du -h .sdd-wizard/compiled/
 # - Total: ~37 KB
 
 # Check load performance
-time sdd governance load
+time providence governance load
 
 # Expected: <500ms total time
 ```
@@ -257,7 +257,7 @@ time sdd governance load
 **Daily (Morning):**
 
 - [ ] Artifacts exist and match deployment manifest
-- [ ] `sdd governance validate` returns all checks passing
+- [ ] `providence governance validate` returns all checks passing
 - [ ] CLI responds in <1 second
 
 **Weekly (Monday morning):**
@@ -291,15 +291,15 @@ ModuleNotFoundError: No module named 'sdd'
 
 ```bash
 # Option 1: Use pre-built binary
-chmod +x ./dist/sdd
-./dist/sdd --help
+chmod +x ./dist/providence
+./dist/providence --help
 
 # Option 2: Install from source
 pip install -r requirements-cli.txt
 python -m cli --help
 
 # Option 3: Add to Python path
-export PYTHONPATH=$PYTHONPATH:$(pwd)/.sdd-core
+export PYTHONPATH=$PYTHONPATH:$(pwd)/.providence-core
 python -m cli --help
 ```
 
@@ -323,18 +323,18 @@ python -m cli --help
 
 ```bash
 # Step 1: Check if source files were modified
-git diff .sdd-core/CANONICAL/
+git diff .providence-core/CANONICAL/
 
 # Step 2: If modified intentionally, recompile
-cd .sdd-wizard
+cd .providence-wizard
 python compile_artifacts.py
 
 # Step 3: Verify new fingerprints
-sdd governance validate
+providence governance validate
 
 # Step 4: If unauthorized changes found, revert
-git checkout .sdd-core/CANONICAL/
-cd .sdd-wizard
+git checkout .providence-core/CANONICAL/
+cd .providence-wizard
 python compile_artifacts.py
 ```
 
@@ -343,7 +343,7 @@ python compile_artifacts.py
 **Symptoms:**
 
 ```
-$ ls .sdd-wizard/compiled/
+$ ls .providence-wizard/compiled/
 # Returns empty or file not found
 ```
 
@@ -351,10 +351,10 @@ $ ls .sdd-wizard/compiled/
 
 ```bash
 # Step 1: Create compiled directory
-mkdir -p .sdd-wizard/compiled
+mkdir -p .providence-wizard/compiled
 
 # Step 2: Compile from source
-cd .sdd-wizard
+cd .providence-wizard
 python compile_artifacts.py
 
 # Step 3: Verify output
@@ -377,13 +377,13 @@ Error: Language not recognized: 'cpp'
 
 ```bash
 # Run with verbose output
-python .sdd-wizard/src/wizard.py --test-phases 1-7 --verbose
+python .providence-wizard/src/wizard.py --test-phases 1-7 --verbose
 
 # Check which phase actually failed
 # Look for first ❌ mark
 
 # Common phase failures:
-# Phase 1: Source validation - Check .sdd-core/ structure
+# Phase 1: Source validation - Check .providence-core/ structure
 # Phase 2: Compilation - Check artifact generation
 # Phase 3: Mandate filtering - Check mandate.spec format
 # Phase 4: Guideline filtering - Check language parameter
@@ -396,10 +396,10 @@ python .sdd-wizard/src/wizard.py --test-phases 1-7 --verbose
 
 ```bash
 # Phase 1 failure: Validate source
-python .sdd-core/scripts/validate_source.py
+python .providence-core/scripts/validate_source.py
 
 # Phase 2 failure: Recompile
-python .sdd-wizard/compile_artifacts.py
+python .providence-wizard/compile_artifacts.py
 
 # Phase 4 failure: Check language support
 # Valid: python, java, javascript
@@ -410,7 +410,7 @@ ls -ld /path/to/generation/target
 chmod 755 /path/to/generation/target
 
 # Phase 7 failure: Check output structure
-ls -R ./sdd-generated/project/
+ls -R ./providence-generated/project/
 ```
 
 ### Troubleshooting Decision Tree
@@ -422,7 +422,7 @@ Is CLI working?
     ├→ NO → Install/reinstall CLI (requirements, Python path)
     └→ YES → Continue
     ↓
-Does `sdd governance validate` pass?
+Does `providence governance validate` pass?
     ├→ NO → Fingerprint mismatch (see above)
     └→ YES → Continue
     ↓
@@ -431,7 +431,7 @@ Is it a wizard issue?
     └→ NO → Continue
     ↓
 Is it a project issue?
-    ├→ YES → Check project .sdd/ structure
+    ├→ YES → Check project .providence/ structure
     └→ NO → See operational/troubleshooting/
 ```
 
@@ -445,18 +445,18 @@ Is it a project issue?
 
 ```bash
 # Compiled artifacts are cached automatically
-# Cache location: .sdd-wizard/compiled/
+# Cache location: .providence-wizard/compiled/
 
 # To verify cache is being used:
-time sdd governance load  # Should be <100ms
+time providence governance load  # Should be <100ms
 
 # If cache is not working:
 # Check file timestamps
-stat .sdd-wizard/compiled/governance-core.compiled.msgpack
+stat .providence-wizard/compiled/governance-core.compiled.msgpack
 
 # Clear cache and regenerate if needed
-rm -rf .sdd-wizard/compiled/*
-python .sdd-wizard/compile_artifacts.py
+rm -rf .providence-wizard/compiled/*
+python .providence-wizard/compile_artifacts.py
 ```
 
 #### 2. Parallel Processing
@@ -468,29 +468,29 @@ python .sdd-wizard/compile_artifacts.py
 export WORKERS=$(nproc)
 
 # Then run wizard:
-python .sdd-wizard/src/wizard.py --language python
+python .providence-wizard/src/wizard.py --language python
 ```
 
 #### 3. Disk I/O Optimization
 
 ```bash
-# Use SSD for .sdd-wizard/compiled/
+# Use SSD for .providence-wizard/compiled/
 # Check I/O performance:
 time dd if=/dev/zero of=test.bin bs=1M count=10
 # Expected: <100ms for 10MB
 
 # If slow, move compiled/ to faster disk:
-mv .sdd-wizard/compiled /fast-disk/sdd-compiled
-ln -s /fast-disk/sdd-compiled .sdd-wizard/compiled
+mv .providence-wizard/compiled /fast-disk/sdd-compiled
+ln -s /fast-disk/sdd-compiled .providence-wizard/compiled
 ```
 
 ### Performance Monitoring
 
 ```bash
 # Benchmark governance operations
-time sdd governance load
-time sdd governance validate
-time sdd governance generate
+time providence governance load
+time providence governance validate
+time providence governance generate
 
 # Expected times:
 # - load: 50-150ms
@@ -524,8 +524,8 @@ BACKUP_DIR="/backups/sdd-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$BACKUP_DIR"
 
 # Backup critical components
-cp -r .sdd-core/CANONICAL "$BACKUP_DIR/"
-cp -r .sdd-wizard/compiled "$BACKUP_DIR/"
+cp -r .providence-core/CANONICAL "$BACKUP_DIR/"
+cp -r .providence-wizard/compiled "$BACKUP_DIR/"
 cp CHANGELOG.md "$BACKUP_DIR/"
 
 # Verify backup
@@ -540,14 +540,14 @@ echo "Backup: $BACKUP_DIR" >> backup_manifest.log
 # Core rules cannot be modified at runtime
 
 # 1. Modify CLIENT guidelines
-edit .sdd-core/CANONICAL/guidelines.dsl
+edit .providence-core/CANONICAL/guidelines.dsl
 
 # 2. Recompile artifacts
-cd .sdd-wizard
+cd .providence-wizard
 python compile_artifacts.py
 
 # 3. Validate new artifacts
-sdd governance validate
+providence governance validate
 
 # 4. Deploy to projects
 # (Projects load from updated artifacts on next initialization)
@@ -560,17 +560,17 @@ sdd project validate
 
 ```bash
 # Remove old generated projects
-find . -name "sdd-generated" -type d -mtime +30 -exec rm -rf {} \;
+find . -name "providence-generated" -type d -mtime +30 -exec rm -rf {} \;
 
 # Clear compiled artifact cache (forces recompilation)
-rm -rf .sdd-wizard/compiled
+rm -rf .providence-wizard/compiled
 
 # Remove test artifacts
 find . -name ".pytest_cache" -type d -exec rm -rf {} \;
 find . -name "__pycache__" -type d -exec rm -rf {} \;
 
 # Verify cleanup
-du -sh .sdd-*
+du -sh .providence-*
 ```
 
 ### Routine Maintenance Schedule
@@ -604,13 +604,13 @@ du -sh .sdd-*
 **Need help?**
 
 1. **Check troubleshooting:** [Troubleshooting](#troubleshooting)
-2. **Search guides:** `.sdd-core/spec/guides/`
+2. **Search guides:** `.providence-core/spec/guides/`
 3. **Review logs:** Check phase output with `--verbose` flag
 4. **Escalate:** Contact SDD framework maintainers
 
 **Provide when reporting issues:**
 
-- Command run: `sdd version` output
+- Command run: `providence version` output
 - Error message: Full stack trace if available
 - Environment: OS, Python version
 - Recent changes: What changed before issue occurred

@@ -1,6 +1,6 @@
 # 🎯 STEP 5 — Commit to Git
 
-**Goal:** Save all SDD framework changes to version control
+**Goal:** Save all Providence framework changes to version control
 **Duration:** 3 minutes
 **Complexity:** Simple (3 git commands)
 **Prerequisites:** Steps 1-4 complete, validation passed
@@ -19,7 +19,7 @@ You have:
 
 You're about to:
 
-- Stage all SDD-related files
+- Stage all Providence-related files
 - Create a git commit
 - Complete integration
 - **Your project is now ready for development!**
@@ -44,7 +44,7 @@ On branch main
 
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
-        .sdd/
+        .providence/
         .cursor/
         .github/
         .pre-commit-config.yaml
@@ -55,11 +55,11 @@ Untracked files:
 nothing added to commit but untracked files present (tracking will be proposed)
 ```
 
-### Step 2: Stage SDD Files
+### Step 2: Stage Providence Files
 
 ```bash
-# Stage all SDD-related files
-git add .spec.config .github/ .vscode/ .cursor/ .pre-commit-config.yaml scripts/ .sdd/
+# Stage all Providence-related files
+git add .spec.config .github/ .vscode/ .cursor/ .pre-commit-config.yaml scripts/ .providence/
 ```
 
 ### Step 3: Verify Staging
@@ -82,8 +82,8 @@ Changes to be committed:
         new file:   .cursor/rules/spec.mdc
         new file:   .pre-commit-config.yaml
         new file:   .github/setup-precommit-hook.sh
-        new file:   .sdd/context-aware/...
-        new file:   .sdd/runtime/...
+        new file:   .providence/context-aware/...
+        new file:   .providence/runtime/...
         (many more files)
 ```
 
@@ -97,13 +97,13 @@ git add path/to/file
 ### Step 4: Create Commit
 
 ```bash
-git commit -m "feat: Integrate SDD framework governance"
+git commit -m "feat: Integrate Providence framework governance"
 ```
 
 **Expected output:**
 
 ```
-[main a1b2c3d] feat: Integrate SDD framework governance
+[main a1b2c3d] feat: Integrate Providence framework governance
  45 files changed, 5234 insertions(+)
  create mode 100644 .spec.config
  create mode 100644 .github/copilot-instructions.md
@@ -112,8 +112,8 @@ git commit -m "feat: Integrate SDD framework governance"
  create mode 100644 .cursor/rules/spec.mdc
  create mode 100644 .pre-commit-config.yaml
  create mode 100644 .github/setup-precommit-hook.sh
- create mode 100644 .sdd/context-aware/...
- create mode 100644 .sdd/runtime/...
+ create mode 100644 .providence/context-aware/...
+ create mode 100644 .providence/runtime/...
 ```
 
 ---
@@ -125,7 +125,7 @@ After committing, verify everything worked:
 ```bash
 # Check git log
 git log -1 --oneline
-# Should show: a1b2c3d feat: Integrate SDD framework governance
+# Should show: a1b2c3d feat: Integrate Providence framework governance
 
 # Check status
 git status
@@ -147,8 +147,8 @@ git show HEAD --stat | tail -1
 # Should show: ~45 files changed, ~5000+ insertions
 
 # Check specific folders
-git show HEAD --name-only | grep "^\.sdd/" | wc -l
-# Should show: ~20-30 files in .sdd/
+git show HEAD --name-only | grep "^\.providence/" | wc -l
+# Should show: ~20-30 files in .providence/
 ```
 
 ---
@@ -166,8 +166,8 @@ git add .gitignore README.md (or main project files)
 git commit -m "Initial commit"
 
 # Then come back to Step 5
-git add .spec.config .github/ .vscode/ .cursor/ .pre-commit-config.yaml scripts/ .sdd/
-git commit -m "feat: Integrate SDD framework governance"
+git add .spec.config .github/ .vscode/ .cursor/ .pre-commit-config.yaml scripts/ .providence/
+git commit -m "feat: Integrate Providence framework governance"
 ```
 
 ### Issue: "Nothing to commit, working tree clean"
@@ -195,7 +195,7 @@ git config user.name "Your Name"
 sudo chown -R $USER:$USER .
 
 # Then try commit again
-git commit -m "feat: Integrate SDD framework governance"
+git commit -m "feat: Integrate Providence framework governance"
 ```
 
 ### Issue: "Changes not staged"
@@ -223,7 +223,7 @@ git status
 # (Then press Enter)
 
 # Or use simpler message format:
-git commit -m "feat: Integrate SDD framework governance"
+git commit -m "feat: Integrate Providence framework governance"
 # (doesn't open editor)
 ```
 
@@ -233,7 +233,7 @@ git commit -m "feat: Integrate SDD framework governance"
 
 After committing, your project is now:
 
-✅ Integrated with SDD framework
+✅ Integrated with Providence framework
 ✅ Ready for development
 ✅ All changes tracked in git
 ✅ Developers can start using AGENT_HARNESS
@@ -246,7 +246,7 @@ Your developers can now:
 
 1. **Read:** [spec/guides/operational/CORE__START_HERE.md](spec/guides/operational/CORE__START_HERE.md)
 2. **Understand:** AGENT_HARNESS 7-phase workflow
-3. **Implement:** Features following SDD governance
+3. **Implement:** Features following Providence governance
 
 ---
 
@@ -254,14 +254,14 @@ Your developers can now:
 
 | Step | Action | Result |
 |------|--------|--------|
-| 1 | Create directories | `.github/`, `.vscode/`, `.cursor/`, `scripts/`, `.sdd/` |
+| 1 | Create directories | `.github/`, `.vscode/`, `.cursor/`, `scripts/`, `.providence/` |
 | 2 | Copy templates | 8 template files populated |
-| 3 | Configure `.spec.config` | Points to sdd-harness |
-| 4 | Validate setup | Framework verified, `.sdd/` infrastructure created |
+| 3 | Configure `.spec.config` | Points to providence |
+| 4 | Validate setup | Framework verified, `.providence/` infrastructure created |
 | 5 | Commit to git | All changes saved to version control |
 
 **Time invested:** 20-30 minutes
-**Result:** Production-ready SDD integration
+**Result:** Production-ready Providence integration
 
 ---
 
@@ -269,7 +269,7 @@ Your developers can now:
 
 - [ ] Git commit created: `git log -1`
 - [ ] `.spec.config` correctly configured: `cat .spec.config`
-- [ ] `.sdd/` infrastructure exists: `ls -la .sdd/`
+- [ ] `.providence/` infrastructure exists: `ls -la .providence/`
 - [ ] Pre-commit hooks in place: `ls -la .pre-commit-config.yaml`
 - [ ] All files staged and committed: `git status` shows "nothing to commit"
 - [ ] Ready for developers: Share the project repo
@@ -277,6 +277,6 @@ Your developers can now:
 ---
 
 **Integration successful!** 🎉
-Your project now has SDD governance.
+Your project now has Providence governance.
 
 Next: Developers read [spec/guides/operational/CORE__START_HERE.md](spec/guides/operational/CORE__START_HERE.md)

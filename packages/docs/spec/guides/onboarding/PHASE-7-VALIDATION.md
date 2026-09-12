@@ -125,7 +125,7 @@
    ├── docs/
    └── data/
 
-❌ .sdd/context-aware/ (REMOVED - created by agent during PHASE 0)
+❌ .providence/context-aware/ (REMOVED - created by agent during PHASE 0)
 ❌ README-IA.md (REMOVED - reference in spec-architecture)
 ```
 
@@ -133,7 +133,7 @@
 
 ```
 e7e3d2c: Refactor: Move infrastructure creation to PHASE 0 (agent-driven)
-         - Deleted .sdd/context-aware/
+         - Deleted .providence/context-aware/
          - Deleted README-IA.md
          - Updated .github/copilot-instructions.md
          (6 files changed, 1088 deletions)
@@ -158,17 +158,17 @@ e7e3d2c: Refactor: Move infrastructure creation to PHASE 0 (agent-driven)
    └─ Time: ~30 minutes
 
 ✅ Step 3: Agent creates directories
-   mkdir -p .sdd/context-aware/{task-progress/completed,analysis,runtime-state}
+   mkdir -p .providence/context-aware/{task-progress/completed,analysis,runtime-state}
 
 ✅ Step 4: Agent copies templates
-   cp -r {spec_path}/templates/ai/context-aware/* .sdd/context-aware/
+   cp -r {spec_path}/templates/ai/context-aware/* .providence/context-aware/
 
 ✅ Step 5: Agent takes quiz
    cat {spec_path}docs/spec/guides/onboarding/VALIDATION_QUIZ.md
    Score: ≥ 4/5 (80% required)
 
 ✅ Step 6: Agent commits
-   git add .sdd/
+   git add .providence/
    git commit -m "🚀 PHASE 0: Agent workspace initialized"
 
 ✅ Result: Workspace ready for AGENT_HARNESS (phases 1-7)
@@ -184,7 +184,7 @@ e7e3d2c: Refactor: Move infrastructure creation to PHASE 0 (agent-driven)
 ✅ What script does:
    1. Verifies .spec.config
    2. Verifies SPEC framework exists
-   3. Creates .sdd/context-aware/ directories
+   3. Creates .providence/context-aware/ directories
    4. Copies templates
    5. Validates knowledge (quiz)
    6. Prints success report
@@ -253,7 +253,7 @@ e7e3d2c: Refactor: Move infrastructure creation to PHASE 0 (agent-driven)
      ↓
 ✅ Agent executes: PHASE 0 (manual or automated)
      ↓
-✅ Agent creates: .sdd/context-aware/ (locally)
+✅ Agent creates: .providence/context-aware/ (locally)
      ↓
 ✅ Agent validates: Knowledge via quiz (≥80%)
      ↓

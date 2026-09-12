@@ -29,13 +29,13 @@ This policy applies to:
 
 ### Test Context
 
-1. Repository-root `.sdd` MUST NOT be mutated by tests.
+1. Repository-root `.providence` MUST NOT be mutated by tests.
 2. Test writes MUST target isolated roots (`tmp_path`, `SDD_TEST_OUTPUT_DIR`, or shadow workspace).
 3. Path overrides MUST NOT bypass isolation guarantees.
 
 ### Runtime Context
 
-1. Runtime mutations under `.sdd` are allowed only through governed flows.
+1. Runtime mutations under `.providence` are allowed only through governed flows.
 2. Signature and trust behavior MUST follow `SDD_SIGNATURE_MODE` and keyring precedence rules.
 3. Non-governed runtime mutation attempts MUST be blocked or flagged.
 
@@ -53,7 +53,7 @@ Managed seed artifacts (e.g. `CLAUDE.md`, `.claude/`, `.gemini/`, `.cursor/`,
 
 ### Allowed Owners / Triggers
 
-1. `sdd governance generate` (governed generation path)
+1. `providence governance generate` (governed generation path)
 2. Wizard generation/deployment phases in governed flows
 3. Approved maintenance/reconciliation commands declared by governance
 
@@ -86,7 +86,7 @@ Compliance is enforced through CI environment-boundary gates, including:
 1. `env-boundary-lint`
 2. `workspace-root-resolution-check`
 3. `test-isolation-preflight`
-4. `repo-sdd-mutation-guard`
+4. `repo-providence-mutation-guard` (compatibility alias: `repo-sdd-mutation-guard`)
 5. `runtime-seed-drift-check`
 6. `telemetry-path-scope-check`
 7. `trusted-keyring-precedence-check`
@@ -100,6 +100,6 @@ change artifacts.
 ## Delivery Checklist
 
 - [ ] Context (`test` / `runtime` / `dev/prod`) identified before side effects
-- [ ] No repository-root `.sdd` mutation from tests
+- [ ] No repository-root `.providence` mutation from tests
 - [ ] Seed writes performed only by approved owners/triggers
 - [ ] Path variable usage complies with precedence/fallback rules

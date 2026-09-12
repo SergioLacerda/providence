@@ -1,11 +1,11 @@
 #!/bin/bash
-# SDD Guardrail — commit-msg hook
+# Providence Guardrail — commit-msg hook
 # Enforces commit message format and P002 (Honest Critique Policy).
 
 commit_msg_file="$1"
 commit_msg=$(cat "$commit_msg_file")
 
-echo "SDD Guardrail: Commit-msg Validation"
+echo "Providence Guardrail: Commit-msg Validation"
 
 # ── 1. Allow merge commits and fixup commits ─────────────────────────────────
 # Git generates these automatically; don't apply our format rules to them.
@@ -17,7 +17,7 @@ fi
 # ── 2. Conventional Commits format ───────────────────────────────────────────
 # Accepted: feat(scope): message, fix: message, docs: message, etc.
 CONVENTIONAL="^(feat|fix|docs|style|refactor|test|chore|ci|perf|build|revert)(\([^)]+\))?: .+"
-# Legacy SDD task-ID format: #01: message
+# Legacy Providence task-ID format: #01: message
 TASK_ID="^#[0-9]+: .+"
 
 if ! echo "$commit_msg" | grep -qE "$CONVENTIONAL" && ! echo "$commit_msg" | grep -qE "$TASK_ID"; then
@@ -33,7 +33,7 @@ fi
 
 # ── 3. P002 Honest Critique — BLOCKING ───────────────────────────────────────
 # If the state file lists known risks/debt, the commit message must acknowledge them.
-CACHE_FILE=".sdd-local/state.md"
+CACHE_FILE=".providence-local/state.md"
 if [ -f "$CACHE_FILE" ] && grep -qiE "Risk|Debt|Blocker|Known issue" "$CACHE_FILE"; then
     if ! echo "$commit_msg" | grep -qiE "risk|debt|known.?issue|limitation|wip|partial|caveat"; then
         echo "GUARDRAIL FAILURE (P002 — Honest Critique):"

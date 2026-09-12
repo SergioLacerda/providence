@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+name = "providence-core"
+dynamic = ["version"]
+description = "Core domain model and contracts for SDD governance"
+requires-python = ">=3.10"
+license = {text = "Proprietary"}
+authors = [
+    {name = "Sergio Lacerda", email = "sergio.lacerda.vieira@gmail.com"},
+]
+
+dependencies = [
+    "certifi>=2024.7.4",
+    "msgpack>=1.2.1",
+    "structlog>=23.0",
+]
+
+[project.urls]
+Repository = "https://github.com/SergioLacerda/providence"
+
+[tool.hatch.version]
+source = "vcs"
+tag-pattern = "[vV](?P<version>[0-9]+\\.[0-9]+\\.[0-9]+)"
+fallback-version = "0.0.0+unknown"
+# This package's pyproject.toml is 3 directories below the repo root
+# (packages/core/providence_core), and setuptools-scm (which hatch-vcs delegates to)
+# does not search parent directories for the git repo by default — it must be
+# told explicitly where the root is, or it silently falls back to
+# fallback-version above instead of resolving the real tag.
+raw-options = { root = "../../..", version_scheme = "no-guess-dev" }
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/providence_core"]
+artifacts = [
+    "src/providence_core/_native/*",
+]

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from sdd_core.utils.text_io import read_text_utf8, write_text_utf8
+from providence_core.utils.text_io import read_text_utf8, write_text_utf8
 
 
 def read_text_utf8_replace(path: Path) -> str:

@@ -7,4 +7,4 @@ Canonical policy documentation lives in:
 - `docs/spec/reference/SECURITY.md`
 
 To report a vulnerability, use GitHub private advisories:
-- https://github.com/SergioLacerda/sdd-harness/security/advisories/new
+- https://github.com/SergioLacerda/providence/security/advisories/new

@@ -10,12 +10,12 @@
 ## Context
 
 `RuntimeEvent.trace_id` was a mandatory field, but each call site generated its own UUID.
-A single `sdd ask` invocation produced multiple `RuntimeEvent` entries with unrelated
+A single `providence ask` invocation produced multiple `RuntimeEvent` entries with unrelated
 `trace_id` values, making it impossible to reconstruct a request lifecycle from the
 telemetry JSONL sink.
 
 The observability plan required that all events produced within a single CLI command share
-one `trace_id`, queryable via `sdd telemetry query --trace-id <id>`.
+one `trace_id`, queryable via `providence telemetry query --trace-id <id>`.
 
 ---
 
@@ -66,5 +66,5 @@ a new UUID is generated — preserving existing standalone behaviour.
 
 ## Links
 
-- Implementation: `packages/core/sdd_runtime/`, `packages/interfaces/sdd_cli/`
+- Implementation: `packages/core/providence_runtime/`, `packages/interfaces/providence_cli/`
 - Related: ADR-001 (Runtime Authority Boundary), M007 (Telemetry Enforcement)

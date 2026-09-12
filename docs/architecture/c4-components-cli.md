@@ -1,13 +1,13 @@
-# C4 Level 3 - Components: sdd_cli
+# C4 Level 3 - Components: providence_cli
 
-Internal structure of the `sdd_cli` package, focused on command dispatch and the
+Internal structure of the `providence_cli` package, focused on command dispatch and the
 canonical JSON envelope.
 
 ```mermaid
 graph TB
     user["User / Agent"]
 
-    subgraph cli["sdd_cli"]
+    subgraph cli["providence_cli"]
         typerApp["Typer App\nmain.py / app.py\ncommand registration"]
 
         subgraph commands["Command Modules"]
@@ -34,7 +34,7 @@ graph TB
         telemetry["Telemetry helpers\nservices/*telemetry*.py"]
     end
 
-    subgraph core["sdd_core / sdd_runtime"]
+    subgraph core["providence_core / providence_runtime"]
         governance["Governance domain\nmandates, handshake, audit"]
         compiler["CompilerRunner\nnative sdd-compile bridge"]
         runtime["Skill runtime\nSkillEngine + handlers"]
@@ -117,16 +117,16 @@ command handler
 ```
 
 The envelope contract is centralized in
-`packages/interfaces/sdd_cli/src/sdd_cli/shared/contracts.py`. Command handlers
+`packages/interfaces/providence_cli/src/providence_cli/shared/contracts.py`. Command handlers
 must not build alternate JSON shapes when emitting machine-readable output.
 
 ## Boundaries
 
-- `sdd_cli.commands` maps user intent to service calls and output mode.
-- `sdd_cli.services` coordinates governance, runtime, compiler, and filesystem
+- `providence_cli.commands` maps user intent to service calls and output mode.
+- `providence_cli.services` coordinates governance, runtime, compiler, and filesystem
   interactions.
-- `sdd_cli.shared` owns cross-command contracts and errors.
-- `sdd_core` and `sdd_runtime` remain upstream dependencies; `sdd_cli` must not
+- `providence_cli.shared` owns cross-command contracts and errors.
+- `providence_core` and `providence_runtime` remain upstream dependencies; `providence_cli` must not
   reimplement governance or runtime policy.
 
 ## Contract Ownership

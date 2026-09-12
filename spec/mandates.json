@@ -1,6 +1,6 @@
 {
   "schema": "1.0",
-  "generated_by": "sdd-wizard",
+  "generated_by": "providence-wizard",
   "generated_at": "2026-07-06T21:28:50+00:00",
   "mandates": [
     {
@@ -9,7 +9,7 @@
       "category": "Cognition / Operational Efficiency / Context",
       "summary_runtime": "Ensure absolute continuity of state and logic across parallel agents, long-running tasks, and multi-repository environments by maintaining a persistent, project-isolated \"Context Cache\".",
       "requirements": [
-        "Mandatory Cache File: Every project must maintain a `.sdd-cache.md` (or `.sdd/task-context.json`) in its root.",
+        "Mandatory Cache File: Every project must maintain a `.providence-cache.md` (or `.providence/task-context.json`) in its root.",
         "Sub-task Checkpoint: Agents MUST update this cache at the end of EVERY sub-task or significant logical block.",
         "Pre-flight Sync: Before starting any task, the agent MUST read the cache to synchronize with the current global state of the project, overriding stale memory.",
         "Isolation: The cache is strictly project-scoped. In multi-repository IDEs, agents must treat each repository as a separate context-aware cell."
@@ -17,14 +17,14 @@
       "rationale": "- **Parallelism**: Prevents Agent A from breaking assumptions made by Agent B. - **Context Longevity**: Prevents \"forgetting\" the main goal when the token window fills up with implementation details. - **Multi-Repo Safety**: Ensures the agent doesn't mix up rules between two different projects open in the same workspace.",
       "implementation_pattern": null,
       "enforcement_steps": [
-        "Verify `.sdd-cache.md` exists in the project root before starting any task",
-        "Read `.sdd-cache.md` (pre-flight sync) and confirm understanding of current state before acting",
-        "Update `.sdd-cache.md` at the end of every sub-task or significant logical block",
+        "Verify `.providence-cache.md` exists in the project root before starting any task",
+        "Read `.providence-cache.md` (pre-flight sync) and confirm understanding of current state before acting",
+        "Update `.providence-cache.md` at the end of every sub-task or significant logical block",
         "Confirm cache content is project-scoped and does not reference state from other repositories",
         "Confirm cache was committed alongside the last code change"
       ],
       "validation": [
-        "Presence of `.sdd-cache.md` in root.",
+        "Presence of `.providence-cache.md` in root.",
         "Git history shows cache updates synchronized with logical feature commits.",
         "Cache content reflects the actual current state of the implementation."
       ]
@@ -36,7 +36,7 @@
       "summary_runtime": "Ensure every agent respects token budget zones and circuit-breaker thresholds to prevent context overflow, degraded output, and undetected budget breaches.",
       "requirements": null,
       "rationale": "Without enforced budget zones, agents silently overflow the context window, producing incomplete or hallucinated responses. Zone-based enforcement gives a graduated response: compression at YELLOW, explicit warning at RED, hard block at BREACH.",
-      "implementation_pattern": "- **Runtime module:** `packages/core/sdd_runtime/src/sdd_runtime/telemetry.py`\n  - `TelemetrySink._maybe_emit_zone_event()` — zone detection and event emission\n  - `_ZONE_YELLOW_PCT = 70.0`, `_ZONE_RED_PCT = 90.0`, `_ZONE_BREACH_PCT = 100.0`\n- **Circuit breaker:** `packages/core/sdd_runtime/src/sdd_runtime/context.py`\n  - `RetryBudget` — retry ceiling enforcement\n- **Entropy scoring:** `packages/core/sdd_runtime/src/sdd_runtime/entropy.py`\n  - `EntropyScore.compute(retry_count, reflection_count, budget_utilization_pct)`",
+      "implementation_pattern": "- **Runtime module:** `packages/core/providence_runtime/src/providence_runtime/telemetry.py`\n  - `TelemetrySink._maybe_emit_zone_event()` — zone detection and event emission\n  - `_ZONE_YELLOW_PCT = 70.0`, `_ZONE_RED_PCT = 90.0`, `_ZONE_BREACH_PCT = 100.0`\n- **Circuit breaker:** `packages/core/providence_runtime/src/providence_runtime/context.py`\n  - `RetryBudget` — retry ceiling enforcement\n- **Entropy scoring:** `packages/core/providence_runtime/src/providence_runtime/entropy.py`\n  - `EntropyScore.compute(retry_count, reflection_count, budget_utilization_pct)`",
       "enforcement_steps": [
         "Verify current token budget zone before loading any additional context (GREEN < 70%, YELLOW 70–90%, RED > 90%, BREACH ≥ 100%)",
         "Apply compression before loading context when in YELLOW or RED zone",
@@ -59,7 +59,7 @@
       "summary_runtime": "Ensure 100% traceability of agentic decisions and governance compliance via structured telemetry and OpenTelemetry integration.",
       "requirements": null,
       "rationale": "Unrecorded governance decisions are a security risk. Telemetry provides the \"black box\" required to debug agent failures, audit compliance breaches, and optimize token economy efficiency across the entire ecosystem.",
-      "implementation_pattern": "- **Runtime module:** `packages/core/sdd_runtime/src/sdd_runtime/telemetry.py`\n  - `RuntimeEvent` — standardized event envelope.\n  - `TelemetrySink` — collector and JSONL persistence.\n- **OTEL Bridge:** `packages/core/sdd_runtime/src/sdd_runtime/otel.py`\n  - `OtelBridge` — subclass for OTEL export.\n  - `OtlpHttpExporter` — OTLP-HTTP/JSON transport.",
+      "implementation_pattern": "- **Runtime module:** `packages/core/providence_runtime/src/providence_runtime/telemetry.py`\n  - `RuntimeEvent` — standardized event envelope.\n  - `TelemetrySink` — collector and JSONL persistence.\n- **OTEL Bridge:** `packages/core/providence_runtime/src/providence_runtime/otel.py`\n  - `OtelBridge` — subclass for OTEL export.\n  - `OtlpHttpExporter` — OTLP-HTTP/JSON transport.",
       "enforcement_steps": [
         "Confirm `runtime.session.start` event was emitted at agent initialization",
         "Confirm `governance.ask` event is emitted on every SDD context query",
@@ -69,7 +69,7 @@
         "Verify all governance metadata is mapped under the `sdd.*` OTEL attribute namespace"
       ],
       "validation": [
-        "Every `sdd ask` command generates at least one entry in `.sdd/compliance-events.jsonl` (written to the runtime state folder).",
+        "Every `providence ask` command generates at least one entry in `.providence/compliance-events.jsonl` (written to the runtime state folder).",
         "Events contain a valid `artifact_fingerprint`.",
         "If an OTEL endpoint is configured, spans appear in the target observability platform with `sdd.*` attributes."
       ]
@@ -78,19 +78,19 @@
       "id": "M008",
       "title": "Audit Integrity",
       "category": "Security / Compliance / Audit Trail",
-      "summary_runtime": "Preserve and protect the integrity of the audit trail (`.sdd/audit-trail/compliance-events.jsonl`) to ensure forensic capability, regulatory compliance, and accountability for all governance-aware ...",
+      "summary_runtime": "Preserve and protect the integrity of the audit trail (`.providence/audit-trail/compliance-events.jsonl`) to ensure forensic capability, regulatory compliance, and accountability for all governance-aware ...",
       "requirements": null,
       "rationale": "- **Forensics:** If governance fails, we must be able to replay and understand what happened - **Compliance:** Regulators (GDPR, SOC2) require immutable audit trails - **Accountability:** Agents must not be able to hide violations after the fact - **Detection:** Unusual patterns visible only in unmodified logs",
-      "implementation_pattern": "**Runtime:**\n\n- All events persisted via `TelemetrySink` to `.sdd/audit-trail/compliance-events.jsonl` (append-only mode)\n- Pre-commit hook validates log format before commit\n- CI/CD gate prevents merge if log modified incorrectly\n\n**Archival:**\n\n- Old logs archived with timestamp: `compliance-events-2026-05-01.jsonl.gz`\n- Retained per data retention policy (recommend: 2 years minimum)\n- Archived logs treated with same protection as current log",
+      "implementation_pattern": "**Runtime:**\n\n- All events persisted via `TelemetrySink` to `.providence/audit-trail/compliance-events.jsonl` (append-only mode)\n- Pre-commit hook validates log format before commit\n- CI/CD gate prevents merge if log modified incorrectly\n\n**Archival:**\n\n- Old logs archived with timestamp: `compliance-events-2026-05-01.jsonl.gz`\n- Retained per data retention policy (recommend: 2 years minimum)\n- Archived logs treated with same protection as current log",
       "enforcement_steps": [
-        "Verify `.sdd/audit-trail/compliance-events.jsonl` exists and has not been modified (only appended)",
+        "Verify `.providence/audit-trail/compliance-events.jsonl` exists and has not been modified (only appended)",
         "Confirm no events have been deleted, reordered, or had timestamps altered",
         "Confirm all new governance events were appended (never overwritten) to the log",
         "Confirm log format is valid JSONL with no corrupted entries",
         "Verify log file is backed up per the data retention policy"
       ],
       "validation": [
-        "`.sdd/audit-trail/compliance-events.jsonl` exists and is append-only",
+        "`.providence/audit-trail/compliance-events.jsonl` exists and is append-only",
         "No manual editing of compliance events (only appends)",
         "Log is backed up in `.git/` or external secure storage",
         "CI/CD validates log format (valid JSONL, no corruption)"
@@ -188,7 +188,7 @@
         "Confirm the agent responded with its `agent_id`, declared `skills_to_use`, and acknowledged active mandate IDs",
         "Verify the `SkillEngine` blocks any skill not explicitly authorized in the handshake response",
         "If `SDD_SIGNATURE_MODE=strict`, confirm execution is blocked when handshake is missing or artifact signatures are unacknowledged",
-        "Confirm the handshake response is stored under `.sdd/runtime/` as an auditable contract"
+        "Confirm the handshake response is stored under `.providence/runtime/` as an auditable contract"
       ],
       "validation": null
     },
@@ -273,8 +273,8 @@
         "Plugins MUST NOT invent SDD rules that do not exist",
         "Plugins MUST stop or degrade safely when governance context is missing",
         "Plugins operating in governed mode MUST respect all HARD mandates",
-        "Internal SDD skills (under `.sdd/skills/`) MUST declare `governance_adherence: ` in skill.yaml",
-        "External plugins are registered via `.sdd/plugins/registry.yaml` through agent-mediated handshake",
+        "Internal SDD skills (under `.providence/skills/`) MUST declare `governance_adherence: ` in skill.yaml",
+        "External plugins are registered via `.providence/plugins/registry.yaml` through agent-mediated handshake",
         "GovernanceEvent MUST be emitted on registration: `type=PLUGIN_REGISTERED`",
         "GovernanceEvent MUST be emitted on violation: `type=PLUGIN_GOVERNANCE_VIOLATION`"
       ],
@@ -282,7 +282,7 @@
       "implementation_pattern": null,
       "enforcement_steps": [
         "Verify plugin has performed governance handshake before execution",
-        "Verify registry entry exists for plugin in `.sdd/plugins/registry.yaml` (external) or `governance_adherence:` block in `skill.yaml` (internal)",
+        "Verify registry entry exists for plugin in `.providence/plugins/registry.yaml` (external) or `governance_adherence:` block in `skill.yaml` (internal)",
         "Verify plugin respects all HARD mandates when mode=governed",
         "Verify GovernanceEvent emitted on registration and on violation",
         "Verify internal skills declare `governance_adherence:` in their skill.yaml"
@@ -297,7 +297,7 @@
       "requirements": [
         "Derive all LLM input context from canonical fields (governance state, fingerprint, mandates count). Base form: max 2 lines, key=value compact",
         "Derive all user-facing output from a canonical event (phase, status, decision, artifact_path, next_action). Base output: max 3 lines, max 120 chars per line",
-        "Persist full diagnostic evidence in `.sdd/runtime/` artifacts, not in console output",
+        "Persist full diagnostic evidence in `.providence/runtime/` artifacts, not in console output",
         "Emit DEBUG/TRACE as structured JSON telemetry, bypassing all profile renderers",
         "Deduplicate repeated findings before rendering",
         "Include artifact paths for auditability on every finding or decision event",

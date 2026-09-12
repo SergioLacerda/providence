@@ -52,7 +52,7 @@ This project follows P003 Mandatory Human Review.
 The `pre-push` hook blocks pushes in CI/automated environments. Install it:
 
 ```bash
-cp .sdd/hooks/pre-push .git/hooks/pre-push
+cp .providence/hooks/pre-push .git/hooks/pre-push
 chmod +x .git/hooks/pre-push
 ```
 

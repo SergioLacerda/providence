@@ -21,7 +21,7 @@ Run from repo root:
 
 from __future__ import annotations
 
-from sdd_runtime import RuntimeEvent, SessionDriftScorer
+from providence_runtime import RuntimeEvent, SessionDriftScorer
 
 SECTION = "\n" + "=" * 60
 

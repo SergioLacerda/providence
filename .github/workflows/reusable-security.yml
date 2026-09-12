@@ -13,15 +13,15 @@ jobs:
     timeout-minutes: 3
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-      - name: Compare AGENTS.md fingerprint against .sdd/metadata.json
+      - name: Compare AGENTS.md fingerprint against .providence/metadata.json
         shell: bash
         run: |
           set -euo pipefail
-          combined=$(python3 -c "import json; print(json.load(open('.sdd/metadata.json'))['fingerprints']['combined'])")
+          combined=$(python3 -c "import json; print(json.load(open('.providence/metadata.json'))['fingerprints']['combined'])")
           agents_fp=$(grep -oP 'Governance fingerprint: \K[0-9a-f]+' AGENTS.md)
           if [[ "$combined" != "$agents_fp" ]]; then
-            echo "AGENTS.md fingerprint ($agents_fp) does not match .sdd/metadata.json fingerprints.combined ($combined)."
-            echo "Run 'uv run python -m sdd_cli governance generate' and sync AGENTS.md, then commit the update."
+            echo "AGENTS.md fingerprint ($agents_fp) does not match .providence/metadata.json fingerprints.combined ($combined)."
+            echo "Run 'uv run python -m providence_cli governance generate' and sync AGENTS.md, then commit the update."
             exit 1
           fi
 

@@ -70,7 +70,7 @@ def _fetch_tags(repo: str, *, token: str | None) -> list[str]:
     url = f"https://api.github.com/repos/{repo}/tags?per_page=100"
     headers = {
         "Accept": "application/vnd.github+json",
-        "User-Agent": "sdd-harness-ecosystem-canary",
+        "User-Agent": "providence-ecosystem-canary",
     }
     if token:
         headers["Authorization"] = f"Bearer {token}"

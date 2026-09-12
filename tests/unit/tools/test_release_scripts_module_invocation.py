@@ -11,7 +11,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from sdd_core.utils.process import SafeProcessRunner
+from providence_core.utils.process import SafeProcessRunner
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 RELEASE_SCRIPTS_DIR = REPO_ROOT / "tools" / "release"

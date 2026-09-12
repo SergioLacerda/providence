@@ -17,9 +17,9 @@ from pathlib import Path
 from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-_SDD_CORE_SRC = REPO_ROOT / "packages" / "core" / "sdd_core" / "src"
-if str(_SDD_CORE_SRC) not in sys.path:
-    sys.path.insert(0, str(_SDD_CORE_SRC))
+_PROVIDENCE_CORE_SRC = REPO_ROOT / "packages" / "core" / "providence_core" / "src"
+if str(_PROVIDENCE_CORE_SRC) not in sys.path:
+    sys.path.insert(0, str(_PROVIDENCE_CORE_SRC))
 
 SCHEMAS_DIR = REPO_ROOT / "tests" / "contract" / "schemas"
 

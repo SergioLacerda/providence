@@ -9,7 +9,7 @@ Initialize governance awareness.
 1. DISCOVERY
 
 - `.spec.config`
-- `.sdd/source/`
+- `.providence/source/`
 
 1. CONTEXT LOAD
 

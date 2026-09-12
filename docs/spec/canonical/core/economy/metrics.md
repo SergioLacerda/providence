@@ -16,7 +16,7 @@ Field names in this document are **authoritative** — implementation MUST match
 
 ## 📊 RuntimeEvent Economy Fields
 
-Added to `RuntimeEvent` dataclass in `packages/core/sdd_runtime/src/sdd_runtime/telemetry.py`.
+Added to `RuntimeEvent` dataclass in `packages/core/providence_runtime/src/providence_runtime/telemetry.py`.
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -122,6 +122,6 @@ from `ContextLoader.load_result()`.
 
 - `→ economy/execution-budget.md` — budget ceilings and breach thresholds
 - `→ economy/efficiency-policy.md` — retry/reflection ceiling definitions
-- `→ packages/core/sdd_runtime/src/sdd_runtime/telemetry.py` — RuntimeEvent implementation
-- `→ packages/core/sdd_runtime/src/sdd_runtime/llm.py` — LLM token capture (populates `tokens_*` fields)
-- `→ packages/core/sdd_runtime/src/sdd_runtime/otel.py` — OtelAttributes implementation
+- `→ packages/core/providence_runtime/src/providence_runtime/telemetry.py` — RuntimeEvent implementation
+- `→ packages/core/providence_runtime/src/providence_runtime/llm.py` — LLM token capture (populates `tokens_*` fields)
+- `→ packages/core/providence_runtime/src/providence_runtime/otel.py` — OtelAttributes implementation

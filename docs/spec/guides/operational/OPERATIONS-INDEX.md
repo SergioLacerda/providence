@@ -32,7 +32,7 @@
 - **Data:** Compiled msgpack artifacts + metadata
 - **SLA:** 99.9% availability, <500ms load time
 
-**Read:** [SDD Architecture Overview](.sdd-core/README.md)
+**Read:** [SDD Architecture Overview](.providence-core/README.md)
 
 ### 📋 Operations <a name="operations"></a>
 
@@ -126,7 +126,7 @@ Steps:
 ```
 Commands:
 ./scripts/health-check.sh          # Daily morning
-sdd governance validate             # Verify integrity
+providence governance validate             # Verify integrity
 ./scripts/collect-metrics.sh        # Performance tracking
 ```
 
@@ -159,7 +159,7 @@ Quarterly: System update + disaster recovery drill
 ### Critical Files
 
 ```
-.sdd-core/
+.providence-core/
 ├── CANONICAL/
 │   ├── mandate.spec          ← Core governance source
 │   ├── guidelines.dsl        ← Client governance source
@@ -170,7 +170,7 @@ Quarterly: System update + disaster recovery drill
     ├── MONITORING.md         ← Health monitoring
     └── MAINTENANCE.md        ← System upkeep
 
-.sdd-wizard/
+.providence-wizard/
 └── compiled/
     ├── governance-core.compiled.msgpack
     ├── governance-client-template.compiled.msgpack
@@ -179,7 +179,7 @@ Quarterly: System update + disaster recovery drill
     └── DEPLOYMENT_MANIFEST.json
 
 generated/client/build/final-template/
-└── .sdd/
+└── .providence/
     ├── compiled/
     │   ├── governance-core.compiled.msgpack
     │   ├── governance-client-template.compiled.msgpack
@@ -204,9 +204,9 @@ generated/client/build/final-template/
 
 | Issue | Guide | Command |
 |-------|-------|---------|
-| **Artifact missing** | Operations | `python .sdd-wizard/compile_artifacts.py` |
-| **Validation failed** | Operations | `sdd governance validate --verbose` |
-| **Load time slow** | Monitoring | `time sdd governance load` |
+| **Artifact missing** | Operations | `python .providence-wizard/compile_artifacts.py` |
+| **Validation failed** | Operations | `providence governance validate --verbose` |
+| **Load time slow** | Monitoring | `time providence governance load` |
 | **Deployment failed** | Deployment | See rollback procedures |
 | **Disk space low** | Maintenance | `./scripts/weekly-cleanup.sh` |
 | **Corruption detected** | Maintenance | Check backups, restore from latest |
@@ -243,7 +243,7 @@ Week 2+ (Ongoing)
 **Other important documentation:**
 
 - **Framework Overview:** [CORE__START_HERE.md](./CORE__START_HERE.md)
-- **Architecture Details:** [.sdd-core/NAVIGATION.md](./NAVIGATION.md)
+- **Architecture Details:** [.providence-core/NAVIGATION.md](./NAVIGATION.md)
 - **Specific Operational Tasks:** [OPERATIONS.md](./OPERATIONS.md)
 - **Troubleshooting Deep-Dive:** [TROUBLESHOOTING_SPEC_VIOLATIONS.md](./TROUBLESHOOTING_SPEC_VIOLATIONS.md)
 - **Integration Workflow:** [INTEG_INDEX.md](../integration/INTEG_INDEX.md)

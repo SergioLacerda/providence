@@ -73,8 +73,8 @@ The standalone analysis scripts have been replaced by this framework (hard cutov
 
 | Old invocation | New invocation |
 |---|---|
-| `python tools/analysis/analyze_sdd_runtime.py` | `uv run python -m tools.guardrails.cli --analyzer runtime` |
-| `python tools/analysis/analyze_sdd_telemetry.py` | `uv run python -m tools.guardrails.cli --analyzer telemetry` |
+| `python tools/analysis/analyze_providence_runtime.py` | `uv run python -m tools.guardrails.cli --analyzer runtime` |
+| `python tools/analysis/analyze_providence_telemetry.py` | `uv run python -m tools.guardrails.cli --analyzer telemetry` |
 
 Output file names and locations (`.analysis/pending/<analyzer-name>/{discovery,analysis,recommendations}.md`
 and `analysis.json`) are unchanged.

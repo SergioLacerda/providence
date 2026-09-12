@@ -6,13 +6,13 @@
 ## Context
 
 Three legacy path fallbacks existed in the codebase for backward compatibility with
-workspaces predating the `.sdd/` layout:
+workspaces predating the `.providence/` layout:
 
 | ID | Location | Legacy path | Canonical path |
 |----|----------|-------------|----------------|
-| L1 | `sdd_runtime/signatures.py` | `compiled/trusted-keys.json`, `compiled/audit/trusted-keys.json` | `.sdd/trust/trusted-keys.json` |
-| L2 | `sdd_core/governance/audit.py` | `generated/master/compiled/` | `.sdd/compiled/` |
-| L3 | `sdd_core/utils/loader.py` | `compiled/<filename>` | `compiled/audit/<filename>` |
+| L1 | `providence_runtime/signatures.py` | `compiled/trusted-keys.json`, `compiled/audit/trusted-keys.json` | `.providence/trust/trusted-keys.json` |
+| L2 | `providence_core/governance/audit.py` | `generated/master/compiled/` | `.providence/compiled/` |
+| L3 | `providence_core/utils/loader.py` | `compiled/<filename>` | `compiled/audit/<filename>` |
 
 These fallbacks were introduced to ease migration but have two failure modes:
 
@@ -28,7 +28,7 @@ Remove all three fallbacks. Misconfigured workspaces now fail loudly:
 - L1: `_resolve_keyring_path` only checks canonical + env var override; any workspace
   with only a legacy keyring path receives `(None, "none", "")`.
 - L2: `_audit_signatures` emits HIGH "No compiled governance artifacts found" immediately
-  when `.sdd/compiled/` is absent; `generated/master/compiled/` is no longer a fallback.
+  when `.providence/compiled/` is absent; `generated/master/compiled/` is no longer a fallback.
 - L3: `_resolve_metadata_path` always returns `compiled/audit/<filename>`; the caller
   handles `FileNotFoundError` if the file does not exist.
 

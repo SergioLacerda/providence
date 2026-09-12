@@ -3,9 +3,9 @@ requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
-name = "sdd-harness"
+name = "providence"
 dynamic = ["version"]
-description = "SDD Harness — Executable governance platform for AI agents"
+description = "Providence — Executable governance platform for AI agents"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
@@ -23,17 +23,17 @@ test = [
     "pytest-timeout>=2.4.0",
     "pytest-xdist>=3.8.0",
     "pytest-asyncio>=1.4.0",
-    "msgpack>=1.2.1",
+    "msgpack>=1.2.2",
     "PyYAML>=6.0.3",
-    "typer>=0.27.1",
+    "typer>=0.27.2",
     "rich>=15.0.0",
     "python-dotenv>=1.2.3",
-    "pydantic>=2.13.4",
-    "hypothesis>=6.165.10",
+    "pydantic>=2.13.5",
+    "hypothesis>=6.167.1",
     "httpx>=0.28.1",
 ]
 lint = [
-    "ruff>=0.16.4",
+    "ruff>=0.16.6",
 ]
 typing = [
     "mypy>=2.3.1",
@@ -45,16 +45,16 @@ dev = [
 ]
 examples-langgraph = [
     "langgraph>=1.2.11",
-    "langchain-core>=1.6.0",
+    "langchain-core>=1.6.1",
 ]
-examples-crewai = [
-    "crewai==1.15.17",
+examplescrewai = [
+    "crewai==1.15.18",
     "onnxruntime<1.25",
     "setuptools>=84.0.0",
 ]
 
 [project.urls]
-Repository = "https://github.com/SergioLacerda/sdd-harness"
+Repository = "https://github.com/SergioLacerda/providence"
 
 [tool.hatch.version]
 source = "vcs"
@@ -69,17 +69,17 @@ bypass-selection = true
 # Workspace root — not a publishable package, only orchestrates the workspace.
 managed = true
 package = false
-# crewai pins pydantic<2.13, which is incompatible with the pydantic>=2.13.4
+# crewai pins pydantic<2.13, which is incompatible with the pydantic>=2.13.5
 # required by `test`; the two extras/groups are never installed together, so
 # mark them conflicting to keep the universal lock resolvable.
 conflicts = [
     [
         { extra = "test" },
-        { extra = "examples-crewai" },
+        { extra = "examplescrewai" },
     ],
     [
         { group = "test" },
-        { extra = "examples-crewai" },
+        { extra = "examplescrewai" },
     ],
 ]
 constraint-dependencies = [
@@ -90,33 +90,33 @@ constraint-dependencies = [
 
 [tool.uv.workspace]
 members = [
-    "packages/core/sdd_core",
-    "packages/core/sdd_telemetry",
-    "packages/core/sdd_runtime",
-    "packages/features/sdd_integration",
-    "packages/features/sdd_adapters",
-    "packages/features/sdd_skills",
-    "packages/features/sdd_pages",
-    "packages/interfaces/sdd_wizard",
-    "packages/interfaces/sdd_cli",
+    "packages/core/providence_core",
+    "packages/core/providence_telemetry",
+    "packages/core/providence_runtime",
+    "packages/features/providence_integration",
+    "packages/features/providence_adapters",
+    "packages/features/providence_skills",
+    "packages/features/providence_pages",
+    "packages/interfaces/providence_wizard",
+    "packages/interfaces/providence_cli",
 ]
 
 [tool.uv.sources]
-sdd-core        = { workspace = true }
-sdd-telemetry   = { workspace = true }
-sdd-runtime     = { workspace = true }
-sdd-integration = { workspace = true }
-sdd-adapters    = { workspace = true }
-sdd-skills      = { workspace = true }
-sdd-pages       = { workspace = true }
-sdd-wizard      = { workspace = true }
-sdd-cli         = { workspace = true }
+providence-core        = { workspace = true }
+providence-telemetry   = { workspace = true }
+providence-runtime     = { workspace = true }
+providence-integration = { workspace = true }
+providence-adapters    = { workspace = true }
+providence-skills      = { workspace = true }
+providence-pages       = { workspace = true }
+providence-wizard      = { workspace = true }
+providence-cli         = { workspace = true }
 
 # Ranges are intentional — exact versions are pinned in uv.lock.
 # To update a tool: edit the range, run `uv lock`, commit both files.
 [dependency-groups]
 lint = [
-    "ruff>=0.16.4",
+    "ruff>=0.16.6",
     # black removed: ruff format is the canonical formatter (ruff 0.1+).
 ]
 test = [
@@ -125,12 +125,12 @@ test = [
     "pytest-timeout>=2.4.0",
     "pytest-xdist>=3.8.0",
     "pytest-asyncio>=1.4.0",
-    "msgpack>=1.2.1",
+    "msgpack>=1.2.2",
     "PyYAML>=6.0.3",
-    "typer>=0.27.1",
+    "typer>=0.27.2",
     "rich>=15.0.0",
     "python-dotenv>=1.2.3",
-    "pydantic>=2.13.4",
+    "pydantic>=2.13.5",
 ]
 typing = [
     "mypy>=2.3.1",
@@ -145,7 +145,7 @@ mutation = [
 docs = [
     "mkdocs>=1.6.1",
     "mkdocs-material>=9.7.7",
-    "pymdown-extensions>=11.0.1",  # CVE-2026-46338: path traversal via sibling prefix
+    "pymdown-extensions>=11.0.2",  # CVE-2026-46338: path traversal via sibling prefix
     "mkdocs-static-i18n>=1.3.1",
 ]
 dev = [
@@ -164,7 +164,7 @@ python_version = "3.10"
 platform = "linux"
 strict = true
 ignore_missing_imports = false
-exclude = ["^generated/", "^site/", "^tests/", "^packages/.*/tests/", "^packages/features/sdd_wizard/tests/conftest\\.py", "build/", "dist/", "^packages/core/sdd_core/src/sdd_core/tools/(generate-specializations|_generate_.*)\\.py$"]
+exclude = ["^generated/", "^site/", "^tests/", "^packages/.*/tests/", "^packages/features/providence_wizard/tests/conftest\\.py", "build/", "dist/", "^packages/core/providence_core/src/providence_core/tools/(generate-specializations|_generate_.*)\\.py$", "^conftest\\.py$", "^packages/conftest\\.py$"]
 cache_dir = "build/.mypy_cache"
 
 [[tool.mypy.overrides]]
@@ -224,7 +224,7 @@ extend-safe-fixes = ["PLC0414"]
 "tests/**" = ["D1", "T201"]
 "tools/**" = ["D1", "T201"]
 "examples/**" = ["D1", "T201"]
-"packages/interfaces/sdd_wizard/src/**" = ["T201"]
+"packages/interfaces/providence_wizard/src/**" = ["T201"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -234,14 +234,14 @@ max-complexity = 10
 
 [tool.ruff.lint.isort]
 known-first-party = [
-    "sdd_core",
-    "sdd_telemetry",
-    "sdd_integration",
-    "sdd_adapters",
-    "sdd_skills",
-    "sdd_pages",
-    "sdd_wizard",
-    "sdd_cli",
+    "providence_core",
+    "providence_telemetry",
+    "providence_integration",
+    "providence_adapters",
+    "providence_skills",
+    "providence_pages",
+    "providence_wizard",
+    "providence_cli",
 ]
 
 [tool.ruff.format]
@@ -299,15 +299,15 @@ markers = [
 
 pythonpath = [
     ".",
-    "packages/core/sdd_core/src",
-    "packages/core/sdd_runtime/src",
-    "packages/core/sdd_telemetry/src",
-    "packages/features/sdd_integration/src",
-    "packages/features/sdd_adapters/src",
-    "packages/features/sdd_skills/src",
-    "packages/features/sdd_pages/src",
-    "packages/interfaces/sdd_wizard/src",
-    "packages/interfaces/sdd_cli/src"
+    "packages/core/providence_core/src",
+    "packages/core/providence_runtime/src",
+    "packages/core/providence_telemetry/src",
+    "packages/features/providence_integration/src",
+    "packages/features/providence_adapters/src",
+    "packages/features/providence_skills/src",
+    "packages/features/providence_pages/src",
+    "packages/interfaces/providence_wizard/src",
+    "packages/interfaces/providence_cli/src"
 ]
 
 [tool.coverage.run]
@@ -342,7 +342,7 @@ exclude_lines = [
 # source_root is a sub-path of [tool.sdd.paths].spec_root ("docs/spec").
 # If spec_root changes, update source_root accordingly.
 source_root = "docs/spec/canonical/core/policies"
-compiled_output = ".sdd/compiled"
+compiled_output = ".providence/compiled"
 
 [tool.sdd.codegen]
 # generated_paths mirrors [tool.sdd.paths].generated_root for tool-exclusion contexts (ruff, mypy).
@@ -350,8 +350,8 @@ generated_paths = ["generated/", "build/"]
 immutable_generated = true
 
 [tool.sdd.runtime]
-context_root = ".sdd"
-cache_file = ".sdd/runtime/.sdd-cache.md"
+context_root = ".providence"
+cache_file = ".providence/runtime/.providence-cache.md"
 token_budget_ceiling = 100000
 context_compression_threshold = 70
 context_compression_target = 50

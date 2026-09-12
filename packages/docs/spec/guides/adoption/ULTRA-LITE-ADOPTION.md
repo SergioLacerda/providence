@@ -33,7 +33,7 @@ Absolute minimum viable version of SDD with:
 ```bash
 # 1. Create constitution file (1 min)
 
-# Option A: Quick inline version (fastest)cat > .sdd/constitution.md << 'EOF'
+# Option A: Quick inline version (fastest)cat > .providence/constitution.md << 'EOF'
 # Ultra-Lite Constitution- Clean Domain: Business logic free of framework
 - Async Everything: No blocking I/O
 - Explicit Rules: Document your choices
@@ -41,7 +41,7 @@ Absolute minimum viable version of SDD with:
 - Progressive Disclosure: Grow as needed
 EOF
 
-# Option B: Use template (more structured)# cp EXECUTION/spec/guides/adoption/templates/lite-constitution.yaml .sdd/constitution.yaml
+# Option B: Use template (more structured)# cp EXECUTION/spec/guides/adoption/templates/lite-constitution.yaml .providence/constitution.yaml
 # 2. Set three rules (1 min)echo "✅ Rule 1: All I/O operations are async"
 echo "✅ Rule 2: No framework code in domain layer"
 echo "✅ Rule 3: Every feature has a test"
@@ -137,7 +137,7 @@ Before committing, verify:
 
 ```
 my-project/
-├── .sdd/
+├── .providence/
 │   └── constitution.md          ← Your 5 principles
 │
 ├── src/
@@ -211,8 +211,8 @@ Grow to FULL when:
 
 **Ready to start?**
 
-1. Create `.sdd/constitution.md` (copy the 5 principles above)
-2. Create `.sdd/rules.md` (copy the 3 rules above)
+1. Create `.providence/constitution.md` (copy the 5 principles above)
+2. Create `.providence/rules.md` (copy the 3 rules above)
 3. Create `tests/` folder (start with 1 test file)
 4. Begin coding with async-first mindset
 5. Check DoD checklist before each commit

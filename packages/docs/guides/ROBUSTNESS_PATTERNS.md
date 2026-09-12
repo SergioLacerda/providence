@@ -4,7 +4,7 @@ This guide describes the runtime robustness mechanisms currently implemented for
 governed skills.
 
 It focuses on the execution behavior in
-`packages/core/sdd_runtime/src/sdd_runtime/_skill_executor.py`, not on broader
+`packages/core/providence_runtime/src/providence_runtime/_skill_executor.py`, not on broader
 platform reliability topics.
 
 ## Scope
@@ -112,7 +112,7 @@ YAML files.
 Implemented today:
 
 - `sdd-pipeline` reads `config.pipeline.decision_gates`
-- `sdd-correct` loads `.sdd/skills/sdd-correct/gate-rules.yaml`
+- `sdd-correct` loads `.providence/skills/sdd-correct/gate-rules.yaml`
 - correction gate rules use a structured `when` DSL with deterministic operators
 - invalid rule schemas fail closed before correction execution
 
@@ -139,8 +139,8 @@ from free-form stderr alone.
 
 ## References
 
-- `packages/core/sdd_runtime/src/sdd_runtime/_skill_executor.py`
-- `packages/core/sdd_runtime/tests/test_skill_executor.py`
+- `packages/core/providence_runtime/src/providence_runtime/_skill_executor.py`
+- `packages/core/providence_runtime/tests/test_skill_executor.py`
 - `docs/guides/PIPELINE_ORCHESTRATION.md`
 - `docs/guides/LEARNING_INTEGRATION.md`
 - `docs/spec/canonical/core/economy/efficiency-policy.md`

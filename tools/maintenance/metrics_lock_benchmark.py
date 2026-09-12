@@ -8,7 +8,7 @@ import threading
 import time
 from dataclasses import dataclass
 
-from sdd_runtime.metrics import TokenEconomyCollector
+from providence_runtime.metrics import TokenEconomyCollector
 
 
 @dataclass(frozen=True)

@@ -1,6 +1,6 @@
-# Architecture Decision Records — SDD Harness Runtime
+# Architecture Decision Records — Providence Runtime
 
-Local ADRs specific to the SDD Harness runtime layer. These are distinct from the framework-level ADR catalog under `docs/spec/decisions/`.
+Local ADRs specific to the Providence runtime layer. These are distinct from the framework-level ADR catalog under `docs/spec/decisions/`.
 
 ---
 
@@ -28,14 +28,14 @@ vs Go compiler comparison.
 
 - Governance specs (`docs/spec/canonical/`) are the source of truth
 - Compiled artifacts are immutable snapshots
-- Runtime execution engine (`sdd_runtime`) is a pure executor, not a normative authority
+- Runtime execution engine (`providence_runtime`) is a pure executor, not a normative authority
 - Prevents runtime from overriding specs
 
 **Links:**
 
 - [ADR-001-runtime-authority-boundary.md](ADR-001-runtime-authority-boundary.md)
 - Implements M003 (Context Awareness), M005 (Token Economy)
-- Enforced by `GovernanceOrchestrator` in `sdd_core`
+- Enforced by `GovernanceOrchestrator` in `providence_core`
 
 ---
 
@@ -61,7 +61,7 @@ vs Go compiler comparison.
 
 - [ADR-002-intelligence-provider-architecture.md](ADR-002-intelligence-provider-architecture.md)
 - Implements M005 (Token Economy) compression obligations
-- Implementation: `sdd_runtime` package, `intelligence_providers.py`
+- Implementation: `providence_runtime` package, `intelligence_providers.py`
 
 ---
 
@@ -128,7 +128,7 @@ vs Go compiler comparison.
 **Links:**
 
 - [ADR-006-cli-canonical-json-envelope.md](ADR-006-cli-canonical-json-envelope.md)
-- Implementation: `packages/interfaces/sdd_cli/src/sdd_cli/shared/contracts.py`
+- Implementation: `packages/interfaces/providence_cli/src/providence_cli/shared/contracts.py`
 
 ---
 
@@ -183,7 +183,7 @@ vs Go compiler comparison.
 
 ### ADR-010: structlog as the Logging Primitive (2026-05-21)
 
-**Decision:** `structlog` replaces raw `print()` across all 6 packages. A single `sdd_core/logging.py` module is the only place structlog is configured. ConsoleRenderer for dev/TTY, JSONRenderer for production/non-TTY.
+**Decision:** `structlog` replaces raw `print()` across all 6 packages. A single `providence_core/logging.py` module is the only place structlog is configured. ConsoleRenderer for dev/TTY, JSONRenderer for production/non-TTY.
 
 **Rationale:**
 
@@ -193,7 +193,7 @@ vs Go compiler comparison.
 **Links:**
 
 - [ADR-010-structlog-as-logging-primitive.md](ADR-010-structlog-as-logging-primitive.md)
-- Implementation: `packages/core/sdd_core/src/sdd_core/logging.py`
+- Implementation: `packages/core/providence_core/src/providence_core/logging.py`
 
 ---
 
@@ -212,20 +212,20 @@ vs Go compiler comparison.
 
 ---
 
-### ADR-012: AskRuntimeContext — Dependency-Injection Seam for `sdd ask` Testing (2026-06-10)
+### ADR-012: AskRuntimeContext — Dependency-Injection Seam for `providence ask` Testing (2026-06-10)
 
-**Decision:** Introduce an `AskRuntimeContext` object bundling the collaborators currently reached via `unittest.mock.patch("sdd_cli.commands._ask_backend.<symbol>")`, passed explicitly to `_ask_cmd_impl` and its orchestration helpers.
+**Decision:** Introduce an `AskRuntimeContext` object bundling the collaborators currently reached via `unittest.mock.patch("providence_cli.commands._ask_backend.<symbol>")`, passed explicitly to `_ask_cmd_impl` and its orchestration helpers.
 
 **Rationale:**
 
-- `_ask_backend.py` (1060 lines) is the only `sdd_cli` file still over the Wave 8 ≤300-line gate, blocked by ~121 `mock.patch` call sites across 9 test files
+- `_ask_backend.py` (1060 lines) is the only `providence_cli` file still over the Wave 8 ≤300-line gate, blocked by ~121 `mock.patch` call sites across 9 test files
 - "Extract + re-export" (the pattern used for every other Wave 8 file) fails here because the orchestration chain itself — not just the helpers — needs to move
 - A context object decouples patched collaborators from the physical module location of their call sites, unblocking incremental decomposition
 
 **Links:**
 
 - [ADR-012-ask-runtime-context-seam.md](ADR-012-ask-runtime-context-seam.md)
-- `packages/interfaces/sdd_cli/REFACTOR_NOTES.md` (Wave 1 / Wave 8 — `_ask_backend.py` blocker history)
+- `packages/interfaces/providence_cli/REFACTOR_NOTES.md` (Wave 1 / Wave 8 — `_ask_backend.py` blocker history)
 
 ---
 
@@ -271,7 +271,7 @@ supported model. Defer KMS provider integration to a separate scoped demand.
 **Links:**
 
 - [ADR-017-governance-signing-kms-deferred.md](ADR-017-governance-signing-kms-deferred.md)
-- Implementation reference: `packages/core/sdd_core/src/sdd_core/utils/compiler_runner.py`
+- Implementation reference: `packages/core/providence_core/src/providence_core/utils/compiler_runner.py`
 
 ---
 
@@ -314,11 +314,11 @@ check blocking for new violations going forward.
 - [ADR-019-guardrail-complexity-budget.md](ADR-019-guardrail-complexity-budget.md)
 - Related: ADR-020 (Progressive Enforcement Ladder)
 - Implementation reference: `tools/architecture/validate_class_size.py`,
-  `packages/interfaces/sdd_wizard/EXCEPTIONS.md` (grandfather-list pattern)
+  `packages/interfaces/providence_wizard/EXCEPTIONS.md` (grandfather-list pattern)
 
 ### ADR-022: Managed-Block Convention for Shared-Namespace Seed Files (2026-09-06, extended 2026-09-07)
 
-**Decision:** sdd-generated content inside cross-tool-convention files
+**Decision:** providence-generated content inside cross-tool-convention files
 lives inside a delimited `<!-- sdd:managed:begin/end -->` block. Generators
 read-merge-write instead of overwriting the whole file; `check_root_seed_drift`
 validates only `CLAUDE.md`/`GEMINI.md`/`AGENTS.md`'s block content — a file
@@ -343,7 +343,62 @@ section for what remains deliberately out of scope and why.
 
 - [ADR-022-managed-block-seed-convention.md](ADR-022-managed-block-seed-convention.md)
 - `.analysis/refined/20260906-root-seed-githook-necessity/`
-- Implementation: `packages/core/sdd_core/src/sdd_core/utils/managed_block.py`
+- Implementation: `packages/core/providence_core/src/providence_core/utils/managed_block.py`
+
+---
+
+### ADR-023: Providentian Naming and Identity Contract (2026-09-07)
+
+**Decision:** Adopt "Providentian Agent Governance" / `provident` / `/provident` as the
+current standard for every new CLI, skill, and slash-command surface. `sdd`, `providence ask`, and
+`/sdd-ask` continue only as a compatibility adapter under active deprecation, not a co-equal
+default. SDD stays the name of the specification/policy pack; kernel responsibilities stop
+being associated with `ask`.
+
+**Rationale:**
+
+- Both `ACHADOS_E_MELHORIAS_PROVIDENTIA.md` and `nova_arquitetura.txt.txt` diagnose `ask` as
+  having accumulated kernel responsibilities that don't semantically belong to a query
+  capability
+- `nova_arquitetura.txt.txt` §14 ("Fase 0") requires a naming ADR before any public rename
+- The landing-page migration mission already needed this vocabulary; renaming everything at
+  once (`ask_*` → `provident_*`) was explicitly rejected as a false simplification
+
+**Links:**
+
+- [ADR-023-providentian-naming-and-identity.md](ADR-023-providentian-naming-and-identity.md)
+- `docs/migration/2026-09-07-landing-page-providentia-migration.md`
+- `.analysis/refined/20260907-landing-page-providentia-migration/`
+
+---
+
+### ADR-024: Providence CI/CD Brand Alignment (2026-09-12)
+
+**Decision:** Rename public CI/CD display strings (workflow/job/step names,
+Docker OCI labels, entrypoint banner, pre-commit hook output) from `SDD`/
+`sdd-harness` to Providence now. Rename the internal CI gate id
+`repo-sdd-mutation-guard` to canonical `repo-providence-mutation-guard` with a
+compatibility alias for the old id. Leave `SDD_*` environment variables,
+`sdd-compile`, and the `sdd-validation.yml` workflow filename unchanged —
+compatibility-sensitive identifiers with real external dependents. Fixed two
+latent `sdd` CLI invocations in the Dockerfile (no `sdd` console script has
+existed since the Providence rename) as a side effect of the same edit.
+
+**Rationale:**
+
+- The Python/Go workspace has been Providence-branded since `pyproject.toml`
+  declared `name = "providence"`; CI/CD surfaces were the last visible holdout
+- Internal identifiers (the CI gate id) carry no external branch-protection
+  risk and can be renamed immediately with a one-line alias; env vars and the
+  release binary name (`sdd-compile`) do carry that risk and are deferred
+- This is a narrower rename than ADR-023's "Providentian" direction — ADR-023
+  itself keeps the CLI/packages/README on "Providence" pending a separate
+  decision, which this ADR does not revisit
+
+**Links:**
+
+- [ADR-024-providence-cicd-brand-alignment.md](ADR-024-providence-cicd-brand-alignment.md)
+- `.analysis/refined/20260912-providence-cicd-brand-refinement/`
 
 ---
 
@@ -376,5 +431,5 @@ When adding a new runtime ADR:
 ---
 
 **Last Updated:** 2026-05-24
-**Authority:** SDD Harness v0.1.0+
+**Authority:** Providence v0.1.0+
 **Scope:** Runtime implementation decisions only

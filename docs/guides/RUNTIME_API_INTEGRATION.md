@@ -7,13 +7,13 @@ This guide documents the practical runtime integration contract for external age
 SDD integrates as a governance layer in front of your orchestration runtime.
 It does not replace your framework scheduler, memory, or tool routing.
 
-Use SDD runtime API/CLI for:
+Use the Providence runtime API/CLI for:
 
 - workspace governance health (AHP + GAP)
 - governed context queries
 - telemetry and compliance event logging
 - drift detection before/after agent execution
-- capability-oriented execution via `sdd skills run`
+- capability-oriented execution via `providence skills run`
 
 ## Skill-First Invocation Model
 
@@ -30,7 +30,7 @@ Canonical flow:
 ### 1) Health Gate (pre-flight)
 
 ```bash
-sdd runtime status --verbose
+providence runtime status --verbose
 ```
 
 Expected behavior:
@@ -47,7 +47,7 @@ Purpose:
 ### 2) Governed Context Query (minimal)
 
 ```bash
-sdd ask "<query>"
+providence ask "<query>"
 ```
 
 Command contract:
@@ -59,7 +59,7 @@ Command contract:
 ### 3) Governed Context Query (full telemetry)
 
 ```bash
-sdd ask --full "<query>" \
+providence ask --full "<query>" \
   --tokens-input 150 \
   --tokens-output 60 \
   --log-format jsonl
@@ -81,7 +81,7 @@ Supported options:
 ### 4) Bootstrap/Activation Refresh
 
 ```bash
-sdd bootstrap run
+providence bootstrap run
 ```
 
 Use when:
@@ -96,7 +96,7 @@ Optional guard:
 ### 5) Capability Execution (skills-first)
 
 ```bash
-sdd skills run sdd-validate-governance
+providence skills run sdd-validate-governance
 ```
 
 Contract:
@@ -105,19 +105,19 @@ Contract:
 - emits skill runtime telemetry (`runtime.skill.run`) when telemetry sink is configured
 - keeps fallback command references for governed escalation
 - always includes `governance_footer` in JSON/text final output:
-  `SDD GOVERNANCE: drift=<status> | governance=<status> | profile=<profile>`
+  `PROVIDENCE GOVERNANCE: drift=<status> | governance=<status> | profile=<profile>`
 
 ## Response Footer Contract
 
 Governed outputs must end with a compact governance footer.
 
-- Canonical source: `sdd_runtime.format_governance_footer(...)`
+- Canonical source: `providence_runtime.format_governance_footer(...)`
 - Required format:
-  `SDD GOVERNANCE: drift=<status> | governance=<status> | profile=<profile>`
+  `PROVIDENCE GOVERNANCE: drift=<status> | governance=<status> | profile=<profile>`
 - Applies to:
-  - `sdd skills run`
-  - `sdd runtime status`
-  - governed ask flows (`sdd ask`, `sdd ask --full`)
+  - `providence skills run`
+  - `providence runtime status`
+  - governed ask flows (`providence ask`, `providence ask --full`)
 
 ## Integration Pattern by Framework
 
@@ -125,8 +125,8 @@ Governed outputs must end with a compact governance footer.
 
 Recommended insertion points:
 
-1. Pre-graph run hook: call `sdd runtime status --verbose`
-2. Retrieval/context node: call `sdd ask`/`sdd ask --full`
+1. Pre-graph run hook: call `providence runtime status --verbose`
+2. Retrieval/context node: call `providence ask`/`providence ask --full`
 3. Post-run hook: record final status and optionally re-check drift
 
 Minimal shell adapter:
@@ -145,7 +145,7 @@ def sdd_health_gate() -> None:
 
 
 def sdd_to_otel(event: dict) -> dict:
-    from sdd_telemetry import to_otel_attributes
+    from providence_telemetry import to_otel_attributes
 
     return to_otel_attributes(
         event,
@@ -159,14 +159,14 @@ def sdd_to_otel(event: dict) -> dict:
 Recommended insertion points:
 
 1. Before `Crew.kickoff()`: run health gate
-2. In agent tool wrapper: route policy/spec questions to `sdd ask --full`
-3. For intent-level actions, prefer `sdd skills run <skill>`
+2. In agent tool wrapper: route policy/spec questions to `providence ask --full`
+3. For intent-level actions, prefer `providence skills run <skill>`
 4. After task completion: persist/ship compliance log artifact
 
 OTel mapping adapter:
 
 ```python
-from sdd_telemetry import to_otel_attributes
+from providence_telemetry import to_otel_attributes
 
 
 def crew_emit_event(event: dict, trace_id: str, span_id: str) -> dict:
@@ -184,14 +184,14 @@ def crew_emit_event(event: dict, trace_id: str, span_id: str) -> dict:
 Recommended insertion points:
 
 1. Before starting chat loop: run health gate
-2. In custom tool/function bridge: map governance questions to `sdd ask` or `sdd ask --full`
-3. Use `sdd skills run` for capability-oriented tasks before low-level command fallback
+2. In custom tool/function bridge: map governance questions to `providence ask` or `providence ask --full`
+3. Use `providence skills run` for capability-oriented tasks before low-level command fallback
 4. In termination callback: run drift check and archive logs
 
 OTel mapping adapter:
 
 ```python
-from sdd_telemetry import to_otel_attributes
+from providence_telemetry import to_otel_attributes
 
 
 def autogen_event_attrs(event: dict) -> dict:
@@ -206,7 +206,7 @@ def autogen_event_attrs(event: dict) -> dict:
 
 ## Error Handling and Exit Codes
 
-Treat SDD commands as hard gates for runtime safety:
+Treat Providence commands as hard gates for runtime safety:
 
 - `runtime status` non-zero: stop orchestration loop
 - budget/compliance failure in `ask --full`: fallback to safe response path
@@ -228,16 +228,16 @@ For integration-grade observability, always prefer:
 
 Recommended export flow:
 
-1. Keep `.sdd/runtime/compliance-events.jsonl` as append-only local audit trail.
+1. Keep `.providence/runtime/compliance-events.jsonl` as append-only local audit trail.
 2. Forward copies to central SIEM/observability pipeline.
-3. Correlate SDD events with framework run/session IDs.
+3. Correlate Providence events with framework run/session IDs.
 
 ### Direct OTEL Attribute Mapping
 
-Use `sdd_telemetry.to_otel_attributes` to normalize runtime events before exporting:
+Use `providence_telemetry.to_otel_attributes` to normalize runtime events before exporting:
 
 ```python
-from sdd_telemetry import to_otel_attributes
+from providence_telemetry import to_otel_attributes
 
 event = {
     "type": "governance.context_load",
@@ -266,22 +266,22 @@ attrs = to_otel_attributes(
 
 ```bash
 # 1) Validate runtime governance state
-sdd runtime status --verbose
+providence runtime status --verbose
 
 # 2) Query governed context used by orchestration layer
-sdd ask --full "What constraints apply to this deployment action?" \
+providence ask --full "What constraints apply to this deployment action?" \
   --tokens-input 220 \
   --tokens-output 80 \
   --log-format jsonl
 
 # 3) Refresh bootstrap state if needed between sessions
-sdd bootstrap run
+providence bootstrap run
 ```
 
 ## Production Checklist
 
-- [ ] `sdd runtime status --verbose` executed before every run
-- [ ] Context queries routed through `sdd ask` or `sdd ask --full`
+- [ ] `providence runtime status --verbose` executed before every run
+- [ ] Context queries routed through `providence ask` or `providence ask --full`
 - [ ] Compliance logs persisted and exported
 - [ ] Bootstrap refresh policy defined (`session_guard_hours`)
 - [ ] Fail-closed behavior documented in the orchestration runtime

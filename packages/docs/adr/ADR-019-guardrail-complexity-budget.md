@@ -39,11 +39,11 @@ exist."**
 | CI workflow files | 13 | `.github/workflows/*.yml` count, confirmed in Strategist mission `20260807-critique-project-todo-gap-eval` | Measured |
 | Max synchronous gates per PR | TBD | Requires enumerating blocking jobs per workflow trigger | Needs measurement |
 | Pipeline P50/P95 wall-clock time | TBD | Requires CI run-history mining (GitHub Actions API) | Needs measurement |
-| Number of generated artifacts | TBD | Requires enumerating `.sdd/compiled/*`, release assets, docs build outputs | Needs measurement |
+| Number of generated artifacts | TBD | Requires enumerating `.providence/compiled/*`, release assets, docs build outputs | Needs measurement |
 | Number of canonical governance sources | TBD | `docs/spec/canonical/governance-sources.yaml` entry count — quick to derive, not run this pass | Needs measurement |
 | Product-code : enforcement-code ratio | TBD | Requires a `cloc`-style split of `packages/` vs. `tools/ci/` + `tools/architecture/` + `tools/guardrails/` | Needs measurement |
 | Supported modes/configurations | TBD | e.g. Strategist personas, signature modes, output profiles — not enumerated this pass | Needs measurement |
-| Handshake token/time cost | TBD | Referenced in the critique; `sdd ask` telemetry (`ask.runtime.handbook`, `ask.governance.snapshot` timings visible in this session's own hook output) is the likely source — not aggregated this pass | Needs measurement |
+| Handshake token/time cost | TBD | Referenced in the critique; `providence ask` telemetry (`ask.runtime.handbook`, `ask.governance.snapshot` timings visible in this session's own hook output) is the likely source — not aggregated this pass | Needs measurement |
 | Guardrail false-positive rate | TBD, but see Consequences | The module-size scanner's own `build/`-directory bug (this ADR's trigger case) is itself one concrete false-positive data point | Needs measurement (partial evidence) |
 
 Rows marked `Needs measurement` are not blocking on this ADR's acceptance — they
@@ -57,9 +57,9 @@ waiting for a perfect budget before deciding the one case in front of us.
 
 - Fix the `validate_class_size.py` module-level scan to exclude gitignored/build
   directories (root cause of 2 of the 6 currently-reported violations —
-  `packages/interfaces/sdd_cli/build/lib/...`).
+  `packages/interfaces/providence_cli/build/lib/...`).
 - Grandfather the 4 remaining real violations in a new exceptions list (same
-  pattern as `packages/interfaces/sdd_wizard/EXCEPTIONS.md`):
+  pattern as `packages/interfaces/providence_wizard/EXCEPTIONS.md`):
   `compiler_runner.py` (661), `governance_docs_sources.py` (540),
   `ask_context.py` (494), `pipeline_builder.py` (405).
 - Change `validate_class_size.py`'s exit code to also fail on any module-size
@@ -124,7 +124,7 @@ waiting for a perfect budget before deciding the one case in front of us.
 
 - `docs/adr/ADR-020-progressive-enforcement-ladder.md` (related — general
   warn/block/strict philosophy this ADR's module-size decision follows)
-- `packages/interfaces/sdd_wizard/EXCEPTIONS.md` (prior-art pattern reused for the
+- `packages/interfaces/providence_wizard/EXCEPTIONS.md` (prior-art pattern reused for the
   grandfather list)
 - `tools/architecture/validate_class_size.py` (implementation target for the scan
   fix and enforcement change — tracked as `implementation_handoff`, not executed by

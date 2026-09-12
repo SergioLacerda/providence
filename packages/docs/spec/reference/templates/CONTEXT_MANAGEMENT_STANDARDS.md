@@ -2,7 +2,7 @@
 
 > **Authority:** Framework-wide standardization for AI agent context operations
 > **Version:** 1.0 | **Status:** Production
-> **Applies to:** All `context/` and `.sdd/context-aware/` directories across projects
+> **Applies to:** All `context/` and `.providence/context-aware/` directories across projects
 
 ---
 
@@ -130,14 +130,14 @@ doc-context/
 
 ### TYPE B: Runtime Context
 
-**Examples:** `.sdd/context-aware/` (agent work tracking)
+**Examples:** `.providence/context-aware/` (agent work tracking)
 **Use 3-tier structure for:** TASK-PROGRESS, ANALYSIS, METRICS
 **Update cadence:** Frequent (per task/session)
 
 **Template:**
 
 ```
-.sdd/context-aware/
+.providence/context-aware/
 ├── README.md
 ├── QUICK_STATUS.md          ← Current sprint status
 ├── summaries/
@@ -223,7 +223,7 @@ Token budget: ~700 per file
 
 **Optional (context-specific):**
 
-- task-progress/, analysis/, runtime-state/ (for .sdd/context-aware/ only)
+- task-progress/, analysis/, runtime-state/ (for .providence/context-aware/ only)
 - Other topic-specific folders per project needs
 
 ---
@@ -267,7 +267,7 @@ Result: 66-87% token reduction vs single-file approach"
 ### For Runtime Context
 
 ```bash
-git add .sdd/context-aware/
+git add .providence/context-aware/
 git commit -m "refactor: standardize context-aware per framework standards
 
 Apply 3-tier structure:

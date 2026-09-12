@@ -1,5 +1,5 @@
 #!/bin/bash
-# Post-merge Hook — SDD Architecture Framework
+# Post-merge Hook — Providence Architecture Framework
 # Clears stale governance cache and warms it after a merge.
 
 set -euo pipefail
@@ -15,7 +15,7 @@ NC='\033[0m'
 echo -e "${YELLOW}[POST-MERGE] Refreshing governance cache...${NC}"
 
 # ── Clear stale agent state cache ───────────────────────────────────────────
-CACHE_FILE="$PROJECT_ROOT/.sdd/agent_state.json"
+CACHE_FILE="$PROJECT_ROOT/.providence/agent_state.json"
 if [ -f "$CACHE_FILE" ]; then
     rm -f "$CACHE_FILE" && echo -e "${GREEN}✓ Cache cleared${NC}" || {
         echo -e "${RED}✗ Failed to clear cache: $CACHE_FILE${NC}"
@@ -47,7 +47,7 @@ if "$PYTHON_BIN" "$HEALTH_SCRIPT" >/dev/null 2>&1; then
     echo -e "${GREEN}✓ Cache warmed${NC}"
 else
     echo -e "${RED}✗ Health check failed after merge — governance may need recompile${NC}"
-    echo -e "  Run: sdd governance compile && sdd runtime status"
+    echo -e "  Run: providence governance compile && providence runtime status"
     exit 1
 fi
 

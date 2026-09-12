@@ -33,8 +33,8 @@ def test_single_import_style_is_allowed(tmp_path: Path) -> None:
     repo = _mk_repo(tmp_path)
     _write_module(
         repo,
-        "packages/core/sdd_core/src/sdd_core/a.py",
-        "import sdd_core.b\n",
+        "packages/core/providence_core/src/providence_core/a.py",
+        "import providence_core.b\n",
     )
 
     violations, parse_errors = validate_import_style.validate(repo)
@@ -48,16 +48,18 @@ def test_mixed_import_style_for_same_module_is_reported(tmp_path: Path) -> None:
     repo = _mk_repo(tmp_path)
     _write_module(
         repo,
-        "packages/core/sdd_core/src/sdd_core/a.py",
-        "import sdd_core.b\nfrom sdd_core.b import Thing\n",
+        "packages/core/providence_core/src/providence_core/a.py",
+        "import providence_core.b\nfrom providence_core.b import Thing\n",
     )
 
     violations, parse_errors = validate_import_style.validate(repo)
 
     assert parse_errors == []
     assert len(violations) == 1
-    assert violations[0].path == "packages/core/sdd_core/src/sdd_core/a.py"
-    assert violations[0].module == "sdd_core.b"
+    assert (
+        violations[0].path == "packages/core/providence_core/src/providence_core/a.py"
+    )
+    assert violations[0].module == "providence_core.b"
     assert violations[0].import_lines == (1,)
     assert violations[0].import_from_lines == (2,)
 
@@ -67,12 +69,12 @@ def test_relative_import_from_is_resolved_for_package_modules(tmp_path: Path) ->
     repo = _mk_repo(tmp_path)
     _write_module(
         repo,
-        "packages/core/sdd_core/src/sdd_core/sub/a.py",
-        "import sdd_core.sub.b\nfrom .b import Thing\n",
+        "packages/core/providence_core/src/providence_core/sub/a.py",
+        "import providence_core.sub.b\nfrom .b import Thing\n",
     )
 
     violations, parse_errors = validate_import_style.validate(repo)
 
     assert parse_errors == []
     assert len(violations) == 1
-    assert violations[0].module == "sdd_core.sub.b"
+    assert violations[0].module == "providence_core.sub.b"

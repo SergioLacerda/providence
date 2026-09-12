@@ -1,0 +1,122 @@
+---
+// Interactive virtue selector: click a node on the circle, panel updates at right.
+// Content lives in lib/i18n.ts (VIRTUES_CONTENT) — bilingual, reactive to the
+// shared lang bridge (lib/lang-bridge.ts) instead of the handoff's single
+// hardcoded VIRTUES array.
+import { VIRTUES_CONTENT } from '../lib/i18n';
+
+const virtues = VIRTUES_CONTENT.pt;
+---
+<section id="virtudes">
+  <div class="wrap">
+    <div class="virtues-layout">
+      <svg class="cycle-diagram" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 250,80 A 180,180 0 0 1 420,250" fill="none" stroke="var(--line-strong)" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <path d="M 420,250 A 180,180 0 0 1 250,420" fill="none" stroke="var(--line-strong)" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <path d="M 250,420 A 180,180 0 0 1 80,250" fill="none" stroke="var(--line-strong)" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <path d="M 80,250 A 180,180 0 0 1 250,80" fill="none" stroke="var(--bronze-dim)" stroke-width="1.2" stroke-dasharray="3 4" marker-end="url(#arrow-b)"/>
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--line-strong)"/></marker>
+          <marker id="arrow-b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--bronze-dim)"/></marker>
+        </defs>
+        {virtues.map((v, i) => {
+          const positions = [
+            { cx: 250, cy: 80, ly: 76, vy: 92 },
+            { cx: 420, cy: 250, ly: 246, vy: 262 },
+            { cx: 250, cy: 420, ly: 416, vy: 432 },
+            { cx: 80, cy: 250, ly: 246, vy: 262 },
+          ];
+          const p = positions[i];
+          return (
+            <g class:list={['vnode', { active: i === 0 }]} data-virtue={v.id}>
+              <circle class="vcircle" cx={p.cx} cy={p.cy} r="34" fill="var(--panel)" stroke={i === 0 ? 'var(--bronze)' : 'var(--line-strong)'} stroke-width="1.5"/>
+              <text class="node-label" x={p.cx} y={p.ly} text-anchor="middle" font-size={v.id === 'fidelitas' ? '12' : '13'}>{v.name}</text>
+              <text class="verb" x={p.cx} y={p.vy} text-anchor="middle">{v.verb.split('—').pop()?.trim()}</text>
+            </g>
+          );
+        })}
+      </svg>
+
+      <div class="virtue-panel">
+        <p class="vname" id="vp-name">{virtues[0].name}</p>
+        <p class="vverb" id="vp-verb">{virtues[0].verb}</p>
+        <p id="vp-desc">{virtues[0].desc}</p>
+        <p class="vq" id="vp-quote">{virtues[0].quote}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .virtues-layout{display:flex; justify-content:flex-start; align-items:center; gap:72px; flex-wrap:wrap;}
+  .cycle-diagram{width:100%; max-width:420px; display:block; flex:0 0 420px;}
+  /* Two-tier responsive: shrink but stay side-by-side first (docs/migration/
+     2026-09-07-nav-layout-tweaks.md); only stack as a last resort on very
+     narrow phones, below 420px. */
+  @media (max-width:900px){
+    .virtues-layout{gap:40px;}
+    .cycle-diagram{flex:0 0 240px; max-width:240px;}
+    .virtue-panel{flex:1 1 220px;}
+  }
+  @media (max-width:420px){
+    .cycle-diagram{flex-basis:100%; max-width:300px; margin:0 auto;}
+  }
+  .cycle-diagram text{font-family:var(--sans); fill:var(--ink);}
+  .cycle-diagram .node-label{font-family:var(--serif); font-weight:600; font-style:italic;}
+  .cycle-diagram .verb{font-size:10px; fill:var(--ink-faint); letter-spacing:0.03em;}
+  .vnode{cursor:pointer;}
+  .vnode circle{transition:stroke .2s;}
+  .vnode .node-label{transition:fill .2s;}
+  .vnode:hover circle{stroke:var(--bronze-dim);}
+  .vnode.active circle{stroke:var(--bronze);}
+  .vnode.active .node-label{fill:var(--bronze);}
+  .virtue-panel{max-width:400px; flex:1 1 320px;}
+  .virtue-panel .vname{font-family:var(--serif); font-style:italic; font-weight:600; color:var(--bronze); font-size:26px; margin:0 0 4px;}
+  .virtue-panel .vverb{font-family:var(--mono); font-size:11px; color:var(--ink-faint); text-transform:lowercase; margin:0 0 20px;}
+  .virtue-panel p{font-size:14.5px; color:var(--ink-dim); margin:0 0 18px; line-height:1.65;}
+  .virtue-panel .vq{font-size:13px; font-style:italic; color:var(--ink); margin:0; border-left:2px solid var(--bronze-dim); padding-left:14px;}
+</style>
+
+<script>
+  import { VIRTUES_CONTENT, type Virtue } from '../lib/i18n';
+  import { getLang, onLangChange } from '../lib/lang-bridge';
+
+  const nodes = Array.from(document.querySelectorAll<SVGGElement>('.vnode'));
+  const nameEl = document.getElementById('vp-name')!;
+  const verbEl = document.getElementById('vp-verb')!;
+  const descEl = document.getElementById('vp-desc')!;
+  const quoteEl = document.getElementById('vp-quote')!;
+
+  let activeId = 'providentia';
+  let current: Record<string, Virtue> = Object.fromEntries(VIRTUES_CONTENT[getLang()].map((v) => [v.id, v]));
+
+  function render() {
+    const d = current[activeId];
+    if (!d) return;
+    nameEl.textContent = d.name;
+    verbEl.textContent = d.verb;
+    descEl.textContent = d.desc;
+    quoteEl.textContent = d.quote;
+    nodes.forEach((n) => {
+      const label = n.querySelector('.node-label');
+      const verb = n.querySelector('.verb');
+      const vid = n.getAttribute('data-virtue');
+      const isActive = vid === activeId;
+      n.classList.toggle('active', isActive);
+      if (vid && current[vid]) {
+        if (label) label.textContent = current[vid].name;
+        if (verb) verb.textContent = current[vid].verb.split('—').pop()?.trim() ?? '';
+      }
+    });
+  }
+
+  nodes.forEach((n) => n.addEventListener('click', () => {
+    activeId = n.getAttribute('data-virtue') ?? activeId;
+    render();
+  }));
+
+  onLangChange((lang) => {
+    current = Object.fromEntries(VIRTUES_CONTENT[lang].map((v) => [v.id, v]));
+    render();
+  });
+</script>

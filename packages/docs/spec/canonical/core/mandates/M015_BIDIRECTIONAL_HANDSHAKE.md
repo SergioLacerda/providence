@@ -39,7 +39,7 @@ begins.
 
 - The handshake is non-negotiable and must precede any tool/skill call.
 - Agents operating without a valid handshake are considered unauthorized.
-- Handshake responses are stored as auditable contracts under `.sdd/runtime/`.
+- Handshake responses are stored as auditable contracts under `.providence/runtime/`.
 - Violation requires human escalation — not auto-correction.
 
 ---
@@ -50,7 +50,7 @@ begins.
 - Confirm the agent responded with its `agent_id`, declared `skills_to_use`, and acknowledged active mandate IDs
 - Verify the `SkillEngine` blocks any skill not explicitly authorized in the handshake response
 - If `SDD_SIGNATURE_MODE=strict`, confirm execution is blocked when handshake is missing or artifact signatures are unacknowledged
-- Confirm the handshake response is stored under `.sdd/runtime/` as an auditable contract
+- Confirm the handshake response is stored under `.providence/runtime/` as an auditable contract
 
 ---
 

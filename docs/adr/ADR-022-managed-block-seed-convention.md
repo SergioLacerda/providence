@@ -38,12 +38,12 @@ such distinction existed in the file format.
 
 ## Decision
 
-Introduce a **managed-block convention**: sdd-generated content in a
+Introduce a **managed-block convention**: providence-generated content in a
 shared-namespace file lives inside a single delimited region,
 
 ```
 <!-- sdd:managed:begin -->
-...sdd-generated content, including the fingerprint header...
+...providence-generated content, including the fingerprint header...
 <!-- sdd:managed:end -->
 ```
 
@@ -66,11 +66,11 @@ shared-namespace file lives inside a single delimited region,
   markers are treated the same as absent markers (`unmanaged`), since a
   validator reading an arbitrary, possibly hand-edited file must not crash.
 
-Implementation: `sdd_core.utils.managed_block`
+Implementation: `providence_core.utils.managed_block`
 (`merge_managed_block`, `extract_managed_block`,
-`MalformedManagedBlockError`) — placed in `sdd_core` because both
-`sdd_wizard` (writers) and `sdd_cli` (validator) already declare
-`sdd-core>=1.0` as a dependency, so no new cross-package dependency was
+`MalformedManagedBlockError`) — placed in `providence_core` because both
+`providence_wizard` (writers) and `providence_cli` (validator) already declare
+`providence-core>=1.0` as a dependency, so no new cross-package dependency was
 introduced.
 
 ## What This Replaces
@@ -95,18 +95,18 @@ Implemented for five of the wizard's ~17 generator keys, in two waves:
   `.gemini/antigravity/antigravity-instructions.md`
   (`generate_antigravity_seed`) — same risk profile (a single, well-known
   instructions filename an external tool reads directly), same fix, no
-  changes to `sdd_core.utils.managed_block` itself.
+  changes to `providence_core.utils.managed_block` itself.
 
 Deliberately **not** covered, with reasons recorded rather than left
 ambiguous:
 
-- 10 other generator keys write exclusively under `.sdd/` (sdd's own
+- 10 other generator keys write exclusively under `.providence/` (sdd's own
   directory) — no plausible collision risk, so no managed block is needed.
 - `sovereign-factory` copies an open-ended set of distinctly-named
   `SKILL.md` files into a shared directory — a directory-level
   reconciliation problem, not a single-file managed-block problem; not
   implemented speculatively.
-- `prompt-commands` delegates to `sdd_cli.generators.agent_seeds`, a
+- `prompt-commands` delegates to `providence_cli.generators.agent_seeds`, a
   separate subsystem (writing `.cursor/rules/*.mdc`, `.gemini/commands.md`,
   `.github/prompts/*.prompt.md`, `.codex/commands.md`) that neither wave
   read. This is plausibly the highest real-world collision risk of
@@ -115,7 +115,7 @@ ambiguous:
   `.analysis/todo/riposte-captures.md` (mission_ref
   `20260907-managed-block-generalization`) rather than guessed at.
 
-`sdd_core.utils.managed_block`'s implementation is format-agnostic by
+`providence_core.utils.managed_block`'s implementation is format-agnostic by
 design specifically so it can be reused for other generator keys without
 redesign, as Wave 2 already did for Wave 1's implementation verbatim.
 
@@ -132,7 +132,7 @@ redesign, as Wave 2 already did for Wave 1's implementation verbatim.
   migration — no forced one-time migration step was added.
 - Future generator additions that write into a shared or ambiguous-ownership
   path should default to this convention rather than a whole-file
-  overwrite, using `sdd_core.utils.managed_block` directly.
+  overwrite, using `providence_core.utils.managed_block` directly.
 
 ## Alternatives Considered
 
@@ -142,8 +142,8 @@ redesign, as Wave 2 already did for Wave 1's implementation verbatim.
   reading the file locally regardless of whether it ever reaches a shared
   remote. Removing the check would silence a legitimate signal instead of
   correcting its scope.
-- **Extend `sdd governance generate` to write root `CLAUDE.md`** — considered
-  and deferred; crosses the `sdd_cli`/`sdd_wizard` package boundary and
+- **Extend `providence governance generate` to write root `CLAUDE.md`** — considered
+  and deferred; crosses the `providence_cli`/`providence_wizard` package boundary and
   wasn't evaluated for side effects on the wizard's own idempotency
   assumptions. Out of scope for this change.
 
@@ -151,7 +151,7 @@ redesign, as Wave 2 already did for Wave 1's implementation verbatim.
 
 - `.analysis/refined/20260906-root-seed-githook-necessity/` — analysis,
   proposal, design, tasks for this decision
-- Implementation: `packages/core/sdd_core/src/sdd_core/utils/managed_block.py`
-- Consumers: `packages/interfaces/sdd_wizard/src/sdd_wizard/orchestration/seedlings/ai_seeds.py`,
+- Implementation: `packages/core/providence_core/src/providence_core/utils/managed_block.py`
+- Consumers: `packages/interfaces/providence_wizard/src/providence_wizard/orchestration/seedlings/ai_seeds.py`,
   `.../seedling_renderer.py`,
-  `packages/interfaces/sdd_cli/src/sdd_cli/services/governance_config_reader.py`
+  `packages/interfaces/providence_cli/src/providence_cli/services/governance_config_reader.py`

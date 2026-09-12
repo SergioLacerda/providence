@@ -21,15 +21,15 @@ Never load documentation "to be safe" — load strategically based on task class
 ```bash
 # Find governance config
 cat .spec.config  # Workspace configuration
-cat .sdd/profile  # Workspace identity
+cat .providence/profile  # Workspace identity
 ```
 
 ### 2. Load Runtime Indices (ALWAYS)
 
 ```
-.sdd/source/search-keywords.md          # 5–10KB
-.sdd/source/spec-canonical-index.md     # 10–15KB
-.sdd/source/spec-guides-index.md        # 5–10KB
+.providence/source/search-keywords.md          # 5–10KB
+.providence/source/spec-canonical-index.md     # 10–15KB
+.providence/source/spec-guides-index.md        # 5–10KB
 ```
 
 **Reason:** Indices are small and enable targeted lookups
@@ -116,7 +116,7 @@ Never exceed 70% documentation utilization.
 | Skipping indices and searching manually | Always start with indices first |
 | Loading all guides when 1 guide applies | Use search-keywords to find the right guide |
 | Using 60% budget on context, 10% on reasoning | Reserve 30%+ for thinking; use compression |
-| Memorizing from previous session instead of loading current state | Always load .sdd-cache.md at start |
+| Memorizing from previous session instead of loading current state | Always load .providence-cache.md at start |
 
 ---
 
@@ -154,13 +154,13 @@ Load context via:
 
 ```bash
 # Automated
-sdd ask "how do I implement a custom port?"  # Queries compiled governance
+providence ask "how do I implement a custom port?"  # Queries compiled governance
 
 # Manual
 # 1. Read search-keywords.md for topic
 # 2. Follow pointer to relevant doc
 # 3. Load that doc into context
-# 4. Check budget via: sdd runtime status
+# 4. Check budget via: providence runtime status
 ```
 
 ---

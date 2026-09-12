@@ -1,0 +1,68 @@
+---
+// Side dot-nav + prev/next arrows, scroll-spy via IntersectionObserver.
+// Direct port from the design handoff (ADR-023).
+export interface Props {
+  sectionIds: string[];
+}
+const { sectionIds } = Astro.props;
+---
+<nav class="scrollnav" aria-label="section navigation">
+  {sectionIds.map((id) => <button data-target={id} aria-label={id}></button>)}
+</nav>
+
+<div class="scrollarrows">
+  <button id="scroll-prev" aria-label="Previous section"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+  <button id="scroll-next" aria-label="Next section"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+</div>
+
+<style>
+  .scrollnav{position:fixed; right:26px; top:50%; transform:translateY(-50%); z-index:50; display:flex; flex-direction:column; gap:16px; align-items:center;}
+  .scrollnav button{width:9px; height:9px; padding:0; border-radius:50%; border:1px solid var(--line-strong); background:transparent; cursor:pointer; transition:all .18s; flex:none;}
+  .scrollnav button:hover{border-color:var(--bronze);}
+  .scrollnav button.active{width:10px; height:10px; background:var(--bronze); border-color:var(--bronze); box-shadow:0 0 0 3px rgba(193,154,94,.18);}
+  @media (max-width:760px){ .scrollnav{display:none;} }
+  .scrollarrows{position:fixed; right:24px; bottom:32px; z-index:50; display:flex; flex-direction:column; gap:12px;}
+  .scrollarrows button{
+    width:52px; height:52px; border-radius:50%; border:1.5px solid var(--bronze-dim); background:var(--panel);
+    color:var(--ink); box-shadow:0 4px 16px rgba(0,0,0,.35);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .18s;
+  }
+  .scrollarrows button:hover:not(:disabled){border-color:var(--bronze); color:var(--bronze-bright); transform:scale(1.06);}
+  .scrollarrows button:disabled{opacity:.28; cursor:default;}
+  @media (max-width:760px){ .scrollarrows{display:none;} }
+</style>
+
+<script is:inline define:vars={{ sectionIds }}>
+  const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+  const dots = Array.from(document.querySelectorAll('.scrollnav button'));
+  const nextBtn = document.getElementById('scroll-next');
+  const prevBtn = document.getElementById('scroll-prev');
+  let current = 0;
+
+  function setActive(i) {
+    current = i;
+    dots.forEach((d, di) => d.classList.toggle('active', di === i));
+    prevBtn.disabled = i === 0;
+    nextBtn.disabled = i === sections.length - 1;
+  }
+  function goTo(i) {
+    if (i < 0 || i >= sections.length) return;
+    window.scrollTo({ top: sections[i].offsetTop, behavior: 'smooth' });
+  }
+  dots.forEach((d, i) => d.addEventListener('click', () => goTo(i)));
+  nextBtn.addEventListener('click', () => goTo(current + 1));
+  prevBtn.addEventListener('click', () => goTo(current - 1));
+
+  if (sections.length > 0) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const idx = sections.indexOf(entry.target);
+          if (idx !== -1) setActive(idx);
+        }
+      });
+    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+    sections.forEach(s => observer.observe(s));
+    setActive(0);
+  }
+</script>

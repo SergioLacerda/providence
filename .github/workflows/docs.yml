@@ -11,15 +11,15 @@ on:
       - 'tools/docs/check_links.py'
       - 'tools/docs/check_runtime_path_schema.py'
       - '.markdownlint-cli2.jsonc'
-      - 'packages/interfaces/sdd_cli/src/sdd_cli/commands/docs.py'
+      - 'packages/interfaces/providence_cli/src/providence_cli/commands/docs.py'
       - '.github/workflows/docs.yml'
-      - '.sdd/metadata.json'
-      - '.sdd/source/mandates/mandates.md'
-      - '.sdd/source/guidelines.dsl'
-      - 'packages/interfaces/sdd_wizard/src/sdd_wizard/orchestration/wizard/selector_compiler.py'
-      - 'packages/interfaces/sdd_wizard/src/sdd_wizard/orchestration/wizard/selector_compiler_cli.py'
-      - 'packages/interfaces/sdd_wizard/src/sdd_wizard/templates/selector/**'
-      - 'packages/features/sdd_pages/**'
+      - '.providence/metadata.json'
+      - '.providence/source/mandates/mandates.md'
+      - '.providence/source/guidelines.dsl'
+      - 'packages/interfaces/providence_wizard/src/providence_wizard/orchestration/wizard/selector_compiler.py'
+      - 'packages/interfaces/providence_wizard/src/providence_wizard/orchestration/wizard/selector_compiler_cli.py'
+      - 'packages/interfaces/providence_wizard/src/providence_wizard/templates/selector/**'
+      - 'packages/features/providence_pages/**'
       - 'apps/landing/**'
   pull_request:
     branches: [main, develop]
@@ -31,15 +31,15 @@ on:
       - 'tools/docs/check_links.py'
       - 'tools/docs/check_runtime_path_schema.py'
       - '.markdownlint-cli2.jsonc'
-      - 'packages/interfaces/sdd_cli/src/sdd_cli/commands/docs.py'
+      - 'packages/interfaces/providence_cli/src/providence_cli/commands/docs.py'
       - '.github/workflows/docs.yml'
-      - '.sdd/metadata.json'
-      - '.sdd/source/mandates/mandates.md'
-      - '.sdd/source/guidelines.dsl'
-      - 'packages/interfaces/sdd_wizard/src/sdd_wizard/orchestration/wizard/selector_compiler.py'
-      - 'packages/interfaces/sdd_wizard/src/sdd_wizard/orchestration/wizard/selector_compiler_cli.py'
-      - 'packages/interfaces/sdd_wizard/src/sdd_wizard/templates/selector/**'
-      - 'packages/features/sdd_pages/**'
+      - '.providence/metadata.json'
+      - '.providence/source/mandates/mandates.md'
+      - '.providence/source/guidelines.dsl'
+      - 'packages/interfaces/providence_wizard/src/providence_wizard/orchestration/wizard/selector_compiler.py'
+      - 'packages/interfaces/providence_wizard/src/providence_wizard/orchestration/wizard/selector_compiler_cli.py'
+      - 'packages/interfaces/providence_wizard/src/providence_wizard/templates/selector/**'
+      - 'packages/features/providence_pages/**'
       - 'apps/landing/**'
   workflow_dispatch:
 
@@ -89,13 +89,13 @@ jobs:
         run: uv run python tools/ci/check_no_sdd_ci_commands.py
 
       - name: Verify CLI module
-        run: uv run python -m sdd_cli --help > /dev/null
+        run: uv run python -m providence_cli --help > /dev/null
 
       - name: Validate MkDocs mapped paths
         run: uv run python tools/verify_mkdocs_paths.py
 
       - name: Validate active docs anchors
-        run: uv run python -m sdd_cli lint spec --validate-all-anchors --strict-anchor-style
+        run: uv run python -m providence_cli lint spec --validate-all-anchors --strict-anchor-style
 
       - name: Validate PATH IA-first runtime schema
         run: uv run python tools/docs/check_runtime_path_schema.py
@@ -143,7 +143,7 @@ jobs:
         run: |
           uv run python -c "
           from pathlib import Path
-          from sdd_pages.selector import DocumentIndexer
+          from providence_pages.selector import DocumentIndexer
           indexer = DocumentIndexer()
           entries = indexer.index(Path('docs'))
           indexer.to_json(entries, Path('build/site/selector/docs.index.json'))
@@ -154,7 +154,7 @@ jobs:
         run: |
           uv run python -c "
           from pathlib import Path
-          from sdd_pages.validator import IndexValidator
+          from providence_pages.validator import IndexValidator
           result = IndexValidator().validate(Path('build/site/selector/docs.index.json'), source_dir=Path('docs'))
           for w in result.warnings: print('WARNING:', w)
           if not result.valid:
@@ -167,7 +167,7 @@ jobs:
         run: |
           uv run python -c "
           from pathlib import Path
-          from sdd_pages.compression import CompressionEngine
+          from providence_pages.compression import CompressionEngine
           engine = CompressionEngine()
           site_dir = Path('build/site')
           results = []
@@ -226,7 +226,7 @@ jobs:
           uv run python -c "
           import shutil
           from importlib import resources
-          src = resources.files('sdd_pages').joinpath('templates').joinpath('_headers')
+          src = resources.files('providence_pages').joinpath('templates').joinpath('_headers')
           shutil.copy(str(src), 'build/site/_headers')
           print('_headers written to build/site/_headers')
           "

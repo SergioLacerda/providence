@@ -1,7 +1,7 @@
 # Plugin Entry Reference
 
 **Status:** Active
-**Schema:** `.sdd/plugins/plugin-entry.schema.yaml`
+**Schema:** `.providence/plugins/plugin-entry.schema.yaml`
 **Mandate:** M019 (Governance Federation)
 
 ---
@@ -90,7 +90,7 @@
 
 - **Default:** `when_relevant`
 
-- **Description:** When the plugin consults SDD governance sources (mandates, guidelines, ADRs).
+- **Description:** When the plugin consults Providence governance sources (mandates, guidelines, ADRs).
 
 ### `output_schema`
 
@@ -98,7 +98,7 @@
 
 - **Description:** Path to the artifact output schema, if the plugin produces structured output.
 
-- **Example:** `.sdd/contracts/analysis-result.schema.yaml`
+- **Example:** `.providence/contracts/analysis-result.schema.yaml`
 
 ### `registered_at`
 
@@ -144,7 +144,7 @@
 
 ## What Does NOT Go Here
 
-- Internal SDD skills (`.sdd/skills/`) — governed via `governance_adherence:`in`skill.yaml`
+- Internal Providence skills (`.providence/skills/`) — governed via `governance_adherence:`in`skill.yaml`
 
 - Plugin-instance documentation (requirements-strategist, openspec, etc.) — created when the plugin is implemented
 

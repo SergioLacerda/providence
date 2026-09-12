@@ -1,4 +1,4 @@
-"""Contract tests for the canonical sdd_cli command envelope schema."""
+"""Contract tests for the canonical providence_cli command envelope schema."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from typing import Any
 
 import pytest
 
-from sdd_cli.shared.contracts import build_error_result, build_ok_result
+from providence_cli.shared.contracts import build_error_result, build_ok_result
 
 pytestmark = pytest.mark.contract
 

@@ -1,4 +1,4 @@
-"""Unit tests for `sdd runtime status` command.
+"""Unit tests for `providence runtime status` command.
 
 Tests call the status() callback directly to bypass Typer's CliRunner,
 patching AgentHandshakeProtocol.validate() and find_workspace_root.
@@ -12,7 +12,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 import typer
 
-from sdd_cli.commands.runtime import status
+from providence_cli.commands.runtime import status
 
 pytestmark = pytest.mark.unit
 
@@ -26,21 +26,26 @@ def _make_ahp_patch(state: str) -> MagicMock:
 
 
 class TestRuntimeStatusCommand:
-    """sdd runtime status exits with correct codes per AHP state."""
+    """providence runtime status exits with correct codes per AHP state."""
 
     def test_healthy_exits_0(self, tmp_path: Path) -> None:
         ahp_instance = _make_ahp_patch("HEALTHY")
         with (
             patch(
-                "sdd_core.utils.environment.find_workspace_root", return_value=tmp_path
+                "providence_core.utils.environment.find_workspace_root",
+                return_value=tmp_path,
             ),
             patch(
-                "sdd_core.governance.handshake.AgentHandshakeProtocol",
+                "providence_core.governance.handshake.AgentHandshakeProtocol",
                 return_value=ahp_instance,
             ),
-            patch("sdd_cli.commands.runtime._emit_runtime_status", return_value={}),
-            patch("sdd_cli.commands.runtime._show_ask_confidence", return_value=""),
-            patch("sdd_runtime.format_governance_footer", return_value=""),
+            patch(
+                "providence_cli.commands.runtime._emit_runtime_status", return_value={}
+            ),
+            patch(
+                "providence_cli.commands.runtime._show_ask_confidence", return_value=""
+            ),
+            patch("providence_runtime.format_governance_footer", return_value=""),
         ):
             # HEALTHY → should not raise typer.Exit (exits 0 implicitly)
             status(ctx=MagicMock(), verbose=False, force=False, update_cache=False)
@@ -49,15 +54,20 @@ class TestRuntimeStatusCommand:
         ahp_instance = _make_ahp_patch("PARTIAL")
         with (
             patch(
-                "sdd_core.utils.environment.find_workspace_root", return_value=tmp_path
+                "providence_core.utils.environment.find_workspace_root",
+                return_value=tmp_path,
             ),
             patch(
-                "sdd_core.governance.handshake.AgentHandshakeProtocol",
+                "providence_core.governance.handshake.AgentHandshakeProtocol",
                 return_value=ahp_instance,
             ),
-            patch("sdd_cli.commands.runtime._emit_runtime_status", return_value={}),
-            patch("sdd_cli.commands.runtime._show_ask_confidence", return_value=""),
-            patch("sdd_runtime.format_governance_footer", return_value=""),
+            patch(
+                "providence_cli.commands.runtime._emit_runtime_status", return_value={}
+            ),
+            patch(
+                "providence_cli.commands.runtime._show_ask_confidence", return_value=""
+            ),
+            patch("providence_runtime.format_governance_footer", return_value=""),
         ):
             status(ctx=MagicMock(), verbose=False, force=False, update_cache=False)
 
@@ -66,15 +76,20 @@ class TestRuntimeStatusCommand:
         with (
             pytest.raises(typer.Exit) as exc_info,
             patch(
-                "sdd_core.utils.environment.find_workspace_root", return_value=tmp_path
+                "providence_core.utils.environment.find_workspace_root",
+                return_value=tmp_path,
             ),
             patch(
-                "sdd_core.governance.handshake.AgentHandshakeProtocol",
+                "providence_core.governance.handshake.AgentHandshakeProtocol",
                 return_value=ahp_instance,
             ),
-            patch("sdd_cli.commands.runtime._emit_runtime_status", return_value={}),
-            patch("sdd_cli.commands.runtime._show_ask_confidence", return_value=""),
-            patch("sdd_runtime.format_governance_footer", return_value=""),
+            patch(
+                "providence_cli.commands.runtime._emit_runtime_status", return_value={}
+            ),
+            patch(
+                "providence_cli.commands.runtime._show_ask_confidence", return_value=""
+            ),
+            patch("providence_runtime.format_governance_footer", return_value=""),
         ):
             status(ctx=MagicMock(), verbose=False, force=False, update_cache=False)
         assert exc_info.value.exit_code == 1
@@ -84,15 +99,20 @@ class TestRuntimeStatusCommand:
         with (
             pytest.raises(typer.Exit) as exc_info,
             patch(
-                "sdd_core.utils.environment.find_workspace_root", return_value=tmp_path
+                "providence_core.utils.environment.find_workspace_root",
+                return_value=tmp_path,
             ),
             patch(
-                "sdd_core.governance.handshake.AgentHandshakeProtocol",
+                "providence_core.governance.handshake.AgentHandshakeProtocol",
                 return_value=ahp_instance,
             ),
-            patch("sdd_cli.commands.runtime._emit_runtime_status", return_value={}),
-            patch("sdd_cli.commands.runtime._show_ask_confidence", return_value=""),
-            patch("sdd_runtime.format_governance_footer", return_value=""),
+            patch(
+                "providence_cli.commands.runtime._emit_runtime_status", return_value={}
+            ),
+            patch(
+                "providence_cli.commands.runtime._show_ask_confidence", return_value=""
+            ),
+            patch("providence_runtime.format_governance_footer", return_value=""),
         ):
             status(ctx=MagicMock(), verbose=False, force=False, update_cache=False)
         assert exc_info.value.exit_code == 2
@@ -102,16 +122,20 @@ class TestRuntimeStatusCommand:
         with (
             pytest.raises(typer.Exit) as exc_info,
             patch(
-                "sdd_cli.commands.runtime.resolve_workspace_root",
+                "providence_cli.commands.runtime.resolve_workspace_root",
                 return_value=Path("/tmp/nonexistent"),
             ),
             patch(
-                "sdd_core.governance.handshake.AgentHandshakeProtocol",
+                "providence_core.governance.handshake.AgentHandshakeProtocol",
                 return_value=ahp_instance,
             ),
-            patch("sdd_cli.commands.runtime._emit_runtime_status", return_value={}),
-            patch("sdd_cli.commands.runtime._show_ask_confidence", return_value=""),
-            patch("sdd_runtime.format_governance_footer", return_value=""),
+            patch(
+                "providence_cli.commands.runtime._emit_runtime_status", return_value={}
+            ),
+            patch(
+                "providence_cli.commands.runtime._show_ask_confidence", return_value=""
+            ),
+            patch("providence_runtime.format_governance_footer", return_value=""),
         ):
             status(ctx=MagicMock(), verbose=False, force=False, update_cache=False)
         assert exc_info.value.exit_code == 3
@@ -121,17 +145,17 @@ class TestShowAskConfidence:
     """Tests for the internal _show_ask_confidence helper."""
 
     def test_no_state_file_returns_silently(self, tmp_path: Path) -> None:
-        from sdd_cli.commands.runtime import _show_ask_confidence
+        from providence_cli.commands.runtime import _show_ask_confidence
 
-        # No .sdd/runtime/governance-state.json → should not raise
+        # No .providence/runtime/governance-state.json → should not raise
         _show_ask_confidence(tmp_path)
 
     def test_state_file_without_last_ask_returns_silently(self, tmp_path: Path) -> None:
         import json
 
-        from sdd_cli.commands.runtime import _show_ask_confidence
+        from providence_cli.commands.runtime import _show_ask_confidence
 
-        runtime_dir = tmp_path / ".sdd" / "runtime"
+        runtime_dir = tmp_path / ".providence" / "runtime"
         runtime_dir.mkdir(parents=True)
         (runtime_dir / "governance-state.json").write_text(
             json.dumps({"state": "HEALTHY"}), encoding="utf-8"
@@ -141,9 +165,9 @@ class TestShowAskConfidence:
     def test_state_file_with_last_ask_echoes_fields(self, tmp_path: Path) -> None:
         import json
 
-        from sdd_cli.commands.runtime import _show_ask_confidence
+        from providence_cli.commands.runtime import _show_ask_confidence
 
-        runtime_dir = tmp_path / ".sdd" / "runtime"
+        runtime_dir = tmp_path / ".providence" / "runtime"
         runtime_dir.mkdir(parents=True)
         last_ask = {
             "ts": "2025-01-01T00:00:00",
@@ -167,9 +191,9 @@ class TestShowAskConfidence:
     def test_state_file_with_trace_id_shows_truncated(self, tmp_path: Path) -> None:
         import json
 
-        from sdd_cli.commands.runtime import _show_ask_confidence
+        from providence_cli.commands.runtime import _show_ask_confidence
 
-        runtime_dir = tmp_path / ".sdd" / "runtime"
+        runtime_dir = tmp_path / ".providence" / "runtime"
         runtime_dir.mkdir(parents=True)
         last_ask = {
             "ts": "2025-01-01T00:00:00",
@@ -192,9 +216,9 @@ class TestShowAskConfidence:
         assert "abc123de" in combined  # first 8 chars
 
     def test_malformed_json_does_not_raise(self, tmp_path: Path) -> None:
-        from sdd_cli.commands.runtime import _show_ask_confidence
+        from providence_cli.commands.runtime import _show_ask_confidence
 
-        runtime_dir = tmp_path / ".sdd" / "runtime"
+        runtime_dir = tmp_path / ".providence" / "runtime"
         runtime_dir.mkdir(parents=True)
         (runtime_dir / "governance-state.json").write_text(
             "not-valid-json", encoding="utf-8"
@@ -212,7 +236,7 @@ class TestDoUpdateCache:
     ) -> Path:
         import json
 
-        gov_dir = tmp_path / ".sdd" / "compiled"
+        gov_dir = tmp_path / ".providence" / "compiled"
         gov_dir.mkdir(parents=True)
         item: dict = {
             "id": "M003",
@@ -238,10 +262,12 @@ class TestDoUpdateCache:
     def test_happy_path_prints_quiz_and_touches_cache(
         self, tmp_path: Path, capsys: pytest.CaptureFixture
     ) -> None:
-        from sdd_cli.commands.runtime import _do_update_cache
+        from providence_cli.commands.runtime import _do_update_cache
 
-        self._write_gov_json(tmp_path, ["Read .sdd-cache.md", "Confirm mandate list"])
-        cache_file = tmp_path / ".sdd" / "runtime" / ".sdd-cache.md"
+        self._write_gov_json(
+            tmp_path, ["Read .providence-cache.md", "Confirm mandate list"]
+        )
+        cache_file = tmp_path / ".providence" / "runtime" / ".providence-cache.md"
         cache_file.parent.mkdir(parents=True, exist_ok=True)
         cache_file.write_text("old", encoding="utf-8")
         old_mtime = cache_file.stat().st_mtime
@@ -254,15 +280,15 @@ class TestDoUpdateCache:
 
         out = capsys.readouterr().out
         assert "M003" in out
-        assert "Read .sdd-cache.md" in out
+        assert "Read .providence-cache.md" in out
         assert "Confirm mandate list" in out
         assert cache_file.stat().st_mtime > old_mtime
 
     def test_creates_cache_file_when_absent(self, tmp_path: Path) -> None:
-        from sdd_cli.commands.runtime import _do_update_cache
+        from providence_cli.commands.runtime import _do_update_cache
 
         self._write_gov_json(tmp_path, ["step one"])
-        cache_file = tmp_path / ".sdd" / "runtime" / ".sdd-cache.md"
+        cache_file = tmp_path / ".providence" / "runtime" / ".providence-cache.md"
         assert not cache_file.exists()
 
         _do_update_cache(tmp_path)
@@ -270,14 +296,14 @@ class TestDoUpdateCache:
         assert cache_file.exists()
 
     def test_missing_compiled_file_exits_1(self, tmp_path: Path) -> None:
-        from sdd_cli.commands.runtime import _do_update_cache
+        from providence_cli.commands.runtime import _do_update_cache
 
         with pytest.raises(typer.Exit) as exc_info:
             _do_update_cache(tmp_path)
         assert exc_info.value.exit_code == 1
 
     def test_missing_enforcement_steps_exits_1(self, tmp_path: Path) -> None:
-        from sdd_cli.commands.runtime import _do_update_cache
+        from providence_cli.commands.runtime import _do_update_cache
 
         self._write_gov_json(tmp_path, None)
         with pytest.raises(typer.Exit) as exc_info:
@@ -293,9 +319,9 @@ class TestMainExitHandling:
 
         import typer
 
-        from sdd_cli.main import main
+        from providence_cli.main import main
 
-        with patch("sdd_cli.main.app") as mock_app:
+        with patch("providence_cli.main.app") as mock_app:
             mock_app.side_effect = typer.Exit(3)
             result = main()
         assert result == 3
@@ -310,22 +336,28 @@ class TestRuntimeStatusVerboseDiagnostics:
 
         with (
             patch(
-                "sdd_core.utils.environment.find_workspace_root", return_value=tmp_path
+                "providence_core.utils.environment.find_workspace_root",
+                return_value=tmp_path,
             ),
             patch(
-                "sdd_cli.commands.runtime.enforce_path_policy", return_value=tmp_path
+                "providence_cli.commands.runtime.enforce_path_policy",
+                return_value=tmp_path,
             ),
             patch(
-                "sdd_core.governance.handshake.AgentHandshakeProtocol",
+                "providence_core.governance.handshake.AgentHandshakeProtocol",
                 return_value=ahp_instance,
             ),
-            patch("sdd_cli.commands.runtime._emit_runtime_status", return_value={}),
-            patch("sdd_cli.commands.runtime._show_ask_confidence", return_value=""),
             patch(
-                "sdd_cli.commands.runtime._check_cache_staleness",
+                "providence_cli.commands.runtime._emit_runtime_status", return_value={}
+            ),
+            patch(
+                "providence_cli.commands.runtime._show_ask_confidence", return_value=""
+            ),
+            patch(
+                "providence_cli.commands.runtime._check_cache_staleness",
                 return_value={"stale": False},
             ),
-            patch("sdd_runtime.format_governance_footer", return_value=""),
+            patch("providence_runtime.format_governance_footer", return_value=""),
         ):
             ctx = MagicMock()
             ctx.obj = {}
@@ -345,22 +377,28 @@ class TestRuntimeStatusVerboseDiagnostics:
 
         with (
             patch(
-                "sdd_core.utils.environment.find_workspace_root", return_value=tmp_path
+                "providence_core.utils.environment.find_workspace_root",
+                return_value=tmp_path,
             ),
             patch(
-                "sdd_cli.commands.runtime.enforce_path_policy", return_value=tmp_path
+                "providence_cli.commands.runtime.enforce_path_policy",
+                return_value=tmp_path,
             ),
             patch(
-                "sdd_core.governance.handshake.AgentHandshakeProtocol",
+                "providence_core.governance.handshake.AgentHandshakeProtocol",
                 return_value=ahp_instance,
             ),
-            patch("sdd_cli.commands.runtime._emit_runtime_status", return_value={}),
-            patch("sdd_cli.commands.runtime._show_ask_confidence", return_value=""),
             patch(
-                "sdd_cli.commands.runtime._check_cache_staleness",
+                "providence_cli.commands.runtime._emit_runtime_status", return_value={}
+            ),
+            patch(
+                "providence_cli.commands.runtime._show_ask_confidence", return_value=""
+            ),
+            patch(
+                "providence_cli.commands.runtime._check_cache_staleness",
                 return_value={"stale": False},
             ),
-            patch("sdd_runtime.format_governance_footer", return_value=""),
+            patch("providence_runtime.format_governance_footer", return_value=""),
         ):
             ctx = MagicMock()
             ctx.obj = {}
@@ -380,9 +418,9 @@ class TestHandshakeCacheNotConnected:
         import json
         from datetime import datetime, timedelta
 
-        from sdd_core.governance.handshake_cache import HandshakeCache
+        from providence_core.governance.handshake_cache import HandshakeCache
 
-        cache_dir = tmp_path / ".sdd" / "runtime"
+        cache_dir = tmp_path / ".providence" / "runtime"
         cache_dir.mkdir(parents=True)
         cache_file = cache_dir / "governance-state.json"
         cache_file.write_text(
@@ -410,9 +448,9 @@ class TestHandshakeCacheNotConnected:
     def test_save_cache_skips_not_connected(self, tmp_path: Path) -> None:
         from datetime import timedelta
 
-        from sdd_core.governance.handshake_cache import HandshakeCache
+        from providence_core.governance.handshake_cache import HandshakeCache
 
-        cache_dir = tmp_path / ".sdd" / "runtime"
+        cache_dir = tmp_path / ".providence" / "runtime"
         cache_dir.mkdir(parents=True)
         cache_file = cache_dir / "governance-state.json"
         cache = HandshakeCache(
@@ -423,7 +461,7 @@ class TestHandshakeCacheNotConnected:
 
 
 class TestHandshakeAutoHeal:
-    """Stale NOT_CONNECTED cache is discarded when .sdd/ now exists."""
+    """Stale NOT_CONNECTED cache is discarded when .providence/ now exists."""
 
     def test_auto_heal_triggers_revalidation_when_sdd_exists(
         self, tmp_path: Path
@@ -432,10 +470,10 @@ class TestHandshakeAutoHeal:
         from datetime import datetime
         from unittest.mock import patch
 
-        from sdd_core.governance.handshake import AgentHandshakeProtocol
+        from providence_core.governance.handshake import AgentHandshakeProtocol
 
-        # Create .sdd/ so Layer 1 would pass
-        (tmp_path / ".sdd").mkdir()
+        # Create .providence/ so Layer 1 would pass
+        (tmp_path / ".providence").mkdir()
 
         ahp = AgentHandshakeProtocol(project_root=tmp_path)
 
@@ -494,15 +532,15 @@ class TestRuntimeStatusPathPolicy:
     """PathPolicyViolation must produce a clean error message, not a raw traceback."""
 
     def test_path_policy_violation_exits_2(self, tmp_path: Path) -> None:
-        from sdd_cli.utils.sdd_authority import PathPolicyViolation
+        from providence_cli.utils.providence_authority import PathPolicyViolation
 
         with (
             patch(
-                "sdd_core.utils.environment.find_workspace_root",
+                "providence_core.utils.environment.find_workspace_root",
                 return_value=tmp_path,
             ),
             patch(
-                "sdd_cli.commands.runtime.enforce_path_policy",
+                "providence_cli.commands.runtime.enforce_path_policy",
                 side_effect=PathPolicyViolation(
                     requested_path=tmp_path,
                     reason="outside permitted paths",

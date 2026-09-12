@@ -6,7 +6,7 @@
 
 ## 🎯 Purpose
 
-The indices layer provides template indices that projects copy and customize during PHASE 0 setup. Projects maintain their own copies in `.sdd/context-aware/` for fast, project-specific lookups.
+The indices layer provides template indices that projects copy and customize during PHASE 0 setup. Projects maintain their own copies in `.providence/context-aware/` for fast, project-specific lookups.
 
 ---
 
@@ -17,7 +17,7 @@ The indices layer provides template indices that projects copy and customize dur
 **File:** `search-keywords.md`
 **Purpose:** Keyword-to-document mapping for on-demand discovery
 **Use When:** You know WHAT you're looking for, but not WHERE
-**Copy To:** `.sdd/context-aware/search-keywords.md` (project-local)
+**Copy To:** `.providence/context-aware/search-keywords.md` (project-local)
 
 **Contents:**
 
@@ -37,7 +37,7 @@ The indices layer provides template indices that projects copy and customize dur
 **File:** `spec-canonical-index.md`
 **Purpose:** Complete reference to immutable authority layer
 **Use When:** Need to understand rules, decisions, and specifications
-**Copy To:** `.sdd/context-aware/spec-canonical-index.md` (project-local)
+**Copy To:** `.providence/context-aware/spec-canonical-index.md` (project-local)
 
 **Contents:**
 
@@ -56,7 +56,7 @@ The indices layer provides template indices that projects copy and customize dur
 **File:** `spec-guides-index.md`
 **Purpose:** Complete reference to operational guides
 **Use When:** Need step-by-step help for specific scenarios
-**Copy To:** `.sdd/context-aware/spec-guides-index.md` (project-local)
+**Copy To:** `.providence/context-aware/spec-guides-index.md` (project-local)
 
 **Contents:**
 
@@ -78,7 +78,7 @@ The indices layer provides template indices that projects copy and customize dur
 - ✅ Updated quarterly (when framework changes)
 - ✅ Canonical reference
 
-**Project Tier (.sdd/context-aware/ in each project):**
+**Project Tier (.providence/context-aware/ in each project):**
 
 - ✅ Project-specific copies
 - ✅ Can diverge from framework
@@ -89,7 +89,7 @@ The indices layer provides template indices that projects copy and customize dur
 
 ```
 1. Framework provides templates → docs/indices/
-2. During setup, templates copied → .sdd/context-aware/
+2. During setup, templates copied → .providence/context-aware/
 3. Projects customize as needed
 4. Each project maintains own indices
 ```
@@ -102,24 +102,24 @@ The indices layer provides template indices that projects copy and customize dur
 
 ```bash
 # Copy indices templates to project-local
-cp docs/indices/search-keywords.md .sdd/context-aware/
-cp docs/indices/spec-canonical-index.md .sdd/context-aware/
-cp docs/indices/spec-guides-index.md .sdd/context-aware/
+cp docs/indices/search-keywords.md .providence/context-aware/
+cp docs/indices/spec-canonical-index.md .providence/context-aware/
+cp docs/indices/spec-guides-index.md .providence/context-aware/
 
 # Customize for your project (optional)
-vi .sdd/context-aware/search-keywords.md
+vi .providence/context-aware/search-keywords.md
 ```
 
 ### For Existing Projects
 
 ```bash
 # Verify you have project copies
-ls -la .sdd/context-aware/search-keywords.md
-ls -la .sdd/context-aware/spec-canonical-index.md
-ls -la .sdd/context-aware/spec-guides-index.md
+ls -la .providence/context-aware/search-keywords.md
+ls -la .providence/context-aware/spec-canonical-index.md
+ls -la .providence/context-aware/spec-guides-index.md
 
 # If missing, copy from framework
-cp docs/indices/* .sdd/context-aware/
+cp docs/indices/* .providence/context-aware/
 ```
 
 ---
@@ -167,17 +167,17 @@ cp docs/indices/* .sdd/context-aware/
 - **docs/runtime/protocols/AGENT_ENTRYPOINT.md** — Agent entry point and bootstrap protocol
 - **docs/spec/canonical/** — Canonical governance and specifications
 - **docs/guides/** — Operational guides and onboarding
-- **.sdd/context-aware/** — Project-local copies of these indices
+- **.providence/context-aware/** — Project-local copies of these indices
 
 ---
 
 ## 📝 Notes
 
 - These indices are TEMPLATES, not project-local instances
-- Each project customizes its own `.sdd/context-aware/` copies
+- Each project customizes its own `.providence/context-aware/` copies
 - Framework tier updated quarterly; projects can diverge
 - For framework-level questions: use these files
-- For project-specific questions: use `.sdd/context-aware/` copies
+- For project-specific questions: use `.providence/context-aware/` copies
 
 ---
 

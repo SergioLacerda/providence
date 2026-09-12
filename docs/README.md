@@ -1,4 +1,4 @@
-# SDD Harness Documentation
+# Providence Documentation
 
 This page is the routing surface for the published docs site. It points readers
 to the shortest path by intent and leaves canonical technical detail in the

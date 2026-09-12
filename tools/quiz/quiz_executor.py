@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SDD Architecture Quiz Executor — interactive multiple-choice quiz."""
+"""Providence Architecture Quiz Executor — interactive multiple-choice quiz."""
 
 import json
 import sys
@@ -107,7 +107,9 @@ class QuizExecutor:
 def main() -> int:
     import argparse
 
-    parser = argparse.ArgumentParser(description="SDD Architecture Foundation Quiz")
+    parser = argparse.ArgumentParser(
+        description="Providence Architecture Foundation Quiz"
+    )
     parser.add_argument("--file", type=Path, help="Path to quiz JSON file (optional)")
     parser.add_argument(
         "--silent",

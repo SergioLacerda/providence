@@ -30,10 +30,12 @@ def test_no_cycle_detected(tmp_path: Path) -> None:
     repo = _mk_repo(tmp_path)
     _write_module(
         repo,
-        "packages/core/sdd_core/src/sdd_core/a.py",
-        "import sdd_core.b\n",
+        "packages/core/providence_core/src/providence_core/a.py",
+        "import providence_core.b\n",
     )
-    _write_module(repo, "packages/core/sdd_core/src/sdd_core/b.py", "x = 1\n")
+    _write_module(
+        repo, "packages/core/providence_core/src/providence_core/b.py", "x = 1\n"
+    )
 
     graph, _ = validate_cycles._build_graph(repo)
     sccs = validate_cycles._tarjan_scc(graph)
@@ -46,19 +48,19 @@ def test_simple_cycle_detected(tmp_path: Path) -> None:
     repo = _mk_repo(tmp_path)
     _write_module(
         repo,
-        "packages/core/sdd_core/src/sdd_core/a.py",
-        "import sdd_core.b\n",
+        "packages/core/providence_core/src/providence_core/a.py",
+        "import providence_core.b\n",
     )
     _write_module(
         repo,
-        "packages/core/sdd_core/src/sdd_core/b.py",
-        "import sdd_core.a\n",
+        "packages/core/providence_core/src/providence_core/b.py",
+        "import providence_core.a\n",
     )
 
     graph, _ = validate_cycles._build_graph(repo)
     sccs = validate_cycles._tarjan_scc(graph)
     cycles = [c for c in sccs if len(c) > 1]
-    assert any(set(c) == {"sdd_core.a", "sdd_core.b"} for c in cycles)
+    assert any(set(c) == {"providence_core.a", "providence_core.b"} for c in cycles)
 
 
 def test_package_reimport_cycle_detected(tmp_path: Path) -> None:
@@ -69,19 +71,19 @@ def test_package_reimport_cycle_detected(tmp_path: Path) -> None:
     repo = _mk_repo(tmp_path)
     _write_module(
         repo,
-        "packages/core/sdd_core/src/sdd_core/a.py",
-        "import sdd_core.b\n",
+        "packages/core/providence_core/src/providence_core/a.py",
+        "import providence_core.b\n",
     )
     _write_module(
         repo,
-        "packages/core/sdd_core/src/sdd_core/b.py",
-        "from sdd_core import a\n",
+        "packages/core/providence_core/src/providence_core/b.py",
+        "from providence_core import a\n",
     )
 
     graph, _ = validate_cycles._build_graph(repo)
     sccs = validate_cycles._tarjan_scc(graph)
     cycles = [c for c in sccs if len(c) > 1]
-    assert any(set(c) == {"sdd_core.a", "sdd_core.b"} for c in cycles)
+    assert any(set(c) == {"providence_core.a", "providence_core.b"} for c in cycles)
 
 
 def test_external_imports_are_ignored(tmp_path: Path) -> None:
@@ -89,8 +91,8 @@ def test_external_imports_are_ignored(tmp_path: Path) -> None:
     repo = _mk_repo(tmp_path)
     _write_module(
         repo,
-        "packages/core/sdd_core/src/sdd_core/a.py",
+        "packages/core/providence_core/src/providence_core/a.py",
         "import json\nfrom pathlib import Path\n",
     )
     graph, _ = validate_cycles._build_graph(repo)
-    assert graph.get("sdd_core.a") == set()
+    assert graph.get("providence_core.a") == set()

@@ -39,11 +39,11 @@ exist."**
 | CI workflow files | 13 | `.github/workflows/*.yml` count, confirmed in Strategist mission `20260807-critique-project-todo-gap-eval` | Measured | Sergio Lacerda | 2026-11-24 |
 | Number of canonical governance sources | 46 | `grep -c "^  - id:" docs/spec/canonical/governance-sources.yaml`, re-measured 2026-08-24 (16 mandates + 23 guidelines + 7 handbook/docs/mirror entries) | Measured | Sergio Lacerda | 2026-11-24 |
 | Product-code : enforcement-code ratio | 10.42:1 | `wc -l` over `packages/**/*.py` (excl. `tests/`, `build/`) = 60,057 lines vs. `tools/{ci,architecture,guardrails}/**/*.py` = 5,762 lines, measured 2026-08-24 | Measured | Sergio Lacerda | 2026-11-24 |
-| Number of generated artifacts | 22 | 8 in `.sdd/compiled/*` + 9 required release assets (`tools/release/validate_release_assets.py`'s `REQUIRED_ASSETS`: 5 compiler binaries + 3 CLI binaries + `SHA256SUMS`) + 4 additional release artifacts (`sdd_cli` wheel, SBOM, Sigstore signature bundle, SLSA provenance attestation, per `release.yml`) + 1 docs site (mkdocs static build). Measured 2026-08-24 | Measured | Sergio Lacerda | 2026-11-24 |
-| Supported modes/configurations | 3 Strategist personas (`debug`, `epic`, `pragmatic`) + 3 signature modes (`off`/`warn`/`strict`) + output profiles (`.strategist/output-profiles/`) | `ls .strategist/personas/`, `grep signature_mode packages/core/sdd_core/src/`, `ls .strategist/output-profiles/`, measured 2026-08-24 — kept as an enumerated list, not a single count, since "modes" spans unrelated dimensions with no single meaningful sum | Measured | Sergio Lacerda | 2026-11-24 |
+| Number of generated artifacts | 22 | 8 in `.providence/compiled/*` + 9 required release assets (`tools/release/validate_release_assets.py`'s `REQUIRED_ASSETS`: 5 compiler binaries + 3 CLI binaries + `SHA256SUMS`) + 4 additional release artifacts (`providence_cli` wheel, SBOM, Sigstore signature bundle, SLSA provenance attestation, per `release.yml`) + 1 docs site (mkdocs static build). Measured 2026-08-24 | Measured | Sergio Lacerda | 2026-11-24 |
+| Supported modes/configurations | 3 Strategist personas (`debug`, `epic`, `pragmatic`) + 3 signature modes (`off`/`warn`/`strict`) + output profiles (`.strategist/output-profiles/`) | `ls .strategist/personas/`, `grep signature_mode packages/core/providence_core/src/`, `ls .strategist/output-profiles/`, measured 2026-08-24 — kept as an enumerated list, not a single count, since "modes" spans unrelated dimensions with no single meaningful sum | Measured | Sergio Lacerda | 2026-11-24 |
 | Max synchronous gates per PR | TBD | Requires enumerating blocking jobs per workflow trigger | Needs measurement | Sergio Lacerda | 2026-11-24 |
 | Pipeline P50/P95 wall-clock time | TBD | Requires CI run-history mining (GitHub Actions API) | Needs measurement | Sergio Lacerda | 2026-11-24 |
-| Handshake token/time cost | TBD | Referenced in the critique; `sdd ask` telemetry (`ask.runtime.handbook`, `ask.governance.snapshot` timings visible in this session's own hook output) is the likely source — not aggregated this pass | Needs measurement | Sergio Lacerda | 2026-11-24 |
+| Handshake token/time cost | TBD | Referenced in the critique; `providence ask` telemetry (`ask.runtime.handbook`, `ask.governance.snapshot` timings visible in this session's own hook output) is the likely source — not aggregated this pass | Needs measurement | Sergio Lacerda | 2026-11-24 |
 | Guardrail false-positive rate | TBD, but see Consequences | The module-size scanner's own `build/`-directory bug (this ADR's trigger case) is itself one concrete false-positive data point. Needs the false-positive/override telemetry described in doc 06 (no emitter exists yet — see `.analysis/pending/20260824-tp4-complexity-budget-remainder-analysis.md`) before a real rate can be computed | Needs measurement (partial evidence) | Sergio Lacerda | 2026-11-24 |
 
 Rows marked `Needs measurement` are not blocking on this ADR's acceptance — they
@@ -81,9 +81,9 @@ decisions are made.
 
 - Fix the `validate_class_size.py` module-level scan to exclude gitignored/build
   directories (root cause of 2 of the 6 currently-reported violations —
-  `packages/interfaces/sdd_cli/build/lib/...`).
+  `packages/interfaces/providence_cli/build/lib/...`).
 - Grandfather the 4 remaining real violations in a new exceptions list (same
-  pattern as `packages/interfaces/sdd_wizard/EXCEPTIONS.md`):
+  pattern as `packages/interfaces/providence_wizard/EXCEPTIONS.md`):
   `compiler_runner.py` (661), `governance_docs_sources.py` (540),
   `ask_context.py` (494), `pipeline_builder.py` (405).
 - Change `validate_class_size.py`'s exit code to also fail on any module-size
@@ -148,7 +148,7 @@ decisions are made.
 
 - `docs/adr/ADR-020-progressive-enforcement-ladder.md` (related — general
   warn/block/strict philosophy this ADR's module-size decision follows)
-- `packages/interfaces/sdd_wizard/EXCEPTIONS.md` (prior-art pattern reused for the
+- `packages/interfaces/providence_wizard/EXCEPTIONS.md` (prior-art pattern reused for the
   grandfather list)
 - `tools/architecture/validate_class_size.py` (implementation target for the scan
   fix and enforcement change — tracked as `implementation_handoff`, not executed by

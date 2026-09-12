@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SDD Architecture - Agent Confidence Evaluator
+Providence Architecture - Agent Confidence Evaluator
 
 Evaluates AI agent confidence and safety:
 - Model information (if available in context)
@@ -18,7 +18,7 @@ from typing import Any
 
 _TELEMETRY_AVAILABLE = False
 try:
-    from sdd_telemetry.collectors.confidence import ConfidenceCollector
+    from providence_telemetry.collectors.confidence import ConfidenceCollector
 
     _TELEMETRY_AVAILABLE = True
 except ImportError:
@@ -33,11 +33,11 @@ class AgentConfidenceEvaluator:
         self._available = _TELEMETRY_AVAILABLE
 
     def evaluate(self, **kwargs: Any) -> dict[str, Any]:
-        """Collect confidence metrics via sdd_telemetry, or fail explicitly."""
+        """Collect confidence metrics via providence_telemetry, or fail explicitly."""
         if not self._available:
             return {
-                "error": "sdd_telemetry not installed",
-                "hint": "Run: pip install sdd-telemetry",
+                "error": "providence_telemetry not installed",
+                "hint": "Run: pip install providence-telemetry",
                 "overall_confidence": 0.0,
                 "safety_level": "UNKNOWN",
             }

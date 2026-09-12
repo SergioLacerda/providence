@@ -11,7 +11,7 @@ EXCLUDED_PATH_PARTS = (
 
 # Files that define the canonical helper APIs are allowed to use low-level I/O.
 ALLOWED_LOW_LEVEL_FILES = {
-    "packages/core/sdd_core/src/sdd_core/utils/text_io.py",
+    "packages/core/providence_core/src/providence_core/utils/text_io.py",
     "tests/helpers/text_io.py",
     "tools/ci/check_text_io_centralization.py",
 }

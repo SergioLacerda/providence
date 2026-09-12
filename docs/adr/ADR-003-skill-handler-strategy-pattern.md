@@ -78,5 +78,5 @@ validate → policy check → deprecation → pre_run (if exists)
 
 **Files:**
 
-- `packages/core/sdd_runtime/src/sdd_runtime/_skill_executor.py` — handlers + `_get_skill_handler` factory
-- `packages/core/sdd_runtime/tests/test_skill_handler_correct.py` — handler unit tests
+- `packages/core/providence_runtime/src/providence_runtime/_skill_executor.py` — handlers + `_get_skill_handler` factory
+- `packages/core/providence_runtime/tests/test_skill_handler_correct.py` — handler unit tests

@@ -15,7 +15,7 @@
 #   "pydantic",
 # ]
 # ///
-"""Run all SDD tests across all layers of the monorepo."""
+"""Run all Providence tests across all layers of the monorepo."""
 
 import argparse
 import json
@@ -27,13 +27,15 @@ from pathlib import Path
 
 # Repo root is two levels up from tools/testing/
 REPO_ROOT = Path(__file__).resolve().parents[2]
-_SDD_CORE_SRC = REPO_ROOT / "packages" / "core" / "sdd_core" / "src"
-_SDD_RUNTIME_SRC = REPO_ROOT / "packages" / "core" / "sdd_runtime" / "src"
-_SDD_TELEMETRY_SRC = REPO_ROOT / "packages" / "core" / "sdd_telemetry" / "src"
-if str(_SDD_CORE_SRC) not in sys.path:
-    sys.path.insert(0, str(_SDD_CORE_SRC))
-if str(_SDD_RUNTIME_SRC) not in sys.path:
-    sys.path.insert(0, str(_SDD_RUNTIME_SRC))
+_PROVIDENCE_CORE_SRC = REPO_ROOT / "packages" / "core" / "providence_core" / "src"
+_PROVIDENCE_RUNTIME_SRC = REPO_ROOT / "packages" / "core" / "providence_runtime" / "src"
+_PROVIDENCE_TELEMETRY_SRC = (
+    REPO_ROOT / "packages" / "core" / "providence_telemetry" / "src"
+)
+if str(_PROVIDENCE_CORE_SRC) not in sys.path:
+    sys.path.insert(0, str(_PROVIDENCE_CORE_SRC))
+if str(_PROVIDENCE_RUNTIME_SRC) not in sys.path:
+    sys.path.insert(0, str(_PROVIDENCE_RUNTIME_SRC))
 
 # Every workspace member's src/, mirroring pyproject.toml's
 # [tool.pytest.ini_options].pythonpath. Each per-package layer below invokes
@@ -42,7 +44,7 @@ if str(_SDD_RUNTIME_SRC) not in sys.path:
 # can land on the package's own, pythonpath-less pyproject.toml (every
 # workspace member has one) instead of this root one, before ever reaching
 # this file. That silently drops the pythonpath list and breaks
-# sibling-package imports (e.g. sdd_cli's tests importing sdd_runtime) in any
+# sibling-package imports (e.g. providence_cli's tests importing providence_runtime) in any
 # environment where the workspace members aren't also editable-installed
 # (e.g. a plain `uv sync` at the repo root, which only installs shared dev
 # dependencies — no workspace member is a dependency of the root project
@@ -51,18 +53,18 @@ if str(_SDD_RUNTIME_SRC) not in sys.path:
 # pytest resolves.
 _WORKSPACE_SRC_DIRS = [
     REPO_ROOT,
-    REPO_ROOT / "packages" / "core" / "sdd_core" / "src",
-    REPO_ROOT / "packages" / "core" / "sdd_runtime" / "src",
-    REPO_ROOT / "packages" / "core" / "sdd_telemetry" / "src",
-    REPO_ROOT / "packages" / "features" / "sdd_integration" / "src",
-    REPO_ROOT / "packages" / "features" / "sdd_adapters" / "src",
-    REPO_ROOT / "packages" / "features" / "sdd_skills" / "src",
-    REPO_ROOT / "packages" / "features" / "sdd_pages" / "src",
-    REPO_ROOT / "packages" / "interfaces" / "sdd_wizard" / "src",
-    REPO_ROOT / "packages" / "interfaces" / "sdd_cli" / "src",
+    REPO_ROOT / "packages" / "core" / "providence_core" / "src",
+    REPO_ROOT / "packages" / "core" / "providence_runtime" / "src",
+    REPO_ROOT / "packages" / "core" / "providence_telemetry" / "src",
+    REPO_ROOT / "packages" / "features" / "providence_integration" / "src",
+    REPO_ROOT / "packages" / "features" / "providence_adapters" / "src",
+    REPO_ROOT / "packages" / "features" / "providence_skills" / "src",
+    REPO_ROOT / "packages" / "features" / "providence_pages" / "src",
+    REPO_ROOT / "packages" / "interfaces" / "providence_wizard" / "src",
+    REPO_ROOT / "packages" / "interfaces" / "providence_cli" / "src",
 ]
-if str(_SDD_TELEMETRY_SRC) not in sys.path:
-    sys.path.insert(0, str(_SDD_TELEMETRY_SRC))
+if str(_PROVIDENCE_TELEMETRY_SRC) not in sys.path:
+    sys.path.insert(0, str(_PROVIDENCE_TELEMETRY_SRC))
 
 
 @dataclass
@@ -76,36 +78,44 @@ class TestLayer:
 # Paths are relative to REPO_ROOT.
 TEST_LAYERS = [
     TestLayer(
-        "Package: sdd_core", "packages/core/sdd_core/tests", "Core package tests"
+        "Package: providence_core",
+        "packages/core/providence_core/tests",
+        "Core package tests",
     ),
     TestLayer(
-        "Package: sdd_runtime", "packages/core/sdd_runtime/tests", "Runtime tests"
+        "Package: providence_runtime",
+        "packages/core/providence_runtime/tests",
+        "Runtime tests",
     ),
     TestLayer(
-        "Package: sdd_telemetry", "packages/core/sdd_telemetry/tests", "Telemetry tests"
+        "Package: providence_telemetry",
+        "packages/core/providence_telemetry/tests",
+        "Telemetry tests",
     ),
     TestLayer(
-        "Package: sdd_adapters",
-        "packages/features/sdd_adapters/tests",
+        "Package: providence_adapters",
+        "packages/features/providence_adapters/tests",
         "Adapter generation tests",
     ),
     TestLayer(
-        "Package: sdd_integration",
-        "packages/features/sdd_integration/tests",
+        "Package: providence_integration",
+        "packages/features/providence_integration/tests",
         "Integration tests",
     ),
     TestLayer(
-        "Package: sdd_skills",
-        "packages/features/sdd_skills/tests",
+        "Package: providence_skills",
+        "packages/features/providence_skills/tests",
         "Skill contract tests",
     ),
     TestLayer(
-        "Package: sdd_wizard",
-        "packages/interfaces/sdd_wizard/tests",
+        "Package: providence_wizard",
+        "packages/interfaces/providence_wizard/tests",
         "Wizard UI/Logic tests",
     ),
     TestLayer(
-        "Package: sdd_cli", "packages/interfaces/sdd_cli/tests", "CLI Interface tests"
+        "Package: providence_cli",
+        "packages/interfaces/providence_cli/tests",
+        "CLI Interface tests",
     ),
     TestLayer("Layer: Unit", "tests/unit", "Global unit tests"),
     TestLayer("Layer: Integration", "tests/integration", "Global integration tests"),
@@ -116,7 +126,7 @@ TEST_LAYERS = [
 def _run_governed(
     cmd: list[str], *, cwd: Path | None = None, env: dict[str, str] | None = None
 ) -> int:
-    from sdd_core.utils.process import SafeProcessRunner
+    from providence_core.utils.process import SafeProcessRunner
 
     runner = SafeProcessRunner()
     result = runner.run(cmd, capture_output=False, cwd=cwd or REPO_ROOT, env=env)
@@ -330,7 +340,7 @@ def _group_coverage_by_package(files: dict[str, object]) -> dict[str, dict[str, 
         parts = file_path.split("/")
         if len(parts) < 3:
             continue
-        group = "/".join(parts[:3])  # e.g. packages/core/sdd_runtime
+        group = "/".join(parts[:3])  # e.g. packages/core/providence_runtime
         summary = file_data.get("summary", {})
         if not isinstance(summary, dict):
             continue
@@ -422,7 +432,7 @@ def main() -> int:
     main_args, extra_pytest_args = _parse_extra_args()
 
     parser = argparse.ArgumentParser(
-        description="Run all SDD tests across the monorepo"
+        description="Run all Providence tests across the monorepo"
     )
     parser.add_argument("-v", "--verbose", action="store_true", help="Show each test")
     parser.add_argument(
@@ -475,7 +485,7 @@ def main() -> int:
             return 1
 
     print(f"\n{'=' * 70}")
-    print(f"SDD Test Runner — {len(layers)} layer(s)")
+    print(f"Providence Test Runner — {len(layers)} layer(s)")
     if parallel:
         print("Parallel execution enabled (pytest-xdist)")
     print("=" * 70)

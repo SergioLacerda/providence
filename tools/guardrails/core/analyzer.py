@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime, timezone
 from pathlib import Path
 
-from sdd_core.utils.text_io import read_text_utf8
+from providence_core.utils.text_io import read_text_utf8
 from tools.guardrails.core.config import AnalysisConfig
 from tools.guardrails.core.dimension import AnalysisDimension
 from tools.guardrails.core.discovery import discover_files
@@ -37,7 +37,7 @@ class GuardrailAnalyzer(ABC):
 
     @abstractmethod
     def get_analysis_name(self) -> str:
-        """Return analyzer identifier (e.g., 'sdd_runtime', 'sdd_telemetry')."""
+        """Return analyzer identifier (e.g., 'providence_runtime', 'providence_telemetry')."""
 
     @abstractmethod
     def get_dimensions(self) -> list[AnalysisDimension]:
