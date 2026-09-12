@@ -8,7 +8,7 @@ MAKEFLAGS += --no-builtin-rules --no-builtin-variables
 VENV_PYTHON := $(firstword $(wildcard .venv/bin/python .venv/Scripts/python.exe))
 DOCKER_BUILD_FLAGS ?=
 ifeq ($(OS),Windows_NT)
-  UV := $(firstword $(shell powershell -NoProfile -Command "$$cmd = Get-Command uv -ErrorAction SilentlyContinue; if ($$cmd) { $$cmd.Source }"))
+  UV := $(firstword $(shell powershell -NoProfile -Command '$$cmd = Get-Command uv -ErrorAction SilentlyContinue; if ($$cmd) { $$cmd.Source }'))
 else
   UV := $(shell command -v uv 2>/dev/null)
 endif
