@@ -23,11 +23,16 @@ from __future__ import annotations
 from pathlib import Path
 
 from providence_core.governance.handshake import AgentHandshakeProtocol
+from providence_core.utils.environment import is_repo_root
 
 
 def _find_repo_root(start: Path) -> Path:
+    # Marker-based (pyproject.toml layout), not `.git`-based: this test also
+    # runs against git-less checkouts (e.g. the sovereign-container health
+    # suite's /tmp/sdd-shadow-repo copy), matching how the rest of the
+    # runtime (detect_repo_root/is_repo_root) resolves "repository root".
     for parent in [start, *start.parents]:
-        if (parent / ".git").exists():
+        if is_repo_root(parent):
             return parent
     raise RuntimeError(f"could not locate repository root above {start}")
 
