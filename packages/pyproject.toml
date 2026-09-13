@@ -1,116 +1,34 @@
-[build-system]
-requires = ["hatchling", "hatch-vcs"]
-build-backend = "hatchling.build"
-
-[project]
-name = "providence"
-dynamic = ["version"]
-description = "Providence — Executable governance platform for AI agents"
-readme = "README.md"
-requires-python = ">=3.10"
-license = {text = "MIT"}
-authors = [
-    {name = "Sergio Lacerda", email = "sergio.lacerda.vieira@gmail.com"},
-]
-dependencies = [
-    "structlog>=26.1.0",
-]
-
-[project.optional-dependencies]
-test = [
-    "pytest>=9.1.1",
-    "pytest-cov>=7.1.0",
-    "pytest-timeout>=2.4.0",
-    "pytest-xdist>=3.8.0",
-    "pytest-asyncio>=1.4.0",
-    "msgpack>=1.2.1",
-    "PyYAML>=6.0.3",
-    "typer>=0.27.1",
-    "rich>=15.0.0",
-    "python-dotenv>=1.2.2",
-    "pydantic>=2.13.4",
-    "hypothesis>=6.165.2",
-    "httpx>=0.28.1",
-]
-lint = [
-    "ruff>=0.16.1",
-]
-typing = [
-    "mypy>=2.3.0",
-    "types-PyYAML>=6.0.12.20260724",
-]
-dev = [
-    "hatchling>=1.31.0",
-    "hatch-vcs>=0.5.0",
-]
-examples-langgraph = [
-    "langgraph>=1.2.10",
-    "langchain-core>=1.5.3",
-]
-examplescrewai = [
-    "crewai==1.15.12",
-    "onnxruntime<1.25",
-    "setuptools>=83.0.0",
-]
-
-[project.urls]
-Repository = "https://github.com/SergioLacerda/providence"
-
-[tool.hatch.version]
-source = "vcs"
-tag-pattern = "[vV](?P<version>[0-9]+\\.[0-9]+\\.[0-9]+)"
-fallback-version = "0.0.0+unknown"
-
-[tool.hatch.build.targets.wheel]
-# Root is not publishable (package = false); prevents hatchling from discovering packages.
-bypass-selection = true
-
-[tool.uv]
-# Workspace root — not a publishable package, only orchestrates the workspace.
-managed = true
-package = false
-# crewai pins pydantic<2.13, which is incompatible with the pydantic>=2.13.4
-# required by `test`; the two extras/groups are never installed together, so
-# mark them conflicting to keep the universal lock resolvable.
-conflicts = [
-    [
-        { extra = "test" },
-        { extra = "examplescrewai" },
-    ],
-    [
-        { group = "test" },
-        { extra = "examplescrewai" },
-    ],
-]
-constraint-dependencies = [
-    "idna>=3.15",  # CVE-2026-45409: DoS via arbitrarily large inputs in idna.encode()
-    "click>=8.3.3",  # PYSEC-2026-2132: command injection in click.edit()
-    "setuptools>=83.0.0",  # PYSEC-2026-3447: MANIFEST.in exclude bypass via Unicode normalization
-]
-
-[tool.uv.workspace]
-members = [
-    "packages/core/providence_core",
-    "packages/core/providence_telemetry",
-    "packages/core/providence_runtime",
-    "packages/features/providence_integration",
-    "packages/features/providence_adapters",
-    "packages/features/providence_skills",
-    "packages/features/providence_pages",
-    "packages/interfaces/providence_wizard",
-    "packages/interfaces/providence_cli",
-]
-
-[tool.uv.sources]
-providence-core        = { workspace = true }
-providence-telemetry   = { workspace = true }
-providence-runtime     = { workspace = true }
-providence-integration = { workspace = true }
-providence-adapters    = { workspace = true }
-providence-skills      = { workspace = true }
-providence-pages       = { workspace = true }
-providence-wizard      = { workspace = true }
-providence-cli         = { workspace = true }
+# This file intentionally has NO [project]/[build-system]/[tool.hatch.*]/
+# [tool.uv] tables — see docs/adr/ for the follow-up ADR, or
+# CHANGELOG.md's [Unreleased] entry for the immediate fix context.
+#
+# It used to declare a second, duplicate uv workspace root here (identical
+# member list to the real root pyproject.toml one directory up, just with
+# stale dependency-version pins and member paths that were wrong relative to
+# this file's own location: "packages/core/providence_core" here resolves to
+# the nonexistent packages/packages/core/providence_core). uv's ancestor-climb
+# workspace discovery stops at the *first* pyproject.toml with a [project]
+# table it finds while walking up from a target directory — whether or not
+# that table declares [tool.uv.workspace] — and does not keep climbing past
+# it even when the target isn't one of its members. Because this file sat
+# between the real root and every package under packages/, ANY install
+# resolved from inside packages/ (most importantly `uv tool install
+# git+.../providence@vX.Y.Z#subdirectory=packages/interfaces/providence_cli`,
+# the documented external-adopter install command) hit this file first,
+# "found" a workspace it wasn't a member of, gave up on workspace resolution
+# entirely, and fell back to resolving providence-core/-wizard/-integration/
+# -runtime/-adapters against the public PyPI registry — where none of them
+# are published, so the install failed with "providence-adapters was not
+# found in the package registry".
+#
+# Fix: remove every uv/project-discovery-relevant table from this file so
+# uv's climb passes through it and reaches the real root's [tool.uv.workspace]
+# instead. The tool configs below ([tool.pytest.ini_options], [tool.ruff],
+# [tool.mypy], [tool.coverage], [tool.sdd.*], [tool.bandit]) are unaffected —
+# none of them require a [project] table to be discovered, and nothing in
+# this repo's own Makefile/CI/tooling invokes uv (or any of these tools) with
+# packages/ itself as the working directory, so removing the [project]/
+# [tool.uv] tables has no other effect.
 
 # Ranges are intentional — exact versions are pinned in uv.lock.
 # To update a tool: edit the range, run `uv lock`, commit both files.

@@ -25,6 +25,29 @@ Before tagging a new release, verify:
 
 ## [Unreleased]
 
+### Fixed
+- Fixed `uv tool install "git+https://github.com/.../providence@vX.Y.Z#subdirectory=packages/interfaces/providence_cli"`
+  (the standalone-client install command documented in `README.md` /
+  `docs/guides/CLIENT_ONBOARDING.md` / `docs/spec/guides/COMPATIBILITY.md`)
+  failing with `providence-adapters was not found in the package registry`.
+  `providence-cli` depends on several sibling `providence-*` packages resolved
+  via this workspace's `{ workspace = true }` sources, which only apply to a
+  project resolved as an actual workspace member (e.g. `uv sync` from the
+  monorepo root) — never to an isolated git-subdirectory install, tag-pinned
+  or not, which has no workspace to resolve them against. Docs now point at
+  `uv tool install providence-cli --find-links
+  https://github.com/.../providence/releases/expanded_assets/vX.Y.Z` instead
+  (same release wheelhouse as the existing `pip install --no-index
+  --find-links <dist-dir>` channel, just fetched by URL) and explicitly warn
+  against the git-subdirectory form.
+- Fixed a duplicate, stale `[tool.uv.workspace]` declaration in
+  `packages/pyproject.toml` (a leftover from before the true workspace root
+  was `pyproject.toml` one directory up) that made every `uv` install rooted
+  under `packages/` — including the broken command above — silently abandon
+  workspace resolution instead of reaching the real root's correct one,
+  turning a clear error into a confusing "found a workspace, but you're not a
+  member of it" dead end.
+
 ## [1.0.15] — 2026-09-13
 
 ### Fixed

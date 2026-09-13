@@ -136,18 +136,26 @@ SergioLacerda/providence`.
 > own CI configuration for the latest status before relying on wheel-level
 > verification.
 
-The Git-subdirectory install below is a source/development install path — it
-installs the code at a specific tag rather than a released wheel. Replace `v1.0.15`
-with the tag you want; omitting the `@<tag>` ref (not recommended) installs
-whatever the default branch head currently is:
+If you have [uv](https://astral.sh/uv), skip the manual download above with a
+single command that installs straight from the same tagged release's wheelhouse
+(`providence-cli` plus every `providence-*` sibling package it depends on — this
+project is a multi-package monorepo, so those siblings are never published to
+PyPI on their own; `--find-links` here points at the tag's own release-assets
+page, not a git checkout). Replace `v1.0.15` with the tag you want:
 
 ```bash
-uv tool install "git+https://github.com/SergioLacerda/providence@v1.0.15#subdirectory=packages/interfaces/providence_cli"
+uv tool install providence-cli --find-links "https://github.com/SergioLacerda/providence/releases/expanded_assets/v1.0.15"
 cd your-project
 providence install --wizard
 providence init --default
 providence governance validate
 ```
+
+> **Do not** use `uv tool install git+https://...#subdirectory=packages/interfaces/providence_cli`
+> — it cannot resolve this project's `providence-*` sibling packages from
+> outside a full local workspace checkout and fails with "was not found in the
+> package registry". Use the `--find-links` form above, or the manual
+> download in [Client / Adopter Flow](#client--adopter-flow), instead.
 
 If PowerShell reports `providence : O termo 'providence' nao e reconhecido`,
 the CLI is not on that shell's `PATH`. Either reopen the terminal after
