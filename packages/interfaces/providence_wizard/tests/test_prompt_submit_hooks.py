@@ -459,8 +459,15 @@ def test_prompt_submit_hook_falls_back_to_workspace_venv_when_providence_not_on_
         ],
     )
 
+    # Restrict PATH to simulate `providence` not being installed on it, but
+    # keep the running interpreter's own directory reachable: the fake
+    # `providence` script's `#!/usr/bin/env python3` shebang needs *some*
+    # `python3` on PATH to exec, and on CI images that interpreter doesn't
+    # necessarily live under /usr/bin or /bin (e.g. a pyenv/uv install).
     env = {key: value for key, value in os.environ.items() if key != "PATH"}
-    env["PATH"] = os.pathsep.join(("/usr/bin", "/bin"))
+    env["PATH"] = os.pathsep.join(
+        ("/usr/bin", "/bin", str(Path(sys.executable).parent))
+    )
     result = subprocess.run(
         [sys.executable, str(tmp_path / CENTRAL_PROMPT_SUBMIT_HOOK)],
         input=json.dumps({"prompt": "implement C"}),
