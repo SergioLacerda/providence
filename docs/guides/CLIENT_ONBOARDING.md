@@ -67,16 +67,8 @@ uv tool install providence-cli --find-links "https://github.com/SergioLacerda/pr
 `.github/workflows/release.yml` verifies the wheelhouse install on `windows-latest`
 and `ubuntu-latest` before publishing. Both channels above install the exact same
 wheels, which bundle the native `sdd-compile` binaries (`providence_core/_native/`),
-so no runtime download is needed.
-
-> **Do not** install with `uv tool install
-> "git+https://github.com/SergioLacerda/providence#subdirectory=packages/interfaces/providence_cli"`
-> (with or without a `@vX.Y.Z` tag). This project is a multi-package monorepo —
-> `providence-cli` depends on several sibling `providence-*` packages that are
-> resolved via the workspace when developing inside this repo, but are never
-> published to PyPI on their own. A git-subdirectory install has no workspace to
-> resolve them against, so it fails with "was not found in the package
-> registry" regardless of tag-pinning. Use 1a or 1b above instead.
+so no runtime download is needed. The repository README's own Quick Start uses
+the same 1b one-liner, not a git-subdirectory install (see the warning above).
 
 ```bash
 # 2. Enter your project and run the wizard

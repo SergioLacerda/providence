@@ -9,6 +9,7 @@ deeper docs tree.
 | You want to... | Start here |
 |---|---|
 | bootstrap governance in a project | [`guides/CLIENT_ONBOARDING.md`](./guides/CLIENT_ONBOARDING.md) |
+| read detailed workflows and operational notes | [`guides/README.md`](./guides/README.md) |
 | contribute to this repository | [`guides/ONBOARDING.md`](./guides/ONBOARDING.md) |
 | understand the architecture | [`architecture/README.md`](./architecture/README.md) |
 | understand governance source vs runtime output | [`governance-runtime-model.md`](./governance-runtime-model.md) |
