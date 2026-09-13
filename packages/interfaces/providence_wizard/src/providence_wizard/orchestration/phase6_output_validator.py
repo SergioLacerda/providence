@@ -7,12 +7,26 @@ from pathlib import Path
 from typing import Any
 
 from .prompt_submit_hooks import (
-    CENTRAL_PROMPT_SUBMIT_COMMAND,  # noqa: F401 - backward-compat import
+    CENTRAL_PROMPT_SUBMIT_COMMAND,
     CENTRAL_PROMPT_SUBMIT_HOOK,
     SUPPORTED_PROMPT_HOOK_AGENTS,
 )
 from .wizard.models import ValidationDetail
 from .wizard.seedling_catalog import resolve_selection
+
+# CENTRAL_PROMPT_SUBMIT_COMMAND is not used in this module — it is
+# deliberately re-exported here for backward compatibility (callers that
+# import it from phase6_output_validator rather than prompt_submit_hooks)
+# and guarded by
+# test_phase6_output_validator_imports_stay_in_sync_with_prompt_submit_hooks.
+# __all__ marks it as intentional to static analysis (CodeQL/Ruff unused-import
+# checks), which a bare noqa directive does not cover for every tool.
+__all__ = [
+    "OutputValidator",
+    "CENTRAL_PROMPT_SUBMIT_COMMAND",
+    "CENTRAL_PROMPT_SUBMIT_HOOK",
+    "SUPPORTED_PROMPT_HOOK_AGENTS",
+]
 
 
 class OutputValidator:

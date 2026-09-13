@@ -137,12 +137,12 @@ SergioLacerda/providence`.
 > verification.
 
 The Git-subdirectory install below is a source/development install path — it
-installs the code at a specific tag rather than a released wheel. Replace `v1.0.14`
+installs the code at a specific tag rather than a released wheel. Replace `v1.0.15`
 with the tag you want; omitting the `@<tag>` ref (not recommended) installs
 whatever the default branch head currently is:
 
 ```bash
-uv tool install "git+https://github.com/SergioLacerda/providence@v1.0.14#subdirectory=packages/interfaces/providence_cli"
+uv tool install "git+https://github.com/SergioLacerda/providence@v1.0.15#subdirectory=packages/interfaces/providence_cli"
 cd your-project
 providence install --wizard
 providence init --default
