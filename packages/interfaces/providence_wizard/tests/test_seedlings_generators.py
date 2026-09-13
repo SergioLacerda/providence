@@ -1896,9 +1896,12 @@ class TestWizardMessagesConsistency:
         assert "acknowledged_signature" in content
 
 
-class TestRootReadmeOnboarding:
-    def test_readme_contains_agent_onboarding_commands(self) -> None:
-        content = Path("README.md").read_text(encoding="utf-8")
+class TestReadmeOnboarding:
+    def test_detailed_readme_contains_agent_onboarding_commands(self) -> None:
+        repo_root = Path(__file__).resolve().parents[4]
+        content = (repo_root / "docs" / "guides" / "README.md").read_text(
+            encoding="utf-8"
+        )
         assert "Agent Onboarding After Governance Activation" in content
         assert "providence skills list" in content
         assert "providence skills describe sdd-validate-governance" in content

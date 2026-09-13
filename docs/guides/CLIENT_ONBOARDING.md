@@ -45,30 +45,30 @@ Each step is skipped automatically if it already ran (idempotent re-run); use
 
 ## Step-by-step Setup (Client Project)
 
-**Step 1 — Install the Providence CLI from a released version.** Two supported channels,
-both pinned to a tag:
+**Step 1 — Install the Providence CLI from a released version.** Two equivalent
+ways to install from the same tag's release wheelhouse — pick whichever is more
+convenient:
 
 ```bash
-# 1a. (Preferred) GitHub Release wheelhouse — the official, CI-proven channel.
+# 1a. Manual download, then install offline.
 #     Download the dist/ assets attached to the tagged release
 #     (https://github.com/SergioLacerda/providence/releases), then:
 pip install --no-index --find-links <dist-dir> providence-cli
 
-# 1b. (Alternative) Tag-pinned git install — no asset download, needs git + network.
-#     Replace vX.Y.Z with the latest release tag from the releases page:
-uv tool install "git+https://github.com/SergioLacerda/providence@vX.Y.Z#subdirectory=packages/interfaces/providence_cli"
+# 1b. One-liner — same wheelhouse, no manual download. Requires uv.
+#     Replace vX.Y.Z with the latest release tag from the releases page.
+#     `--find-links` points at that tag's own release-assets page (this is
+#     GitHub's internal endpoint for the static asset-links fragment, not the
+#     JS-rendered release page itself — the plain releases/tag/vX.Y.Z URL does
+#     NOT work with --find-links).
+uv tool install providence-cli --find-links "https://github.com/SergioLacerda/providence/releases/expanded_assets/vX.Y.Z"
 ```
 
 `.github/workflows/release.yml` verifies the wheelhouse install on `windows-latest`
-and `ubuntu-latest` before publishing. The wheelhouse wheel bundles the native
-`sdd-compile` binaries (`providence_core/_native/`), so no runtime download is needed;
-the git channel resolves the binary from the release assets at first use.
-
-> **Development installs only:** installing without a tag
-> (`git+https://...#subdirectory=...`) builds the **default branch HEAD** — an
-> unreleased version. Use it only for developing providence itself, never for
-> client onboarding: HEAD code paired with release binaries is exactly the skew
-> class the version handshake exists to reject.
+and `ubuntu-latest` before publishing. Both channels above install the exact same
+wheels, which bundle the native `sdd-compile` binaries (`providence_core/_native/`),
+so no runtime download is needed. The repository README's own Quick Start uses
+the same 1b one-liner, not a git-subdirectory install (see the warning above).
 
 ```bash
 # 2. Enter your project and run the wizard
@@ -93,10 +93,11 @@ providence governance validate
 providence doctor compiler
 ```
 
-A healthy `providence doctor compiler` report shows `binary.resolution_rule` as `packaged`
-(wheelhouse install) or `download` (git install), `handshake.status: "ok"` (or
-`skipped_dev_binary` on dev builds), and `validate.ok: true` once governance has been
-generated. Anything else — see the
+A healthy `providence doctor compiler` report shows `binary.resolution_rule` as
+`packaged` (both Step 1 channels above install the same wheelhouse wheels, which
+bundle the native binary), `handshake.status: "ok"` (or `skipped_dev_binary` on
+dev builds), and `validate.ok: true` once governance has been generated. Anything
+else — see the
 [Windows standalone troubleshooting guide](windows-standalone-troubleshooting.md).
 
 ### Windows signing troubleshooting
@@ -110,13 +111,16 @@ The `sdd-compile` binary itself is resolved in this order: `SDD_COMPILE_BIN`
 env var → repo-local build → `PATH` → binary bundled in the providence-core wheel →
 download from the matching GitHub Release.
 
-Only wheels built by the release CI bundle the native binaries. A source
-install (for example `uv tool install "git+https://...#subdirectory=..."`)
-has no bundled binary and falls back to the release download, which requires
-working TLS certificate verification. If that download fails with
-`CERTIFICATE_VERIFY_FAILED`, either:
+Only wheels built by the release CI bundle the native binaries — both Step 1
+channels above use those wheels, so `binary.resolution_rule: packaged` is the
+expected outcome for a client onboarding install. The `download` fallback only
+applies to an editable/local-source install of this repo itself (e.g. `uv sync`
+during development of providence, not client onboarding), which has no bundled
+binary and falls back to the release download; that requires working TLS
+certificate verification. If that download fails with `CERTIFICATE_VERIFY_FAILED`,
+either:
 
-- install from the release wheelhouse instead (the CI-proven channel above:
+- install from the release wheelhouse instead (Step 1 above:
   `pip install --no-index --find-links <dist-dir> providence-cli`) — the bundled
   binary makes the download unnecessary; or
 - download `sdd-compile-windows-amd64.exe` from the GitHub Release manually

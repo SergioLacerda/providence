@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import pytest
@@ -76,3 +77,45 @@ def test_codex_includes_slash_aliases(tmp_path: Path) -> None:
     codex_commands = (tmp_path / ".codex" / "commands.md").read_text(encoding="utf-8")
 
     assert "/sdd-ask" in codex_commands
+
+
+def _repo_root() -> Path:
+    return Path(__file__).resolve().parents[3]
+
+
+@pytest.mark.parametrize(
+    "adapter_relative_path",
+    [
+        ".claude/settings.json",
+        ".codex/config.toml",
+        ".gemini/settings.json",
+        "generated/client/build/final-template/.claude/settings.json",
+        "generated/client/build/final-template/.codex/config.toml",
+        "generated/client/build/final-template/.gemini/settings.json",
+    ],
+)
+def test_deployed_prompt_submit_adapters_do_not_reference_stale_compiled_path(
+    adapter_relative_path: str,
+) -> None:
+    """Regression (20260913-governance-hooks-dogfood, F002/F003): this
+    repository's own checked-in/deployed prompt-submit hook adapters must
+    reference a hook file that actually exists on disk, never the stale
+    `generated/client/compiled` staging path a prior generation run left
+    behind."""
+    adapter_path = _repo_root() / adapter_relative_path
+    if not adapter_path.exists():
+        pytest.skip(f"{adapter_relative_path} not present in this checkout")
+
+    content = adapter_path.read_text(encoding="utf-8")
+    assert "generated/client/compiled" not in content
+
+    match = re.search(r"exit 0'\s+sh\s+([^\"]+)\"", content)
+    assert match, f"no prompt-submit hook command found in {adapter_relative_path}"
+    hook_path = Path(match.group(1))
+    assert hook_path.is_absolute(), (
+        f"hook path in {adapter_relative_path} must be cwd-independent"
+    )
+    assert hook_path.exists(), (
+        f"{adapter_relative_path} points at a hook file that does not exist: "
+        f"{hook_path}"
+    )

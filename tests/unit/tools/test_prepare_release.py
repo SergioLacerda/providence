@@ -39,13 +39,10 @@ _CHANGELOG_WITH_EMPTY_UNRELEASED = """\
 """
 
 _README_SNIPPET = """\
-The Git-subdirectory install below is a source/development install path — it
-installs the code at a specific tag rather than a released wheel. Replace `v1.0.4`
-with the tag you want; omitting the `@<tag>` ref (not recommended) installs
-whatever the default branch head currently is:
+Install from the tagged release wheelhouse:
 
 ```bash
-uv tool install "git+https://github.com/SergioLacerda/providence@v1.0.4#subdirectory=packages/interfaces/providence_cli"
+uv tool install providence-cli --find-links "https://github.com/SergioLacerda/providence/releases/expanded_assets/v1.0.4"
 ```
 """
 
@@ -116,8 +113,7 @@ def test_prepare_readme_replaces_prose_and_install_tag(tmp_path: Path) -> None:
 
     assert updated is True
     text = readme.read_text(encoding="utf-8")
-    assert "Replace `v1.0.11`" in text
-    assert "@v1.0.11#subdirectory=packages/interfaces/providence_cli" in text
+    assert "releases/expanded_assets/v1.0.11" in text
     assert "v1.0.4" not in text
 
 
@@ -153,6 +149,51 @@ def test_prepare_release_rejects_invalid_version(tmp_path: Path) -> None:
     # rejected before any write
     assert changelog.read_text(encoding="utf-8") == _CHANGELOG_WITH_EMPTY_UNRELEASED
     assert readme.read_text(encoding="utf-8") == _README_SNIPPET
+
+
+def test_prepare_release_syncs_docs_guide_readme_when_present(
+    tmp_path: Path,
+) -> None:
+    """docs/guides/README.md carries its own copy of the same pinned install
+    snippet (since the 20260913 'review readme' pass moved the detailed
+    onboarding walkthrough there) — prepare_release must keep it in sync so
+    the two files don't drift to different pinned versions."""
+    changelog = tmp_path / "CHANGELOG.md"
+    readme = tmp_path / "README.md"
+    changelog.write_text(_CHANGELOG_WITH_UNRELEASED_CONTENT, encoding="utf-8")
+    readme.write_text(_README_SNIPPET, encoding="utf-8")
+    docs_guide_dir = tmp_path / "docs" / "guides"
+    docs_guide_dir.mkdir(parents=True)
+    docs_guide_readme = docs_guide_dir / "README.md"
+    docs_guide_readme.write_text(_README_SNIPPET, encoding="utf-8")
+
+    result = prepare_release(
+        "1.0.11",
+        changelog_path=changelog,
+        readme_path=readme,
+        today=date(2026, 8, 25),
+    )
+
+    assert result.docs_guide_readme_updated is True
+    assert "releases/expanded_assets/v1.0.11" in docs_guide_readme.read_text(
+        encoding="utf-8"
+    )
+
+
+def test_prepare_release_skips_missing_docs_guide_readme(tmp_path: Path) -> None:
+    changelog = tmp_path / "CHANGELOG.md"
+    readme = tmp_path / "README.md"
+    changelog.write_text(_CHANGELOG_WITH_UNRELEASED_CONTENT, encoding="utf-8")
+    readme.write_text(_README_SNIPPET, encoding="utf-8")
+
+    result = prepare_release(
+        "1.0.11",
+        changelog_path=changelog,
+        readme_path=readme,
+        today=date(2026, 8, 25),
+    )
+
+    assert result.docs_guide_readme_updated is False
 
 
 def test_prepare_release_updates_both_files(tmp_path: Path) -> None:

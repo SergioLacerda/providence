@@ -24,11 +24,17 @@ _VERSION_RE = re.compile(r"^\d+\.\d+\.\d+$")
 _UNRELEASED_HEADER = "## [Unreleased]"
 _VERSION_HEADER_RE = re.compile(r"^## \[(?P<version>[^\]]+)\]")
 
-# Anchored to the specific git-subdirectory install snippet in README.md,
+# Anchored to the pinned release-wheelhouse install snippet
+# (`uv tool install ... --find-links ".../releases/expanded_assets/vX.Y.Z"`),
 # not a blind repo-wide version regex — see design.md in
-# .analysis/refined/20260825-changelog-readme-automation/.
-_README_PROSE_RE = re.compile(r"Replace `v(?P<version>\d+\.\d+\.\d+)`")
-_README_INSTALL_RE = re.compile(r"@v(?P<version>\d+\.\d+\.\d+)#subdirectory=")
+# .analysis/refined/20260825-changelog-readme-automation/. The README's
+# "review readme" pass (20260913) replaced the older git-subdirectory
+# `@vX.Y.Z#subdirectory=` snippet with this one; docs/guides/README.md
+# duplicates the same snippet for its own onboarding walkthrough, so both
+# files are kept in sync (the second, best-effort, since only README.md is
+# the documented contract of this script).
+_README_INSTALL_RE = re.compile(r"releases/expanded_assets/v(?P<version>\d+\.\d+\.\d+)")
+_DOCS_GUIDE_README_RELATIVE_PATH = Path("docs") / "guides" / "README.md"
 
 
 class PrepareReleaseError(ValueError):
@@ -42,6 +48,7 @@ class PrepareResult:
     version: str
     changelog_header_inserted: bool
     readme_updated: bool
+    docs_guide_readme_updated: bool = False
 
 
 def _validate_version(version: str) -> str:
@@ -108,26 +115,47 @@ def prepare_changelog(changelog_path: Path, version: str, *, today: date) -> boo
 
 
 def prepare_readme(readme_path: Path, version: str) -> bool:
-    """Replace the pinned install-tag references in README.md with ``version``.
+    """Replace the pinned release-wheelhouse tag in ``readme_path`` with ``version``.
 
     Returns True if the file content changed, False if it already matched
     (safe no-op on a re-run).
     """
     text = readme_path.read_text(encoding="utf-8")
 
-    if _README_PROSE_RE.search(text) is None or _README_INSTALL_RE.search(text) is None:
+    if _README_INSTALL_RE.search(text) is None:
         raise PrepareReleaseError(
             f"expected pinned-tag anchors not found in {readme_path} "
-            "(prose 'Replace `vX.Y.Z`' and install '@vX.Y.Z#subdirectory=') — "
-            "the file structure may have changed since this script was written"
+            "(install 'releases/expanded_assets/vX.Y.Z') — the file structure "
+            "may have changed since this script was written"
         )
 
-    new_text = _README_PROSE_RE.sub(f"Replace `v{version}`", text, count=1)
-    new_text = _README_INSTALL_RE.sub(f"@v{version}#subdirectory=", new_text, count=1)
+    new_text = _README_INSTALL_RE.sub(
+        f"releases/expanded_assets/v{version}", text, count=1
+    )
 
     if new_text == text:
         return False
     readme_path.write_text(new_text, encoding="utf-8")
+    return True
+
+
+def _sync_docs_guide_readme(repo_root: Path, version: str) -> bool:
+    """Best-effort sync of docs/guides/README.md's copy of the same pinned
+    install snippet. Unlike ``prepare_readme`` on the top-level README.md,
+    this is not this script's documented contract — a missing file, or one
+    without the anchor, is silently skipped rather than raised."""
+    docs_guide_readme = repo_root / _DOCS_GUIDE_README_RELATIVE_PATH
+    if not docs_guide_readme.exists():
+        return False
+    text = docs_guide_readme.read_text(encoding="utf-8")
+    if _README_INSTALL_RE.search(text) is None:
+        return False
+    new_text = _README_INSTALL_RE.sub(
+        f"releases/expanded_assets/v{version}", text, count=1
+    )
+    if new_text == text:
+        return False
+    docs_guide_readme.write_text(new_text, encoding="utf-8")
     return True
 
 
@@ -144,10 +172,12 @@ def prepare_release(
         changelog_path, version, today=resolved_today
     )
     readme_updated = prepare_readme(readme_path, version)
+    docs_guide_readme_updated = _sync_docs_guide_readme(readme_path.parent, version)
     return PrepareResult(
         changelog_path=changelog_path,
         readme_path=readme_path,
         version=version,
+        docs_guide_readme_updated=docs_guide_readme_updated,
         changelog_header_inserted=changelog_inserted,
         readme_updated=readme_updated,
     )
@@ -187,10 +217,17 @@ def main(argv: list[str] | None = None) -> int:
     else:
         print(f"README.md: already pinned to v{result.version} (no-op)")
 
+    if result.docs_guide_readme_updated:
+        print(f"docs/guides/README.md: pinned install tag updated to v{result.version}")
+
+    touched_paths = "CHANGELOG.md README.md"
+    if result.docs_guide_readme_updated:
+        touched_paths += " docs/guides/README.md"
+
     print("\nReview the diff, then commit and tag manually:")
-    print("  git diff -- CHANGELOG.md README.md")
+    print(f"  git diff -- {touched_paths}")
     print(
-        "  git add CHANGELOG.md README.md && "
+        f"  git add {touched_paths} && "
         f"git commit -m 'chore: prepare release v{result.version}'"
     )
     print(f"  git tag v{result.version} && git push origin v{result.version}")

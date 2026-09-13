@@ -53,10 +53,19 @@ providence-telemetry
   and install with `pip install --no-index --find-links <dist-dir> providence-cli`.
   This exact flow is verified on `windows-latest` and `ubuntu-latest` by
   `.github/workflows/release.yml` before a release is published.
-- **End-users (source/development install):** `uv tool install
-  "git+https://github.com/SergioLacerda/providence#subdirectory=packages/interfaces/providence_cli"`
-  tracks branch code rather than a released version.
+- **End-users (no manual download):** `uv tool install providence-cli
+  --find-links "https://github.com/SergioLacerda/providence/releases/expanded_assets/vX.Y.Z"`
+  — installs the exact same tagged wheelhouse as the official channel above,
+  just fetched by URL instead of downloaded by hand.
 - **Developers:** `uv sync` in monorepo root (all packages in editable mode)
+
+`uv tool install git+https://.../providence#subdirectory=packages/interfaces/providence_cli`
+does **not** work, tag-pinned or not: `providence-cli` depends on several
+sibling `providence-*` packages resolved via this workspace's `{ workspace =
+true }` sources, which only apply to a project resolved as an actual workspace
+member (e.g. via `uv sync` from the monorepo root) — not to an isolated
+git-subdirectory install, which has no workspace to resolve them against and
+fails with "was not found in the package registry".
 
 There is no published `providence` package on PyPI; do not reference `pip
 install providence` until PyPI publishing is implemented and proven in CI.

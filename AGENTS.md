@@ -1,7 +1,8 @@
+<!-- providence:managed:begin -->
 # Agent Bootstrap Paths
 <!-- Governance fingerprint: 3c92a54d04d29611 -->
 <!-- Active mandates: 16 (M001, M002, M003, M005, M006, ...) -->
-<!-- Generated: 2026-09-13T15:42:49.395675Z -->
+<!-- Generated: 2026-09-13T20:24:10.105896Z -->
 <!-- Drift check: fingerprint must match .providence/metadata.json  fingerprints.combined -->
 
 Objective: standardize where each agent must load local instructions, commands, and skills in this project.
@@ -46,3 +47,5 @@ If a dedicated path does not exist:
 
 1. Register that local bootstrap is missing.
 2. Continue with default agent behavior, without inventing local context.
+
+<!-- providence:managed:end -->
