@@ -25,6 +25,31 @@ Before tagging a new release, verify:
 
 ## [Unreleased]
 
+## [1.0.15] — 2026-09-13
+
+### Fixed
+- Fixed a CodeQL "unused import" false positive in `phase6_output_validator.py`
+  by declaring its intentionally re-exported names (kept for backward
+  compatibility and guarded by a cross-module sync test) in `__all__`,
+  instead of relying on a `# noqa` comment CodeQL doesn't recognize.
+- Fixed the "Container Security (Trivy)" CI job failing with "Username and
+  password required" when `DOCKERHUB_USERNAME`/`DOCKERHUB_TOKEN` secrets
+  aren't configured — the Docker Hub login step now skips cleanly instead
+  (the container build and scan still work unauthenticated; only the
+  anonymous-pull rate limit is affected).
+- Fixed an invalid workflow expression introduced by the above: the
+  `secrets` context is not permitted inside `if:` conditionals. The two
+  secrets are now mirrored into job-level `env` vars first, and the `if:`
+  reads from `env` instead.
+- Fixed the release pipeline's upgrade/rollback smoke test failing with
+  "No providence_cli-*.whl asset found" when the previous published release
+  predates the `sdd_cli` → `providence_cli` package rename. That one
+  boundary release (`v1.0.13`) publishes the wheel under the old
+  distribution name; the smoke test now skips the upgrade/rollback
+  assertion for this specific, one-time transition instead of failing the
+  release, since a force-reinstall across a package rename would not be a
+  real rollback test anyway.
+
 ## [1.0.14] — 2026-09-12
 
 ### Changed

@@ -187,6 +187,7 @@ jobs:
           python3 - > .release-smoke/prev.env <<'PYEOF'
           import json
           import os
+          import shlex
           import urllib.request
 
           url = (
@@ -212,19 +213,54 @@ jobs:
               None,
           )
           if wheel is None:
-              raise SystemExit(
-                  f"No providence_cli-*.whl asset found on release {release['tag_name']}"
+              # Releases published before the sdd_cli -> providence_cli package
+              # rename still publish the wheel under the old distribution name.
+              # There is no meaningful "rollback" across a distribution rename
+              # (pip treats sdd-cli and providence-cli as unrelated packages —
+              # force-reinstalling the old one would not even touch the new
+              # one's installed files, so asserting a version string here would
+              # be a fake assertion, not a real rollback test). Skip instead of
+              # failing the release: every release from here on republishes
+              # under the new name, so this branch is exercised at most once,
+              # permanently, for the first release built after the rename.
+              legacy_wheel = next(
+                  (
+                      asset
+                      for asset in release["assets"]
+                      if asset["name"].startswith("sdd_cli-") and asset["name"].endswith(".whl")
+                  ),
+                  None,
               )
-
-          print(f"PREV_TAG={release['tag_name']}")
-          print(f"PREV_WHEEL_NAME={wheel['name']}")
-          print(f"PREV_WHEEL_URL={wheel['browser_download_url']}")
+              if legacy_wheel is None:
+                  raise SystemExit(
+                      "No providence_cli-*.whl or sdd_cli-*.whl asset found on "
+                      f"release {release['tag_name']}"
+                  )
+              skip_reason = (
+                  "previous release "
+                  f"{release['tag_name']} predates the providence_cli package "
+                  f"rename ({legacy_wheel['name']}); no providence_cli-*.whl to "
+                  "roll back to"
+              )
+              # Quoted: this line is later `source`d as shell code, and the
+              # message contains spaces/parentheses/an asterisk that would
+              # otherwise be parsed as a subshell/glob instead of plain text.
+              print(f"SKIP_REASON={shlex.quote(skip_reason)}")
+          else:
+              print(f"PREV_TAG={release['tag_name']}")
+              print(f"PREV_WHEEL_NAME={wheel['name']}")
+              print(f"PREV_WHEEL_URL={wheel['browser_download_url']}")
           PYEOF
 
           cat .release-smoke/prev.env
           set -a
           source .release-smoke/prev.env
           set +a
+
+          if [ -n "${SKIP_REASON:-}" ]; then
+            echo "Skipping upgrade/rollback smoke: $SKIP_REASON"
+            exit 0
+          fi
 
           echo "Downloading previous release wheel: $PREV_WHEEL_NAME ($PREV_TAG)"
           curl -sSL -o ".release-smoke/prev/$PREV_WHEEL_NAME" "$PREV_WHEEL_URL"
