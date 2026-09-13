@@ -64,7 +64,7 @@ export function CapabilitiesPanel({ stats = PLACEHOLDER_GOVERNANCE_STATS }: Capa
               ))}
               <p style={{ margin: '16px 0 0', fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--ink-faint)' }}>{c.auditCaption}</p>
             </div>
-            <Terminal title="sdd — audit" chrome lines={termAuditLive} />
+            <Terminal title="providence — audit" chrome lines={termAuditLive} />
           </div>
         </div>
       )}
@@ -149,7 +149,7 @@ export function CapabilitiesPanel({ stats = PLACEHOLDER_GOVERNANCE_STATS }: Capa
                 ))}
               </div>
             </div>
-            <Terminal title="sdd — compile" chrome lines={termCompileLive} />
+            <Terminal title="providence — compile" chrome lines={termCompileLive} />
           </div>
         </div>
       )}

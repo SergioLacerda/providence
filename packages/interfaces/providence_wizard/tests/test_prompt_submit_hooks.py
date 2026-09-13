@@ -14,6 +14,7 @@ from providence_wizard.orchestration.prompt_submit_hooks import (
     CENTRAL_PROMPT_SUBMIT_COMMAND,
     CENTRAL_PROMPT_SUBMIT_HOOK,
     PromptSubmitHookGenerator,
+    central_prompt_submit_command,
     resolve_prompt_submit_hook_agents,
 )
 
@@ -62,7 +63,10 @@ def test_prompt_submit_hook_generator_writes_central_hook_and_selected_adapter(
     assert "PROVIDENCE GOVERNANCE ACTIVE" in central_hook_text
     assert "prompt-submit-hook" in central_hook_text
     codex_config = tmp_path / ".codex" / "config.toml"
-    assert CENTRAL_PROMPT_SUBMIT_COMMAND in codex_config.read_text(encoding="utf-8")
+    assert central_prompt_submit_command(tmp_path) in codex_config.read_text(
+        encoding="utf-8"
+    )
+    assert CENTRAL_PROMPT_SUBMIT_COMMAND not in codex_config.read_text(encoding="utf-8")
     assert not (tmp_path / ".claude" / "settings.json").exists()
     assert not (tmp_path / ".gemini" / "settings.json").exists()
 
@@ -77,7 +81,7 @@ def test_prompt_submit_hook_generator_merges_gemini_settings(tmp_path: Path) -> 
 
     settings = json.loads(settings_path.read_text(encoding="utf-8"))
     assert settings["contextFileName"] == "GEMINI.md"
-    assert CENTRAL_PROMPT_SUBMIT_COMMAND in json.dumps(settings)
+    assert central_prompt_submit_command(tmp_path) in json.dumps(settings)
 
 
 def test_prompt_submit_hook_generator_writes_claude_settings(tmp_path: Path) -> None:
@@ -88,7 +92,9 @@ def test_prompt_submit_hook_generator_writes_claude_settings(tmp_path: Path) -> 
 
     claude_settings = tmp_path / ".claude" / "settings.json"
     assert claude_settings.exists()
-    assert CENTRAL_PROMPT_SUBMIT_COMMAND in claude_settings.read_text(encoding="utf-8")
+    assert central_prompt_submit_command(tmp_path) in claude_settings.read_text(
+        encoding="utf-8"
+    )
     assert not (tmp_path / ".codex" / "config.toml").exists()
     assert not (tmp_path / ".gemini" / "settings.json").exists()
 
@@ -103,13 +109,13 @@ def test_prompt_submit_hook_generator_all_three_agents_together(
 
     assert generator.generate() is True
 
-    assert CENTRAL_PROMPT_SUBMIT_COMMAND in (
+    assert central_prompt_submit_command(tmp_path) in (
         tmp_path / ".claude" / "settings.json"
     ).read_text(encoding="utf-8")
-    assert CENTRAL_PROMPT_SUBMIT_COMMAND in (
+    assert central_prompt_submit_command(tmp_path) in (
         tmp_path / ".codex" / "config.toml"
     ).read_text(encoding="utf-8")
-    assert CENTRAL_PROMPT_SUBMIT_COMMAND in (
+    assert central_prompt_submit_command(tmp_path) in (
         tmp_path / ".gemini" / "settings.json"
     ).read_text(encoding="utf-8")
 
@@ -184,6 +190,48 @@ def test_prompt_submit_hook_injects_governance_activation_header(
         "end your response with this compact footer: "
         "PROVIDENCE GOVERNANCE: drift=none | governance=ok | profile=default"
     ) in context
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason=_SKIP_FAKE_SDD_REASON)
+def test_prompt_submit_hook_resolves_workspace_when_called_from_subdir(
+    tmp_path: Path,
+) -> None:
+    generator = PromptSubmitHookGenerator(tmp_path, {"codex"})
+    generator.generate()
+    (tmp_path / ".providence" / "metadata.json").write_text("{}", encoding="utf-8")
+    subdir = tmp_path / "apps" / "landing"
+    subdir.mkdir(parents=True)
+
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    marker_path = tmp_path / "cwd.marker"
+    _write_fake_sdd(
+        bin_dir,
+        [
+            "import os",
+            f"open(r'{marker_path}', 'w').write(os.getcwd())",
+            "print('governance=active fingerprint=58a087b3c9fb9ce2 mandates=16')",
+            "print('execution_gate=allowed')",
+        ],
+    )
+
+    env = dict(os.environ)
+    env["PATH"] = f"{bin_dir}{os.pathsep}{env.get('PATH', '')}"
+    result = subprocess.run(
+        [sys.executable, str(tmp_path / CENTRAL_PROMPT_SUBMIT_HOOK)],
+        input=json.dumps({"prompt": "diagnose M015"}),
+        cwd=subdir,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0
+    assert json.loads(result.stdout)["hookSpecificOutput"]["hookEventName"] == (
+        "UserPromptSubmit"
+    )
+    assert marker_path.read_text(encoding="utf-8") == str(tmp_path)
 
 
 def test_prompt_submit_hook_skips_full_sdd_ask_for_explicit_slash_command(

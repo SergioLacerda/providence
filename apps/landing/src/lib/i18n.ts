@@ -76,7 +76,7 @@ export const LANDING_CONTENT: Record<Lang, LandingCopy> = {
     capEyebrow: 'Capacidades', capTitle: 'Governança que roda junto com o agente',
     capSub: 'Além da seleção, o harness opera em runtime: audita continuamente, mantém contexto isolado por projeto, coordena agentes e compila contratos otimizados.',
     auditTitle: 'Auditoria: drift & economia de tokens',
-    auditBody: 'sdd governance drift compara runtime × especificação; sdd economy report reporta a zona de budget. Eventos de telemetria armam em RED e disparam em BREACH.',
+    auditBody: 'providence audit compara runtime × especificação; providence metrics summary reporta a zona de budget. Eventos de telemetria armam em RED e disparam em BREACH.',
     auditCaption: 'circuit breaker: retries ≤ 3 · reflections ≤ 2 · entropy score por decisão',
     ctxTitle: 'Context-aware: cache isolado por projeto',
     ctxBody: 'Cada projeto mantém .providence/task-context.json. O agente sincroniza (pre-flight) antes de agir e faz checkpoint ao fim de cada sub-tarefa — um loop de aprendizado que converge o estado e barra anti-padrões e memória obsoleta.',
@@ -87,7 +87,7 @@ export const LANDING_CONTENT: Record<Lang, LandingCopy> = {
     handshake: 'handshake bidirecional',
     federation: 'M019 — federação de governança: regras compartilhadas entre projetos, cada célula preserva seu contexto.',
     compTitle: 'Compilação: otimizada, assinada, com fingerprint',
-    compBody: 'Após a escolha, sdd governance compile transforma a seleção em contratos de runtime compactados para economia de token, assinados com Ed25519 e com fingerprint interno para detecção de drift.',
+    compBody: 'Após a escolha, providence governance compile transforma a seleção em contratos de runtime compactados para economia de token, assinados com Ed25519 e com fingerprint interno para detecção de drift.',
     howEyebrow: 'Como funciona', howTitle: 'Da seleção ao contrato de runtime',
     previewEyebrow: 'Preview interativo', previewTitle: 'Experimente o Selector',
     previewSub: 'Marque mandates e guidelines. Veja as dependências resolverem e a seleção se consolidar em selector-selection.json.',
@@ -111,10 +111,10 @@ export const LANDING_CONTENT: Record<Lang, LandingCopy> = {
       { key: 'pending_risks', desc: 'Bloqueios e gotchas descobertos.' },
     ],
     steps: [
-      { roman: 'I', t: 'Navegue o catálogo', d: 'Mandates imutáveis (M001–M{{MCOUNT}}) e guidelines (G01–G{{GCOUNT}}) com categoria e risco.', cmd: 'sdd governance list' },
+      { roman: 'I', t: 'Navegue o catálogo', d: 'Mandates imutáveis (M001–M{{MCOUNT}}) e guidelines (G01–G{{GCOUNT}}) com categoria e risco.', cmd: 'providence governance load' },
       { roman: 'II', t: 'Selecione o que se aplica', d: 'Marque itens no Selector; dependências implícitas são resolvidas automaticamente.', cmd: 'selector-selection.json' },
-      { roman: 'III', t: 'Compile os contratos', d: 'A seleção vira contratos fail-closed, compactados e assinados com fingerprint.', cmd: 'sdd governance compile' },
-      { roman: 'IV', t: 'Audite o drift', d: 'O harness compara runtime × especificação e registra evidência de compliance.', cmd: 'sdd governance drift' },
+      { roman: 'III', t: 'Compile os contratos', d: 'A seleção vira contratos fail-closed, compactados e assinados com fingerprint.', cmd: 'providence governance compile' },
+      { roman: 'IV', t: 'Audite o drift', d: 'O harness compara runtime × especificação e registra evidência de compliance.', cmd: 'providence audit' },
     ],
     compStats: [
       { value: '−63%', label: 'tokens após compactação', color: 'var(--green-600)' },
@@ -133,7 +133,7 @@ export const LANDING_CONTENT: Record<Lang, LandingCopy> = {
     capEyebrow: 'Capabilities', capTitle: 'Governance that runs alongside the agent',
     capSub: 'Beyond selection, the harness operates at runtime: it audits continuously, keeps project-isolated context, coordinates agents, and compiles optimized contracts.',
     auditTitle: 'Audit: drift & token economy',
-    auditBody: 'sdd governance drift compares runtime against the spec; sdd economy report reports the budget zone. Telemetry events arm at RED and fire at BREACH.',
+    auditBody: 'providence audit compares runtime against the spec; providence metrics summary reports the budget zone. Telemetry events arm at RED and fire at BREACH.',
     auditCaption: 'circuit breaker: retries ≤ 3 · reflections ≤ 2 · entropy score per decision',
     ctxTitle: 'Context-aware: project-isolated cache',
     ctxBody: 'Each project keeps .providence/task-context.json. The agent syncs (pre-flight) before acting and checkpoints at the end of every sub-task — a learning loop that converges state and blocks anti-patterns and stale memory.',
@@ -144,7 +144,7 @@ export const LANDING_CONTENT: Record<Lang, LandingCopy> = {
     handshake: 'bidirectional handshake',
     federation: 'M019 — governance federation: rules shared across projects, each cell preserves its own context.',
     compTitle: 'Compile: optimized, signed, fingerprinted',
-    compBody: 'After selection, sdd governance compile turns the selection into runtime contracts compacted for token economy, signed with Ed25519 and carrying an internal fingerprint for drift detection.',
+    compBody: 'After selection, providence governance compile turns the selection into runtime contracts compacted for token economy, signed with Ed25519 and carrying an internal fingerprint for drift detection.',
     howEyebrow: 'How it works', howTitle: 'From selection to runtime contract',
     previewEyebrow: 'Interactive preview', previewTitle: 'Try the Selector',
     previewSub: 'Check mandates and guidelines. Watch dependencies resolve and the selection consolidate into selector-selection.json.',
@@ -168,10 +168,10 @@ export const LANDING_CONTENT: Record<Lang, LandingCopy> = {
       { key: 'pending_risks', desc: 'Blockers and gotchas discovered.' },
     ],
     steps: [
-      { roman: 'I', t: 'Browse the catalog', d: 'Immutable mandates (M001–M{{MCOUNT}}) and guidelines (G01–G{{GCOUNT}}) with category and risk.', cmd: 'sdd governance list' },
+      { roman: 'I', t: 'Browse the catalog', d: 'Immutable mandates (M001–M{{MCOUNT}}) and guidelines (G01–G{{GCOUNT}}) with category and risk.', cmd: 'providence governance load' },
       { roman: 'II', t: 'Select what applies', d: 'Check items in the Selector; implicit dependencies are resolved automatically.', cmd: 'selector-selection.json' },
-      { roman: 'III', t: 'Compile the contracts', d: 'The selection becomes fail-closed, compacted contracts signed with a fingerprint.', cmd: 'sdd governance compile' },
-      { roman: 'IV', t: 'Audit drift', d: 'The harness compares runtime against the spec and records compliance evidence.', cmd: 'sdd governance drift' },
+      { roman: 'III', t: 'Compile the contracts', d: 'The selection becomes fail-closed, compacted contracts signed with a fingerprint.', cmd: 'providence governance compile' },
+      { roman: 'IV', t: 'Audit drift', d: 'The harness compares runtime against the spec and records compliance evidence.', cmd: 'providence audit' },
     ],
     compStats: [
       { value: '−63%', label: 'tokens after compaction', color: 'var(--green-600)' },
@@ -183,11 +183,11 @@ export const LANDING_CONTENT: Record<Lang, LandingCopy> = {
 };
 
 export const TERM_AUDIT = [
-  { prompt: '$', text: 'sdd governance drift --profile client', tone: 'text' as const },
+  { prompt: '$', text: 'providence --profile client audit', tone: 'text' as const },
   { text: '✓ drift=clean · 0 violations', tone: 'green' as const },
   { text: '  fingerprint {{FP}}', tone: 'dim' as const },
   { text: '', tone: 'dim' as const },
-  { prompt: '$', text: 'sdd economy report', tone: 'text' as const },
+  { prompt: '$', text: 'providence metrics summary', tone: 'text' as const },
   { text: 'zone=YELLOW  budget=82%  retries=1/3', tone: 'amber' as const },
   { text: '! economy.budget.warn arms at >90%', tone: 'amber' as const },
   { text: '✓ governance=active', tone: 'green' as const },
@@ -383,7 +383,7 @@ export const INSTALL_CONTENT: Record<Lang, InstallCopy> = {
 };
 
 export const TERM_COMPILE = [
-  { prompt: '$', text: 'sdd governance compile --optimize', tone: 'text' as const },
+  { prompt: '$', text: 'providence governance compile', tone: 'text' as const },
   { text: '✓ 12 contracts compiled', tone: 'green' as const },
   { text: '✓ compacted −63% tokens', tone: 'green' as const },
   { text: '✓ signed (Ed25519)', tone: 'green' as const },
