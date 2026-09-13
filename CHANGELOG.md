@@ -25,6 +25,8 @@ Before tagging a new release, verify:
 
 ## [Unreleased]
 
+## [1.0.16] — 2026-09-13
+
 ### Fixed
 - Fixed `uv tool install "git+https://github.com/.../providence@vX.Y.Z#subdirectory=packages/interfaces/providence_cli"`
   (the standalone-client install command documented in `README.md` /

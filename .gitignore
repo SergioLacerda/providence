@@ -64,6 +64,7 @@ AGENTS.md
 .coverage
 htmlcov/
 .tox/
+mutants/*
 
 # Generated/Compiled Artifacts
 sdd-runtime/*.bin
