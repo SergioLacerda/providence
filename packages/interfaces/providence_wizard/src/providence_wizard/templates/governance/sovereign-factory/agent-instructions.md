@@ -1,4 +1,4 @@
-# SDD Agent Instructions  Authority & Bootstrap
+# Providence Agent Instructions — Authority & Bootstrap
 
 **This workspace is governed by Spec Driven Development (SDD).**
 
@@ -167,7 +167,7 @@ The following aliases are mapped to the operational prompt templates in `.github
 - `/sdd-converge`:  `.github/prompts/sdd-converge.prompt.md` (Systemic alignment convergence)
 - `/sdd-organize`:  `.github/prompts/sdd-organize.prompt.md` (Large context intake/indexing)
 
-**Mandate**: All responses triggered by these commands MUST include the mandatory SDD footer:
+**Mandate**: All responses triggered by these commands MUST include the mandatory Providence footer:
 `PROVIDENCE GOVERNANCE: drift=${status} | governance=${status} | profile=${profile}`
 
 Additional mandate for `/sdd-ask`:

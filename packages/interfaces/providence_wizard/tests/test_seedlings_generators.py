@@ -1098,10 +1098,10 @@ class TestGovernanceSeedsGeneratorPromptCommands:
         )
         success = gen._generate_minimal_prompt_commands()
         assert success is True
-        assert (tmp_path / ".cursor" / "rules" / "sdd-commands.mdc").exists()
+        assert (tmp_path / ".cursor" / "rules" / "providence-commands.mdc").exists()
         assert (tmp_path / ".gemini" / "commands.md").exists()
         cursor_content = (
-            tmp_path / ".cursor" / "rules" / "sdd-commands.mdc"
+            tmp_path / ".cursor" / "rules" / "providence-commands.mdc"
         ).read_text(encoding="utf-8")
         gemini_content = (tmp_path / ".gemini" / "commands.md").read_text(
             encoding="utf-8"
@@ -1248,7 +1248,7 @@ class TestGovernanceSeedsGeneratorGeneratePromptCommands:
         success = gen.generate_prompt_commands()
         assert success is True
         # Check if minimal prompt command files were created
-        assert (tmp_path / ".cursor" / "rules" / "sdd-commands.mdc").exists()
+        assert (tmp_path / ".cursor" / "rules" / "providence-commands.mdc").exists()
 
     def test_generate_prompt_commands_accepts_tuple_outputs(
         self, tmp_path: Path, tmp_seedlings_dir: Path, base_config: dict[str, Any]
@@ -1642,9 +1642,9 @@ class TestGovernanceSeedsGeneratorPromptCommandsExceptions:
             "full",
         }
         # Verify at least one of the fallback files was created
-        assert (tmp_path / ".cursor" / "rules" / "sdd-commands.mdc").exists() or (
-            tmp_path / ".gemini" / "commands.md"
-        ).exists()
+        assert (
+            tmp_path / ".cursor" / "rules" / "providence-commands.mdc"
+        ).exists() or (tmp_path / ".gemini" / "commands.md").exists()
 
     def test_generate_minimal_prompt_commands_creates_files(
         self, tmp_path: Path, tmp_seedlings_dir: Path, base_config: dict[str, Any]
@@ -1665,7 +1665,7 @@ class TestGovernanceSeedsGeneratorPromptCommandsExceptions:
         assert success is True
 
         # Verify files were created
-        assert (tmp_path / ".cursor" / "rules" / "sdd-commands.mdc").exists()
+        assert (tmp_path / ".cursor" / "rules" / "providence-commands.mdc").exists()
         assert (tmp_path / ".gemini" / "commands.md").exists()
 
     def test_generate_prompt_commands_returns_boolean(
@@ -1778,7 +1778,7 @@ class TestIntelligentSeedlingsGeneratorCodex:
         (prompts / "sdd-ask.prompt.md").write_text("x", encoding="utf-8")
         cursor_dir = tmp_path / ".cursor" / "rules"
         cursor_dir.mkdir(parents=True, exist_ok=True)
-        (cursor_dir / "sdd-commands.mdc").write_text("x", encoding="utf-8")
+        (cursor_dir / "providence-commands.mdc").write_text("x", encoding="utf-8")
         gemini_dir = tmp_path / ".gemini"
         gemini_dir.mkdir(parents=True, exist_ok=True)
         (gemini_dir / "commands.md").write_text("x", encoding="utf-8")

@@ -9,6 +9,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "lint": "astro check",
+    "lint:md": "cd ../.. && markdownlint-cli2",
+    "lint-fix": "npm run lint:md -- --fix",
     "test": "vitest run",
     "cover": "vitest run --coverage"
   },
@@ -27,11 +29,13 @@
     "@types/react-dom": "^19.2.7",
     "@vitest/coverage-v8": "^5.0.0",
     "happy-dom": "^20.14.0",
+    "markdownlint-cli2": "^0.23.2",
     "typescript": "^6.0.3",
     "vitest": "^5.0.0"
   },
   "overrides": {
-    "yaml": ">=2.8.3"
+    "yaml": ">=2.8.3",
+    "smol-toml": ">=1.7.1"
   },
   "engines": {
     "node": ">=24.18.0"

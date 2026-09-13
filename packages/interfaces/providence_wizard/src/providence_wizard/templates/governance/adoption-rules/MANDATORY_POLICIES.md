@@ -218,7 +218,7 @@ python packages/agent_handshake.py --mode=compact
 
 Expected output:
 ```
- SDD STATUS
+ PROVIDENCE STATUS
 State:  HEALTHY
 Confidence: 85%
 ```

@@ -20,7 +20,7 @@ def _render_claude_bootstrap_sections() -> list[str]:
         "8. ANTI-PATTERN   Validate no violations",
         "9. EXECUTE        Mandates > Policies > Rules",
         "10. VALIDATE      Compliance check",
-        "11. OUTPUT        [SDD STATUS] Governance: ACTIVE",
+        "11. OUTPUT        [PROVIDENCE STATUS] Governance: ACTIVE",
         "",
         "**Reference:** `.providence/source/README.md`",
         "",

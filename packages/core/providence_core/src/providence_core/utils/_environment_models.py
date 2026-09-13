@@ -30,6 +30,8 @@ class ProfileContext:
     core_hash: str
     root: Path
     language: str | None = None
+    capabilities: frozenset[str] | None = None
+    audit_mode: str | None = None
 
     @property
     def is_master(self) -> bool:
@@ -40,7 +42,7 @@ class ProfileContext:
         return self.type == "client"
 
     def as_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "profile": self.type,
             "name": self.name,
             "workspace_id": self.workspace_id,
@@ -50,3 +52,8 @@ class ProfileContext:
             "is_client": self.is_client,
             "language": self.language,
         }
+        if self.capabilities is not None:
+            result["capabilities"] = self.capabilities
+        if self.audit_mode is not None:
+            result["audit_mode"] = self.audit_mode
+        return result

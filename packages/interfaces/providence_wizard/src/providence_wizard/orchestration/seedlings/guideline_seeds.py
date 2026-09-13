@@ -92,20 +92,23 @@ class GuidelineSeeds:
             )
             cursor_dir = self._ctx.output_base / ".cursor" / "rules"
             cursor_dir.mkdir(parents=True, exist_ok=True)
-            (cursor_dir / "sdd-commands.mdc").write_text(
-                "---\ndescription: SDD CLI commands\nglobs: ['**/*']\nalwaysApply: false\n---\n\n"
-                "# SDD CLI Commands\n\n" + _commands_table,
+            # Rename-away cleanup: don't leave the pre-rebrand filename behind
+            # alongside the new one.
+            (cursor_dir / "sdd-commands.mdc").unlink(missing_ok=True)
+            (cursor_dir / "providence-commands.mdc").write_text(
+                "---\ndescription: Providence CLI commands\nglobs: ['**/*']\nalwaysApply: false\n---\n\n"
+                "# Providence CLI Commands\n\n" + _commands_table,
                 encoding="utf-8",
             )
             gemini_dir = self._ctx.output_base / ".gemini"
             gemini_dir.mkdir(parents=True, exist_ok=True)
             (gemini_dir / "commands.md").write_text(
-                "# SDD CLI Commands for Gemini\n\n" + _commands_table,
+                "# Providence CLI Commands for Gemini\n\n" + _commands_table,
                 encoding="utf-8",
             )
             self.prompt_commands_mode = "fallback"
             self.prompt_commands_outputs = [
-                ".cursor/rules/sdd-commands.mdc",
+                ".cursor/rules/providence-commands.mdc",
                 ".gemini/commands.md",
             ]
             return True

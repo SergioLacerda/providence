@@ -16,7 +16,7 @@ Complete this BEFORE running wizard:
 - [ ] I've read WIZARD_ADOPTION.md
 - [ ] I'm ready to commit to governance (no option to skip this)
 
-**Proceed if all checked** 
+**Proceed if all checked**
 
 ---
 
@@ -111,7 +111,7 @@ python packages/agent_handshake.py --mode=compact
 
 **Expected output**:
 ```
- SDD STATUS
+ PROVIDENCE STATUS
 State:  HEALTHY (or  PARTIAL)
 Confidence: 70%+
 ```
@@ -273,7 +273,7 @@ EOF
 
 ---
 
-## Adoption Complete! 
+## Adoption Complete!
 
 **Date Adopted**: ____________
 **Adopted By**: ____________

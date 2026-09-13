@@ -36,6 +36,6 @@ mode: agent
 
 ## PROVIDENCE GOVERNANCE
 
-`PROVIDENCE GOVERNANCE: drift=${status} | governance=${status} | profile={{ skill.name }}`
+`PROVIDENCE GOVERNANCE: drift=${status} | governance=${status} | profile={{ skill.name | profile_label }}`
 
 Agents must prefer `.providence/source/*` for governance context over compiled artifacts.

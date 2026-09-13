@@ -305,6 +305,23 @@ def test_npm_audit_fix_swallows_unresolved_vulnerabilities(
     assert "unresolved vulnerabilities" in capsys.readouterr().out
 
 
+def test_npm_script_advisory_skips_when_npm_missing(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """A missing `npm` binary is the same "advisory, not blocking" case as a
+    non-zero exit — it must not let a spawn error escape `run_lint_web`
+    (regression: CI environments without npm installed crashed lint-web
+    entirely instead of skipping the advisory markdown-style step)."""
+    make_tasks = _make_tasks_module()
+    with (
+        patch.object(make_tasks.shutil, "which", return_value=None),
+        patch.object(make_tasks, "_run") as run,
+    ):
+        make_tasks.run_npm_script_advisory("lint:md", label="lint-web (markdown style)")
+        run.assert_not_called()
+    assert "npm not found on PATH" in capsys.readouterr().out
+
+
 def test_lint_web_runs_audit_fix_then_lint_script() -> None:
     make_tasks = _make_tasks_module()
     with (
@@ -321,6 +338,19 @@ def test_lint_web_ignores_audit_fix_result() -> None:
     with (
         patch.object(make_tasks, "run_npm_audit_fix", return_value=1),
         patch.object(make_tasks, "run_npm_script", return_value=0),
+    ):
+        assert make_tasks.run_lint_web() == 0
+
+
+def test_lint_web_does_not_crash_when_npm_missing() -> None:
+    """Regression: `run_lint_web` must complete (not raise) in an environment
+    with no `npm` on PATH — the advisory `lint:md` step degrades to a skip
+    instead of a `ProcessSpawnError` escaping through `run_npm_script_advisory`."""
+    make_tasks = _make_tasks_module()
+    with (
+        patch.object(make_tasks, "run_npm_audit_fix", return_value=0),
+        patch.object(make_tasks, "run_npm_script", return_value=0),
+        patch.object(make_tasks.shutil, "which", return_value=None),
     ):
         assert make_tasks.run_lint_web() == 0
 

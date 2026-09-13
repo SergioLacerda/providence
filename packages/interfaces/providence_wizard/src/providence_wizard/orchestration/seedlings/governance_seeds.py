@@ -201,15 +201,24 @@ def generate_root_bootstrap_from_config(
     output_base: "Path",
     config: "dict[str, Any]",
 ) -> bool:
-    """Regenerate root bootstrap files from a compiled governance config dict."""
+    """Regenerate root bootstrap files from a compiled governance config dict.
+
+    Uses the same managed-block-protected write path as `AISeedsGenerator`
+    (`ai_seeds._write_root_seed_file`) instead of a raw whole-file overwrite,
+    so content a human or another tool added outside the managed block in
+    CLAUDE.md/GEMINI.md/AGENTS.md survives regeneration triggered by
+    `providence governance compile`. See
+    `.analysis/refined/20260913-providence-seeds-entrypoint-brand-refinement/design.md`
+    § 3.
+    """
     from datetime import datetime, timezone
     from pathlib import Path
 
-    from providence_core.utils.text_io import write_text_utf8
     from providence_wizard.templates.seedling_templates import build_agents_md
 
     from ._ai_seed_templates import build_claude_md
     from ._renderer import build_fingerprint_header, render_agent_redirector
+    from .ai_seeds import _write_root_seed_file
 
     try:
         items = config.get("items", [])
@@ -227,8 +236,8 @@ def generate_root_bootstrap_from_config(
         fp_header = "\n".join(
             build_fingerprint_header(fingerprint, mandate_ids, generated_at)
         )
-        write_text_utf8(output / "CLAUDE.md", build_claude_md(fp_header))
-        write_text_utf8(
+        _write_root_seed_file(output / "CLAUDE.md", build_claude_md(fp_header))
+        _write_root_seed_file(
             output / "GEMINI.md",
             render_agent_redirector(
                 tool_name="Gemini",
@@ -242,7 +251,7 @@ def generate_root_bootstrap_from_config(
                 generated_at=generated_at,
             ),
         )
-        write_text_utf8(
+        _write_root_seed_file(
             output / "AGENTS.md",
             build_agents_md(
                 spec_fingerprint=fingerprint,

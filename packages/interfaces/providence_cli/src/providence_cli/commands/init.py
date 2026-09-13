@@ -47,6 +47,7 @@ def _write_profile_or_exit(
                 next_hint="upgrade the standalone tool so providence-cli and providence-core come from the same release, then retry: uv tool upgrade providence-cli",
             )
         )
+        raise  # pragma: no cover - _exit_init_operational_error is NoReturn; safety net only
     except OSError as exc:
         _raise_init_operational_error(
             exc,

@@ -105,6 +105,22 @@ decision.
   Rejected per explicit user direction: new work must default to the `provident`/`/provident`
   pattern, with legacy kept only for existing dependents under active deprecation.
 
+## Follow-up
+
+**2026-09-13 status note:** this ADR remains **Proposed** — never accepted — and is
+not superseded by any later ADR. In the meantime, the brand actually adopted
+across the live codebase (mkdocs `site_name`, Python package names, `CLAUDE.md`,
+ADR-024) is "Providence", not this ADR's proposed target ("Providentian" /
+`provident` / `/provident`). A diagnostic mission
+(`.analysis/refined/20260913-legacy-command-names-runtime/`) investigating why
+`sdd-*` command/skill ids still persist at runtime traced the answer back to this
+divergence: this ADR is the only document naming a concrete replacement for
+`sdd-*`, and because it was never accepted — and targets a brand different from
+the one actually in use — there is no approved destination for those ids to
+migrate toward. Resolving that (accept as-is, amend the target to align with
+"Providence", or supersede with a new ADR) is an open decision, not made by
+that diagnostic mission.
+
 ## Links
 
 - `.analysis/pending/ACHADOS_E_MELHORIAS_PROVIDENTIA.md`

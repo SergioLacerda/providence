@@ -60,7 +60,7 @@ class TestGenerateAgentInstructionFiles:
         )
 
         generate_agent_instruction_files(tmp_path, _make_config())
-        cursor_file = tmp_path / ".cursor" / "rules" / "sdd-governance.mdc"
+        cursor_file = tmp_path / ".cursor" / "rules" / "providence-governance.mdc"
         assert cursor_file.exists()
 
     def test_returns_label_and_path_tuples(self, tmp_path: Path) -> None:

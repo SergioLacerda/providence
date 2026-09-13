@@ -39,16 +39,19 @@ def _write_copilot_prompts(
 def _write_cursor_commands(cursor_rules_dir: Path) -> tuple[str, Path]:
     """Write Cursor commands rule file."""
     cursor_rules_dir.mkdir(parents=True, exist_ok=True)
-    cursor_commands = cursor_rules_dir / "sdd-commands.mdc"
+    # Rename-away cleanup: don't leave the pre-rebrand filename behind
+    # alongside the new one.
+    (cursor_rules_dir / "sdd-commands.mdc").unlink(missing_ok=True)
+    cursor_commands = cursor_rules_dir / "providence-commands.mdc"
     cursor_commands.write_text(
         "---\n"
-        "description: SDD CLI commands  invoked when user asks to run tests, lint, governance, etc.\n"
+        "description: Providence CLI commands — invoked when user asks to run tests, lint, governance, etc.\n"
         "globs: ['**/*']\n"
         "alwaysApply: false\n"
         "---\n\n"
-        "# SDD CLI Commands\n\n"
+        "# Providence CLI Commands\n\n"
         "When the user asks to run tests, lint, check governance, or diagnose the workspace, "
-        "use the following SDD CLI commands in the terminal:\n\n"
+        "use the following Providence CLI commands in the terminal:\n\n"
         + _COMMANDS_TABLE
         + "\n"
         + _RUNTIME_STATUS_NOTE,
@@ -61,7 +64,7 @@ def _write_cursor_commands(cursor_rules_dir: Path) -> tuple[str, Path]:
         + _AUDIT_JSON_NOTE,
         encoding="utf-8",
     )
-    return ("Cursor/sdd-commands", cursor_commands)
+    return ("Cursor/providence-commands", cursor_commands)
 
 
 def _write_gemini_files(gemini_dir: Path) -> list[tuple[str, Path]]:
@@ -71,7 +74,7 @@ def _write_gemini_files(gemini_dir: Path) -> list[tuple[str, Path]]:
 
     gemini_commands = gemini_dir / "commands.md"
     gemini_commands.write_text(
-        "# SDD CLI Commands for Gemini\n\n"
+        "# Providence CLI Commands for Gemini\n\n"
         "Use these commands when asked to run tests, lint, or manage governance:\n\n"
         + _COMMANDS_TABLE
         + "\n"
@@ -106,7 +109,7 @@ def _write_codex_commands(
     codex_dir.mkdir(parents=True, exist_ok=True)
     codex_commands = codex_dir / "commands.md"
     codex_commands.write_text(
-        "# SDD Commands for Codex\n\n"
+        "# Providence Commands for Codex\n\n"
         "Entrypoint contract:\n"
         "1. You must learn commands and skills from your custom folder path:\n"
         "   - `.codex/commands.md`\n"

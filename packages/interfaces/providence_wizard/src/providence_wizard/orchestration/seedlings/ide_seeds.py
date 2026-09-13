@@ -58,7 +58,7 @@ class IDESeedsGenerator(BaseSeedlingGenerator):
                         "auto_load": True,
                     },
                     "cursor": {
-                        "rules_ref": ".cursor/rules/sdd-governance.mdc",
+                        "rules_ref": ".cursor/rules/providence-governance.mdc",
                         "auto_load": True,
                     },
                     "claude": {
@@ -150,15 +150,15 @@ class IDESeedsGenerator(BaseSeedlingGenerator):
                 "agent": "cursor",
                 "description": "Cursor IDE governance bootstrap  redirects to compiled SDD source",
                 "load_compiled_from": RUNTIME_DIRNAME,
-                "instructions_ref": ".cursor/rules/sdd-governance.mdc",
-                "commands_ref": ".cursor/rules/sdd-commands.mdc",
+                "instructions_ref": ".cursor/rules/providence-governance.mdc",
+                "commands_ref": ".cursor/rules/providence-commands.mdc",
                 "governance_fingerprint": self.spec_fingerprint,
                 "mandates_count": len(self.mandate_ids),
                 "auto_load": True,
                 "triggers": ["on_project_load", "on_editor_focus"],
                 "required_context": [
                     f"{RUNTIME_DIRNAME}/metadata.json",
-                    ".cursor/rules/sdd-governance.mdc",
+                    ".cursor/rules/providence-governance.mdc",
                 ],
                 "on_load": "prepare_ide_context",
                 "generated_at": self.generated_at,

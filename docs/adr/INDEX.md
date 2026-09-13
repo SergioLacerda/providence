@@ -316,10 +316,13 @@ check blocking for new violations going forward.
 - Implementation reference: `tools/architecture/validate_class_size.py`,
   `packages/interfaces/providence_wizard/EXCEPTIONS.md` (grandfather-list pattern)
 
-### ADR-022: Managed-Block Convention for Shared-Namespace Seed Files (2026-09-06, extended 2026-09-07)
+### ADR-022: Managed-Block Convention for Shared-Namespace Seed Files (2026-09-06, extended 2026-09-07, marker renamed 2026-09-13)
 
 **Decision:** providence-generated content inside cross-tool-convention files
-lives inside a delimited `<!-- sdd:managed:begin/end -->` block. Generators
+lives inside a delimited `<!-- providence:managed:begin/end -->` block
+(renamed 2026-09-13 from `<!-- sdd:managed:begin/end -->`; reads still
+recognize the legacy pair and silently upgrade it on write — see the ADR's
+own Addendum). Generators
 read-merge-write instead of overwriting the whole file; `check_root_seed_drift`
 validates only `CLAUDE.md`/`GEMINI.md`/`AGENTS.md`'s block content — a file
 with no managed block is `unmanaged`, never a failure. Wave 2 (2026-09-07)

@@ -135,3 +135,49 @@ validate` — none of these exist in the current codebase; `providence` has no
 fixing the actual problem. This needs either a full rewrite against the
 current architecture or archival, not a branding pass — flagging for a
 separate task.
+
+## Seed/entrypoint generator findings (2026-09-13)
+
+Mission: `20260913-providence-seeds-entrypoint-brand-refinement`. Scope: the code
+that generates agent entrypoint/seed files (CLAUDE.md, AGENTS.md, GEMINI.md,
+copilot-instructions.md, Cursor `.mdc` rules, `.providence/agent-instructions.md`,
+the central prompt-submit hook) — a layer the audit above did not examine at the
+literal-content/marker level. Full evidence and remediation design:
+`.analysis/refined/20260913-providence-seeds-entrypoint-brand-refinement/`.
+
+New `branding_drift` findings, not previously tracked:
+
+- The managed-block marker embedded in every generated CLAUDE.md/GEMINI.md/AGENTS.md/copilot-instructions.md/antigravity-instructions.md
+  is still the literal string `<!-- sdd:managed:begin -->` / `<!-- sdd:managed:end -->`
+  (`packages/core/providence_core/src/providence_core/utils/managed_block.py:17-18`).
+  Decision (DEC-001): rename to `<!-- providence:managed:begin/end -->` with a
+  backward-compatible **read-both, write-new** marker table — legacy `sdd:managed:*`
+  content already deployed in target repositories is recognized on read and silently
+  upgraded to the new marker on the next regeneration, never treated as corrupted or
+  unmanaged. Not yet implemented (`implementation_handoff`, see mission `tasks.md`
+  Task 1).
+- `.providence/agent-instructions.md` — the file every generated redirector points
+  to as the authoritative bootstrap document — is titled `# SDD Agent Instructions —
+  Authority & Bootstrap` (`seedlings/_agent_instructions_content.py:31`). Not yet
+  fixed (Task 2).
+- The CLI's handshake/status tag is still `SDD STATUS` / `SDD STATUS REPORT`
+  (`providence_core/governance/handshake_formatter.py:57,67`), and a generated
+  bootstrap instructs the agent to print `[SDD STATUS] Governance: ACTIVE`
+  (`providence_cli/generators/_shared_renderers.py:23`) — the same class of tag
+  already fixed elsewhere in this audit (`[SDD] BUDGET BREACH` → `[Providence]
+  BUDGET BREACH`) was missed in these two spots. Not yet fixed (Task 2).
+- Generated Cursor rule filenames `sdd-governance.mdc` and `sdd-commands.mdc` are
+  user-facing artifacts (not internal compiler paths) produced by independent
+  generators in both `providence_cli` and `providence_wizard`. Not yet renamed
+  (Task 2) — pending mission `20260913-providence-seeds-entrypoint-brand-refinement`
+  Task 5 / side quest `SQ-001`, which questions whether the two generator packages
+  should be unified before renaming both independently.
+- The prompt-submit hook script mixes brands within the same generated file: it
+  prints `PROVIDENCE GOVERNANCE ACTIVE` but also instructs "start your response
+  with one short SDD governance status line"
+  (`providence_wizard/orchestration/prompt_submit_hooks.py:70-76`). Not yet fixed
+  (Task 2).
+
+This section is a pointer, not a duplicate ledger — remediation status for each item
+lives in the mission's own `tasks.md` and should be checked there, not re-derived
+from this prose.

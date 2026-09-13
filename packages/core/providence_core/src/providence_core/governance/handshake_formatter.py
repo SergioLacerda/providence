@@ -54,7 +54,7 @@ class HandshakeFormatter:
         return (gap_output + "\n" + ahp_output) if ahp_output else gap_output
 
     def _format_compact_output(self, state: str, emoji: str, report: Any) -> str:
-        output = f"\nSDD STATUS\nState: {emoji} {state}\n"
+        output = f"\nPROVIDENCE STATUS\nState: {emoji} {state}\n"
         for check in report.checks:
             symbol = "PASS" if check["passed"] else "FAIL"
             output += f"  {symbol} {check['name']}\n"
@@ -64,7 +64,7 @@ class HandshakeFormatter:
 
     def _format_verbose_output(self, state: str, emoji: str, report: Any) -> str:
         output = "\n" + "=" * 60 + "\n"
-        output += f"SDD STATUS REPORT\nState: {emoji} {state}\n"
+        output += f"PROVIDENCE STATUS REPORT\nState: {emoji} {state}\n"
         output += f"Confidence: {report.confidence}%\n" + "=" * 60 + "\n\n"
 
         by_layer: dict[str, list[dict[str, Any]]] = {}
@@ -104,7 +104,7 @@ class HandshakeFormatter:
         emoji = str(state_info.get("emoji", "?"))
 
         if mode == "silent":
-            return f"SDD: {emoji}"
+            return f"Providence: {emoji}"
         if mode == "verbose":
             return self._format_verbose_output(state, emoji, report)
         return self._format_compact_output(state, emoji, report)

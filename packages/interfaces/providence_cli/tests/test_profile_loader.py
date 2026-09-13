@@ -11,6 +11,19 @@ def test_get_adapter_returns_expected_policy() -> None:
     assert profile_loader_mod.get_adapter("unknown") is profile_loader_mod.ClientAdapter
 
 
+def test_explicit_capabilities_are_independent_of_artifact_profile() -> None:
+    ctx = click.Context(click.Command("test"))
+    ctx.obj = {
+        "profile": "client",
+        "capabilities": frozenset({"consume", "author", "publish"}),
+    }
+    profile_loader_mod.enforce_profile_policy("release", ctx)
+    profile_loader_mod.enforce_profile_policy("wizard", ctx)
+    ctx.obj = {"profile": "master", "capabilities": frozenset({"consume"})}
+    with pytest.raises(click.exceptions.Exit):
+        profile_loader_mod.enforce_profile_policy("release", ctx)
+
+
 def test_get_active_profile_reads_context_obj() -> None:
     ctx = click.Context(click.Command("test"))
     ctx.obj = {"profile": "master"}

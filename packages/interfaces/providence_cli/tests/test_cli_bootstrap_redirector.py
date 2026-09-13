@@ -83,7 +83,7 @@ def test_cli_vscode_instructions_has_fingerprint(tmp_path: Path) -> None:
 
 def test_cli_cursor_instructions_has_fingerprint(tmp_path: Path) -> None:
     generate_agent_instruction_files(tmp_path, _sample_config())
-    content = (tmp_path / ".cursor" / "rules" / "sdd-governance.mdc").read_text(
+    content = (tmp_path / ".cursor" / "rules" / "providence-governance.mdc").read_text(
         encoding="utf-8"
     )
     assert FINGERPRINT in content
@@ -118,7 +118,7 @@ def test_cli_vscode_instructions_is_redirector(tmp_path: Path) -> None:
 
 def test_cli_cursor_instructions_is_redirector(tmp_path: Path) -> None:
     generate_agent_instruction_files(tmp_path, _sample_config())
-    content = (tmp_path / ".cursor" / "rules" / "sdd-governance.mdc").read_text(
+    content = (tmp_path / ".cursor" / "rules" / "providence-governance.mdc").read_text(
         encoding="utf-8"
     )
     assert ".providence/agent-instructions.md" in content

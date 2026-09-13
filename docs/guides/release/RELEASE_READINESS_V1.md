@@ -45,6 +45,7 @@ Rollback is recommended when one or more conditions are true after release:
 1. Identify last known good tag in GitHub Releases.
 2. Re-deploy previous artifact set from signed release assets.
 3. Open incident entry in `docs/incidents/FAILURE_LEDGER.md`.
+4. Record postmortem and update playbooks in `docs/incidents/PLAYBOOKS.md`.
 
 ## Branch Protection Prerequisite (Manual)
 
@@ -61,7 +62,6 @@ it is not something a workflow file can enforce on its own:
   checks to pass before merging → add the `dry-run` job (or, after the
   `dry-run-build` job exists, both `dry-run` and `dry-run-build`) from
   `release-dry-run.yml`.
-4. Record postmortem and update playbooks in `docs/incidents/PLAYBOOKS.md`.
 
 ## Pre-Build Dependency Check (Manual)
 

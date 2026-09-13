@@ -1,21 +1,30 @@
-"""Managed-block convention for files sdd shares with other tools/agents.
+"""Managed-block convention for files Providence shares with other tools/agents.
 
 Some generated files (root `CLAUDE.md`, `GEMINI.md`, `AGENTS.md`) use
 filenames that are conventions independently recognized by other AI coding
-tools — sdd does not own the whole file, only the governance content it
-itself writes. This module lets a generator replace only its own delimited
-region on regeneration, preserving everything else in the file exactly as
-found (a human's notes, another tool's own instructions, etc.), and lets a
-validator extract that same region without assuming anything about content
-outside it.
+tools — Providence does not own the whole file, only the governance content
+it itself writes. This module lets a generator replace only its own
+delimited region on regeneration, preserving everything else in the file
+exactly as found (a human's notes, another tool's own instructions, etc.),
+and lets a validator extract that same region without assuming anything
+about content outside it.
 
-See `.analysis/refined/20260906-root-seed-githook-necessity/design.md`.
+See `.analysis/refined/20260906-root-seed-githook-necessity/design.md` and
+`.analysis/refined/20260913-providence-seeds-entrypoint-brand-refinement/design.md`
+(marker rename compatibility policy).
 """
 
 from __future__ import annotations
 
-_BLOCK_BEGIN = "<!-- sdd:managed:begin -->"
-_BLOCK_END = "<!-- sdd:managed:end -->"
+# Recognized marker pairs, current first. Reads try every pair in order;
+# writes always emit the first (current) pair — so a file carrying a legacy
+# pair is silently upgraded to the current pair on its next regeneration.
+# See docs/adr/20260913-providence-seeds-entrypoint-brand-refinement-adr.md.
+_MARKER_PAIRS: tuple[tuple[str, str], ...] = (
+    ("<!-- providence:managed:begin -->", "<!-- providence:managed:end -->"),
+    ("<!-- sdd:managed:begin -->", "<!-- sdd:managed:end -->"),  # legacy, read-only
+)
+_BLOCK_BEGIN, _BLOCK_END = _MARKER_PAIRS[0]
 
 
 class MalformedManagedBlockError(ValueError):
@@ -27,24 +36,41 @@ class MalformedManagedBlockError(ValueError):
     """
 
 
-def _find_markers(content: str) -> tuple[int, int] | None:
-    """Return (begin_index, end_of_end_marker_index) or None if absent.
+def _find_markers(content: str) -> tuple[int, int, str, str] | None:
+    """Return (begin_index, end_of_end_marker_index, begin, end) or None if absent.
 
-    Raises `MalformedManagedBlockError` if markers are unbalanced or
-    duplicated (more than one begin, or a mismatched count of begin/end).
+    Tries every recognized marker pair (see `_MARKER_PAIRS`). Raises
+    `MalformedManagedBlockError` if more than one begin or end marker is
+    present (across all pairs combined), if begin/end counts do not match,
+    or if a begin marker from one pair is paired with an end marker from a
+    different pair. The returned `begin`/`end` are the exact marker strings
+    matched, so callers can correctly strip them regardless of which pair
+    (current or legacy) was found.
     """
-    begin_count = content.count(_BLOCK_BEGIN)
-    end_count = content.count(_BLOCK_END)
-    if begin_count != end_count or begin_count > 1:
+    total_begin = sum(content.count(begin) for begin, _ in _MARKER_PAIRS)
+    total_end = sum(content.count(end) for _, end in _MARKER_PAIRS)
+
+    if total_begin != total_end or total_begin > 1:
         raise MalformedManagedBlockError(
             f"expected 0 or 1 balanced managed-block marker pairs, "
-            f"found {begin_count} begin / {end_count} end"
+            f"found {total_begin} begin / {total_end} end"
         )
-    if begin_count == 0:
+    if total_begin == 0:
         return None
-    start = content.index(_BLOCK_BEGIN)
-    end = content.index(_BLOCK_END) + len(_BLOCK_END)
-    return start, end
+
+    begin_pair = next(
+        i for i, (begin, _) in enumerate(_MARKER_PAIRS) if begin in content
+    )
+    end_pair = next(i for i, (_, end) in enumerate(_MARKER_PAIRS) if end in content)
+    if begin_pair != end_pair:
+        raise MalformedManagedBlockError(
+            "managed-block begin/end markers belong to different marker pairs"
+        )
+
+    begin, end = _MARKER_PAIRS[begin_pair]
+    start = content.index(begin)
+    finish = content.index(end) + len(end)
+    return start, finish, begin, end
 
 
 def merge_managed_block(existing_content: str | None, new_block_body: str) -> str:
@@ -74,7 +100,7 @@ def merge_managed_block(existing_content: str | None, new_block_body: str) -> st
         # No existing block: insert at the top, preserve everything else below.
         return block + "\n" + existing_content
 
-    start, end = markers
+    start, end, _matched_begin, _matched_end = markers
     return existing_content[:start] + block + existing_content[end:]
 
 
@@ -93,5 +119,5 @@ def extract_managed_block(content: str) -> str | None:
         return None
     if markers is None:
         return None
-    start, end = markers
-    return content[start + len(_BLOCK_BEGIN) : end - len(_BLOCK_END)].strip("\n")
+    start, end, begin_marker, end_marker = markers
+    return content[start + len(begin_marker) : end - len(end_marker)].strip("\n")

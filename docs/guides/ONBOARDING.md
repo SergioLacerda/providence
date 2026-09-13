@@ -35,12 +35,13 @@ and Windows.
 <!-- -->
 
 > [!WARNING]
-> If you also have `sdd` installed globally as the `providence-cli` tool (e.g. via
-> `uv tool install`, as an adopter in another project), that global binary may appear
+> If you also have `providence` installed globally as the `providence-cli` tool (e.g.
+> via `uv tool install`, as an adopter in another project), that global binary may appear
 > earlier in your `PATH` and
 > shadow this repository's version (`.venv/bin/providence` or `.venv/Scripts/providence.exe`). When
-> developing in this repo, always prefer `uv run sdd <command>` (uses this workspace's
-> `.venv` regardless of `PATH`), or run `uv tool uninstall providence-cli` before starting.
+> developing in this repo, always prefer `uv run providence <command>` (uses this
+> workspace's `.venv` regardless of `PATH`), or run `uv tool uninstall providence-cli`
+> before starting.
 
 ## Quick bootstrap
 

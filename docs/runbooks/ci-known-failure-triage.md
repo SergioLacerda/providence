@@ -87,7 +87,7 @@ matrix below first.
    conflicting URL sources such as `file:///.../providence_integration` and
    `file:///.../providence_integration (editable)`.
 
-3. Re-run the targeted policy test:
+4. Re-run the targeted policy test:
 
    ```bash
    UV_CACHE_DIR=/tmp/uv-cache uv run python -m pytest -q -o addopts='' tests/unit/ci/test_release_workflow_policy.py

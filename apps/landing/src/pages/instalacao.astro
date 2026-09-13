@@ -25,14 +25,14 @@ const RELEASES_URL = 'https://github.com/SergioLacerda/providence/releases';
         label="github releases (recomendado)"
         linkHref={RELEASES_URL}
         linkText="github.com/SergioLacerda/providence/releases"
-        note="Baixe os artefatos dist/ de um release publicado e instale sdd-cli localmente (python -m venv + pip install --no-index --find-links) — canal oficial validado por CI."
+        note="Baixe os artefatos dist/ de um release publicado e instale providence-cli localmente (python -m venv + pip install --no-index --find-links) — canal oficial validado por CI."
         copyLabel="copiar"
         openLabel="abrir ↗"
       />
       <InstallCard
         label="uv tool install · a partir do código-fonte"
-        command='uv tool install "git+https://github.com/SergioLacerda/providence@&lt;tag&gt;#subdirectory=packages/interfaces/sdd_cli"'
-        note="Substitua <tag> por um release (ex.: v1.0.13). Omitir a tag instala o HEAD do branch default — não recomendado."
+        command='uv tool install "git+https://github.com/SergioLacerda/providence@&lt;tag&gt;#subdirectory=packages/interfaces/providence_cli"'
+        note="Substitua <tag> por um release (ex.: v1.0.14). Omitir a tag instala o HEAD do branch default — não recomendado."
         copyLabel="copiar"
       />
     </div>
@@ -41,11 +41,11 @@ const RELEASES_URL = 'https://github.com/SergioLacerda/providence/releases';
       <div class="step-head"><h2 data-i18n="install.step2Title">{install.step2Title}</h2><span class="rule"></span><span class="stepnum" data-i18n="install.step2Num">{install.step2Num}</span></div>
       <p class="step-intro" data-i18n="install.step2Intro">{install.step2Intro}</p>
 
-      <InstallCard label="sdd-cli" command="sdd install --wizard" copyLabel="copiar" />
-      <InstallCard label="sdd-cli" command="sdd init --default" copyLabel="copiar" />
+      <InstallCard label="providence-cli" command="providence install --wizard" copyLabel="copiar" />
+      <InstallCard label="providence-cli" command="providence init --default" copyLabel="copiar" />
       <InstallCard
         label="verificar"
-        command="sdd governance validate"
+        command="providence governance validate"
         note="Confirma perfil ativo e estado da governança."
         copyLabel="copiar"
       />

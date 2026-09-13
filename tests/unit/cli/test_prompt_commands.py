@@ -15,7 +15,7 @@ def test_generated_prompts_include_soft_governance_footer(tmp_path: Path) -> Non
     generate_agent_prompt_commands(tmp_path)
 
     copilot_prompt = tmp_path / ".github" / "prompts" / "sdd-ask.prompt.md"
-    cursor_commands = tmp_path / ".cursor" / "rules" / "sdd-commands.mdc"
+    cursor_commands = tmp_path / ".cursor" / "rules" / "providence-commands.mdc"
     codex_commands = tmp_path / ".codex" / "commands.md"
     gemini_commands = tmp_path / ".gemini" / "commands.md"
 
@@ -41,7 +41,7 @@ def test_generated_prompts_do_not_reference_legacy_generated_paths(
 
     prompt_files = [
         tmp_path / ".github" / "prompts" / "sdd-ask.prompt.md",
-        tmp_path / ".cursor" / "rules" / "sdd-commands.mdc",
+        tmp_path / ".cursor" / "rules" / "providence-commands.mdc",
         tmp_path / ".codex" / "commands.md",
         tmp_path / ".gemini" / "commands.md",
     ]
@@ -59,7 +59,7 @@ def test_generated_prompts_do_not_contain_duplicate_ask_invocation(
 
     prompt_files = [
         tmp_path / ".github" / "prompts" / "sdd-ask.prompt.md",
-        tmp_path / ".cursor" / "rules" / "sdd-commands.mdc",
+        tmp_path / ".cursor" / "rules" / "providence-commands.mdc",
         tmp_path / ".codex" / "commands.md",
         tmp_path / ".gemini" / "commands.md",
     ]

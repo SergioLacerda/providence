@@ -5,7 +5,7 @@
 - **Optimization**: Optimized for AI agent parsing
 - **Version**: 3.0
 - **Language**: all
-- **Generated**: 2026-09-12T07:49:58.299630
+- **Generated**: 2026-09-13T12:42:04.371464
 
 ## Core Mandates
 

@@ -128,7 +128,7 @@ def test_vscode_no_inline_mandate_descriptions(tmp_path: Path) -> None:
 
 def test_cursor_no_inline_mandate_descriptions(tmp_path: Path) -> None:
     generate_agent_instruction_files(tmp_path, _sample_config())
-    content = (tmp_path / ".cursor" / "rules" / "sdd-governance.mdc").read_text(
+    content = (tmp_path / ".cursor" / "rules" / "providence-governance.mdc").read_text(
         encoding="utf-8"
     )
     assert MANDATE_DESC not in content

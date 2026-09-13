@@ -104,6 +104,7 @@ NUL
 
 # SDD Profiles - generated via CLI; ignore runtime contents but keep safe/canonical files
 # Git cannot re-include files inside a directory ignored with dir/, so use dir/*.
+packages/interfaces/providence_cli/.providence/runtime/
 .providence/*
 # Trust: only public/keyring material is safe to commit
 !.providence/trust/

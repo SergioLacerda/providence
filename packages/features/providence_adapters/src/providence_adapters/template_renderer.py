@@ -10,6 +10,8 @@ from jinja2 import (
     select_autoescape,
 )
 
+from providence_skills import resolve_profile_label
+
 # Templates bundled inside the package
 _BUNDLED_TEMPLATES = Path(__file__).parent / "templates" / "adapters"
 
@@ -32,6 +34,7 @@ class TemplateRenderer:
             loader=FileSystemLoader(str(self.templates_dir)),
             autoescape=select_autoescape(enabled_extensions=("html", "htm")),
         )
+        self.env.filters["profile_label"] = resolve_profile_label
 
     def render(self, target: str, template_name: str, **context: Any) -> str:
         """

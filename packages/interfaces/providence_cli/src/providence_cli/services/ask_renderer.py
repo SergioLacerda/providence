@@ -45,7 +45,7 @@ def render_governance_activation_header(
     execution_gate: str = "allowed",
     governance_mode: str = "hard",
 ) -> str:
-    """Return the compact SDD-active header for prompt hook context."""
+    """Return the compact Providence-active header for prompt hook context."""
     fp = (fingerprint or "unknown")[:8]
     return "\n".join(
         [
@@ -54,7 +54,7 @@ def render_governance_activation_header(
             f"governance_mode={governance_mode or 'hard'} | "
             f"execution_gate={execution_gate or 'unknown'} | "
             f"fingerprint={fp}",
-            "Instruction: start your response with one short SDD governance "
+            "Instruction: start your response with one short Providence governance "
             "status line when this context is present.",
         ]
     )

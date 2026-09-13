@@ -60,18 +60,34 @@ export function RuntimeProof({ stats = PLACEHOLDER_GOVERNANCE_STATS, detailHref 
           <GovernanceFooter drift="clean" governance="active" profile="client" surface="dark" />
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left', maxWidth: 640, margin: '0 auto' }}>
-          {c.steps.map((s) => (
-            <div key={s.roman} style={{ display: 'grid', gridTemplateColumns: '52px 1fr', gap: 22, padding: '20px 0', borderTop: '1px solid var(--line)' }}>
-              <div style={{ width: 38, height: 38, borderRadius: 999, border: '1px solid var(--bronze-dim)', color: 'var(--bronze)', fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{s.roman}</div>
-              <div>
-                <h3 style={{ margin: '0 0 5px', fontFamily: 'var(--serif)', fontSize: 16, fontWeight: 600, color: 'var(--ink)' }}>{s.t}</h3>
-                <p style={{ margin: '0 0 10px', fontSize: 14, lineHeight: 1.55, color: 'var(--ink-dim)' }}>{withGovernanceStats(stats, s.d)}</p>
-                <code style={{ display: 'inline-block', fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--bronze-bright)', background: 'var(--panel)', border: '1px solid var(--line)', borderRadius: 4, padding: '6px 10px' }}>{s.cmd}</code>
-              </div>
+        <div className="steps-grid">
+          {c.steps.map((s, i) => (
+            <div key={s.roman} className="step-cell" style={{ borderRight: i < c.steps.length - 1 ? '1px solid var(--line)' : 'none' }}>
+              <div style={{ width: 34, height: 34, borderRadius: 999, border: '1px solid var(--bronze-dim)', color: 'var(--bronze)', fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>{s.roman}</div>
+              <h3 style={{ margin: '0 0 6px', fontFamily: 'var(--serif)', fontSize: 15.5, fontWeight: 600, color: 'var(--ink)' }}>{s.t}</h3>
+              <p style={{ margin: '0 0 14px', fontSize: 13, lineHeight: 1.5, color: 'var(--ink-dim)' }}>{withGovernanceStats(stats, s.d)}</p>
+              <code style={{ display: 'inline-block', fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--bronze-bright)', background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 4, padding: '6px 10px', wordBreak: 'break-word' }}>{s.cmd}</code>
             </div>
           ))}
         </div>
+
+        <style>{`
+          .steps-grid{
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            border: 1px solid var(--line-strong);
+            border-radius: 4px;
+            overflow: hidden;
+            text-align: left;
+          }
+          .step-cell{ padding: 22px 20px; background: var(--panel); }
+          @media (max-width: 760px){
+            .steps-grid{ grid-template-columns: 1fr; }
+            .step-cell{ border-right: none !important; border-bottom: 1px solid var(--line); }
+            .step-cell:last-child{ border-bottom: none; }
+          }
+        `}</style>
 
         <a
           href={detailHref}

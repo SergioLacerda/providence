@@ -127,6 +127,40 @@ def test_claude_seed_has_fingerprint(tmp_path: Path) -> None:
     assert FINGERPRINT in content
 
 
+def test_claude_seed_preserves_pre_existing_user_prompt_submit_hook(
+    tmp_path: Path,
+) -> None:
+    """`generate_claude_seed()` writes `.claude/settings.json`'s "PreToolUse"
+    hook — it must merge, not overwrite, so a "UserPromptSubmit" hook already
+    written by PromptSubmitHookGenerator survives. See
+    `.analysis/refined/20260913-providence-seeds-entrypoint-brand-refinement/design.md` § 4."""
+    settings_path = tmp_path / ".claude" / "settings.json"
+    settings_path.parent.mkdir(parents=True)
+    settings_path.write_text(
+        json.dumps(
+            {
+                "hooks": {
+                    "UserPromptSubmit": [
+                        {"hooks": [{"type": "command", "command": "some-hook.py"}]}
+                    ]
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    gen = _make_ai_gen(tmp_path)
+
+    assert gen.generate_claude_seed()
+
+    settings = json.loads(settings_path.read_text(encoding="utf-8"))
+    assert settings["hooks"]["UserPromptSubmit"][0]["hooks"][0]["command"] == (
+        "some-hook.py"
+    )
+    assert settings["hooks"]["PreToolUse"][0]["hooks"][0]["command"] == (
+        ".claude/providence-bootstrap.sh"
+    )
+
+
 def test_gemini_seed_has_fingerprint(tmp_path: Path) -> None:
     gen = _make_ai_gen(tmp_path)
     assert gen.generate_gemini_seed()

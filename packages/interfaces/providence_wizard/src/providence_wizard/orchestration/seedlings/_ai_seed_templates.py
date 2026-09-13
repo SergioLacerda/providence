@@ -165,7 +165,7 @@ If that file says something different from what you remember seeing in CLAUDE.md
 
 ---
 
-If `providence` is not found on your shell `PATH`, run it via `uv run providence <command>` instead  see `docs/guides/ONBOARDING.md` for why.
+If `providence` is not found on your shell `PATH`, run it via `uv run providence <command>` instead — see `docs/guides/ONBOARDING.md` for why.
 
 ## Safe Fallback
 

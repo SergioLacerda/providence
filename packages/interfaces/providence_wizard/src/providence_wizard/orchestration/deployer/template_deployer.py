@@ -89,13 +89,20 @@ class TemplateDeployer:
     def _ensure_cursor_rule_aliases(self) -> None:
         cursor_rules_dir = self.output_base / ".cursor" / "rules"
         spec_file = cursor_rules_dir / "spec.mdc"
-        governance_file = cursor_rules_dir / "sdd-governance.mdc"
-        if spec_file.exists() and not governance_file.exists():
+        governance_file = cursor_rules_dir / "providence-governance.mdc"
+        # "sdd-governance.mdc" (pre-rebrand) accepted for one transition
+        # period: an existing workspace may not have regenerated yet.
+        legacy_governance_file = cursor_rules_dir / "sdd-governance.mdc"
+        governance_exists = governance_file.exists() or legacy_governance_file.exists()
+        if spec_file.exists() and not governance_exists:
             shutil.copy2(spec_file, governance_file)
             self._log("Created Cursor governance alias from spec.mdc")
-        elif governance_file.exists() and not spec_file.exists():
-            shutil.copy2(governance_file, spec_file)
-            self._log("Created Cursor spec alias from sdd-governance.mdc")
+        elif governance_exists and not spec_file.exists():
+            source = (
+                governance_file if governance_file.exists() else legacy_governance_file
+            )
+            shutil.copy2(source, spec_file)
+            self._log(f"Created Cursor spec alias from {source.name}")
 
     def _prune_github_dir(self, github_dir: Path) -> None:
         """Remove `.github` artifacts belonging to options that were not selected."""

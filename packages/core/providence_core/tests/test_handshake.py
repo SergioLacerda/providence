@@ -627,7 +627,7 @@ class TestFormatOutput:
         ahp = AgentHandshakeProtocol(project_root=tmp_path)
         report = self._make_report()
         result = ahp.format_output("HEALTHY", report, mode="silent")
-        assert "SDD:" in result
+        assert "Providence:" in result
 
     def test_compact_mode_contains_state(self, tmp_path: Path) -> None:
         ahp = AgentHandshakeProtocol(project_root=tmp_path)

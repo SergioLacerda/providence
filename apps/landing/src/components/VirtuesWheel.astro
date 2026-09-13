@@ -29,8 +29,8 @@ const virtues = VIRTUES_CONTENT.pt;
           const p = positions[i];
           return (
             <g class:list={['vnode', { active: i === 0 }]} data-virtue={v.id}>
-              <circle class="vcircle" cx={p.cx} cy={p.cy} r="34" fill="var(--panel)" stroke={i === 0 ? 'var(--bronze)' : 'var(--line-strong)'} stroke-width="1.5"/>
-              <text class="node-label" x={p.cx} y={p.ly} text-anchor="middle" font-size={v.id === 'fidelitas' ? '12' : '13'}>{v.name}</text>
+              <circle class="vcircle" cx={p.cx} cy={p.cy} r="42" fill="var(--panel)" stroke={i === 0 ? 'var(--bronze)' : 'var(--line-strong)'} stroke-width="1.5"/>
+              <text class="node-label" x={p.cx} y={p.ly} text-anchor="middle" font-size={v.id === 'fidelitas' ? '14' : '15'}>{v.name}</text>
               <text class="verb" x={p.cx} y={p.vy} text-anchor="middle">{v.verb.split('—').pop()?.trim()}</text>
             </g>
           );
@@ -54,16 +54,16 @@ const virtues = VIRTUES_CONTENT.pt;
      forcing an early wrap. Force it back to the full available width so
      the row actually gets the ~1096px .wrap normally provides. */
   #virtudes .wrap{width:100%;}
-  .virtues-layout{display:flex; justify-content:flex-start; align-items:center; gap:72px; flex-wrap:wrap;}
-  .cycle-diagram{width:100%; max-width:400px; display:block; flex:1 1 400px;}
+  .virtues-layout{display:flex; justify-content:flex-start; align-items:center; gap:84px; flex-wrap:wrap;}
+  .cycle-diagram{width:100%; max-width:480px; display:block; flex:1 1 480px;}
   /* Two-tier responsive: shrink but stay side-by-side first (docs/migration/
      2026-09-07-nav-layout-tweaks.md); only stack as a last resort on very
      narrow phones, below 420px. Circle and text panel share the same
      flex-basis/max-width at every step so the two stay proportional. */
   @media (max-width:900px){
-    .virtues-layout{gap:40px;}
-    .cycle-diagram{flex:1 1 240px; max-width:240px;}
-    .virtue-panel{flex:1 1 240px; max-width:240px;}
+    .virtues-layout{gap:44px;}
+    .cycle-diagram{flex:1 1 300px; max-width:320px;}
+    .virtue-panel{flex:1 1 320px; max-width:360px;}
   }
   @media (max-width:420px){
     .cycle-diagram{flex-basis:100%; max-width:300px; margin:0 auto;}
@@ -71,18 +71,18 @@ const virtues = VIRTUES_CONTENT.pt;
   }
   .cycle-diagram text{font-family:var(--sans); fill:var(--ink);}
   .cycle-diagram .node-label{font-family:var(--serif); font-weight:600; font-style:italic;}
-  .cycle-diagram .verb{font-size:10px; fill:var(--ink-faint); letter-spacing:0.03em;}
+  .cycle-diagram .verb{font-size:12px; fill:var(--ink-faint); letter-spacing:0.03em;}
   .vnode{cursor:pointer;}
   .vnode circle{transition:stroke .2s;}
   .vnode .node-label{transition:fill .2s;}
   .vnode:hover circle{stroke:var(--bronze-dim);}
   .vnode.active circle{stroke:var(--bronze);}
   .vnode.active .node-label{fill:var(--bronze);}
-  .virtue-panel{max-width:400px; flex:1 1 400px;}
-  .virtue-panel .vname{font-family:var(--serif); font-style:italic; font-weight:600; color:var(--bronze); font-size:30px; margin:0 0 6px;}
-  .virtue-panel .vverb{font-family:var(--mono); font-size:12px; color:var(--ink-faint); text-transform:lowercase; margin:0 0 22px;}
-  .virtue-panel p{font-size:16px; color:var(--ink-dim); margin:0 0 20px; line-height:1.85;}
-  .virtue-panel .vq{font-size:15px; font-style:italic; color:var(--ink); margin:0; line-height:1.7; border-left:2px solid var(--bronze-dim); padding-left:14px;}
+  .virtue-panel{max-width:480px; flex:1 1 460px;}
+  .virtue-panel .vname{font-family:var(--serif); font-style:italic; font-weight:600; color:var(--bronze); font-size:clamp(36px, 4vw, 44px); margin:0 0 8px;}
+  .virtue-panel .vverb{font-family:var(--mono); font-size:14px; color:var(--ink-faint); text-transform:lowercase; margin:0 0 26px;}
+  .virtue-panel p{font-size:18px; color:var(--ink-dim); margin:0 0 24px; line-height:1.75;}
+  .virtue-panel .vq{font-size:17px; font-style:italic; color:var(--ink); margin:0; line-height:1.7; border-left:2px solid var(--bronze-dim); padding-left:18px;}
 </style>
 
 <script>

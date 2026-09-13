@@ -23,9 +23,9 @@ def generate_agent_prompt_commands(
 ) -> list[tuple[str, Path]]:
     """Generate CLI prompt/command files for all supported AI tools.
 
-    These files let users invoke SDD CLI commands natively from each tool:
+    These files let users invoke Providence CLI commands natively from each tool:
     - VS Code Copilot: .github/prompts/*.prompt.md  (slash commands /sdd-*)
-    - Cursor:          .cursor/rules/sdd-commands.mdc
+    - Cursor:          .cursor/rules/providence-commands.mdc
     - Gemini CLI:      .gemini/commands.md + .gemini/settings.json
 
     NOTE: CLAUDE.md is generated exclusively by ai_seeds.py:generate_claude_seed()

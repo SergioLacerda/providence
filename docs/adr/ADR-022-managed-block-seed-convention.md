@@ -155,3 +155,22 @@ redesign, as Wave 2 already did for Wave 1's implementation verbatim.
 - Consumers: `packages/interfaces/providence_wizard/src/providence_wizard/orchestration/seedlings/ai_seeds.py`,
   `.../seedling_renderer.py`,
   `packages/interfaces/providence_cli/src/providence_cli/services/governance_config_reader.py`
+
+## Addendum (2026-09-13) — Marker Renamed
+
+The marker literal shown above (`<!-- sdd:managed:begin/end -->`) reflected
+this project's brand at the time this ADR was written. The marker has since
+been renamed to `<!-- providence:managed:begin/end -->`, following the
+project's rebrand to "Providence." This is left in place above as a record of
+what was true when this decision was made (per this project's own
+`historical_reference` documentation convention — see
+`docs/spec/decisions/2026-09-12-sdd-branding-audit.md`), not corrected in
+place.
+
+The rename is **backward-compatible by design**: `merge_managed_block`/
+`extract_managed_block` still recognize the legacy `sdd:managed:*` pair on
+read, and every write silently upgrades a legacy block to the current pair —
+no forced migration, no flag day, same gradual-and-silent posture already
+described under Consequences above for the original marker rollout. See
+`.analysis/archived/20260913-providence-seeds-entrypoint-brand-refinement-adr.md`
+for the full decision record.
