@@ -140,6 +140,14 @@ jobs:
     name: Container Security (Trivy)
     runs-on: ubuntu-latest
     timeout-minutes: 7
+    env:
+      # `secrets` is not a permitted context inside `if:` conditionals
+      # (actionlint/GitHub Actions restriction — only env, github, inputs,
+      # job, matrix, needs, runner, steps, strategy, vars are). Mirror the
+      # two secrets into job-level env vars so the login step's `if:` below
+      # can check them without referencing `secrets` directly.
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
       - name: Set up Python
@@ -157,10 +165,16 @@ jobs:
           uv run python tools/ci/environment_gates.py trusted-keyring-precedence-check --context security --mode warn
           uv run python tools/ci/environment_gates.py signature-mode-policy-check --context security --mode warn
       - name: Log in to Docker Hub
+        # Skip cleanly (not "failed") when the secrets aren't configured —
+        # docker/login-action itself errors "Username and password
+        # required" rather than skipping, which reads as a real pipeline
+        # failure even though this step is optional (only raises the
+        # anonymous-pull rate limit; the build works unauthenticated too).
+        if: ${{ env.DOCKERHUB_USERNAME != '' && env.DOCKERHUB_TOKEN != '' }}
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f  # v4.6.0
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ env.DOCKERHUB_TOKEN }}
         continue-on-error: true
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
