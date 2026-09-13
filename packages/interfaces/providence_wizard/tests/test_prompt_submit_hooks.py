@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -403,3 +404,133 @@ def test_prompt_submit_hook_runs_full_path_for_non_slash_prompt(
     payload = json.loads(result.stdout)
     context = payload["hookSpecificOutput"]["additionalContext"]
     assert context.startswith("PROVIDENCE GOVERNANCE ACTIVE")
+
+
+def test_prompt_submit_hook_explicit_command_includes_footer_instruction(
+    tmp_path: Path,
+) -> None:
+    """Regression (20260913-governance-hooks-dogfood, F008): the explicit
+    /sdd-ask branch must carry the same footer contract as the normal path,
+    even though it defers its own `providence ask` call to the slash-command
+    adapter for this turn (see .codex/skills/sdd-ask.prompt.md's own
+    `PROVIDENCE GOVERNANCE` footer template, which this instruction mirrors)."""
+    generator = PromptSubmitHookGenerator(tmp_path, {"codex"})
+    generator.generate()
+    (tmp_path / ".providence" / "metadata.json").write_text("{}", encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, str(tmp_path / CENTRAL_PROMPT_SUBMIT_HOOK)],
+        input=json.dumps({"prompt": "/sdd-ask verificar governance"}),
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0
+    context = json.loads(result.stdout)["hookSpecificOutput"]["additionalContext"]
+    assert "end your response with this compact footer" in context
+    assert (
+        "PROVIDENCE GOVERNANCE: drift=${status} | governance=${status} | "
+        "profile=sdd-ask"
+    ) in context
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason=_SKIP_FAKE_SDD_REASON)
+def test_prompt_submit_hook_falls_back_to_workspace_venv_when_providence_not_on_path(
+    tmp_path: Path,
+) -> None:
+    """Regression (20260913-governance-hooks-dogfood, F006): a bare `providence`
+    lookup on PATH is not the only supported runtime shape. This repository's
+    own dogfooded deployment only has `providence` installed under its
+    `.venv/bin/`, not on PATH, so the hook must also try
+    `<workspace_root>/.venv/bin/providence` before giving up."""
+    generator = PromptSubmitHookGenerator(tmp_path, {"codex"})
+    generator.generate()
+    (tmp_path / ".providence" / "metadata.json").write_text("{}", encoding="utf-8")
+
+    venv_bin = tmp_path / ".venv" / "bin"
+    venv_bin.mkdir(parents=True)
+    _write_fake_sdd(
+        venv_bin,
+        [
+            "print('governance=active fingerprint=58a087b3c9fb9ce2 mandates=16')",
+            "print('execution_gate=allowed')",
+        ],
+    )
+
+    env = {key: value for key, value in os.environ.items() if key != "PATH"}
+    env["PATH"] = os.pathsep.join(("/usr/bin", "/bin"))
+    result = subprocess.run(
+        [sys.executable, str(tmp_path / CENTRAL_PROMPT_SUBMIT_HOOK)],
+        input=json.dumps({"prompt": "implement C"}),
+        cwd=tmp_path,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0
+    payload = json.loads(result.stdout)
+    context = payload["hookSpecificOutput"]["additionalContext"]
+    assert context.startswith("PROVIDENCE GOVERNANCE ACTIVE")
+
+
+def test_prompt_submit_hook_silently_exits_when_providence_unavailable_anywhere(
+    tmp_path: Path,
+) -> None:
+    """The hook must stay non-blocking when neither a PATH `providence` nor a
+    `<workspace_root>/.venv/bin/providence` exists (e.g. a fresh clone before
+    dependencies are installed)."""
+    generator = PromptSubmitHookGenerator(tmp_path, {"codex"})
+    generator.generate()
+    (tmp_path / ".providence" / "metadata.json").write_text("{}", encoding="utf-8")
+
+    env = {key: value for key, value in os.environ.items() if key != "PATH"}
+    env["PATH"] = os.pathsep.join(("/usr/bin", "/bin"))
+    result = subprocess.run(
+        [sys.executable, str(tmp_path / CENTRAL_PROMPT_SUBMIT_HOOK)],
+        input=json.dumps({"prompt": "implement C"}),
+        cwd=tmp_path,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0
+    assert result.stdout == ""
+
+
+def test_relocating_generated_output_requires_regeneration_to_avoid_stale_command(
+    tmp_path: Path,
+) -> None:
+    """Regression (20260913-governance-hooks-dogfood, F002/F010/F011): copying
+    a generator's output tree to a new location  as the wizard's
+    final-template consolidation (move) and direct-root deployment (copy)
+    both do  does NOT rewrite the absolute command path baked in at
+    generation time. This is the exact mechanism that left this repository's
+    own deployed adapters pointing at a nonexistent `generated/client/compiled`
+    path. Anything that relocates generated output MUST re-run
+    `PromptSubmitHookGenerator` against the final destination."""
+    staging = tmp_path / "staging"
+    final = tmp_path / "final"
+    PromptSubmitHookGenerator(staging, {"codex"}).generate()
+
+    shutil.copytree(staging, final)
+    stale_command = tomllib.loads(
+        (final / ".codex" / "config.toml").read_text(encoding="utf-8")
+    )["hooks"]["UserPromptSubmit"][0]["hooks"][0]["command"]
+
+    assert stale_command == central_prompt_submit_command(staging)
+    assert str(staging) in stale_command
+    assert str(final) not in stale_command
+
+    PromptSubmitHookGenerator(final, {"codex"}).generate()
+    fixed_command = tomllib.loads(
+        (final / ".codex" / "config.toml").read_text(encoding="utf-8")
+    )["hooks"]["UserPromptSubmit"][0]["hooks"][0]["command"]
+
+    assert fixed_command == central_prompt_submit_command(final)
+    assert str(final) in fixed_command

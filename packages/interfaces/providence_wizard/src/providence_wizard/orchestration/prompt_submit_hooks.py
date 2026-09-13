@@ -40,10 +40,21 @@ own full invocation to avoid paying the governance-snapshot cost twice in the
 same turn (spike: 20260714-sdd-ask-single-entrypoint-spike, R-001 preferred
 strategy). If detection is ever uncertain, this hook falls back to the full
 path rather than silently dropping governance context.
+
+Header/footer contract (20260913-governance-hooks-dogfood): every emitted
+context starts with a `PROVIDENCE GOVERNANCE ACTIVE` header and carries a
+footer *instruction* telling the model to end its response with a compact
+`PROVIDENCE GOVERNANCE: ...` line. On the normal path the instruction embeds
+the concrete footer text extracted from `providence ask`'s own output; on the
+explicit `/sdd-ask` path (which does not call `providence ask` itself) it
+embeds the same footer template the `/sdd-ask` command adapter resolves (see
+`sdd-ask.prompt.md`'s `PROVIDENCE GOVERNANCE` section), so the contract is
+never silently dropped.
 """
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -63,6 +74,16 @@ def _extract_footer_line(context: str) -> str | None:
     match = re.search(r"^PROVIDENCE GOVERNANCE:.*$", context, re.MULTILINE)
     return match.group(0) if match else None
 
+def _footer_instruction(footer_line: str) -> str:
+    return (
+        "Instruction: if the platform response policy allows it, end your "
+        f"response with this compact footer: {footer_line}"
+    )
+
+_SDD_ASK_FOOTER_TEMPLATE = (
+    "PROVIDENCE GOVERNANCE: drift=${status} | governance=${status} | profile=sdd-ask"
+)
+
 def _render_activation_header(context: str) -> str:
     fingerprint = _extract_context_field(context, "fingerprint", "unknown")[:8]
     execution_gate = _extract_context_field(context, "execution_gate", "unknown")
@@ -79,10 +100,7 @@ def _render_activation_header(context: str) -> str:
     ]
     footer_line = _extract_footer_line(context)
     if footer_line:
-        lines.append(
-            "Instruction: if the platform response policy allows it, end your "
-            f"response with this compact footer: {footer_line}"
-        )
+        lines.append(_footer_instruction(footer_line))
     return "\\n".join(lines)
 
 def _is_explicit_sdd_ask(prompt: str) -> bool:
@@ -101,7 +119,20 @@ def _render_explicit_command_context() -> str:
         "twice in one turn.",
         "Instruction: this is context injection only; no provider delegation or "
         "implementation was executed by the hook.",
+        _footer_instruction(_SDD_ASK_FOOTER_TEMPLATE),
     ])
+
+def _resolve_providence_cli(workspace_root: Path) -> str | None:
+    found = shutil.which("providence")
+    if found:
+        return found
+    for candidate in (
+        workspace_root / ".venv" / "bin" / "providence",
+        workspace_root / "venv" / "bin" / "providence",
+    ):
+        if candidate.is_file():
+            return str(candidate)
+    return None
 
 def main() -> int:
     workspace_root = _workspace_root()
@@ -124,12 +155,15 @@ def main() -> int:
             }
         }))
         return 0
+    providence_cli = _resolve_providence_cli(workspace_root)
+    if providence_cli is None:
+        return 0
     try:
         env = dict(os.environ)
         env["SDD_ASK_ENTRYPOINT"] = "hook"
         env.setdefault("SDD_WORKSPACE_ROOT", str(workspace_root))
         result = subprocess.run(
-            ["providence", "ask", prompt],
+            [providence_cli, "ask", prompt],
             capture_output=True,
             text=True,
             timeout=10,
