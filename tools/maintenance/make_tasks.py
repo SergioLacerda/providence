@@ -341,7 +341,13 @@ def run_npm_script_advisory(script: str, *, label: str) -> None:
     Mirrors docs.yml's `continue-on-error: true` markdownlint-cli2 step:
     output is printed, but a non-zero exit never propagates to the caller's
     own return code — this must never turn `make lint-web` red on its own.
+    A missing `npm` binary is the same "not blocking" case, not a harder
+    failure — skip with a message instead of letting the spawn error escape,
+    matching `_run_optional_tool`'s pattern for other optional CLI tools.
     """
+    if shutil.which(_npm_cmd()) is None:
+        print(f"{label}: npm not found on PATH; skipping (advisory only).")
+        return
     if _run([_npm_cmd(), "--prefix", "apps/landing", "run", script]) != 0:
         print(f"{label}: advisory findings reported above; not blocking.")
 

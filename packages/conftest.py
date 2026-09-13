@@ -34,5 +34,10 @@ _spec.loader.exec_module(_root_conftest_guard)
 
 # Re-bind the already `@pytest.fixture`-decorated callable in this module's
 # namespace: pytest discovers autouse fixtures by name in each conftest.py
-# it loads, not by where the function object was originally defined.
+# it loads, not by where the function object was originally defined. Listed
+# in __all__ so static analysis recognizes this as the module's intentional
+# export rather than an unused global (pytest never references it by a
+# direct name lookup in this file's own code — only by module attribute).
 _forbid_repo_sdd_writes = _root_conftest_guard._forbid_repo_sdd_writes
+
+__all__ = ["_forbid_repo_sdd_writes"]

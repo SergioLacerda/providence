@@ -62,7 +62,6 @@ def _guard_handshake(workspace_root: Path) -> None:
     intended hard block. See
     `.analysis/refined/20260906-gaps-e-melhorias-review/backlog.md` SEC-07.
     """
-    sig_mode = "off"
     is_valid: bool | None = None
     try:
         sig_mode = _signature_mode()

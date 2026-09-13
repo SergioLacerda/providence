@@ -302,7 +302,6 @@ class TestSignatureStatus:
         trusted-keyring check (mirrors
         `test_signatures.py::test_validate_artifact_signature_success_and_failures`)."""
         import hashlib
-        import json
 
         monkeypatch.setenv("SDD_SIGNATURE_MODE", "strict")
 
