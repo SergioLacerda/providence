@@ -48,7 +48,7 @@ If that file says something different from what you remember seeing in this file
 | `.providence/source/mandates/mandates.md` | Full mandate descriptions |
 
 If `providence` is not found on your shell `PATH`, run it via `uv run
-providence <command>` instead  see `docs/guides/ONBOARDING.md` for why.
+providence <command>` instead — see `docs/guides/ONBOARDING.md` for why.
 
 ## Safe Fallback
 

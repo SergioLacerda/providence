@@ -74,7 +74,7 @@ class TestRenderGovernanceActivationHeader:
         output = render_governance_activation_header(source="sdd-ask")
 
         assert "start your response" in output
-        assert "SDD governance status" in output
+        assert "Providence governance status" in output
 
 
 class TestRenderGovernanceFooter:

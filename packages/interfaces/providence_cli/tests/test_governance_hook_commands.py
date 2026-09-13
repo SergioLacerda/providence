@@ -91,6 +91,25 @@ def test_hook_status_reports_configured_platforms_for_current_central_hook(
         assert "claude: not configured" in result.output.lower()
 
 
+def test_hook_status_reports_broken_when_adapter_references_missing_central_hook(
+    tmp_path: Path,
+) -> None:
+    with runner.isolated_filesystem(temp_dir=str(tmp_path)):
+        root = Path.cwd()
+        (root / ".codex").mkdir()
+        (root / ".codex" / "config.toml").write_text(
+            'command = "python3 .providence/runtime/hooks/prompt-submit.py"',
+            encoding="utf-8",
+        )
+
+        result = runner.invoke(app, ["governance", "hook", "status"])
+
+        assert result.exit_code == 0
+        assert "codex: configured (broken: missing central hook)" in (
+            result.output.lower()
+        )
+
+
 def test_hook_status_reports_stale_when_central_hook_missing_activation_markers(
     tmp_path: Path,
 ) -> None:

@@ -95,6 +95,79 @@ def _iter_files(repo_root: Path, paths: list[str] | None) -> list[Path]:
     return files
 
 
+def _is_fixable_missing_encoding(call: ast.Call) -> bool:
+    """True for the two mechanically-fixable "no encoding=" violation shapes.
+
+    Excludes the ingestion `errors=` advisory (semantic choice, not mechanical)
+    and anything that isn't a plain `open()`/`.read_text()`/`.write_text()` call.
+    """
+    if _is_text_open_without_encoding(call):
+        return True
+    if not isinstance(call.func, ast.Attribute):
+        return False
+    return call.func.attr in {"read_text", "write_text"} and not _has_encoding_kw(call)
+
+
+def _insert_encoding_kwarg(line: str, call: ast.Call, end_col: int) -> str | None:
+    """Insert `encoding="utf-8"` just before the call's closing paren.
+
+    `end_col` is the call's `end_col_offset` for a confirmed single-line call
+    (see `_fix_file`) — passed explicitly rather than read from `call` again
+    since `ast.Call.end_col_offset` is typed `int | None` in general. Returns
+    None if the line doesn't look like it still has `)` where expected
+    (defensive — skip rather than corrupt the file).
+    """
+    close_idx = end_col - 1
+    if close_idx < 0 or close_idx >= len(line) or line[close_idx] != ")":
+        return None
+    has_args = bool(call.args) or bool(call.keywords)
+    insertion = (", " if has_args else "") + 'encoding="utf-8"'
+    return line[:close_idx] + insertion + line[close_idx:]
+
+
+def _fix_file(py_file: Path, tree: ast.AST) -> tuple[int, int]:
+    """Apply mechanical `encoding="utf-8"` fixes in place.
+
+    Returns (fixed_count, skipped_multiline_count).
+    """
+    calls = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call) and _is_fixable_missing_encoding(node)
+    ]
+
+    # Pair each single-line call with its (necessarily non-None) end_col_offset
+    # up front, so downstream code works with a plain int, not int | None.
+    single_line: list[tuple[ast.Call, int]] = []
+    for call in calls:
+        if call.lineno == call.end_lineno and call.end_col_offset is not None:
+            single_line.append((call, call.end_col_offset))
+    skipped = len(calls) - len(single_line)
+
+    by_line: dict[int, list[tuple[ast.Call, int]]] = {}
+    for call, end_col in single_line:
+        by_line.setdefault(call.lineno, []).append((call, end_col))
+
+    lines = py_file.read_text(encoding="utf-8").splitlines(keepends=True)
+    fixed = 0
+    for lineno, call_group in by_line.items():
+        line = lines[lineno - 1]
+        # Rightmost first so earlier insertions on the same line don't shift
+        # the column offsets the AST computed for calls further left.
+        for call, end_col in sorted(call_group, key=lambda pair: pair[1], reverse=True):
+            new_line = _insert_encoding_kwarg(line, call, end_col)
+            if new_line is None:
+                skipped += 1
+                continue
+            line = new_line
+            fixed += 1
+        lines[lineno - 1] = line
+
+    if fixed:
+        py_file.write_text("".join(lines), encoding="utf-8")
+    return fixed, skipped
+
+
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Check text I/O calls enforce explicit UTF-8 encoding."
@@ -105,6 +178,16 @@ def _parse_args() -> argparse.Namespace:
         default=None,
         help="Optional repository-relative Python file paths to check.",
     )
+    parser.add_argument(
+        "--fix",
+        action="store_true",
+        help=(
+            'Mechanically insert encoding="utf-8" into single-line '
+            "open()/.read_text()/.write_text() calls missing it, then "
+            "re-report anything still failing (multi-line calls and the "
+            "ingestion errors= advisory are never auto-fixed)."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -112,6 +195,8 @@ def main() -> int:  # noqa: C901
     args = _parse_args()
     repo_root = Path(__file__).resolve().parents[2]
     violations: list[tuple[str, str]] = []
+    total_fixed = 0
+    total_fix_skipped = 0
 
     for py_file in _iter_files(repo_root, args.paths):
         source = py_file.read_text(encoding="utf-8")
@@ -121,6 +206,25 @@ def main() -> int:  # noqa: C901
         except SyntaxError as exc:
             violations.append((f"{py_file}: syntax-error while scanning ({exc})", ""))
             continue
+
+        if args.fix:
+            fixed, fix_skipped = _fix_file(py_file, tree)
+            total_fixed += fixed
+            total_fix_skipped += fix_skipped
+            if fixed:
+                # Re-read and re-parse post-fix so the report below reflects
+                # what's actually still on disk, not the pre-fix tree.
+                source = py_file.read_text(encoding="utf-8")
+                try:
+                    tree = ast.parse(source)
+                except SyntaxError as exc:  # pragma: no cover - fixer bug guard
+                    violations.append(
+                        (
+                            f"{py_file}: syntax-error after auto-fix ({exc})",
+                            "This is a bug in check_text_io_encoding.py's --fix — please report it.",
+                        )
+                    )
+                    continue
 
         for node in ast.walk(tree):
             if not isinstance(node, ast.Call):
@@ -156,6 +260,12 @@ def main() -> int:  # noqa: C901
                     "Fix: use read_text_utf8(path) / write_text_utf8(path, content) from the central helper",
                 )
             )
+
+    if args.fix and (total_fixed or total_fix_skipped):
+        print(
+            f"Text I/O encoding auto-fix: {total_fixed} call(s) fixed, "
+            f"{total_fix_skipped} skipped (multi-line calls need a manual fix)."
+        )
 
     if violations:
         print("Text I/O encoding policy failed. Found calls without explicit encoding:")

@@ -84,7 +84,9 @@ class ComplianceLogStore:
         target = log_path or default_log_path(workspace_root)
         if target is None:
             return
-        mode = ComplianceModePolicy.resolve_logging_mode(profile)
+        mode = ComplianceModePolicy.resolve_logging_mode(
+            profile, workspace_root=workspace_root
+        )
         if not ComplianceModePolicy.should_persist_event(event, mode):
             return
         record = {

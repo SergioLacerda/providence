@@ -3,6 +3,8 @@
 Determines which events should be persisted based on logging mode (passive/active/strict).
 """
 
+from pathlib import Path
+
 from providence_core.constants import (
     LOGGING_MODE_ACTIVE,
     LOGGING_MODE_PASSIVE,
@@ -34,7 +36,9 @@ class ComplianceModePolicy:
     _MANDATORY_EVENTS = MANDATORY_COMPLIANCE_EVENTS
 
     @staticmethod
-    def resolve_logging_mode(profile: str = "") -> str:
+    def resolve_logging_mode(
+        profile: str = "", *, workspace_root: Path | None = None
+    ) -> str:
         """Resolve logging mode from environment, profile, or default.
 
         Resolution order:
@@ -54,6 +58,15 @@ class ComplianceModePolicy:
         env_mode = os.environ.get("SDD_LOGGING_MODE", "").strip().lower()
         if env_mode in VALID_LOGGING_MODES:
             return env_mode
+
+        if workspace_root is not None:
+            from providence_core.utils.workspace_settings import (
+                resolve_workspace_settings,
+            )
+
+            return resolve_workspace_settings(
+                workspace_root, profile or "client"
+            ).audit_mode
 
         # Profile-specific defaults
         if profile == "client":

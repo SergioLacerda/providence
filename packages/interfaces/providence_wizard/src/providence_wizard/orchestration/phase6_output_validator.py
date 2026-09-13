@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from .prompt_submit_hooks import (
-    CENTRAL_PROMPT_SUBMIT_COMMAND,
+    CENTRAL_PROMPT_SUBMIT_COMMAND,  # noqa: F401 - backward-compat import
     CENTRAL_PROMPT_SUBMIT_HOOK,
     SUPPORTED_PROMPT_HOOK_AGENTS,
 )
@@ -55,7 +55,13 @@ class OutputValidator:
         cursor_rules_dir = self.output_base / ".cursor" / "rules"
         return any(
             self._path_exists(cursor_rules_dir / filename)
-            for filename in ("spec.mdc", "sdd-governance.mdc")
+            # "sdd-governance.mdc" (pre-rebrand) accepted for one transition
+            # period: an existing workspace may not have regenerated yet.
+            for filename in (
+                "spec.mdc",
+                "providence-governance.mdc",
+                "sdd-governance.mdc",
+            )
         )
 
     def _ci_enabled(self) -> bool:
@@ -103,7 +109,7 @@ class OutputValidator:
                     f"Missing handshake_mode=hook file: {hook_file}"
                 )
                 continue
-            if desc != "central hook" and CENTRAL_PROMPT_SUBMIT_COMMAND not in (
+            if desc != "central hook" and CENTRAL_PROMPT_SUBMIT_HOOK.as_posix() not in (
                 hook_file.read_text(encoding="utf-8")
             ):
                 result["valid"] = False
@@ -198,7 +204,7 @@ class OutputValidator:
             result["errors"].append(
                 "Missing file: expected one of "
                 f"{self.output_base / '.cursor' / 'rules' / 'spec.mdc'} or "
-                f"{self.output_base / '.cursor' / 'rules' / 'sdd-governance.mdc'}"
+                f"{self.output_base / '.cursor' / 'rules' / 'providence-governance.mdc'}"
             )
 
     def _validate_guidelines(self, result: ValidationDetail) -> None:

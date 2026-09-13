@@ -23,6 +23,6 @@ def require_dev_module(module: str, *, tool: str | None = None) -> None:
         f"ERROR: '{name}' is not available in this environment.\n"
         "This command is intended for providence contributors (dev environment).\n"
         "Run 'uv sync --all-groups --extra test' from the providence repo root, "
-        "then retry with 'uv run sdd <command>'."
+        "then retry with 'uv run providence <command>'."
     )
     raise typer.Exit(1)

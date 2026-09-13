@@ -92,6 +92,10 @@ class SeedlingInjector:
         """Populate IDE rule files with governance fingerprint and mandate count."""
         ide_rule_files = [
             self.output_base / ".vscode" / "ai-rules.md",
+            self.output_base / ".cursor" / "rules" / "providence-governance.mdc",
+            # "sdd-governance.mdc" (pre-rebrand) accepted for one transition
+            # period: populated too if present, so an unregenerated workspace
+            # doesn't carry a stale fingerprint placeholder.
             self.output_base / ".cursor" / "rules" / "sdd-governance.mdc",
         ]
         for rules_file in ide_rule_files:

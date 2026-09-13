@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 import pytest
+import tomllib
 
 from providence_wizard.orchestration.prompt_submit_hooks import (
     CENTRAL_PROMPT_SUBMIT_COMMAND,
@@ -63,12 +64,35 @@ def test_prompt_submit_hook_generator_writes_central_hook_and_selected_adapter(
     assert "PROVIDENCE GOVERNANCE ACTIVE" in central_hook_text
     assert "prompt-submit-hook" in central_hook_text
     codex_config = tmp_path / ".codex" / "config.toml"
-    assert central_prompt_submit_command(tmp_path) in codex_config.read_text(
-        encoding="utf-8"
-    )
-    assert CENTRAL_PROMPT_SUBMIT_COMMAND not in codex_config.read_text(encoding="utf-8")
+    codex_config_text = codex_config.read_text(encoding="utf-8")
+    codex_toml = tomllib.loads(codex_config_text)
+    assert codex_toml["hooks"]["UserPromptSubmit"][0]["hooks"][0][
+        "command"
+    ] == central_prompt_submit_command(tmp_path)
+    assert CENTRAL_PROMPT_SUBMIT_COMMAND not in codex_config_text
     assert not (tmp_path / ".claude" / "settings.json").exists()
     assert not (tmp_path / ".gemini" / "settings.json").exists()
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="launcher uses POSIX sh")
+def test_prompt_submit_launcher_exits_zero_when_central_hook_is_missing(
+    tmp_path: Path,
+) -> None:
+    command = central_prompt_submit_command(tmp_path)
+
+    result = subprocess.run(
+        command,
+        input=json.dumps({"prompt": "implement C"}),
+        cwd=tmp_path,
+        shell=True,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0
+    assert result.stdout == ""
+    assert result.stderr == ""
 
 
 def test_prompt_submit_hook_generator_merges_gemini_settings(tmp_path: Path) -> None:
@@ -81,7 +105,48 @@ def test_prompt_submit_hook_generator_merges_gemini_settings(tmp_path: Path) -> 
 
     settings = json.loads(settings_path.read_text(encoding="utf-8"))
     assert settings["contextFileName"] == "GEMINI.md"
-    assert central_prompt_submit_command(tmp_path) in json.dumps(settings)
+    assert settings["hooks"]["BeforeAgent"][0]["hooks"][0][
+        "command"
+    ] == central_prompt_submit_command(tmp_path)
+
+
+def test_prompt_submit_hook_generator_merges_claude_settings(tmp_path: Path) -> None:
+    """The UserPromptSubmit adapter must not clobber a pre-existing PreToolUse
+    hook — e.g. one `ai_seeds.generate_claude_seed()` already wrote. See
+    `.analysis/refined/20260913-providence-seeds-entrypoint-brand-refinement/design.md` § 4."""
+    settings_path = tmp_path / ".claude" / "settings.json"
+    settings_path.parent.mkdir(parents=True)
+    settings_path.write_text(
+        json.dumps(
+            {
+                "hooks": {
+                    "PreToolUse": [
+                        {
+                            "matcher": ".*",
+                            "hooks": [
+                                {
+                                    "type": "command",
+                                    "command": ".claude/providence-bootstrap.sh",
+                                }
+                            ],
+                        }
+                    ]
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    generator = PromptSubmitHookGenerator(tmp_path, {"claude"})
+
+    assert generator.generate() is True
+
+    settings = json.loads(settings_path.read_text(encoding="utf-8"))
+    assert settings["hooks"]["PreToolUse"][0]["hooks"][0]["command"] == (
+        ".claude/providence-bootstrap.sh"
+    )
+    assert settings["hooks"]["UserPromptSubmit"][0]["hooks"][0][
+        "command"
+    ] == central_prompt_submit_command(tmp_path)
 
 
 def test_prompt_submit_hook_generator_writes_claude_settings(tmp_path: Path) -> None:
@@ -92,9 +157,10 @@ def test_prompt_submit_hook_generator_writes_claude_settings(tmp_path: Path) -> 
 
     claude_settings = tmp_path / ".claude" / "settings.json"
     assert claude_settings.exists()
-    assert central_prompt_submit_command(tmp_path) in claude_settings.read_text(
-        encoding="utf-8"
-    )
+    settings = json.loads(claude_settings.read_text(encoding="utf-8"))
+    assert settings["hooks"]["UserPromptSubmit"][0]["hooks"][0][
+        "command"
+    ] == central_prompt_submit_command(tmp_path)
     assert not (tmp_path / ".codex" / "config.toml").exists()
     assert not (tmp_path / ".gemini" / "settings.json").exists()
 
@@ -109,15 +175,24 @@ def test_prompt_submit_hook_generator_all_three_agents_together(
 
     assert generator.generate() is True
 
-    assert central_prompt_submit_command(tmp_path) in (
-        tmp_path / ".claude" / "settings.json"
-    ).read_text(encoding="utf-8")
-    assert central_prompt_submit_command(tmp_path) in (
-        tmp_path / ".codex" / "config.toml"
-    ).read_text(encoding="utf-8")
-    assert central_prompt_submit_command(tmp_path) in (
-        tmp_path / ".gemini" / "settings.json"
-    ).read_text(encoding="utf-8")
+    claude_settings = json.loads(
+        (tmp_path / ".claude" / "settings.json").read_text(encoding="utf-8")
+    )
+    assert claude_settings["hooks"]["UserPromptSubmit"][0]["hooks"][0][
+        "command"
+    ] == central_prompt_submit_command(tmp_path)
+    codex_toml = tomllib.loads(
+        (tmp_path / ".codex" / "config.toml").read_text(encoding="utf-8")
+    )
+    assert codex_toml["hooks"]["UserPromptSubmit"][0]["hooks"][0][
+        "command"
+    ] == central_prompt_submit_command(tmp_path)
+    gemini_settings = json.loads(
+        (tmp_path / ".gemini" / "settings.json").read_text(encoding="utf-8")
+    )
+    assert gemini_settings["hooks"]["BeforeAgent"][0]["hooks"][0][
+        "command"
+    ] == central_prompt_submit_command(tmp_path)
 
 
 def test_phase6_output_validator_imports_stay_in_sync_with_prompt_submit_hooks() -> (
@@ -184,7 +259,10 @@ def test_prompt_submit_hook_injects_governance_activation_header(
     assert "fingerprint=58a087b3" in context
     assert "context injection only" in context
     assert "no provider delegation or implementation was executed" in context
-    assert "start your response with one short SDD governance status line" in context
+    assert (
+        "start your response with one short Providence governance status line"
+        in context
+    )
     assert "PROVIDENCE GOVERNANCE: drift=none" in context
     assert (
         "end your response with this compact footer: "

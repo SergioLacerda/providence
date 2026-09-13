@@ -218,8 +218,8 @@ class TestOutputFormatting:
         state, report = ahp.validate()
 
         output = ahp.format_output(state, report, mode="silent")
-        # Silent mode returns minimal "SDD: X" format
-        assert "SDD:" in output
+        # Silent mode returns minimal "Providence: X" format
+        assert "Providence:" in output
 
     def test_format_compact_output(self, tmp_path: Path) -> None:
         """Compact mode should include state and checks."""
@@ -227,7 +227,7 @@ class TestOutputFormatting:
         state, report = ahp.validate()
 
         output = ahp.format_output(state, report, mode="compact")
-        assert "SDD STATUS" in output or "State:" in output
+        assert "PROVIDENCE STATUS" in output or "State:" in output
 
     def test_format_verbose_output(self, tmp_path: Path) -> None:
         """Verbose mode should include detailed layer information."""

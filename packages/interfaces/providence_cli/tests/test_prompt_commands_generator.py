@@ -32,7 +32,7 @@ def test_generated_command_surfaces_never_emit_duplicated_ask_full(
     """Generated command helper files must not duplicate the full ask variant."""
     generate_agent_prompt_commands(tmp_path, config={})
     files = [
-        tmp_path / ".cursor" / "rules" / "sdd-commands.mdc",
+        tmp_path / ".cursor" / "rules" / "providence-commands.mdc",
         tmp_path / ".gemini" / "commands.md",
     ]
     for path in files:
@@ -47,7 +47,7 @@ def test_generated_command_surfaces_include_hard_mode_field_contract(
     generate_agent_prompt_commands(tmp_path, config={})
     files = [
         tmp_path / ".github" / "prompts" / "sdd-ask.prompt.md",
-        tmp_path / ".cursor" / "rules" / "sdd-commands.mdc",
+        tmp_path / ".cursor" / "rules" / "providence-commands.mdc",
         tmp_path / ".gemini" / "commands.md",
         tmp_path / ".codex" / "commands.md",
     ]

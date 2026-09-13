@@ -66,7 +66,10 @@ def _validate_awareness_pack(
     """Check that all required agent-awareness artifacts were generated."""
     missing_items: list[str] = []
     prompt_dir = output_base / ".github" / "prompts"
-    cursor_cmd = output_base / ".cursor" / "rules" / "sdd-commands.mdc"
+    cursor_cmd = output_base / ".cursor" / "rules" / "providence-commands.mdc"
+    # "sdd-commands.mdc" (pre-rebrand) accepted for one transition period: an
+    # existing workspace may not have regenerated yet.
+    legacy_cursor_cmd = output_base / ".cursor" / "rules" / "sdd-commands.mdc"
     gemini_cmd = output_base / ".gemini" / "commands.md"
     claude_file = output_base / "CLAUDE.md"
     agents_file = output_base / "AGENTS.md"
@@ -75,8 +78,8 @@ def _validate_awareness_pack(
     prompt_files = list(prompt_dir.glob("*.prompt.md")) if prompt_dir.exists() else []
     if not prompt_files:
         missing_items.append(".github/prompts/*.prompt.md")
-    if not cursor_cmd.exists():
-        missing_items.append(".cursor/rules/sdd-commands.mdc")
+    if not cursor_cmd.exists() and not legacy_cursor_cmd.exists():
+        missing_items.append(".cursor/rules/providence-commands.mdc")
     if not gemini_cmd.exists():
         missing_items.append(".gemini/commands.md")
     if not claude_file.exists():

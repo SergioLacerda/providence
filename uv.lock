@@ -4104,6 +4104,7 @@ source = { editable = "packages/features/providence_adapters" }
 dependencies = [
     { name = "jinja2" },
     { name = "providence-core" },
+    { name = "providence-skills" },
     { name = "pydantic", version = "2.12.5", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-10-providence-examplescrewai'" },
     { name = "pydantic", version = "2.13.5", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-10-providence-test' or extra == 'group-10-providence-dev' or extra == 'group-10-providence-test' or extra != 'extra-10-providence-examplescrewai'" },
     { name = "pyyaml" },
@@ -4113,6 +4114,7 @@ dependencies = [
 requires-dist = [
     { name = "jinja2", specifier = ">=3.1" },
     { name = "providence-core", specifier = ">=1.0" },
+    { name = "providence-skills", specifier = ">=1.0" },
     { name = "pydantic", specifier = ">=2.0" },
     { name = "pyyaml", specifier = ">=6.0" },
 ]

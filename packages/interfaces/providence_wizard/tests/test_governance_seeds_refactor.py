@@ -9,7 +9,7 @@ from __future__ import annotations
 import inspect
 from pathlib import Path
 
-from providence_core.utils.text_io import read_text_utf8
+from providence_core.utils.text_io import read_text_utf8, write_text_utf8
 from providence_wizard.orchestration.seedlings.governance_seeds import (
     GovernanceSeedsGenerator,
     generate_agent_instructions_from_config,
@@ -126,6 +126,58 @@ def test_generate_root_bootstrap_from_config_updates_root_files(tmp_path: Path) 
         assert FINGERPRINT in content
         assert "fingerprints.combined" in content
         assert "governance_fingerprint" not in content
+
+
+def test_generate_root_bootstrap_from_config_preserves_hand_added_content(
+    tmp_path: Path,
+) -> None:
+    """`providence governance compile` regenerates CLAUDE.md/AGENTS.md/GEMINI.md
+    on every run — it must not destroy content a human or another tool added
+    outside the managed block, the same guarantee AISeedsGenerator already
+    provides. See
+    `.analysis/refined/20260913-providence-seeds-entrypoint-brand-refinement/design.md` § 3."""
+    config = {
+        "items": [{"type": "MANDATE", "id": "M001", "title": "Clean Architecture"}],
+        "core_fingerprint": FINGERPRINT,
+    }
+    hand_note = "\n<!-- hand-added notes, unrelated to governance -->\n"
+
+    assert generate_root_bootstrap_from_config(tmp_path, config) is True
+    for filename in ("AGENTS.md", "CLAUDE.md", "GEMINI.md"):
+        path = tmp_path / filename
+        write_text_utf8(path, read_text_utf8(path) + hand_note)
+
+    config["core_fingerprint"] = "def67890"
+    assert generate_root_bootstrap_from_config(tmp_path, config) is True
+
+    for filename in ("AGENTS.md", "CLAUDE.md", "GEMINI.md"):
+        content = read_text_utf8(tmp_path / filename)
+        assert hand_note.strip() in content, (
+            f"{filename} lost hand-added content across regeneration"
+        )
+        assert "def67890" in content
+        assert FINGERPRINT not in content
+
+
+def test_generate_root_bootstrap_from_config_does_not_overwrite_on_malformed_markers(
+    tmp_path: Path,
+) -> None:
+    """Unbalanced managed-block markers must fail the regeneration (returns
+    False) rather than silently falling back to a whole-file overwrite —
+    same fail-closed guarantee as `AISeedsGenerator`."""
+    config = {
+        "items": [{"type": "MANDATE", "id": "M001", "title": "Clean Architecture"}],
+        "core_fingerprint": FINGERPRINT,
+    }
+    claude_path = tmp_path / "CLAUDE.md"
+    write_text_utf8(
+        claude_path, "<!-- providence:managed:begin -->\nstale, no end marker\n"
+    )
+
+    assert generate_root_bootstrap_from_config(tmp_path, config) is False
+    assert read_text_utf8(claude_path) == (
+        "<!-- providence:managed:begin -->\nstale, no end marker\n"
+    )
 
 
 def test_governance_seeds_module_size_reduced() -> None:

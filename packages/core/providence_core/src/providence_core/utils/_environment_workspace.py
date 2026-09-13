@@ -13,6 +13,7 @@ from ._environment_models import (
     SddProfile,
     WorkspaceNotInitializedError,
 )
+from .workspace_settings import resolve_workspace_settings
 
 
 def _workspace_root_from_env() -> Path | None:
@@ -92,12 +93,15 @@ def resolve_profile(
     )
     if effective_override in ("master", "client"):
         workspace_root = root or find_workspace_root() or Path.cwd()
+        settings = resolve_workspace_settings(workspace_root, effective_override)
         return ProfileContext(
             type=cast(SddProfile, effective_override),
             name=effective_override,
             workspace_id="",
             core_hash="",
             root=workspace_root,
+            capabilities=settings.capabilities,
+            audit_mode=settings.audit_mode,
         )
 
     workspace_root = root or find_workspace_root() or Path.cwd()
@@ -114,13 +118,16 @@ def resolve_profile(
     if raw_type not in ("master", "client"):
         raise WorkspaceNotInitializedError(workspace_root)
 
+    settings = resolve_workspace_settings(workspace_root, raw_type)
     return ProfileContext(
-        type=cast(SddProfile, raw_type),
+        type=cast(SddProfile, settings.artifact_target),
         name=parser.get("sdd", "name", fallback=raw_type),
         workspace_id=parser.get("sdd", "workspace_id", fallback=""),
         core_hash=parser.get("sdd", "core_hash", fallback=""),
         root=workspace_root,
         language=parser.get("sdd", "language", fallback=None) or None,
+        capabilities=settings.capabilities,
+        audit_mode=settings.audit_mode,
     )
 
 
@@ -153,6 +160,7 @@ def write_profile(
         section["language"] = language
 
     parser = configparser.ConfigParser()
+    parser.read(profile_path, encoding="utf-8")
     parser["sdd"] = section
     with open(profile_path, "w", encoding="utf-8") as handle:
         parser.write(handle)

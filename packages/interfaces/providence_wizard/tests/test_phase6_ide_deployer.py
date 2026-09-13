@@ -126,7 +126,9 @@ def test_ensure_cursor_rule_aliases_creates_governance_from_spec(
 
     deployer._ensure_cursor_rule_aliases()
 
-    assert (rules_dir / "sdd-governance.mdc").read_text(encoding="utf-8") == "spec"
+    assert (rules_dir / "providence-governance.mdc").read_text(
+        encoding="utf-8"
+    ) == "spec"
 
 
 def test_ensure_cursor_rule_aliases_creates_spec_from_governance(
@@ -138,11 +140,33 @@ def test_ensure_cursor_rule_aliases_creates_spec_from_governance(
     )
     rules_dir = output_base / ".cursor" / "rules"
     rules_dir.mkdir(parents=True)
-    (rules_dir / "sdd-governance.mdc").write_text("gov", encoding="utf-8")
+    (rules_dir / "providence-governance.mdc").write_text("gov", encoding="utf-8")
 
     deployer._ensure_cursor_rule_aliases()
 
     assert (rules_dir / "spec.mdc").read_text(encoding="utf-8") == "gov"
+
+
+def test_ensure_cursor_rule_aliases_creates_spec_from_legacy_governance(
+    tmp_path: Path,
+) -> None:
+    """A workspace that has not regenerated since the marker/filename rebrand
+    still has the pre-rebrand `sdd-governance.mdc` filename — it must still be
+    recognized as satisfying the governance side of the alias pair."""
+    output_base = tmp_path / "out"
+    deployer = TemplateDeployer(
+        repo_root=tmp_path, output_base=output_base, verbose=True
+    )
+    rules_dir = output_base / ".cursor" / "rules"
+    rules_dir.mkdir(parents=True)
+    (rules_dir / "sdd-governance.mdc").write_text("legacy-gov", encoding="utf-8")
+
+    deployer._ensure_cursor_rule_aliases()
+
+    assert (rules_dir / "spec.mdc").read_text(encoding="utf-8") == "legacy-gov"
+    # The legacy file itself is left as-is by this alias step; renaming it is
+    # the responsibility of the next full seed regeneration, not this step.
+    assert (rules_dir / "providence-governance.mdc").exists() is False
 
 
 def test_copy_templates_logs_when_workflow_missing(tmp_path: Path) -> None:

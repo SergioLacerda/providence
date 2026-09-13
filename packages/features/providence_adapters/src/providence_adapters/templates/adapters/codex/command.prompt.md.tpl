@@ -30,4 +30,4 @@ mode: agent
 
 ## PROVIDENCE GOVERNANCE
 
-`PROVIDENCE GOVERNANCE: drift=${status} | governance=${status} | profile={{ command.id }}`
+`PROVIDENCE GOVERNANCE: drift=${status} | governance=${status} | profile={{ command.id | profile_label }}`

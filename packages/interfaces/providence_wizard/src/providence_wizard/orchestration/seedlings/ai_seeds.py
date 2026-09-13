@@ -20,6 +20,17 @@ from .base_generator import BaseSeedlingGenerator
 logger = logging.getLogger(__name__)
 
 
+def _load_json_object(path: Path) -> dict[str, object]:
+    """Return *path*'s JSON content as a dict, or {} if absent/invalid/non-dict."""
+    if not path.exists():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
 def _write_root_seed_file(path: Path, block_body: str) -> None:
     """Write *block_body* into *path*'s sdd-managed block, preserving the rest.
 
@@ -173,7 +184,16 @@ class AISeedsGenerator(BaseSeedlingGenerator):
             claude_dir.mkdir(parents=True, exist_ok=True)
             write_text_utf8(hook_file, CLAUDE_BOOTSTRAP_SCRIPT)
             hook_file.chmod(0o755)
-            write_text_utf8(settings_file, CLAUDE_SETTINGS)
+            settings = _load_json_object(settings_file)
+            hooks = settings.setdefault("hooks", {})
+            if not isinstance(hooks, dict):
+                hooks = {}
+                settings["hooks"] = hooks
+            # Merge only the "PreToolUse" event key — other hook event types
+            # (e.g. "UserPromptSubmit", written by PromptSubmitHookGenerator)
+            # must survive this write, not be silently overwritten.
+            hooks["PreToolUse"] = json.loads(CLAUDE_SETTINGS)["hooks"]["PreToolUse"]
+            write_text_utf8(settings_file, json.dumps(settings, indent=2) + "\n")
             self.log(" Generated CLAUDE.md pointer and Claude bootstrap hook")
             return True
         except Exception as e:

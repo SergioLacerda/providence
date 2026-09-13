@@ -96,6 +96,18 @@ def enforce_profile_policy(command_name: str, ctx: click.Context | None = None) 
     Call at the start of command callbacks that should be profile-aware.
     """
     profile = get_active_profile(ctx)
+    if ctx is not None and isinstance(ctx.obj, dict) and "capabilities" in ctx.obj:
+        capabilities = ctx.obj["capabilities"]
+        required = {"release": "publish", "wizard": "consume"}.get(command_name)
+        if required is not None:
+            if required not in capabilities:
+                click.echo(
+                    f"ERROR: command '{command_name}' requires workspace capability '{required}'.",
+                    err=True,
+                )
+                raise click.exceptions.Exit(1)
+            if command_name == "release" or profile != "master":
+                return
     adapter = get_adapter(profile)
 
     if command_name in adapter.blocked_commands:

@@ -106,6 +106,16 @@ def _run_mypy_step(layer_filter: str | None) -> bool:
     )
 
 
+def _run_text_io_encoding_step(*, fix: bool) -> bool:
+    """Run tools/ci/check_text_io_encoding.py — the same script CI's
+    reusable-test.yml enforces as a blocking gate. Not filterable by --layer:
+    it always scans its own fixed roots (tests/, packages/, tools/)."""
+    cmd = [sys.executable, "tools/ci/check_text_io_encoding.py"]
+    if fix:
+        cmd.append("--fix")
+    return run_step("Text I/O Encoding Policy", cmd)
+
+
 def _run_bandit_step(layer_filter: str | None) -> bool:
     """Run Bandit security scan."""
     # SIM103: Return the negated condition directly
@@ -172,6 +182,10 @@ def main() -> int:
 
     # 5. Bandit
     if not _run_bandit_step(args.layer):
+        all_passed = False
+
+    # 6. Text I/O encoding policy
+    if not args.layer and not _run_text_io_encoding_step(fix=args.fix):
         all_passed = False
 
     if all_passed:

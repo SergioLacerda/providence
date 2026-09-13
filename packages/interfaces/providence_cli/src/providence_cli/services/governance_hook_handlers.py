@@ -106,12 +106,14 @@ def _platform_hook_state(
     central_hook_stale: bool,
 ) -> str:
     adapter_path = root / relative_path
-    if not central_hook_present or not adapter_path.exists():
+    if not adapter_path.exists():
         return "not configured"
     try:
         content = adapter_path.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError):
         return "unknown"
     if any(reference in content for reference in _HOOK_REFERENCES):
+        if not central_hook_present:
+            return "configured (broken: missing central hook)"
         return "configured (stale)" if central_hook_stale else "configured"
     return "not configured"

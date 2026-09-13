@@ -27,6 +27,23 @@ SAMPLE_COMMAND_CLI = {
 
 
 class TestTemplateRenderer:
+    @pytest.mark.parametrize("name", ["sdd-harness", "sdd-diagnose", "custom"])
+    def test_codex_display_label_preserves_command_route(self, name: str) -> None:
+        command = {"id": name, "routes_to": {"type": "skill", "id": name}}
+        content = TemplateRenderer().render(
+            "codex", "command.prompt.md", command=command
+        )
+        label = "providence-" + name[4:] if name.startswith("sdd-") else name
+        assert f"profile={label}`" in content
+        assert f"providence skills run {name}" in content
+        assert f".providence/commands/{name}/command.yaml" in content
+
+    def test_codex_skill_display_label_preserves_source(self) -> None:
+        skill = {**SAMPLE_SKILL, "name": "sdd-harness"}
+        content = TemplateRenderer().render("codex", "skill.prompt.md", skill=skill)
+        assert "profile=providence-harness`" in content
+        assert ".providence/skills/sdd-harness/skill.yaml" in content
+
     def test_bundled_templates_dir_exists(self) -> None:
         assert _BUNDLED_TEMPLATES.exists()
         assert (Path(_BUNDLED_TEMPLATES) / "claude" / "command.md.tpl").exists()

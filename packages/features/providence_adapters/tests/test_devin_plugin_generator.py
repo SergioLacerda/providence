@@ -771,11 +771,10 @@ def test_coding_practices_digest_helper_changes_with_content() -> None:
 def test_generate_coding_practices_against_real_repo_sources(tmp_path: Path) -> None:
     repo_root = None
     for parent in Path(__file__).resolve().parents:
-        # Both markers are required: packages/docs/ mirrors docs/cognition/
-        # anti-patterns/ (see packages/docs/), so that alone no longer
-        # identifies the true repo root â€” the closer, .providence-less packages/
-        # directory would match first and generate() would then fail to find
-        # .providence/skills/registry.json under it.
+        # Both markers are required: a docs/cognition/anti-patterns/ check
+        # alone is not enough to identify the true repo root - a closer,
+        # .providence-less parent directory could match first and generate()
+        # would then fail to find .providence/skills/registry.json under it.
         if (parent / "docs" / "cognition" / "anti-patterns").exists() and (
             parent / ".providence" / "skills" / "registry.json"
         ).exists():
@@ -963,8 +962,8 @@ def test_generate_standalone_real_sources_exist() -> None:
     for parent in Path(__file__).resolve().parents:
         # See the identical .providence co-check in
         # test_generate_coding_practices_against_real_repo_sources above:
-        # packages/docs/ mirrors this file too, so the docs marker alone
-        # would match packages/ before the true repo root.
+        # the docs marker alone is not sufficient to identify the true repo
+        # root.
         if (
             parent / "docs" / "guidelines" / "core-engineering-principles.md"
         ).exists() and (parent / ".providence" / "skills" / "registry.json").exists():

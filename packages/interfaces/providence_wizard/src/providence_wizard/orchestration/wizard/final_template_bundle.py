@@ -45,7 +45,7 @@ def validate_awareness_pack(target_dir: Path) -> dict[str, object]:
         ".providence/seedlings/ACTIVATION_GUIDE.md",
         "AGENTS.md",
         ".github/prompts",
-        ".cursor/rules/sdd-commands.mdc",
+        ".cursor/rules/providence-commands.mdc",
         ".gemini/commands.md",
         "CLAUDE.md",
     ]

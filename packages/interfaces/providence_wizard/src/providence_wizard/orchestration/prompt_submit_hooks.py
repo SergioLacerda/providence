@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shlex
 from pathlib import Path
 
 from providence_core.utils.text_io import write_text_utf8
@@ -12,12 +13,18 @@ SUPPORTED_PROMPT_HOOK_AGENTS = frozenset({"claude", "codex", "gemini"})
 CENTRAL_PROMPT_SUBMIT_HOOK = (
     Path(RUNTIME_DIRNAME) / "runtime" / "hooks" / "prompt-submit.py"
 )
-CENTRAL_PROMPT_SUBMIT_COMMAND = f"python3 {CENTRAL_PROMPT_SUBMIT_HOOK.as_posix()}"
+PROMPT_SUBMIT_LAUNCHER = (
+    'sh -c \'hook=$1; if [ -f "$hook" ]; then exec python3 "$hook"; fi; exit 0\' sh'
+)
+CENTRAL_PROMPT_SUBMIT_COMMAND = (
+    f"{PROMPT_SUBMIT_LAUNCHER} {shlex.quote(CENTRAL_PROMPT_SUBMIT_HOOK.as_posix())}"
+)
 
 
 def central_prompt_submit_command(output_base: Path) -> str:
     """Return a cwd-independent command for the generated central hook."""
-    return f"python3 {(output_base / CENTRAL_PROMPT_SUBMIT_HOOK).resolve().as_posix()}"
+    hook_path = (output_base / CENTRAL_PROMPT_SUBMIT_HOOK).resolve().as_posix()
+    return f"{PROMPT_SUBMIT_LAUNCHER} {shlex.quote(hook_path)}"
 
 
 PROMPT_SUBMIT_HOOK_SCRIPT = '''#!/usr/bin/env python3
@@ -65,7 +72,7 @@ def _render_activation_header(context: str) -> str:
         "governance_mode=hard | "
         f"execution_gate={execution_gate} | "
         f"fingerprint={fingerprint}",
-        "Instruction: start your response with one short SDD governance "
+        "Instruction: start your response with one short Providence governance "
         "status line when this context is present.",
         "Instruction: this is context injection only; no provider delegation or "
         "implementation was executed by the hook.",
@@ -147,32 +154,38 @@ if __name__ == "__main__":
 '''
 
 
+def claude_user_prompt_submit_hook_entries(command: str) -> list[object]:
+    """Return the `UserPromptSubmit` hook-entry list for the generated central hook."""
+    return [
+        {
+            "matcher": ".*",
+            "hooks": [
+                {
+                    "type": "command",
+                    "command": command,
+                }
+            ],
+        }
+    ]
+
+
 def claude_prompt_submit_settings(command: str) -> dict[str, object]:
     """Return Claude hook settings pointing at the generated central hook."""
     return {
         "hooks": {
-            "UserPromptSubmit": [
-                {
-                    "matcher": ".*",
-                    "hooks": [
-                        {
-                            "type": "command",
-                            "command": command,
-                        }
-                    ],
-                }
-            ]
+            "UserPromptSubmit": claude_user_prompt_submit_hook_entries(command),
         }
     }
 
 
 def codex_prompt_submit_config(command: str) -> str:
     """Return Codex hook TOML pointing at the generated central hook."""
+    escaped_command = command.replace("\\", "\\\\").replace('"', '\\"')
     return f'''[[hooks.UserPromptSubmit]]
 
 [[hooks.UserPromptSubmit.hooks]]
 type = "command"
-command = "{command}"
+command = "{escaped_command}"
 timeout = 10
 '''
 
@@ -217,11 +230,18 @@ class PromptSubmitHookGenerator:
     def _write_claude_adapter(self) -> None:
         settings_path = self.output_base / ".claude" / "settings.json"
         settings_path.parent.mkdir(parents=True, exist_ok=True)
-        write_text_utf8(
-            settings_path,
-            json.dumps(claude_prompt_submit_settings(self.central_command), indent=2)
-            + "\n",
+        settings = self._load_json_object(settings_path)
+        hooks = settings.setdefault("hooks", {})
+        if not isinstance(hooks, dict):
+            hooks = {}
+            settings["hooks"] = hooks
+        # Merge only the "UserPromptSubmit" event key — other hook event
+        # types (e.g. "PreToolUse", written by ai_seeds.generate_claude_seed)
+        # must survive this write, not be silently overwritten.
+        hooks["UserPromptSubmit"] = claude_user_prompt_submit_hook_entries(
+            self.central_command
         )
+        write_text_utf8(settings_path, json.dumps(settings, indent=2) + "\n")
 
     def _write_codex_adapter(self) -> None:
         config_path = self.output_base / ".codex" / "config.toml"

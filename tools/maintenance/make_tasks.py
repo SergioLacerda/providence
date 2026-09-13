@@ -319,10 +319,12 @@ def run_lint_go(*, fix: bool) -> int:
 
 
 def run_lint_fix_web() -> int:
-    print("lint-fix-web: apps/landing's lint script is 'astro check',")
-    print("a type/diagnostics checker with no autofix mode.")
-    print("Run 'make lint-web' to see diagnostics.")
-    return 0
+    print("lint-fix-web: apps/landing's 'lint' script is 'astro check', a")
+    print("type/diagnostics checker with no autofix mode — run 'make lint-web'")
+    print(
+        "to see astro diagnostics. Auto-fixing markdown style now (markdownlint-cli2)."
+    )
+    return run_npm_script("lint-fix")
 
 
 def _npm_cmd() -> str:
@@ -331,6 +333,17 @@ def _npm_cmd() -> str:
 
 def run_npm_script(script: str) -> int:
     return _run([_npm_cmd(), "--prefix", "apps/landing", "run", script])
+
+
+def run_npm_script_advisory(script: str, *, label: str) -> None:
+    """Run an npm script whose findings are advisory-only.
+
+    Mirrors docs.yml's `continue-on-error: true` markdownlint-cli2 step:
+    output is printed, but a non-zero exit never propagates to the caller's
+    own return code — this must never turn `make lint-web` red on its own.
+    """
+    if _run([_npm_cmd(), "--prefix", "apps/landing", "run", script]) != 0:
+        print(f"{label}: advisory findings reported above; not blocking.")
 
 
 def run_npm_audit_fix() -> int:
@@ -352,7 +365,9 @@ def run_npm_audit_fix() -> int:
 
 def run_lint_web() -> int:
     run_npm_audit_fix()
-    return run_npm_script("lint")
+    result = run_npm_script("lint")
+    run_npm_script_advisory("lint:md", label="lint-web (markdown style)")
+    return result
 
 
 def run_install_web() -> int:

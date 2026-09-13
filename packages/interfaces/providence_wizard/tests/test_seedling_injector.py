@@ -32,7 +32,7 @@ def test_inject_bootstrap_metadata_appends_once(tmp_path: Path) -> None:
 def test_populate_ide_rules_replaces_placeholders(tmp_path: Path) -> None:
     output = tmp_path / "out"
     vscode = output / ".vscode" / "ai-rules.md"
-    cursor = output / ".cursor" / "rules" / "sdd-governance.mdc"
+    cursor = output / ".cursor" / "rules" / "providence-governance.mdc"
     vscode.parent.mkdir(parents=True)
     cursor.parent.mkdir(parents=True)
     vscode.write_text("{FINGERPRINT} {MANDATES_COUNT}", encoding="utf-8")
@@ -43,6 +43,23 @@ def test_populate_ide_rules_replaces_placeholders(tmp_path: Path) -> None:
 
     assert vscode.read_text(encoding="utf-8") == "fingerprint-1 2"
     assert cursor.read_text(encoding="utf-8") == "fingerprint-1 2"
+
+
+def test_populate_ide_rules_also_replaces_legacy_filename_placeholders(
+    tmp_path: Path,
+) -> None:
+    """A workspace that has not regenerated since the marker/filename rebrand
+    still has the pre-rebrand `sdd-governance.mdc` filename — it must still get
+    its placeholders populated so it doesn't carry a stale fingerprint."""
+    output = tmp_path / "out"
+    legacy_cursor = output / ".cursor" / "rules" / "sdd-governance.mdc"
+    legacy_cursor.parent.mkdir(parents=True)
+    legacy_cursor.write_text("{FINGERPRINT} {MANDATES_COUNT}", encoding="utf-8")
+    injector = SeedlingInjector(repo_root=tmp_path, output_base=output, verbose=False)
+
+    injector.populate_ide_rules([{"id": "M001"}, {"id": "M002"}], "fingerprint-1")
+
+    assert legacy_cursor.read_text(encoding="utf-8") == "fingerprint-1 2"
 
 
 def test_inject_bootstrap_metadata_skips_missing_files(tmp_path: Path) -> None:

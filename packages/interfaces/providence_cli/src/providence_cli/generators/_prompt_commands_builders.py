@@ -91,7 +91,7 @@ def _prompt_spec_for_command(command: dict[str, Any]) -> tuple[str, str, str, st
             slug,
             "Query Providence governance context",
             "agent",
-            "Query the SDD governance context with the user's question.\n\n"
+            "Query the Providence governance context with the user's question.\n\n"
             'Execute in the terminal:\n```bash\nprovidence runtime status\nprovidence governance validate\nprovidence ask --full "$QUERY"\n```\n\n'
             "Replace `$QUERY` with the user's question.\n\n"
             "HARD contract for this command:\n"
@@ -124,7 +124,7 @@ def _prompt_spec_for_command(command: dict[str, Any]) -> tuple[str, str, str, st
             slug,
             f"Run {cli_command}",
             "agent",
-            "Run the mapped SDD CLI command.\n\n"
+            "Run the mapped Providence CLI command.\n\n"
             f"Execute in the terminal:\n```bash\n{cli_command}\n```\n"
             + _HARD_MODE_FIELD_CONTRACT,
         )
