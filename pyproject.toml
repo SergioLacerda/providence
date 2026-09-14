@@ -48,7 +48,7 @@ examples-langgraph = [
     "langchain-core>=1.6.1",
 ]
 examplescrewai = [
-    "crewai==1.15.18",
+    "crewai==1.15.21",
     "onnxruntime<1.25",
     "setuptools>=84.0.0",
 ]
