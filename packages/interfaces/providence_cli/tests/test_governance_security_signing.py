@@ -243,7 +243,10 @@ class TestUpdateTrustedKeyring:
 
         keyring_path = tmp_path / ".providence" / "trust" / "trusted-keys.json"
         assert keyring_path.exists()
-        data = json.loads(keyring_path.read_text(encoding="utf-8"))
+        keyring_text = keyring_path.read_text(encoding="utf-8")
+        assert keyring_text.endswith("\n")
+        assert '  "keys": [' in keyring_text
+        data = json.loads(keyring_text)
         assert any(k["key_id"] == "mykey" for k in data["keys"])
 
     def test_updates_existing_key(self, tmp_path: Path) -> None:
@@ -266,6 +269,7 @@ class TestUpdateTrustedKeyring:
         data = json.loads(keyring_path.read_text(encoding="utf-8"))
         entry = next(k for k in data["keys"] if k["key_id"] == "mykey")
         assert entry["status"] == "active"
+        assert keyring_path.read_bytes().endswith(b"\n")
 
     def test_no_pub_key_returns_early(self, tmp_path: Path) -> None:
         k_path = tmp_path / "mykey.key"

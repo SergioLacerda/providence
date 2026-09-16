@@ -8,7 +8,7 @@ the repository landing README.
 The basic onboarding flow is:
 
 ```bash
-uv tool install providence-cli --find-links "https://github.com/SergioLacerda/providence/releases/expanded_assets/v1.0.16"
+uv tool install providence-cli --find-links "https://github.com/SergioLacerda/providence/releases/expanded_assets/v1.0.17"
 cd your-project
 providence install --wizard
 providence init --default

@@ -25,6 +25,21 @@ Before tagging a new release, verify:
 
 ## [Unreleased]
 
+### Fixed
+- Ensure generated signature manifests and the public trust keyring use
+  deterministic two-space JSON formatting with a final newline, so the
+  end-of-file pre-commit fixer does not mutate generated security metadata.
+
+## [1.0.17] — 2026-09-15
+
+### Fixed
+- Fixed generated prompt-submit adapters losing their hook after wizard
+  consolidation by resolving the installed project through
+  `PROVIDENCE_WORKSPACE_ROOT` or the nearest `.providence/metadata.json`.
+- Made prompt-submit adapter regression tests hermetic by generating isolated
+  Claude, Codex, and Gemini fixtures instead of reading the active client
+  runtime.
+
 ## [1.0.16] — 2026-09-13
 
 ### Fixed
