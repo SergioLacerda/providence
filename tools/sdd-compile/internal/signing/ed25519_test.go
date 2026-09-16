@@ -1,6 +1,7 @@
 package signing
 
 import (
+	"bytes"
 	"crypto/ed25519"
 	"crypto/x509"
 	"encoding/base64"
@@ -56,6 +57,12 @@ func TestSignArtifactAndVerifySignatureRoundTrip(t *testing.T) {
 	sigBytes, err := os.ReadFile(sigPath)
 	if err != nil {
 		t.Fatalf("read sig file: %v", err)
+	}
+	if len(sigBytes) == 0 || sigBytes[len(sigBytes)-1] != '\n' {
+		t.Fatal("signature manifest must end with a newline")
+	}
+	if !bytes.Contains(sigBytes, []byte("\n  \"algorithm\": \"ed25519\",")) {
+		t.Fatal("signature manifest must use two-space indentation")
 	}
 
 	var manifest struct {

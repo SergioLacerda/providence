@@ -55,6 +55,7 @@ func SignArtifact(artifactPath, profile, keyID, privateKeyFile string) (string, 
 	if err != nil {
 		return "", fmt.Errorf("marshal signature manifest: %w", err)
 	}
+	b = append(b, '\n')
 	if err := os.WriteFile(sigPath, b, 0o644); err != nil {
 		return "", fmt.Errorf("write signature file: %w", err)
 	}

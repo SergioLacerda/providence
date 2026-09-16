@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import shlex
 from pathlib import Path
 
 from providence_core.utils.text_io import write_text_utf8
@@ -14,17 +13,26 @@ CENTRAL_PROMPT_SUBMIT_HOOK = (
     Path(RUNTIME_DIRNAME) / "runtime" / "hooks" / "prompt-submit.py"
 )
 PROMPT_SUBMIT_LAUNCHER = (
-    'sh -c \'hook=$1; if [ -f "$hook" ]; then exec python3 "$hook"; fi; exit 0\' sh'
+    "sh -c '"
+    "root=${PROVIDENCE_WORKSPACE_ROOT:-$PWD}; "
+    'while [ "$root" != "/" ] && [ ! -f "$root/.providence/metadata.json" ]; '
+    'do parent=${root%/*}; [ "$parent" = "$root" ] && break; root=$parent; done; '
+    'hook="$root/.providence/runtime/hooks/prompt-submit.py"; '
+    'if [ -f "$hook" ]; then exec python3 "$hook"; fi; exit 0'
+    "' sh"
 )
-CENTRAL_PROMPT_SUBMIT_COMMAND = (
-    f"{PROMPT_SUBMIT_LAUNCHER} {shlex.quote(CENTRAL_PROMPT_SUBMIT_HOOK.as_posix())}"
-)
+CENTRAL_PROMPT_SUBMIT_COMMAND = PROMPT_SUBMIT_LAUNCHER
 
 
 def central_prompt_submit_command(output_base: Path) -> str:
-    """Return a cwd-independent command for the generated central hook."""
-    hook_path = (output_base / CENTRAL_PROMPT_SUBMIT_HOOK).resolve().as_posix()
-    return f"{PROMPT_SUBMIT_LAUNCHER} {shlex.quote(hook_path)}"
+    """Return a relocatable command for the generated central hook.
+
+    ``output_base`` remains part of the API because callers use it to generate
+    the hook itself.  The adapter command must not embed that path: the wizard
+    consolidates and deploys the output into another project location.
+    """
+    del output_base
+    return PROMPT_SUBMIT_LAUNCHER
 
 
 PROMPT_SUBMIT_HOOK_SCRIPT = '''#!/usr/bin/env python3
@@ -161,7 +169,7 @@ def main() -> int:
     try:
         env = dict(os.environ)
         env["SDD_ASK_ENTRYPOINT"] = "hook"
-        env.setdefault("SDD_WORKSPACE_ROOT", str(workspace_root))
+        env.setdefault("PROVIDENCE_WORKSPACE_ROOT", str(workspace_root))
         result = subprocess.run(
             [providence_cli, "ask", prompt],
             capture_output=True,

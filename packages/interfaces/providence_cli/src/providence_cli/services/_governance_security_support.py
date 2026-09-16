@@ -125,7 +125,10 @@ def update_trusted_keyring_flow(
                 .replace("+00:00", "Z"),
             }
         )
-    keyring_path.write_text(_json.dumps(keyring, indent=2), encoding="utf-8")
+    keyring_path.write_text(
+        _json.dumps(keyring, indent=2) + "\n",
+        encoding="utf-8",
+    )
     console.print(f"[green]Updated keyring at {keyring_path}[/green]")
 
 

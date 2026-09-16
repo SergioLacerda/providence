@@ -34,6 +34,12 @@ Generated runtime artifacts include:
 .providence/source/handbook/**
 ```
 
+The repository intentionally keeps only the security boundary from this output:
+`.providence/compiled/*.sig` and `.providence/trust/trusted-keys.json`. The
+signatures and public keyring allow CI and installed clients to verify the
+artifacts they regenerate or receive. Compiled JSON/msgpack files and
+`.providence/runtime/` are local build/session state and remain gitignored.
+
 If these outputs disagree with `docs/spec/canonical/governance-sources.yaml`,
 the mismatch is build drift. Fix the source in `docs/` or regenerate runtime
 artifacts; do not treat `.providence/` as the authored documentation source.

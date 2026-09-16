@@ -510,17 +510,14 @@ def test_prompt_submit_hook_silently_exits_when_providence_unavailable_anywhere(
     assert result.stdout == ""
 
 
-def test_relocating_generated_output_requires_regeneration_to_avoid_stale_command(
+def test_relocating_generated_output_keeps_hook_command_functional(
     tmp_path: Path,
 ) -> None:
-    """Regression (20260913-governance-hooks-dogfood, F002/F010/F011): copying
-    a generator's output tree to a new location  as the wizard's
-    final-template consolidation (move) and direct-root deployment (copy)
-    both do  does NOT rewrite the absolute command path baked in at
-    generation time. This is the exact mechanism that left this repository's
-    own deployed adapters pointing at a nonexistent `generated/client/compiled`
-    path. Anything that relocates generated output MUST re-run
-    `PromptSubmitHookGenerator` against the final destination."""
+    """The generated adapter remains valid when the template is relocated.
+
+    This is intentionally a hermetic client simulation: it does not read or
+    execute any real `.codex`, `.claude`, `.gemini`, or project runtime files.
+    """
     staging = tmp_path / "staging"
     final = tmp_path / "final"
     PromptSubmitHookGenerator(staging, {"codex"}).generate()
@@ -531,13 +528,35 @@ def test_relocating_generated_output_requires_regeneration_to_avoid_stale_comman
     )["hooks"]["UserPromptSubmit"][0]["hooks"][0]["command"]
 
     assert stale_command == central_prompt_submit_command(staging)
-    assert str(staging) in stale_command
+    assert str(staging) not in stale_command
     assert str(final) not in stale_command
 
-    PromptSubmitHookGenerator(final, {"codex"}).generate()
-    fixed_command = tomllib.loads(
-        (final / ".codex" / "config.toml").read_text(encoding="utf-8")
-    )["hooks"]["UserPromptSubmit"][0]["hooks"][0]["command"]
+    (final / ".providence" / "metadata.json").write_text("{}", encoding="utf-8")
+    bin_dir = final / "bin"
+    bin_dir.mkdir()
+    _write_fake_sdd(
+        bin_dir,
+        [
+            "print('governance=active fingerprint=58a087b3c9fb9ce2 mandates=16')",
+            "print('execution_gate=allowed')",
+            "print('PROVIDENCE GOVERNANCE: drift=none | governance=ok | profile=client')",
+        ],
+    )
+    env = dict(os.environ)
+    env["PATH"] = f"{bin_dir}{os.pathsep}{env.get('PATH', '')}"
+    env["PROVIDENCE_WORKSPACE_ROOT"] = str(final)
+    result = subprocess.run(
+        stale_command,
+        input=json.dumps({"prompt": "verify relocated hook"}),
+        cwd=final,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+        shell=True,
+    )
 
-    assert fixed_command == central_prompt_submit_command(final)
-    assert str(final) in fixed_command
+    assert result.returncode == 0
+    context = json.loads(result.stdout)["hookSpecificOutput"]["additionalContext"]
+    assert context.startswith("PROVIDENCE GOVERNANCE ACTIVE")
+    assert "PROVIDENCE GOVERNANCE: drift=none" in context

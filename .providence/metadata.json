@@ -1,11 +1,11 @@
 {
   "version": "3.0",
-  "generated_at": "2026-09-13T20:24:10.093607Z",
+  "generated_at": "2026-09-15T22:04:20.616794Z",
   "language": "all",
   "language_context": {
-    "preferred_human_language": "English",
-    "preferred_chat_language": "English",
-    "preferred_ui_language": "English",
+    "preferred_human_language": "Portugus (Brasil)",
+    "preferred_chat_language": "Portugus (Brasil)",
+    "preferred_ui_language": "Portugus (Brasil)",
     "preferred_local_docs_language": "English"
   },
   "language_policy": {
