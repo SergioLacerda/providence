@@ -39,5 +39,7 @@ _spec.loader.exec_module(_root_conftest_guard)
 # export rather than an unused global (pytest never references it by a
 # direct name lookup in this file's own code — only by module attribute).
 _forbid_repo_sdd_writes = _root_conftest_guard._forbid_repo_sdd_writes
+hermetic_env = _root_conftest_guard.hermetic_env
+governed_project = _root_conftest_guard.governed_project
 
-__all__ = ["_forbid_repo_sdd_writes"]
+__all__ = ["_forbid_repo_sdd_writes", "hermetic_env", "governed_project"]

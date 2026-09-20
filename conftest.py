@@ -160,3 +160,45 @@ def _forbid_repo_sdd_writes(monkeypatch: pytest.MonkeyPatch) -> Any:  # noqa: C9
     monkeypatch.setattr(Path, "replace", guarded_replace)
 
     return
+
+
+_WORKSPACE_ENV_VARS = (
+    "PROVIDENCE_WORKSPACE_ROOT",
+    "SDD_ASK_ENTRYPOINT",
+)
+
+
+@pytest.fixture
+def hermetic_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Any:
+    """Isolate a test from the developer's real runtime.
+
+    Hook, entrypoint and seed tests must not depend on folders that only exist
+    in a real checkout (`.providence/`, `.claude/`, `~/.providence/`, ...).
+    This fixture gives the test a fake home that looks like a machine with the
+    *global* CLI installed (`~/.providence/{bin,runtime}` and no workspace
+    marker), drops inherited workspace-root variables, and returns a
+    `SimpleNamespace(home=..., projects=...)`; use `governed_project` below to create
+    a governed project under it.
+    """
+    from types import SimpleNamespace
+
+    home = tmp_path / "home"
+    (home / ".providence" / "bin").mkdir(parents=True)
+    (home / ".providence" / "runtime").mkdir(parents=True)
+    projects = home / "dev"
+    projects.mkdir()
+    for var in ("HOME", "USERPROFILE"):
+        monkeypatch.setenv(var, str(home))
+    for var in _WORKSPACE_ENV_VARS:
+        monkeypatch.delenv(var, raising=False)
+    return SimpleNamespace(home=home, projects=projects)
+
+
+@pytest.fixture
+def governed_project(hermetic_env: Any) -> Path:
+    """A governed project root: own `.git` boundary and `.providence/metadata.json`."""
+    root = hermetic_env.projects / "project"
+    (root / ".git").mkdir(parents=True)
+    (root / ".providence").mkdir()
+    (root / ".providence" / "metadata.json").write_text("{}", encoding="utf-8")
+    return root

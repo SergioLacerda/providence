@@ -2,9 +2,9 @@
   "keys": [
     {
       "key_id": "dev-01",
-      "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA5f+foLdKHLhDJqDR4YSfox+m1Phev31KUnTninIUYf8=\n-----END PUBLIC KEY-----\n",
+      "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAXcMXuQgnYEjFZsQsvcbhATHah9fDqZ9uTe73f81W9Hw=\n-----END PUBLIC KEY-----\n",
       "status": "active",
-      "not_before": "2026-09-13T14:24:40.015733Z"
+      "not_before": "2026-09-20T15:59:02.926161Z"
     }
   ]
 }

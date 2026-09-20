@@ -24,9 +24,20 @@ def _workspace_root_from_env() -> Path | None:
 
 
 def find_workspace_root(start: Path | None = None) -> Path | None:
-    """Walk up from `start` looking for a `.providence/` directory."""
+    """Walk up from `start` looking for a workspace `.providence/` directory.
+
+    The `.providence/` directory in the user's home is the global CLI install
+    (bin/, runtime/), not a workspace, so it is never a match: a project must
+    carry its own `.providence/` to be governed.
+    """
     current = (start or Path.cwd()).resolve()
+    try:
+        home: Path | None = Path.home().resolve()
+    except (OSError, RuntimeError):
+        home = None
     for candidate in [current, *current.parents]:
+        if candidate == home:
+            continue
         if (candidate / ".providence").is_dir():
             return candidate
     return None

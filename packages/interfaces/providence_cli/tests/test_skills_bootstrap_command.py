@@ -96,11 +96,15 @@ def test_skills_dry_run_requires_regenerate_seeds() -> None:
     assert "--dry-run requires --regenerate-seeds" in result.output
 
 
-def test_skills_dry_run_module_entrypoint_preserves_exit_code() -> None:
+def test_skills_dry_run_module_entrypoint_preserves_exit_code(
+    tmp_path: Path, hermetic_env: object
+) -> None:
+    # Hermetic: run from an empty directory (not the real checkout) with a fake
+    # home; only the importable source dirs are shared with the real repo.
     env = {**os.environ, "PYTHONPATH": _WORKSPACE_PYTHONPATH}
     result = subprocess.run(
         [sys.executable, "-m", "providence_cli", "skills", "--dry-run"],
-        cwd=_REPO_ROOT,
+        cwd=tmp_path,
         env=env,
         capture_output=True,
         text=True,

@@ -9,6 +9,7 @@ from typing import Any
 from .prompt_submit_hooks import (
     CENTRAL_PROMPT_SUBMIT_COMMAND,
     CENTRAL_PROMPT_SUBMIT_HOOK,
+    COPILOT_HOOK_FILE,
     SUPPORTED_PROMPT_HOOK_AGENTS,
 )
 from .wizard.models import ValidationDetail
@@ -114,6 +115,8 @@ class OutputValidator:
             hook_files.append(
                 (self.output_base / ".gemini" / "settings.json", "Gemini adapter")
             )
+        if "copilot" in agents:
+            hook_files.append((self.output_base / COPILOT_HOOK_FILE, "Copilot adapter"))
         for hook_file, desc in hook_files:
             exists = self._path_exists(hook_file)
             result["checks"][f"hook: {desc}"] = "OK" if exists else "MISSING"

@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "python -c \"import os,runpy,pathlib as P;p=P.Path(os.environ.get('PROVIDENCE_WORKSPACE_ROOT') or os.getcwd()).resolve();a=[p,*p.parents];a=a[:next((i for i,d in enumerate(a) if (d/'.git').exists()),len(a))+1];r=next((d for d in a if (d/'.providence'/'metadata.json').is_file()),None);h=r and r/'.providence/runtime/hooks/prompt-submit.py';h and h.is_file() and runpy.run_path(str(h),run_name='__main__')\"",
+        "timeout": 10
+      }
+    ]
+  }
+}
