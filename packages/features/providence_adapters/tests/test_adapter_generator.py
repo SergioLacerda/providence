@@ -315,3 +315,44 @@ def test_render_skill_adapter_uses_codex_template(tmp_path: Path, monkeypatch) -
     assert output.name == "diagnose.prompt.md"
     assert captured["template_name"] == "skill.prompt.md"
     assert "skill" in captured["context"]
+
+
+def test_render_codex_native_skill_adapter_creates_local_override(
+    tmp_path: Path, monkeypatch
+) -> None:
+    generator = AdapterGenerator()
+    monkeypatch.setattr(generator.renderer, "render", lambda *_args, **_kwargs: "skill")
+
+    output = generator._render_codex_native_skill_adapter(
+        {"name": "sdd-diagnose"}, tmp_path
+    )
+
+    assert output == tmp_path / "sdd-diagnose" / "SKILL.md"
+    assert output.read_text(encoding="utf-8") == "skill"
+
+
+def test_generate_for_codex_adds_native_diagnose_override(
+    tmp_path: Path, monkeypatch
+) -> None:
+    generator = AdapterGenerator()
+    monkeypatch.setattr(
+        generator.skill_loader,
+        "load_skills",
+        lambda _sdd_dir: [
+            {
+                "name": "sdd-diagnose",
+                "description": "Diagnose workspace problems.",
+                "category": "analysis",
+                "when_to_use": ["failing checks"],
+                "allowed_tools": ["providence doctor run"],
+                "cli_fallback": ["providence doctor run"],
+            }
+        ],
+    )
+    monkeypatch.setattr(generator.skill_loader, "load_commands", lambda _sdd_dir: [])
+
+    result = generator._generate_for_target("codex", tmp_path)
+
+    assert result.success is True
+    assert (tmp_path / ".codex" / "skills" / "sdd-diagnose" / "SKILL.md").is_file()
+    assert (tmp_path / ".codex" / "skills" / "sdd-diagnose.prompt.md").is_file()
