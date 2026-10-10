@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import pytest
 
@@ -394,6 +394,46 @@ def test_run_release_prepare_invokes_prepare_release_module() -> None:
         run.assert_called_once_with(
             ["PYTHON", "-m", "tools.release.prepare_release", "--version", "1.0.11"]
         )
+
+
+def test_docs_build_composes_verified_illusionist_surfaces() -> None:
+    make_tasks = _make_tasks_module()
+
+    class Stage:
+        def __enter__(self):
+            return ("landing", "selector")
+
+        def __exit__(self, *_args):
+            return False
+
+    composer = SimpleNamespace(staged=Mock(return_value=Stage()), compose=Mock())
+    with (
+        patch("providence_pages.illusionist.illusionist_enabled", return_value=True),
+        patch(
+            "providence_pages.illusionist.IllusionistSurfaceComposer.from_environment",
+            return_value=composer,
+        ),
+        patch.object(make_tasks, "_run_docs_pipeline", return_value=0),
+    ):
+        assert make_tasks.run_docs_build() == 0
+
+    composer.staged.assert_called_once_with(make_tasks.REPO_ROOT / "build")
+    composer.compose.assert_called_once_with(
+        make_tasks.REPO_ROOT / "build" / "site", ("landing", "selector")
+    )
+
+
+def test_docs_build_uses_legacy_landing_only_for_explicit_rollback() -> None:
+    make_tasks = _make_tasks_module()
+    with (
+        patch("providence_pages.illusionist.illusionist_enabled", return_value=False),
+        patch.object(make_tasks, "run_npm_script", return_value=0) as npm_script,
+        patch.object(make_tasks, "_run_docs_pipeline", return_value=0) as pipeline,
+    ):
+        assert make_tasks.run_docs_build() == 0
+
+    npm_script.assert_called_once_with("build")
+    pipeline.assert_called_once_with()
 
 
 def test_main_dispatches_release_prepare_with_version_arg() -> None:

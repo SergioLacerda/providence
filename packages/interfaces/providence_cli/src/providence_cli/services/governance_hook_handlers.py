@@ -19,6 +19,7 @@ _PLATFORM_ADAPTER_FILES = {
     "claude": Path(".claude") / "settings.json",
     "codex": Path(".codex") / "config.toml",
     "gemini": Path(".gemini") / "settings.json",
+    "copilot": Path(".github") / "hooks" / "providence-prompt-submit.json",
 }
 
 _HOOK_REFERENCES = (
@@ -34,6 +35,7 @@ _CENTRAL_HOOK_CURRENT_MARKERS = (
     "PROVIDENCE GOVERNANCE ACTIVE",
     "_render_activation_header",
     '"hookEventName"',
+    "_event_name",
 )
 
 

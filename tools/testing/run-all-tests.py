@@ -103,6 +103,11 @@ TEST_LAYERS = [
         "Integration tests",
     ),
     TestLayer(
+        "Package: providence_pages",
+        "packages/features/providence_pages/tests",
+        "GitHub Pages publishing, indexing, and validation tests",
+    ),
+    TestLayer(
         "Package: providence_skills",
         "packages/features/providence_skills/tests",
         "Skill contract tests",

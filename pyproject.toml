@@ -48,7 +48,7 @@ examples-langgraph = [
     "langchain-core>=1.6.1",
 ]
 examplescrewai = [
-    "crewai==1.15.18",
+    "crewai==1.15.23",
     "onnxruntime<1.25",
     "setuptools>=84.0.0",
 ]
@@ -86,6 +86,7 @@ constraint-dependencies = [
     "idna>=3.15",  # CVE-2026-45409: DoS via arbitrarily large inputs in idna.encode()
     "click>=8.3.3",  # PYSEC-2026-2132: command injection in click.edit()
     "setuptools>=84.0.0",  # PYSEC-2026-3447: MANIFEST.in exclude bypass via Unicode normalization
+    "urllib3>=2.8.0",  # PYSEC-2026-4175/4176/4177: HTTPS proxy and streaming flaws
 ]
 
 [tool.uv.workspace]

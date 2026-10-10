@@ -68,10 +68,12 @@ class AISeedsGenerator(BaseSeedlingGenerator):
             )
             write_text_utf8(gemini_dir / "gemini-instructions.md", redirector_content)
             _write_root_seed_file(self.output_base / "GEMINI.md", redirector_content)
-            settings = {"contextFileName": "GEMINI.md"}
-            write_text_utf8(
-                gemini_dir / "settings.json", json.dumps(settings, indent=2) + "\n"
-            )
+            # Merge, never replace: the prompt-submit hook adapter (and the user)
+            # also keep settings such as `hooks` in this file.
+            settings_file = gemini_dir / "settings.json"
+            settings = _load_json_object(settings_file)
+            settings["contextFileName"] = "GEMINI.md"
+            write_text_utf8(settings_file, json.dumps(settings, indent=2) + "\n")
             seed_data = {
                 "auto_activate": True,
                 "agent": "gemini",

@@ -71,6 +71,10 @@ def _create_prompt_submit_hooks(tmp_path: Path) -> None:
     (tmp_path / ".gemini" / "settings.json").write_text(
         CENTRAL_PROMPT_SUBMIT_COMMAND, encoding="utf-8"
     )
+    (tmp_path / ".github" / "hooks").mkdir(parents=True, exist_ok=True)
+    (tmp_path / ".github" / "hooks" / "providence-prompt-submit.json").write_text(
+        CENTRAL_PROMPT_SUBMIT_COMMAND, encoding="utf-8"
+    )
 
 
 class TestOutputValidatorAllPresent:
@@ -124,6 +128,7 @@ class TestOutputValidatorAllPresent:
         assert result["checks"]["hook: Claude adapter"] == "OK"
         assert result["checks"]["hook: Codex adapter"] == "OK"
         assert result["checks"]["hook: Gemini adapter"] == "OK"
+        assert result["checks"]["hook: Copilot adapter"] == "OK"
 
     def test_prompt_submit_hooks_can_target_selected_agents(
         self, tmp_path: Path

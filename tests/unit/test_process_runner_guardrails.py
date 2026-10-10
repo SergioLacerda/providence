@@ -21,7 +21,7 @@ ALLOWED_PACKAGES = {
     # PROMPT_SUBMIT_HOOK_SCRIPT is a template string written out as a standalone
     # hook script for external CLIs (Claude/Codex/Gemini hooks) — the subprocess
     # call runs in that generated script's own process, not in providence_wizard's.
-    "packages/interfaces/providence_wizard/src/providence_wizard/orchestration/prompt_submit_hooks.py",
+    "packages/interfaces/providence_wizard/src/providence_wizard/orchestration/prompt_submit_hook_script.py",
 }
 
 ALLOWED_TOOLS = {

@@ -89,6 +89,11 @@ class AdapterGenerator:
             try:
                 file_path = self._render_skill_adapter(target, skill, agent_dir)
                 result.files_written.append(str(file_path))
+                if target == "codex" and skill.get("name") == "sdd-diagnose":
+                    native_path = self._render_codex_native_skill_adapter(
+                        skill, agent_dir
+                    )
+                    result.files_written.append(str(native_path))
             except Exception as e:
                 result.errors.append(f"Failed to render skill {skill.get('name')}: {e}")
                 result.success = False
@@ -161,5 +166,19 @@ class AdapterGenerator:
         content = self.renderer.render(target, template_name, skill=skill)
 
         # Write file
+        output_file.write_text(content, encoding="utf-8")
+        return output_file
+
+    def _render_codex_native_skill_adapter(
+        self, skill: dict[str, Any], output_dir: Path
+    ) -> Path:
+        """Render the native Codex override for the affected legacy adapter."""
+        skill_name = skill.get("name", "unknown")
+        if not isinstance(skill_name, str):
+            raise TypeError("skill name must be a string")
+        skill_dir = output_dir / skill_name
+        skill_dir.mkdir(parents=True, exist_ok=True)
+        output_file = skill_dir / "SKILL.md"
+        content = self.renderer.render("codex", "skill.md", skill=skill)
         output_file.write_text(content, encoding="utf-8")
         return output_file

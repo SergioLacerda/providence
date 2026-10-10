@@ -24,6 +24,18 @@ def _make_docs(tmp_path: Path, files: dict[str, str]) -> Path:
 
 
 class TestChangedFiles:
+    def test_returns_existing_changed_files_when_git_succeeds(
+        self, tmp_path: Path
+    ) -> None:
+        docs = _make_docs(tmp_path, {"a.md": "# A"})
+        with patch("providence_pages.delta.SafeProcessRunner.run") as mock_run:
+            mock_run.return_value = MagicMock(
+                success=True,
+                stdout=f"{docs / 'a.md'}\n{docs / 'missing.md'}\n",
+            )
+            result = DeltaIndexer().changed_files(docs)
+        assert result == [docs / "a.md"]
+
     def test_returns_empty_when_git_not_available(self, tmp_path: Path) -> None:
         docs = _make_docs(tmp_path, {"a.md": "# A"})
         with patch(
@@ -61,6 +73,18 @@ class TestIncrementalIndex:
 
 
 class TestCachedIndex:
+    def test_reindexes_when_cache_file_is_invalid(self, tmp_path: Path) -> None:
+        docs = _make_docs(tmp_path, {"a.md": "# A"})
+        cache = tmp_path / "cache.json"
+        cache.write_text("{invalid", encoding="utf-8")
+
+        entries, was_cached = DeltaIndexer().cached_index(
+            docs, tmp_path / "index.json", cache
+        )
+
+        assert was_cached is False
+        assert len(entries) == 1
+
     def test_reindexes_when_cache_empty(self, tmp_path: Path) -> None:
         docs = _make_docs(tmp_path, {"a.md": "---\ntitle: A\n---\nBody"})
         output = tmp_path / "index.json"
@@ -101,3 +125,18 @@ class TestCachedIndex:
         entries2, was_cached = indexer.cached_index(docs, output, cache)
         assert was_cached is False
         assert entries2[0].title == "A Modified"
+
+    def test_reindexes_when_cached_output_is_invalid(self, tmp_path: Path) -> None:
+        docs = _make_docs(tmp_path, {"a.md": "# A"})
+        output = tmp_path / "index.json"
+        cache = tmp_path / "cache.json"
+        indexer = DeltaIndexer()
+
+        entries, _ = indexer.cached_index(docs, output, cache)
+        indexer._indexer.to_json(entries, output)
+        output.write_text("{invalid", encoding="utf-8")
+
+        refreshed, was_cached = indexer.cached_index(docs, output, cache)
+
+        assert was_cached is False
+        assert len(refreshed) == 1

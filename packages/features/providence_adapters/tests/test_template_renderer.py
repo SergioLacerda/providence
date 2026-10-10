@@ -47,6 +47,7 @@ class TestTemplateRenderer:
     def test_bundled_templates_dir_exists(self) -> None:
         assert _BUNDLED_TEMPLATES.exists()
         assert (Path(_BUNDLED_TEMPLATES) / "claude" / "command.md.tpl").exists()
+        assert (Path(_BUNDLED_TEMPLATES) / "codex" / "skill.md.tpl").exists()
         assert (Path(_BUNDLED_TEMPLATES) / "codex" / "skill.prompt.md.tpl").exists()
         assert (Path(_BUNDLED_TEMPLATES) / "codex" / "command.prompt.md.tpl").exists()
         assert (Path(_BUNDLED_TEMPLATES) / "copilot" / "skill.prompt.md.tpl").exists()
@@ -79,6 +80,16 @@ class TestTemplateRenderer:
         assert "execution_gate" in content
         assert "intake_index_mode: none" in content
         assert "delegation_executed" in content
+
+    def test_render_codex_native_skill_uses_providence_authority(self) -> None:
+        skill = {**SAMPLE_SKILL, "name": "sdd-diagnose"}
+
+        content = TemplateRenderer().render("codex", "skill.md", skill=skill)
+
+        assert ".providence/agent-instructions.md" in content
+        assert ".providence/skills/sdd-diagnose/skill.yaml" in content
+        assert "providence skills run sdd-diagnose" in content
+        assert ".sdd/" not in content
 
     def test_render_copilot_skill(self) -> None:
         renderer = TemplateRenderer()

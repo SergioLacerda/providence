@@ -53,6 +53,32 @@ class TestFindWorkspaceRoot:
         assert result == tmp_path
 
 
+class TestFindWorkspaceRootIgnoresGlobalHome:
+    def test_home_providence_is_the_global_cli_not_a_workspace(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        home = tmp_path / "home"
+        (home / ".providence" / "bin").mkdir(parents=True)
+        project = home / "dev" / "project"
+        project.mkdir(parents=True)
+        monkeypatch.setattr(Path, "home", classmethod(lambda cls: home))
+
+        # Real ancestors of tmp_path may legitimately match; only the patched
+        # home (the global CLI dir) must be skipped.
+        assert find_workspace_root(start=project) != home
+
+    def test_project_own_providence_still_wins_under_home(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        home = tmp_path / "home"
+        (home / ".providence").mkdir(parents=True)
+        project = home / "dev" / "project"
+        (project / ".providence").mkdir(parents=True)
+        monkeypatch.setattr(Path, "home", classmethod(lambda cls: home))
+
+        assert find_workspace_root(start=project / "src") == project
+
+
 class TestResolveProfile:
     """Tests for resolve_profile (merged from tests/unit/test_environment.py)."""
 

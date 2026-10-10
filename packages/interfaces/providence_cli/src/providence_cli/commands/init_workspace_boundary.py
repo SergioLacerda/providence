@@ -31,8 +31,18 @@ def _is_relative_to(path: Path, base: Path) -> bool:
 
 def _find_project_boundary(cwd: Path) -> Path | None:
     for candidate in [cwd, *cwd.parents]:
-        if any((candidate / marker).exists() for marker in _PROJECT_BOUNDARY_MARKERS):
-            return candidate
+        for marker in _PROJECT_BOUNDARY_MARKERS:
+            marker_path = candidate / marker
+            if marker == ".git":
+                # A real worktree uses a `.git` file; a regular repository has
+                # a directory containing HEAD. Empty synthetic mount points
+                # must not make an unrelated temporary directory a project.
+                if marker_path.is_file() or (
+                    marker_path.is_dir() and (marker_path / "HEAD").is_file()
+                ):
+                    return candidate
+            elif marker_path.exists():
+                return candidate
     return None
 
 

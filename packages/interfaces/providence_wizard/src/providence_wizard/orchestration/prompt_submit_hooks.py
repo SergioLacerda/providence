@@ -3,24 +3,39 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 from providence_core.utils.text_io import write_text_utf8
 from providence_wizard.constants import RUNTIME_DIRNAME
+from providence_wizard.orchestration.prompt_submit_hook_script import (
+    PROMPT_SUBMIT_HOOK_SCRIPT,
+)
 
-SUPPORTED_PROMPT_HOOK_AGENTS = frozenset({"claude", "codex", "gemini"})
+SUPPORTED_PROMPT_HOOK_AGENTS = frozenset({"claude", "codex", "gemini", "copilot"})
 CENTRAL_PROMPT_SUBMIT_HOOK = (
     Path(RUNTIME_DIRNAME) / "runtime" / "hooks" / "prompt-submit.py"
 )
-PROMPT_SUBMIT_LAUNCHER = (
-    "sh -c '"
-    "root=${PROVIDENCE_WORKSPACE_ROOT:-$PWD}; "
-    'while [ "$root" != "/" ] && [ ! -f "$root/.providence/metadata.json" ]; '
-    'do parent=${root%/*}; [ "$parent" = "$root" ] && break; root=$parent; done; '
-    'hook="$root/.providence/runtime/hooks/prompt-submit.py"; '
-    'if [ -f "$hook" ]; then exec python3 "$hook"; fi; exit 0'
-    "' sh"
+COPILOT_HOOK_FILE = Path(".github") / "hooks" / "providence-prompt-submit.json"
+# The launcher must run under every shell an agent may use (sh, cmd.exe,
+# PowerShell 5.1), so it is a single Python one-liner: only single quotes
+# inside, and no `$`, `%`, backtick, `&`, `|` or `^`.  It walks up from the
+# cwd (or PROVIDENCE_WORKSPACE_ROOT) to the workspace and runs the central hook
+# in-process (stdin/stdout are shared); a missing hook exits 0 silently.  The
+# walk stops at the first `.git` (the project boundary): a project without its
+# own `.providence/` must not inherit governance from a parent directory.
+_LAUNCHER_CODE = (
+    "import os,runpy,pathlib as P;"
+    "p=P.Path(os.environ.get('PROVIDENCE_WORKSPACE_ROOT') or os.getcwd()).resolve();"
+    "a=[p,*p.parents];"
+    "a=a[:next((i for i,d in enumerate(a) if (d/'.git').exists()),len(a))+1];"
+    "r=next((d for d in a if (d/'.providence'/'metadata.json').is_file()),None);"
+    "h=r and r/'.providence/runtime/hooks/prompt-submit.py';"
+    "h and h.is_file() and runpy.run_path(str(h),run_name='__main__')"
 )
+# Windows installs expose `python`/`py`; `python3` is often a Store stub there.
+_LAUNCHER_PYTHON = "python" if os.name == "nt" else "python3"
+PROMPT_SUBMIT_LAUNCHER = f'{_LAUNCHER_PYTHON} -c "{_LAUNCHER_CODE}"'
 CENTRAL_PROMPT_SUBMIT_COMMAND = PROMPT_SUBMIT_LAUNCHER
 
 
@@ -33,167 +48,6 @@ def central_prompt_submit_command(output_base: Path) -> str:
     """
     del output_base
     return PROMPT_SUBMIT_LAUNCHER
-
-
-PROMPT_SUBMIT_HOOK_SCRIPT = '''#!/usr/bin/env python3
-"""Shared prompt-submit governance hook for Claude Code / Codex CLI / Gemini CLI.
-
-Reads the hook's stdin JSON payload, extracts the "prompt" field, runs a
-lightweight governance check, and emits the shared additionalContext output
-shape understood by supported platforms. Never blocks (always exits 0).
-
-Explicit `/sdd-ask ...` prompts are a special case: the slash-command adapter
-for that turn will itself run a full `providence ask` call, so this hook skips its
-own full invocation to avoid paying the governance-snapshot cost twice in the
-same turn (spike: 20260714-sdd-ask-single-entrypoint-spike, R-001 preferred
-strategy). If detection is ever uncertain, this hook falls back to the full
-path rather than silently dropping governance context.
-
-Header/footer contract (20260913-governance-hooks-dogfood): every emitted
-context starts with a `PROVIDENCE GOVERNANCE ACTIVE` header and carries a
-footer *instruction* telling the model to end its response with a compact
-`PROVIDENCE GOVERNANCE: ...` line. On the normal path the instruction embeds
-the concrete footer text extracted from `providence ask`'s own output; on the
-explicit `/sdd-ask` path (which does not call `providence ask` itself) it
-embeds the same footer template the `/sdd-ask` command adapter resolves (see
-`sdd-ask.prompt.md`'s `PROVIDENCE GOVERNANCE` section), so the contract is
-never silently dropped.
-"""
-import json
-import os
-import re
-import shutil
-import subprocess
-import sys
-from pathlib import Path
-
-def _workspace_root() -> Path:
-    try:
-        return Path(__file__).resolve().parents[3]
-    except IndexError:
-        return Path.cwd()
-
-def _extract_context_field(context: str, field: str, default: str) -> str:
-    pattern = rf"\\b{re.escape(field)}\\s*[:=]\\s*([A-Za-z0-9_.-]+)"
-    match = re.search(pattern, context)
-    return match.group(1) if match else default
-
-def _extract_footer_line(context: str) -> str | None:
-    match = re.search(r"^PROVIDENCE GOVERNANCE:.*$", context, re.MULTILINE)
-    return match.group(0) if match else None
-
-def _footer_instruction(footer_line: str) -> str:
-    return (
-        "Instruction: if the platform response policy allows it, end your "
-        f"response with this compact footer: {footer_line}"
-    )
-
-_SDD_ASK_FOOTER_TEMPLATE = (
-    "PROVIDENCE GOVERNANCE: drift=${status} | governance=${status} | profile=sdd-ask"
-)
-
-def _render_activation_header(context: str) -> str:
-    fingerprint = _extract_context_field(context, "fingerprint", "unknown")[:8]
-    execution_gate = _extract_context_field(context, "execution_gate", "unknown")
-    lines = [
-        "PROVIDENCE GOVERNANCE ACTIVE | "
-        "source=prompt-submit-hook | "
-        "governance_mode=hard | "
-        f"execution_gate={execution_gate} | "
-        f"fingerprint={fingerprint}",
-        "Instruction: start your response with one short Providence governance "
-        "status line when this context is present.",
-        "Instruction: this is context injection only; no provider delegation or "
-        "implementation was executed by the hook.",
-    ]
-    footer_line = _extract_footer_line(context)
-    if footer_line:
-        lines.append(_footer_instruction(footer_line))
-    return "\\n".join(lines)
-
-def _is_explicit_sdd_ask(prompt: str) -> bool:
-    stripped = prompt.strip().casefold()
-    return stripped == "/sdd-ask" or stripped.startswith("/sdd-ask ")
-
-def _render_explicit_command_context() -> str:
-    return "\\n".join([
-        "PROVIDENCE GOVERNANCE ACTIVE | "
-        "source=prompt-submit-hook | "
-        "entrypoint=explicit_command | "
-        "explicit_command=sdd-ask",
-        "Instruction: this turn is an explicit /sdd-ask invocation; the hook "
-        "deferred its own governance query to that command's own `providence ask` "
-        "call this turn, to avoid running the full governance snapshot "
-        "twice in one turn.",
-        "Instruction: this is context injection only; no provider delegation or "
-        "implementation was executed by the hook.",
-        _footer_instruction(_SDD_ASK_FOOTER_TEMPLATE),
-    ])
-
-def _resolve_providence_cli(workspace_root: Path) -> str | None:
-    found = shutil.which("providence")
-    if found:
-        return found
-    for candidate in (
-        workspace_root / ".venv" / "bin" / "providence",
-        workspace_root / "venv" / "bin" / "providence",
-    ):
-        if candidate.is_file():
-            return str(candidate)
-    return None
-
-def main() -> int:
-    workspace_root = _workspace_root()
-    if (workspace_root / ".providence/runtime/hook-disabled").exists():
-        return 0
-    if not (workspace_root / ".providence/metadata.json").exists():
-        return 0
-    try:
-        payload = json.loads(sys.stdin.read() or "{}")
-    except json.JSONDecodeError:
-        payload = {}
-    prompt = payload.get("prompt", "")
-    if not prompt:
-        return 0
-    if _is_explicit_sdd_ask(prompt):
-        print(json.dumps({
-            "hookSpecificOutput": {
-                "hookEventName": "UserPromptSubmit",
-                "additionalContext": _render_explicit_command_context(),
-            }
-        }))
-        return 0
-    providence_cli = _resolve_providence_cli(workspace_root)
-    if providence_cli is None:
-        return 0
-    try:
-        env = dict(os.environ)
-        env["SDD_ASK_ENTRYPOINT"] = "hook"
-        env.setdefault("PROVIDENCE_WORKSPACE_ROOT", str(workspace_root))
-        result = subprocess.run(
-            [providence_cli, "ask", prompt],
-            capture_output=True,
-            text=True,
-            timeout=10,
-            env=env,
-            cwd=str(workspace_root),
-        )
-        context = result.stdout.strip()
-    except Exception:
-        return 0
-    if context:
-        context = _render_activation_header(context) + "\\n\\n" + context
-        print(json.dumps({
-            "hookSpecificOutput": {
-                "hookEventName": "UserPromptSubmit",
-                "additionalContext": context,
-            }
-        }))
-    return 0
-
-if __name__ == "__main__":
-    raise SystemExit(main())
-'''
 
 
 def claude_user_prompt_submit_hook_entries(command: str) -> list[object]:
@@ -220,21 +74,92 @@ def claude_prompt_submit_settings(command: str) -> dict[str, object]:
     }
 
 
+CODEX_BLOCK_BEGIN = "# >>> providence prompt-submit hook (managed) >>>"
+CODEX_BLOCK_END = "# <<< providence prompt-submit hook <<<"
+_PROVIDENCE_HOOK_MARKERS = (
+    CENTRAL_PROMPT_SUBMIT_HOOK.as_posix(),
+    "sdd-governance-inject.py",  # pre-rebrand central hook
+)
+
+
 def codex_prompt_submit_config(command: str) -> str:
-    """Return Codex hook TOML pointing at the generated central hook."""
+    """Return the managed Codex hook TOML block for the generated central hook."""
     escaped_command = command.replace("\\", "\\\\").replace('"', '\\"')
-    return f'''[[hooks.UserPromptSubmit]]
+    return f'''{CODEX_BLOCK_BEGIN}
+[[hooks.UserPromptSubmit]]
 
 [[hooks.UserPromptSubmit.hooks]]
 type = "command"
 command = "{escaped_command}"
 timeout = 10
+{CODEX_BLOCK_END}
 '''
 
 
-def gemini_prompt_submit_hooks(command: str) -> dict[str, object]:
+def merge_codex_config(existing: str, command: str) -> str:
+    """Insert or refresh the managed hook block, keeping the user's other TOML.
+
+    Older generators wrote the bare hook block as the whole file; that legacy
+    shape is replaced, anything else the user wrote is preserved.
+    """
+    block = codex_prompt_submit_config(command)
+    begin = existing.find(CODEX_BLOCK_BEGIN)
+    end = existing.find(CODEX_BLOCK_END, begin) if begin != -1 else -1
+    if begin != -1 and end != -1:
+        return (
+            existing[:begin]
+            + block
+            + existing[end + len(CODEX_BLOCK_END) :].lstrip("\r\n")
+        )
+    is_legacy = (
+        existing.lstrip().startswith("[[hooks.UserPromptSubmit]]")
+        and existing.count("[[") == 2
+        and any(marker in existing for marker in _PROVIDENCE_HOOK_MARKERS)
+    )
+    if not existing.strip() or is_legacy:
+        return block
+    return existing.rstrip("\r\n") + "\n\n" + block
+
+
+def is_providence_hook_entry(entry: object) -> bool:
+    """Return whether a hook-entry dict runs the Providence central hook."""
+    if not isinstance(entry, dict):
+        return False
+    hooks = entry.get("hooks")
+    if not isinstance(hooks, list):
+        return False
+    return any(
+        isinstance(hook, dict)
+        and any(
+            marker in str(hook.get("command", ""))
+            for marker in _PROVIDENCE_HOOK_MARKERS
+        )
+        for hook in hooks
+    )
+
+
+def upsert_hook_entries(existing: object, ours: list[object]) -> list[object]:
+    """Return `ours` plus the user's non-Providence entries (idempotent)."""
+    kept = (
+        [e for e in existing if not is_providence_hook_entry(e)]
+        if isinstance(existing, list)
+        else []
+    )
+    return [*ours, *kept]
+
+
+def gemini_prompt_submit_hooks(command: str) -> dict[str, list[object]]:
     """Return Gemini hook settings pointing at the generated central hook."""
     return {"BeforeAgent": [{"hooks": [{"type": "command", "command": command}]}]}
+
+
+def copilot_prompt_submit_hooks(command: str) -> dict[str, object]:
+    """Return VS Code / GitHub Copilot agent-hook settings for the central hook."""
+    return {
+        "hooks": {
+            "UserPromptSubmit": [{"type": "command", "command": command, "timeout": 10}]
+        }
+    }
 
 
 def resolve_prompt_submit_hook_agents(selected: set[str] | None) -> set[str]:
@@ -267,6 +192,8 @@ class PromptSubmitHookGenerator:
             self._write_codex_adapter()
         if "gemini" in self.agents:
             self._write_gemini_adapter()
+        if "copilot" in self.agents:
+            self._write_copilot_adapter()
         return True
 
     def _write_claude_adapter(self) -> None:
@@ -277,25 +204,45 @@ class PromptSubmitHookGenerator:
         if not isinstance(hooks, dict):
             hooks = {}
             settings["hooks"] = hooks
-        # Merge only the "UserPromptSubmit" event key — other hook event
-        # types (e.g. "PreToolUse", written by ai_seeds.generate_claude_seed)
-        # must survive this write, not be silently overwritten.
-        hooks["UserPromptSubmit"] = claude_user_prompt_submit_hook_entries(
-            self.central_command
+        # Merge only our entry under the "UserPromptSubmit" key — other hook
+        # event types (e.g. "PreToolUse", written by ai_seeds.generate_claude_seed)
+        # and the user's own UserPromptSubmit hooks must survive this write.
+        hooks["UserPromptSubmit"] = upsert_hook_entries(
+            hooks.get("UserPromptSubmit"),
+            claude_user_prompt_submit_hook_entries(self.central_command),
         )
         write_text_utf8(settings_path, json.dumps(settings, indent=2) + "\n")
 
     def _write_codex_adapter(self) -> None:
         config_path = self.output_base / ".codex" / "config.toml"
         config_path.parent.mkdir(parents=True, exist_ok=True)
-        write_text_utf8(config_path, codex_prompt_submit_config(self.central_command))
+        existing = (
+            config_path.read_text(encoding="utf-8") if config_path.exists() else ""
+        )
+        write_text_utf8(config_path, merge_codex_config(existing, self.central_command))
 
     def _write_gemini_adapter(self) -> None:
         settings_path = self.output_base / ".gemini" / "settings.json"
         settings_path.parent.mkdir(parents=True, exist_ok=True)
         settings = self._load_json_object(settings_path)
-        settings["hooks"] = gemini_prompt_submit_hooks(self.central_command)
+        hooks = settings.setdefault("hooks", {})
+        if not isinstance(hooks, dict):
+            hooks = {}
+            settings["hooks"] = hooks
+        hooks["BeforeAgent"] = upsert_hook_entries(
+            hooks.get("BeforeAgent"),
+            gemini_prompt_submit_hooks(self.central_command)["BeforeAgent"],
+        )
         write_text_utf8(settings_path, json.dumps(settings, indent=2) + "\n")
+
+    def _write_copilot_adapter(self) -> None:
+        hook_path = self.output_base / COPILOT_HOOK_FILE
+        hook_path.parent.mkdir(parents=True, exist_ok=True)
+        write_text_utf8(
+            hook_path,
+            json.dumps(copilot_prompt_submit_hooks(self.central_command), indent=2)
+            + "\n",
+        )
 
     def _load_json_object(self, path: Path) -> dict[str, object]:
         if not path.exists():

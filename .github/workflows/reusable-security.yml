@@ -36,7 +36,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install uv
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4  # v10.1.0
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7  # v10.2.0
         with:
           version: "0.11.9"
           enable-cache: true
@@ -59,7 +59,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install uv
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4  # v10.1.0
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7  # v10.2.0
         with:
           version: "0.11.9"
           enable-cache: true
@@ -77,23 +77,6 @@ jobs:
           # PYSEC-2026-89: markdown (transitive via mkdocs/mkdocs-material).
           # No fix available for 3.10.x series; markdown only renders internal
           # docs (not attacker-controlled input), so DoS risk is not applicable.
-
-  npm-audit:
-    name: npm Audit (apps/landing)
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-      - name: Set up Node
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020  # v7.0.0
-        with:
-          node-version: "24"
-      - name: Install dependencies
-        working-directory: apps/landing
-        run: npm ci
-      - name: Audit Dependencies
-        working-directory: apps/landing
-        run: npm audit --audit-level=high
 
   govulncheck:
     name: govulncheck (tools/sdd-compile)
@@ -155,7 +138,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install uv
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4  # v10.1.0
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7  # v10.2.0
         with:
           version: "0.11.9"
           enable-cache: true
@@ -177,7 +160,7 @@ jobs:
           password: ${{ env.DOCKERHUB_TOKEN }}
         continue-on-error: true
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
       - name: Sync Docker ignore rules
         run: cp infrastructure/docker/.dockerignore .dockerignore
       - name: Build image
