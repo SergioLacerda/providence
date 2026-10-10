@@ -1,11 +1,9 @@
-"""Compile governed selector data and static assets."""
+"""Compile governed Selector data artifacts."""
 
 from __future__ import annotations
 
-import shutil
 import sys
 from dataclasses import dataclass
-from importlib import resources
 from pathlib import Path
 
 from ._selector_canonical_fallback import _build_items_from_canonical_docs
@@ -33,7 +31,6 @@ class SelectorCompiler:
     """Compile selector payload from governed mandate and guideline sources."""
 
     repo_root: Path
-    asset_source_dir: Path | None = None
 
     def build_payload(self) -> dict[str, object]:
         """Build the selector payload."""
@@ -44,11 +41,15 @@ class SelectorCompiler:
             "items": [item.to_dict() for item in items],
         }
 
-    def build_site(self, output_dir: Path) -> Path:
-        """Write data.json and static assets into a site directory."""
+    def build_artifact(self, output_dir: Path) -> Path:
+        """Write the machine-readable Selector artifact into ``output_dir``.
+
+        Presentation assets are owned by the verified ILUSIONISTA Selector
+        release. Keeping this seam artifact-only prevents local HTML, CSS, or
+        JavaScript templates from becoming an implicit publication fallback.
+        """
         output_dir.mkdir(parents=True, exist_ok=True)
         _write_json(output_dir / "data.json", self.build_payload())
-        self._copy_assets(output_dir)
         return output_dir
 
     # ------------------------------------------------------------------
@@ -128,31 +129,6 @@ class SelectorCompiler:
             depends_on=_list_or_default(section.get("depends_on"), []),
             item_type=item_type,
         )
-
-    # ------------------------------------------------------------------
-    # Asset helpers
-    # ------------------------------------------------------------------
-
-    def _copy_assets(self, output_dir: Path) -> None:
-        asset_dir = self._asset_dir()
-        for name in (
-            "index.html",
-            "selector.js",
-            "style.css",
-            "site-header.js",
-            "site-header.css",
-        ):
-            shutil.copy2(asset_dir / name, output_dir / name)
-
-    def _asset_dir(self) -> Path:
-        if self.asset_source_dir is not None:
-            return self.asset_source_dir
-        asset_root = (
-            resources.files("providence_wizard")
-            .joinpath("templates")
-            .joinpath("selector")
-        )
-        return Path(str(asset_root))
 
     # ------------------------------------------------------------------
     # Path helpers

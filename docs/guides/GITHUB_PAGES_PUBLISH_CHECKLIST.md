@@ -12,12 +12,14 @@ Use this checklist when docs workflows are green but the site was not updated.
 
 The Pages artifact is built as a composed publication surface:
 
-1. Astro owns the root landing surface at `/`.
+1. Pin-verified ILUSIONISTA owns the root landing surface at `/`.
 2. MkDocs owns canonical technical documentation under `/docs/`.
-3. Selector remains a compiled artifact under `/selector/`.
+3. Pin-verified ILUSIONISTA owns the Selector presentation at `/selector/`.
+4. The local Selector compiler generates `selector/data.json`.
 
 Use `make docs-build` for local publication verification because it builds the
-composed site: Astro landing, strict MkDocs docs, and compiled Selector assets.
+composed site: verified ILUSIONISTA surfaces, strict MkDocs docs, and the
+machine-readable Selector artifact.
 
 ## 3) Trigger conditions in `docs.yml`
 

@@ -321,68 +321,6 @@ def run_lint_go(*, fix: bool) -> int:
     )
 
 
-def run_lint_fix_web() -> int:
-    print("lint-fix-web: apps/landing's 'lint' script is 'astro check', a")
-    print("type/diagnostics checker with no autofix mode — run 'make lint-web'")
-    print(
-        "to see astro diagnostics. Auto-fixing markdown style now (markdownlint-cli2)."
-    )
-    return run_npm_script("lint-fix")
-
-
-def _npm_cmd() -> str:
-    return "npm.cmd" if sys.platform == "win32" else "npm"
-
-
-def run_npm_script(script: str) -> int:
-    return _run([_npm_cmd(), "--prefix", "apps/landing", "run", script])
-
-
-def run_npm_script_advisory(script: str, *, label: str) -> None:
-    """Run an npm script whose findings are advisory-only.
-
-    Mirrors docs.yml's `continue-on-error: true` markdownlint-cli2 step:
-    output is printed, but a non-zero exit never propagates to the caller's
-    own return code — this must never turn `make lint-web` red on its own.
-    A missing `npm` binary is the same "not blocking" case, not a harder
-    failure — skip with a message instead of letting the spawn error escape,
-    matching `_run_optional_tool`'s pattern for other optional CLI tools.
-    """
-    if shutil.which(_npm_cmd()) is None:
-        print(f"{label}: npm not found on PATH; skipping (advisory only).")
-        return
-    if _run([_npm_cmd(), "--prefix", "apps/landing", "run", script]) != 0:
-        print(f"{label}: advisory findings reported above; not blocking.")
-
-
-def run_npm_audit_fix() -> int:
-    """Best-effort dependency vulnerability fix; never blocks lint-web.
-
-    `npm audit fix` exits non-zero when vulnerabilities remain that need
-    `--force` (a breaking major bump) to resolve. Those need a deliberate,
-    manual call rather than an automatic lint-time upgrade, so a non-zero
-    exit here is logged and swallowed instead of failing lint-web.
-    """
-    returncode = _run([_npm_cmd(), "--prefix", "apps/landing", "audit", "fix"])
-    if returncode != 0:
-        print(
-            "lint-web: npm audit fix left unresolved vulnerabilities "
-            "(likely requiring --force / a breaking upgrade); continuing."
-        )
-    return 0
-
-
-def run_lint_web() -> int:
-    run_npm_audit_fix()
-    result = run_npm_script("lint")
-    run_npm_script_advisory("lint:md", label="lint-web (markdown style)")
-    return result
-
-
-def run_install_web() -> int:
-    return _run([_npm_cmd(), "--prefix", "apps/landing", "ci"])
-
-
 def run_build_compiler() -> int:
     goexe = ""
     from providence_core.utils.process import SafeProcessRunner
@@ -585,6 +523,11 @@ def _run_docs_pipeline() -> int:
     rc = _run(_python_cmd() + ["-m", "mkdocs", "build", "--strict"])
     if rc != 0:
         return rc
+    return _run_selector_artifact()
+
+
+def _run_selector_artifact() -> int:
+    """Generate the machine-readable Selector artifact without page assets."""
     return _run(
         _python_cmd()
         + [
@@ -597,12 +540,8 @@ def _run_docs_pipeline() -> int:
     )
 
 
-def _run_legacy_docs_pipeline() -> int:
-    """Build the retained Landing surface only for the explicit rollback path."""
-    rc = run_npm_script("build")
-    if rc != 0:
-        return rc
-    return _run_docs_pipeline()
+def run_selector_artifact() -> int:
+    return _run_selector_artifact()
 
 
 def run_docs_build() -> int:
@@ -612,15 +551,25 @@ def run_docs_build() -> int:
         illusionist_enabled,
     )
 
+    # A fresh publication tree prevents obsolete local page files from
+    # surviving between builds after their source templates are removed.
+    shutil.rmtree(REPO_ROOT / "build" / "site", ignore_errors=True)
+
     if not illusionist_enabled():
-        print("WARNING: ILUSIONISTA surfaces disabled; using the legacy rollback path.")
-        return _run_legacy_docs_pipeline()
+        print(
+            "ERROR: ILUSIONISTA surfaces are disabled; local landing and Selector "
+            "pages are no longer available. Generating the Selector artifact only "
+            "for inspection; publication is blocked.",
+            file=sys.stderr,
+        )
+        artifact_rc = _run_selector_artifact()
+        return artifact_rc if artifact_rc != 0 else 1
 
     composer = IllusionistSurfaceComposer.from_environment()
     try:
         # Stage and verify both archives before MkDocs or the Selector compiler
-        # can produce the active publication tree. A failure leaves the legacy
-        # source path intact and prevents publication of a partial build.
+        # can produce the active publication tree. A failure prevents publication
+        # of a partial build and cannot fall back to local page sources.
         with composer.staged(REPO_ROOT / "build") as prepared:
             rc = _run_docs_pipeline()
             if rc != 0:
@@ -797,12 +746,6 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("lint-fix")
     sub.add_parser("lint-go")
     sub.add_parser("lint-fix-go")
-    sub.add_parser("lint-web")
-    sub.add_parser("lint-fix-web")
-    sub.add_parser("install-web")
-    sub.add_parser("build-web")
-    sub.add_parser("test-web")
-    sub.add_parser("cover-web")
     sub.add_parser("build-compiler")
     sub.add_parser("test-compiler-go")
     sub.add_parser("mutation-go")
@@ -835,6 +778,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("update-golden-snapshots")
     sub.add_parser("generate-schemas")
     sub.add_parser("governance-bootstrap")
+    sub.add_parser("selector-artifact")
     sub.add_parser("docs-build")
     sub.add_parser("docs-serve")
     sub.add_parser("docs-link-check")
@@ -859,12 +803,6 @@ def main(argv: list[str] | None = None) -> int:
         "lint-fix": lambda: run_lint(fix=True),
         "lint-go": lambda: run_lint_go(fix=False),
         "lint-fix-go": lambda: run_lint_go(fix=True),
-        "lint-web": run_lint_web,
-        "lint-fix-web": run_lint_fix_web,
-        "install-web": run_install_web,
-        "build-web": lambda: run_npm_script("build"),
-        "test-web": lambda: run_npm_script("test"),
-        "cover-web": lambda: run_npm_script("cover"),
         "build-compiler": run_build_compiler,
         "test-compiler-go": run_test_compiler_go,
         "mutation-go": run_mutation_go,
@@ -893,6 +831,7 @@ def main(argv: list[str] | None = None) -> int:
         "update-golden-snapshots": run_update_golden_snapshots,
         "generate-schemas": run_generate_schemas,
         "governance-bootstrap": run_governance_bootstrap,
+        "selector-artifact": run_selector_artifact,
         "docs-build": run_docs_build,
         "docs-serve": run_docs_serve,
         "docs-link-check": run_docs_link_check,

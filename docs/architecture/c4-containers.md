@@ -74,14 +74,15 @@ Violating these rules is caught by the architecture contract tests in `tests/con
 
 The diagram above is the **Python package import graph** enforced by the
 layer rules — it does not represent runtime deployment or the published
-site's URL topology. `apps/landing/` (Astro + React) and the Selector
-(static assets compiled by `providence_wizard`'s `selector_compiler.py`) are not
+site's URL topology. The externally owned landing and Selector presentation
+surfaces, plus the Selector data artifact compiled by
+`providence_wizard`'s `selector_compiler.py`, are not
 Python packages that participate in this import contract, so they
 intentionally aren't nodes in this graph.
 
-The actual publication topology — `/` (Astro landing), `/docs/` (MkDocs),
-`/selector/` (Selector), all assembled into one `build/site/` artifact by
-`providence_pages` — is recorded in
+The actual publication topology — `/` (ILUSIONISTA landing), `/docs/` (MkDocs),
+`/selector/` (ILUSIONISTA Selector), all assembled into one `build/site/`
+artifact by `providence_pages`, with `selector/data.json` generated locally — is recorded in
 `.analysis/archived/selector-landing-mkdocs-refinement-20260702-adr.md`,
 not here. A dedicated deployment/publication diagram would be a separate
 addition, not a change to this import-graph diagram.

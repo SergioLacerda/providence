@@ -1,5 +1,9 @@
 # ADR-018 - Block Dependabot typescript Major Bumps in apps/landing
 
+> Historical and superseded: the local Astro landing application and its npm
+> dependency surface were removed. Public presentation is now supplied by
+> pin-verified ILUSIONISTA releases.
+
 **Status:** Accepted
 **Date:** 2026-07-30
 **Deciders:** Sergio Lacerda

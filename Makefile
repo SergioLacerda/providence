@@ -39,7 +39,6 @@ WORKSPACE_PYTHONPATH := packages/core/providence_core/src:packages/core/providen
 include mk/python.mk
 include mk/lint.mk
 include mk/docs.mk
-include mk/web.mk
 include mk/go.mk
 include mk/release.mk
 include mk/docker.mk

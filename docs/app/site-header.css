@@ -1,7 +1,6 @@
 /* Providence — shared dynamic site header
- * Mounted by site-header.js on Selector and Docs (MkDocs). The landing page
- * keeps its own React header unchanged; this module exists so those two
- * other static/MkDocs surfaces render the same visual language.
+ * Active MkDocs header styles. The externally published landing and Selector
+ * surfaces own their presentation copies.
  *
  * All rules are scoped under .providence-site-header to avoid bleeding into either
  * host page's own styles (Selector's design-system CSS, MkDocs Material's

@@ -63,9 +63,11 @@ At a high level, the platform is organized into three layers:
 | Features | compilation, integration, skill and adapter workflows | `sdd_compiler`, `providence_integration`, `providence_skills` |
 | Interfaces | user-facing entrypoints | `providence_cli`, `providence_wizard` |
 
-Outside `packages/`, `apps/landing/` is the public landing page (Astro +
-React), published at the site root (`/`) alongside the MkDocs docs
-(`/docs/`) and the interactive Selector (`/selector/`).
+Outside `packages/`, the public landing page and interactive Selector are
+published from pin-verified ILUSIONISTA releases. This repository retains the
+MkDocs source and generates the machine-readable Selector artifact at
+`build/site/selector/data.json`; the composed publication root serves the
+landing at `/`, docs at `/docs/`, and Selector at `/selector/`.
 
 Execution flow:
 
