@@ -2,7 +2,7 @@
 # Agent Bootstrap Paths
 <!-- Governance fingerprint: 3c92a54d04d29611 -->
 <!-- Active mandates: 16 (M001, M002, M003, M005, M006, ...) -->
-<!-- Generated: 2026-09-20T18:34:55.732590Z -->
+<!-- Generated: 2026-10-03T01:19:33.118479Z -->
 <!-- Drift check: fingerprint must match .providence/metadata.json  fingerprints.combined -->
 
 Objective: standardize where each agent must load local instructions, commands, and skills in this project.

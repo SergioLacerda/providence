@@ -26,6 +26,9 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 PROVIDENCE_CORE_SRC = REPO_ROOT / "packages" / "core" / "providence_core" / "src"
 if str(PROVIDENCE_CORE_SRC) not in sys.path:
     sys.path.insert(0, str(PROVIDENCE_CORE_SRC))
+PROVIDENCE_PAGES_SRC = REPO_ROOT / "packages" / "features" / "providence_pages" / "src"
+if str(PROVIDENCE_PAGES_SRC) not in sys.path:
+    sys.path.insert(0, str(PROVIDENCE_PAGES_SRC))
 
 # Fallback used only if pyproject.toml is missing or has no parseable typer pin.
 _FALLBACK_MIN_TYPER_VERSION = (0, 26, 8)
@@ -578,7 +581,7 @@ def _workspace_pythonpath_env() -> dict[str, str]:
     return env
 
 
-def run_docs_build() -> int:
+def _run_docs_pipeline() -> int:
     rc = _run(_python_cmd() + ["-m", "mkdocs", "build", "--strict"])
     if rc != 0:
         return rc
@@ -592,6 +595,42 @@ def run_docs_build() -> int:
         ],
         env=_workspace_pythonpath_env(),
     )
+
+
+def _run_legacy_docs_pipeline() -> int:
+    """Build the retained Landing surface only for the explicit rollback path."""
+    rc = run_npm_script("build")
+    if rc != 0:
+        return rc
+    return _run_docs_pipeline()
+
+
+def run_docs_build() -> int:
+    from providence_pages.illusionist import (
+        IllusionistSurfaceComposer,
+        SurfaceError,
+        illusionist_enabled,
+    )
+
+    if not illusionist_enabled():
+        print("WARNING: ILUSIONISTA surfaces disabled; using the legacy rollback path.")
+        return _run_legacy_docs_pipeline()
+
+    composer = IllusionistSurfaceComposer.from_environment()
+    try:
+        # Stage and verify both archives before MkDocs or the Selector compiler
+        # can produce the active publication tree. A failure leaves the legacy
+        # source path intact and prevents publication of a partial build.
+        with composer.staged(REPO_ROOT / "build") as prepared:
+            rc = _run_docs_pipeline()
+            if rc != 0:
+                return rc
+            composer.compose(REPO_ROOT / "build" / "site", prepared)
+            print("ILUSIONISTA Landing and Selector surfaces composed successfully.")
+            return 0
+    except SurfaceError as exc:
+        print(f"ERROR: ILUSIONISTA surface composition blocked: {exc}", file=sys.stderr)
+        return 1
 
 
 def _replace_dir_link(link: Path, target: Path) -> None:

@@ -11,6 +11,13 @@ Public API:
 
 from providence_pages.compression import CompressionEngine, CompressionResult
 from providence_pages.delta import DeltaIndexer
+from providence_pages.illusionist import (
+    IllusionistSurfaceComposer,
+    PreparedSurface,
+    SurfaceError,
+    SurfaceRelease,
+    illusionist_enabled,
+)
 from providence_pages.metadata import DocumentMetadata, MetadataExtractor
 from providence_pages.publisher import (
     GitHubPagesPublisher,
@@ -24,6 +31,11 @@ __all__ = [
     "CompressionEngine",
     "CompressionResult",
     "DeltaIndexer",
+    "IllusionistSurfaceComposer",
+    "PreparedSurface",
+    "SurfaceError",
+    "SurfaceRelease",
+    "illusionist_enabled",
     "DocumentMetadata",
     "MetadataExtractor",
     "GitHubPagesPublisher",

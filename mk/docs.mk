@@ -10,7 +10,7 @@ $(DOCS_TASKS):
 	$(PYTHON) tools/maintenance/make_tasks.py $@
 
 .PHONY: docs-build docs-serve
-docs-build: build-web ## Build composed site (Astro + MkDocs + Selector)
+docs-build: ## Build composed site (ILUSIONISTA + MkDocs + Selector)
 	$(PYTHON) tools/maintenance/make_tasks.py docs-build
 
 docs-serve: docs-build ## Build full site (docs + selector) and serve on http://localhost:8000/providence/

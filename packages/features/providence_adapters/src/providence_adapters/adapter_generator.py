@@ -173,7 +173,10 @@ class AdapterGenerator:
         self, skill: dict[str, Any], output_dir: Path
     ) -> Path:
         """Render the native Codex override for the affected legacy adapter."""
-        skill_dir = output_dir / skill.get("name", "unknown")
+        skill_name = skill.get("name", "unknown")
+        if not isinstance(skill_name, str):
+            raise TypeError("skill name must be a string")
+        skill_dir = output_dir / skill_name
         skill_dir.mkdir(parents=True, exist_ok=True)
         output_file = skill_dir / "SKILL.md"
         content = self.renderer.render("codex", "skill.md", skill=skill)

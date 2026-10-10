@@ -36,7 +36,9 @@ class TestIsRelativeTo:
 class TestFindProjectBoundary:
     def test_finds_marker_in_current_dir(self, tmp_path: Path) -> None:
         project = tmp_path / "proj"
-        (project / ".git").mkdir(parents=True)
+        git_dir = project / ".git"
+        git_dir.mkdir(parents=True)
+        (git_dir / "HEAD").write_text("ref: refs/heads/main\n", encoding="utf-8")
         assert _find_project_boundary(project) == project
 
     def test_finds_marker_in_ancestor(self, tmp_path: Path) -> None:
@@ -108,7 +110,9 @@ class TestFindBlockingParentWorkspace:
         home = tmp_path / "home"
         _write_profile(home / ".providence" / "profile")
         project = home / "dev" / "project"
-        (project / ".git").mkdir(parents=True)
+        git_dir = project / ".git"
+        git_dir.mkdir(parents=True)
+        (git_dir / "HEAD").write_text("ref: refs/heads/main\n", encoding="utf-8")
 
         assert _find_blocking_parent_workspace(project) is None
 
