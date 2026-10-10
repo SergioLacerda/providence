@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "providence-wizard"
 dynamic = ["version"]
 description = "Interactive project scaffolding wizard for SDD workspaces"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.15"
 license = {text = "Proprietary"}
 authors = [
     {name = "Sergio Lacerda", email = "sergio.lacerda.vieira@gmail.com"},

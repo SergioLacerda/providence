@@ -7,7 +7,7 @@ name = "providence"
 dynamic = ["version"]
 description = "Providence — Executable governance platform for AI agents"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.15"
 license = {text = "MIT"}
 authors = [
     {name = "Sergio Lacerda", email = "sergio.lacerda.vieira@gmail.com"},
@@ -48,7 +48,7 @@ examples-langgraph = [
     "langchain-core>=1.6.1",
 ]
 examplescrewai = [
-    "crewai==1.15.23",
+    "crewai==1.15.24",
     "onnxruntime<1.25",
     "setuptools>=84.0.0",
 ]

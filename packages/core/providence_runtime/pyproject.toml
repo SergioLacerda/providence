@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "providence-runtime"
 dynamic = ["version"]
 description = "Runtime execution engine for SDD governance"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.15"
 license = {text = "Proprietary"}
 authors = [
     {name = "Sergio Lacerda", email = "sergio.lacerda.vieira@gmail.com"},

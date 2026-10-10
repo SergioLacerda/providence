@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "providence-integration"
 dynamic = ["version"]
 description = "End-to-end integration protocols and templates for SDD onboarding"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.15"
 license = {text = "Proprietary"}
 authors = [
     {name = "Sergio Lacerda", email = "sergio.lacerda.vieira@gmail.com"},
