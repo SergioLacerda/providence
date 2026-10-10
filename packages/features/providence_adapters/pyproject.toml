@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "providence-adapters"
 dynamic = ["version"]
 description = "Multi-agent adapter generator for SDD skills and commands"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.15"
 license = {text = "Proprietary"}
 authors = [
     {name = "Sergio Lacerda", email = "sergio.lacerda.vieira@gmail.com"},

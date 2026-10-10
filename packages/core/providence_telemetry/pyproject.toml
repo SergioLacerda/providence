@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "providence-telemetry"
 dynamic = ["version"]
 description = "High-performance telemetry and metrics engine for SDD Architecture"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.15"
 license = {text = "MIT"}
 authors = [
     {name = "Sergio Lacerda", email = "sergio.lacerda.vieira@gmail.com"},

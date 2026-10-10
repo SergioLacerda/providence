@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "providence-pages"
 dynamic = ["version"]
 description = "GitHub Pages publishing, compression, and index generation for SDD workspaces"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.15"
 license = {text = "Proprietary"}
 authors = [
     {name = "Sergio Lacerda", email = "sergio.lacerda.vieira@gmail.com"},

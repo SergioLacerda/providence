@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "providence-skills"
 dynamic = ["version"]
 description = "Public contracts and validation for SDD skill execution"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.15"
 license = {text = "Proprietary"}
 authors = [
     {name = "Sergio Lacerda", email = "sergio.lacerda.vieira@gmail.com"},
