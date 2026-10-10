@@ -266,93 +266,8 @@ def test_run_help_lists_targets_with_dependencies(
     assert make_tasks.run_help() == 0
     output = capsys.readouterr().out
     assert "docs-build" in output
-    assert "build-web" in output
+    assert "selector-artifact" in output
     assert "release-prepare" in output
-
-
-def test_web_wrappers_use_npm_prefix() -> None:
-    make_tasks = _make_tasks_module()
-    with (
-        patch.object(make_tasks, "_npm_cmd", return_value="npm") as npm_cmd,
-        patch.object(make_tasks, "_run", return_value=0) as run,
-    ):
-        assert make_tasks.run_install_web() == 0
-        run.assert_called_with(["npm", "--prefix", "apps/landing", "ci"])
-        assert make_tasks.run_npm_script("lint") == 0
-        run.assert_called_with(["npm", "--prefix", "apps/landing", "run", "lint"])
-        assert npm_cmd.call_count == 2
-
-
-def test_npm_audit_fix_uses_npm_prefix() -> None:
-    make_tasks = _make_tasks_module()
-    with (
-        patch.object(make_tasks, "_npm_cmd", return_value="npm"),
-        patch.object(make_tasks, "_run", return_value=0) as run,
-    ):
-        assert make_tasks.run_npm_audit_fix() == 0
-        run.assert_called_with(["npm", "--prefix", "apps/landing", "audit", "fix"])
-
-
-def test_npm_audit_fix_swallows_unresolved_vulnerabilities(
-    capsys: pytest.CaptureFixture[str],
-) -> None:
-    make_tasks = _make_tasks_module()
-    with (
-        patch.object(make_tasks, "_npm_cmd", return_value="npm"),
-        patch.object(make_tasks, "_run", return_value=1),
-    ):
-        assert make_tasks.run_npm_audit_fix() == 0
-    assert "unresolved vulnerabilities" in capsys.readouterr().out
-
-
-def test_npm_script_advisory_skips_when_npm_missing(
-    capsys: pytest.CaptureFixture[str],
-) -> None:
-    """A missing `npm` binary is the same "advisory, not blocking" case as a
-    non-zero exit — it must not let a spawn error escape `run_lint_web`
-    (regression: CI environments without npm installed crashed lint-web
-    entirely instead of skipping the advisory markdown-style step)."""
-    make_tasks = _make_tasks_module()
-    with (
-        patch.object(make_tasks.shutil, "which", return_value=None),
-        patch.object(make_tasks, "_run") as run,
-    ):
-        make_tasks.run_npm_script_advisory("lint:md", label="lint-web (markdown style)")
-        run.assert_not_called()
-    assert "npm not found on PATH" in capsys.readouterr().out
-
-
-def test_lint_web_runs_audit_fix_then_lint_script() -> None:
-    make_tasks = _make_tasks_module()
-    with (
-        patch.object(make_tasks, "run_npm_audit_fix", return_value=0) as audit_fix,
-        patch.object(make_tasks, "run_npm_script", return_value=0) as npm_script,
-    ):
-        assert make_tasks.run_lint_web() == 0
-        audit_fix.assert_called_once_with()
-        npm_script.assert_called_once_with("lint")
-
-
-def test_lint_web_ignores_audit_fix_result() -> None:
-    make_tasks = _make_tasks_module()
-    with (
-        patch.object(make_tasks, "run_npm_audit_fix", return_value=1),
-        patch.object(make_tasks, "run_npm_script", return_value=0),
-    ):
-        assert make_tasks.run_lint_web() == 0
-
-
-def test_lint_web_does_not_crash_when_npm_missing() -> None:
-    """Regression: `run_lint_web` must complete (not raise) in an environment
-    with no `npm` on PATH — the advisory `lint:md` step degrades to a skip
-    instead of a `ProcessSpawnError` escaping through `run_npm_script_advisory`."""
-    make_tasks = _make_tasks_module()
-    with (
-        patch.object(make_tasks, "run_npm_audit_fix", return_value=0),
-        patch.object(make_tasks, "run_npm_script", return_value=0),
-        patch.object(make_tasks.shutil, "which", return_value=None),
-    ):
-        assert make_tasks.run_lint_web() == 0
 
 
 def test_lint_go_skips_when_tool_missing() -> None:
@@ -423,17 +338,15 @@ def test_docs_build_composes_verified_illusionist_surfaces() -> None:
     )
 
 
-def test_docs_build_uses_legacy_landing_only_for_explicit_rollback() -> None:
+def test_docs_build_generates_artifact_and_blocks_disabled_surfaces() -> None:
     make_tasks = _make_tasks_module()
     with (
         patch("providence_pages.illusionist.illusionist_enabled", return_value=False),
-        patch.object(make_tasks, "run_npm_script", return_value=0) as npm_script,
-        patch.object(make_tasks, "_run_docs_pipeline", return_value=0) as pipeline,
+        patch.object(make_tasks, "_run_selector_artifact", return_value=0) as artifact,
     ):
-        assert make_tasks.run_docs_build() == 0
+        assert make_tasks.run_docs_build() == 1
 
-    npm_script.assert_called_once_with("build")
-    pipeline.assert_called_once_with()
+    artifact.assert_called_once_with()
 
 
 def test_main_dispatches_release_prepare_with_version_arg() -> None:

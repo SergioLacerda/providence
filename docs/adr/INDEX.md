@@ -275,7 +275,7 @@ supported model. Defer KMS provider integration to a separate scoped demand.
 
 ---
 
-### ADR-018: Block Dependabot typescript Major Bumps in apps/landing (2026-07-30)
+### ADR-018: Block Dependabot typescript Major Bumps in apps/landing (2026-07-30) — Historical
 
 **Decision:** Ignore Dependabot major-version updates for `typescript` in
 `apps/landing` until the Astro checking toolchain supports the next major.

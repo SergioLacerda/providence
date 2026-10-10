@@ -1,68 +1,70 @@
-# Docs Site Selector Publish
+# Docs Site and Selector Publish
 
-Verification state: documented
+Verification state: active
+
+## Scope
+
+The repository publishes MkDocs documentation and generates the machine-readable
+Selector artifact. The landing and Selector presentation pages are supplied by
+pin-verified ILUSIONISTA releases during `make docs-build`.
 
 ## Symptoms
 
-- `/selector/` returns 404 locally or after publishing.
-- The landing page links to the selector, but the selector artifact is absent.
-- `make docs-serve` fails because `build/site/selector/index.html` is missing.
-- CI validates MkDocs but the assembled site is incomplete.
+- `/selector/` is missing locally or after publishing;
+- `build/site/selector/data.json` is absent or invalid;
+- CI validates MkDocs but the composed site is incomplete;
+- `make docs-build` refuses to publish because an ILUSIONISTA pin is disabled
+  or cannot be verified.
 
 ## Diagnosis
 
-1. Confirm the intended publication split:
-   - landing app publishes to `/`;
-   - MkDocs publishes to `/docs/`;
-   - selector publishes to `/selector/`.
-2. Run the full docs build:
+1. Run the complete build:
 
    ```bash
    make docs-build
    ```
 
-3. Check for the selector artifact:
+2. Check the protected Selector outputs:
 
    ```bash
    test -f build/site/selector/index.html
+   test -f build/site/selector/data.json
+   test -f build/site/selector/docs.index.json
    ```
 
-4. If serving locally, use:
+3. If only governance data is needed, run:
 
    ```bash
-   make docs-serve
+   make selector-artifact
    ```
 
-## Resolution Steps
+   This command must not create HTML, CSS, or JavaScript page assets.
 
-1. Do not hand-build only MkDocs when investigating selector publication.
-2. Re-run the full publication build:
+## Resolution
 
-   ```bash
-   make docs-build
-   ```
-
-3. Fix the failing stage reported by the build: Astro, MkDocs, or selector
-   compiler.
-4. Re-run `make docs-serve` and verify `/selector/`.
+1. Do not hand-build a local landing or Selector page.
+2. Fix the reported ILUSIONISTA archive, checksum, required-entry, or path-
+   safety failure.
+3. Confirm the Selector compiler can still produce `data.json` from `.providence`
+   sources or its canonical-doc fallback.
+4. Rerun `make docs-build` and validate the generated docs index.
+5. For a live deployment, record external release and Pages evidence separately
+   from these local deterministic checks.
 
 ## Rollback
 
-1. Revert the docs/site change that broke the full build.
-2. Re-run `make docs-build`.
-3. Do not publish until the assembled `build/site/` tree is complete.
-
-## Post-Incident
-
-- Add a failure ledger entry when publication reached CI or production.
-- Update this runbook if a new build-stage failure pattern appears.
+There is no local presentation rollback path. If the pinned ILUSIONISTA release
+is not usable, block publication and use `make selector-artifact` for artifact
+diagnostics until a verified release is available.
 
 ## Evidence To Attach
 
-- `make docs-build` output
-- `make docs-serve` output
-- presence or absence of `build/site/selector/index.html`
-- failing source file path if known
+- `make docs-build` output;
+- `build/site/selector/data.json` validation;
+- `build/site/selector/docs.index.json` validation;
+- `build/site/.compressed/manifest.json` when compression runs;
+- the ILUSIONISTA tag, archive, and checksum evidence;
+- authorized live deployment evidence, if applicable.
 
 ## Sources
 

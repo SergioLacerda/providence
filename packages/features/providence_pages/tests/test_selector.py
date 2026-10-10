@@ -157,30 +157,3 @@ class TestDocumentIndexer:
         doc = data["documents"][0]
         assert doc["date"] == "2024-03-01"
         assert doc["category"] == "ref"
-
-
-class TestSelectorTemplate:
-    """Structural assertions on the packaged selector.js template."""
-
-    def _template_path(self) -> Path:
-        from importlib import resources
-
-        asset_root = (
-            resources.files("providence_wizard")
-            .joinpath("templates")
-            .joinpath("selector")
-        )
-        return Path(str(asset_root)) / "selector.js"
-
-    def test_template_fetches_docs_index_json(self) -> None:
-        content = self._template_path().read_text(encoding="utf-8")
-        assert 'fetch("docs.index.json")' in content
-
-    def test_template_fetch_failure_is_non_fatal(self) -> None:
-        content = self._template_path().read_text(encoding="utf-8")
-        assert "loadDocsIndex" in content
-        assert "docsLoaded" in content
-
-    def test_template_still_fetches_data_json_for_governance_items(self) -> None:
-        content = self._template_path().read_text(encoding="utf-8")
-        assert 'fetch("data.json")' in content

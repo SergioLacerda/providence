@@ -11,9 +11,6 @@ from providence_wizard.orchestration.wizard import (
     _selector_canonical_fallback as canonical_fallback_module,
 )
 from providence_wizard.orchestration.wizard import (
-    selector_compiler as selector_compiler_module,
-)
-from providence_wizard.orchestration.wizard import (
     selector_compiler_cli as selector_compiler_cli_module,
 )
 from providence_wizard.orchestration.wizard.selector_compiler import SelectorCompiler
@@ -36,20 +33,6 @@ def _write_repo_fixture(
     return tmp_path
 
 
-def _write_assets(tmp_path: Path) -> Path:
-    asset_dir = tmp_path / "assets"
-    asset_dir.mkdir()
-    for name in (
-        "index.html",
-        "selector.js",
-        "style.css",
-        "site-header.js",
-        "site-header.css",
-    ):
-        (asset_dir / name).write_text(name, encoding="utf-8")
-    return asset_dir
-
-
 def test_selector_compiler_builds_payload(tmp_path: Path) -> None:
     repo_root = _write_repo_fixture(
         tmp_path,
@@ -60,9 +43,7 @@ def test_selector_compiler_builds_payload(tmp_path: Path) -> None:
 Domain logic must stay isolated from infrastructure details.
 """.strip(),
     )
-    compiler = SelectorCompiler(
-        repo_root=repo_root, asset_source_dir=_write_assets(tmp_path)
-    )
+    compiler = SelectorCompiler(repo_root=repo_root)
     payload = compiler.build_payload()
     assert payload["version"] == "1.0"
     item = payload["items"][0]
@@ -85,9 +66,7 @@ First description.
 Second description.
 """.strip(),
     )
-    compiler = SelectorCompiler(
-        repo_root=repo_root, asset_source_dir=_write_assets(tmp_path)
-    )
+    compiler = SelectorCompiler(repo_root=repo_root)
     with pytest.raises(ValueError, match="Duplicate mandate section"):
         compiler.build_payload()
 
@@ -104,14 +83,12 @@ Domain logic must stay isolated.
 **Depends on:** M999
 """.strip(),
     )
-    compiler = SelectorCompiler(
-        repo_root=repo_root, asset_source_dir=_write_assets(tmp_path)
-    )
+    compiler = SelectorCompiler(repo_root=repo_root)
     with pytest.raises(ValueError, match="Unknown selector dependency ids: M999"):
         compiler.build_payload()
 
 
-def test_selector_compiler_build_site_writes_assets(tmp_path: Path) -> None:
+def test_selector_compiler_build_artifact_writes_data_only(tmp_path: Path) -> None:
     repo_root = _write_repo_fixture(
         tmp_path,
         metadata={"mandates": {"M001": "Clean Architecture"}},
@@ -122,15 +99,13 @@ Domain logic must stay isolated from infrastructure details.
 """.strip(),
     )
     output_dir = tmp_path / "site" / "selector"
-    compiler = SelectorCompiler(
-        repo_root=repo_root, asset_source_dir=_write_assets(tmp_path)
-    )
-    compiler.build_site(output_dir)
+    compiler = SelectorCompiler(repo_root=repo_root)
+    compiler.build_artifact(output_dir)
     assert (output_dir / "data.json").exists()
-    assert (output_dir / "index.html").read_text(encoding="utf-8") == "index.html"
+    assert sorted(path.name for path in output_dir.iterdir()) == ["data.json"]
 
 
-def test_selector_compiler_build_site_with_packaged_assets_has_import_and_export(
+def test_selector_compiler_artifact_does_not_require_page_assets(
     tmp_path: Path,
 ) -> None:
     repo_root = _write_repo_fixture(
@@ -145,14 +120,11 @@ Domain logic must stay isolated from infrastructure details.
     output_dir = tmp_path / "site" / "selector"
     compiler = SelectorCompiler(repo_root=repo_root)
 
-    compiler.build_site(output_dir)
+    compiler.build_artifact(output_dir)
 
-    html = (output_dir / "index.html").read_text(encoding="utf-8")
-    js = (output_dir / "selector.js").read_text(encoding="utf-8")
-    assert "Import JSON" in html
-    assert "import-file" in html
-    assert "function importSelectionFile" in js
-    assert "resolved: [...resolved].sort()" in js
+    assert (output_dir / "data.json").is_file()
+    assert not (output_dir / "index.html").exists()
+    assert not (output_dir / "selector.js").exists()
 
 
 # ---------------------------------------------------------------------------
@@ -205,9 +177,7 @@ def test_selector_compiler_includes_guideline_items(tmp_path: Path) -> None:
 Domain logic must stay isolated from infrastructure details.
 """.strip(),
     )
-    compiler = SelectorCompiler(
-        repo_root=repo_root, asset_source_dir=_write_assets(tmp_path)
-    )
+    compiler = SelectorCompiler(repo_root=repo_root)
     payload = compiler.build_payload()
 
     items = payload["items"]
@@ -237,9 +207,7 @@ def test_selector_compiler_mandate_item_type_is_mandate(tmp_path: Path) -> None:
 Domain logic must stay isolated from infrastructure details.
 """.strip(),
     )
-    compiler = SelectorCompiler(
-        repo_root=repo_root, asset_source_dir=_write_assets(tmp_path)
-    )
+    compiler = SelectorCompiler(repo_root=repo_root)
     payload = compiler.build_payload()
 
     m001 = next(i for i in payload["items"] if i["id"] == "M001")
@@ -261,9 +229,7 @@ Domain logic must stay isolated from infrastructure details.
 All changes must include tests.
 """.strip(),
     )
-    compiler = SelectorCompiler(
-        repo_root=repo_root, asset_source_dir=_write_assets(tmp_path)
-    )
+    compiler = SelectorCompiler(repo_root=repo_root)
     payload = compiler.build_payload()
 
     ids = [item["id"] for item in payload["items"]]
@@ -284,9 +250,7 @@ def test_selector_compiler_no_guidelines_dsl_omits_guideline_items(
 Domain logic must stay isolated from infrastructure details.
 """.strip(),
     )
-    compiler = SelectorCompiler(
-        repo_root=repo_root, asset_source_dir=_write_assets(tmp_path)
-    )
+    compiler = SelectorCompiler(repo_root=repo_root)
     payload = compiler.build_payload()
 
     ids = [item["id"] for item in payload["items"]]
@@ -582,9 +546,7 @@ def test_selector_compiler_missing_section_raises(tmp_path: Path) -> None:
 Domain logic must stay isolated from infrastructure details.
 """.strip(),
     )
-    compiler = SelectorCompiler(
-        repo_root=repo_root, asset_source_dir=_write_assets(tmp_path)
-    )
+    compiler = SelectorCompiler(repo_root=repo_root)
     with pytest.raises(ValueError, match="Missing selector section for M002"):
         compiler.build_payload()
 
@@ -599,9 +561,7 @@ def test_selector_compiler_metadata_mandates_must_be_mapping(tmp_path: Path) -> 
         "## M001: Clean Architecture\n\nDescription.\n", encoding="utf-8"
     )
 
-    compiler = SelectorCompiler(
-        repo_root=tmp_path, asset_source_dir=_write_assets(tmp_path)
-    )
+    compiler = SelectorCompiler(repo_root=tmp_path)
     with pytest.raises(ValueError, match="mandates must be a mapping"):
         compiler.build_payload()
 
@@ -630,7 +590,7 @@ def test_parse_args_defaults_repo_root_to_cwd(monkeypatch: pytest.MonkeyPatch) -
     assert args.repo_root == "."
 
 
-def test_main_builds_site_using_parsed_args(
+def test_main_builds_artifact_using_parsed_args(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     repo_root = _write_repo_fixture(
@@ -642,14 +602,7 @@ def test_main_builds_site_using_parsed_args(
 Domain logic must stay isolated from infrastructure details.
 """.strip(),
     )
-    asset_dir = _write_assets(tmp_path)
     output_dir = tmp_path / "site"
-
-    monkeypatch.setattr(
-        selector_compiler_module.SelectorCompiler,
-        "_asset_dir",
-        lambda self: asset_dir,
-    )
     monkeypatch.setattr(
         sys,
         "argv",

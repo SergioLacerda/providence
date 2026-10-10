@@ -19,9 +19,7 @@ on:
       - 'packages/interfaces/providence_wizard/src/providence_wizard/orchestration/wizard/selector_compiler.py'
       - 'packages/interfaces/providence_wizard/src/providence_wizard/orchestration/wizard/selector_compiler_cli.py'
       - 'tools/maintenance/make_tasks.py'
-      - 'packages/interfaces/providence_wizard/src/providence_wizard/templates/selector/**'
       - 'packages/features/providence_pages/**'
-      - 'apps/landing/**'
   pull_request:
     branches: [main, develop]
     paths:
@@ -40,9 +38,7 @@ on:
       - 'packages/interfaces/providence_wizard/src/providence_wizard/orchestration/wizard/selector_compiler.py'
       - 'packages/interfaces/providence_wizard/src/providence_wizard/orchestration/wizard/selector_compiler_cli.py'
       - 'tools/maintenance/make_tasks.py'
-      - 'packages/interfaces/providence_wizard/src/providence_wizard/templates/selector/**'
       - 'packages/features/providence_pages/**'
-      - 'apps/landing/**'
   workflow_dispatch:
 
 permissions:
@@ -119,27 +115,22 @@ jobs:
         continue-on-error: true
         run: npx --yes markdownlint-cli2 "docs/**/*.md"
 
-      - name: Set up Node
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020  # v7.0.0
-        with:
-          node-version: "24"
-          cache: "npm"
-          cache-dependency-path: apps/landing/package-lock.json
-
-      - name: Install landing app dependencies
-        working-directory: apps/landing
-        run: npm ci
-
-      - name: Lint landing app
-        working-directory: apps/landing
-        run: npm run lint
-
-      - name: Test landing app
-        working-directory: apps/landing
-        run: npm run cover
-
       - name: Build site (make docs-build)
         run: make docs-build
+
+      - name: Validate Selector data artifact
+        run: |
+          uv run python -c "
+          import json
+          from pathlib import Path
+          artifact = Path('build/site/selector/data.json')
+          if not artifact.is_file():
+              raise SystemExit('Selector data artifact is missing')
+          payload = json.loads(artifact.read_text(encoding='utf-8'))
+          if payload.get('version') != '1.0' or not isinstance(payload.get('items'), list):
+              raise SystemExit('Selector data artifact has an invalid contract')
+          print(f\"Selector data artifact valid: {len(payload['items'])} items\")
+          "
 
       - name: Generate docs index
         run: |

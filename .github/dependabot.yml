@@ -29,41 +29,6 @@ updates:
       dev-dependencies:
         dependency-type: "development"
 
-  # Node dependencies (apps/landing)
-  - package-ecosystem: "npm"
-    directory: "/apps/landing"
-    target-branch: develop
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "03:30"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "SergioLacerda"
-    labels:
-      - "dependencies"
-      - "npm"
-    commit-message:
-      prefix: "chore(deps):"
-      prefix-development: "chore(deps-dev):"
-      include: "scope"
-    groups:
-      production-minor-patch:
-        dependency-type: "production"
-        update-types: ["minor", "patch"]
-      production-major:
-        dependency-type: "production"
-        update-types: ["major"]
-      dev-dependencies-minor-patch:
-        dependency-type: "development"
-        update-types: ["minor", "patch"]
-      dev-dependencies-major:
-        dependency-type: "development"
-        update-types: ["major"]
-    ignore:
-      - dependency-name: "typescript"
-        update-types: ["version-update:semver-major"]
-
   # Go dependencies (tools/sdd-compile)
   - package-ecosystem: "gomod"
     directory: "/tools/sdd-compile"

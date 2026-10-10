@@ -136,55 +136,6 @@ jobs:
           labels: dependencies,go
           body-file: /tmp/go-canary-report.md
 
-  npm-canary:
-    name: npm dependency freshness (apps/landing)
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-
-      - name: Set up Node
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020  # v7.0.0
-        with:
-          node-version: "24"
-
-      - name: Float npm dependencies
-        working-directory: apps/landing
-        run: |
-          npm ci
-          cp package-lock.json /tmp/package-lock.json.before
-          npm update
-
-      - name: Lint and test (floated deps)
-        working-directory: apps/landing
-        run: |
-          set -o pipefail
-          npm run lint 2>&1 | tee /tmp/npm-canary.log
-          npm run test 2>&1 | tee -a /tmp/npm-canary.log
-
-      - name: Build failure report
-        if: failure()
-        run: |
-          {
-            echo "### package-lock.json diff (first 100 lines)"
-            echo '```diff'
-            diff -u /tmp/package-lock.json.before apps/landing/package-lock.json | head -n 100 || true
-            echo '```'
-            echo
-            echo "### Lint/test log (last 200 lines)"
-            echo '```'
-            tail -n 200 /tmp/npm-canary.log
-            echo '```'
-          } > /tmp/npm-canary-report.md
-
-      - name: Report canary failure
-        if: failure()
-        uses: ./.github/actions/canary-issue-report
-        with:
-          ecosystem: npm
-          labels: dependencies,npm
-          body-file: /tmp/npm-canary-report.md
-
   actions-canary:
     name: GitHub Actions freshness
     runs-on: ubuntu-latest

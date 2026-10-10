@@ -10,9 +10,6 @@ matrix below first.
 
 ## Symptoms
 
-- `npm ci` fails in `docs-quality`
-  with an `ERESOLVE` conflict naming `@astrojs/check@0.9.10` and
-  `typescript@7.0.2`.
 - `Environment Boundary Preflight` (or another job bootstrapping `uv`) fails
   in the `astral-sh/setup-uv@v9` step with `Unexpected input(s) 'cache'` or a
   timeout resolving `uv.ndjson` for `version: "latest"`.
@@ -27,18 +24,12 @@ matrix below first.
 2. Before assuming a code defect, compare the failing ref against
    `origin/main`, `origin/develop`, and local `HEAD`:
 
-   ```bash
-   git show origin/main:apps/landing/package.json | rg -n 'typescript|@astrojs/check'
-   git show origin/develop:apps/landing/package.json | rg -n 'typescript|@astrojs/check'
-   ```
-
    A fix already present on another branch or on local `HEAD` but not on the
    failing ref is not a new defect — it is a promotion/merge gap.
 3. Match the error text against the known signature matrix:
 
    | Signature | Root cause | Fast check | Durable prevention |
    |---|---|---|---|
-   | `ERESOLVE`, `@astrojs/check@0.9.10`, `typescript@7.0.2` | The failing ref still requests TypeScript 7 while `@astrojs/check` only supports `^5 \|\| ^6` | Compare `origin/main`, `origin/develop`, and local `apps/landing/package.json` | Keep TypeScript pinned to `^6.0.3` in `apps/landing`; keep the Dependabot semver-major ignore rule (see [ADR-018](../adr/ADR-018-dependabot-typescript-major-ignore.md)) until Astro tooling supports TypeScript 7 |
    | `Unexpected input(s) 'cache'`, `uv.ndjson` timeout | `astral-sh/setup-uv@v9` received the obsolete `cache` input and resolved `version: "latest"` through a live manifest fetch | Scan the workflow's `setup-uv` step block for `cache:` and `version: "latest"` | Pin `version` to a known-good release (e.g. `0.11.9`) and use `enable-cache: true` instead of `cache:` |
    | "ambiguous user/pass authority", `uv-resolver` panic, `git+file:///D:/...@sha` | On Windows, `uv` can re-parse local `git+file:///D:/...` installs with a resolved `@<sha>` as URL authority instead of a git ref | Inspect the release source-install smoke step for any `git+file://` URL | Install the checkout package path directly with `uv tool install ./packages/interfaces/providence_cli`; do not add sibling packages via `--with-editable`, because the workspace already resolves them locally |
 
@@ -46,18 +37,6 @@ matrix below first.
    fixes applies — follow [Escalation](#escalation).
 
 ## Resolution Steps
-
-### TypeScript / `@astrojs/check` peer mismatch
-
-1. Confirm `apps/landing/package.json` pins `typescript` to `^6.0.3` on the
-   ref actually being built (per step 2 above).
-2. If the failing ref is behind, promote/merge the already-fixed ref rather
-   than re-patching `package.json` locally.
-3. Re-run:
-
-   ```bash
-   npm ci
-   ```
 
 ### `setup-uv` invalid input / `latest` timeout
 
@@ -109,10 +88,7 @@ uv run providence governance validate
 
 ## Post-Incident
 
-- Keep the TypeScript Dependabot ignore rule in place; only remove it after
-  confirming live that `@astrojs/check` supports TypeScript 7
-  ([ADR-018](../adr/ADR-018-dependabot-typescript-major-ignore.md)).
-- These three preventions are documented here but not yet enforced by tests
+- These two preventions are documented here but not yet enforced by tests
   or guards. Tracked as follow-up work, not covered by this runbook:
   - a workflow policy test for `setup-uv@v9` version/cache input shape;
   - a dependency-compatibility guard for TypeScript major vs. the

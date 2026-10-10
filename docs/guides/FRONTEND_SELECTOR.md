@@ -1,8 +1,9 @@
 # Frontend Selector
 
-The frontend selector is a static HTML/JS UI that lets you choose mandates and
-guidelines before running the interactive wizard. It runs entirely in the browser
-with no server or CDN dependency.
+The frontend selector is an externally published static HTML/JS UI that lets
+you choose mandates and guidelines before running the interactive wizard. Its
+presentation is delivered by the pin-verified ILUSIONISTA release; this
+repository generates the machine-readable data consumed by that release.
 
 ## Purpose
 
@@ -33,18 +34,17 @@ Selector UI → selector-selection.json
 
 ## Available Commands
 
-The Selector, the MkDocs documentation, and the Astro landing page
-(`apps/landing/`) are all assembled into one shared publication root,
-`build/site/` — landing at `/`, docs at `/docs/`, Selector at `/selector/`.
-See `.analysis/archived/selector-landing-mkdocs-refinement-20260702-adr.md`
-for the topology decision.
+The Selector, the MkDocs documentation, and the landing surface are assembled
+into one shared publication root, `build/site/`. ILUSIONISTA owns the landing
+at `/` and Selector presentation at `/selector/`; MkDocs owns `/docs/`; the
+local compiler owns only `build/site/selector/data.json`.
 
 | Command | What it does |
 |---------|--------------|
-| `make build-web` | Builds the Astro landing app (`apps/landing/`) into `build/site/` |
-| `make docs-build` | Runs `build-web`, then `mkdocs build --strict` (writes to `build/site/docs/`), then the Selector compiler directly to `build/site/selector/` |
-| `make docs-serve` | Runs `docs-build`, then serves `build/site/` on `http://127.0.0.1:8000/` — landing at `/`, docs at `/docs/`, Selector at `/selector/` |
-| `python -m providence_wizard.orchestration.wizard.selector_compiler --output-dir <dir>` | Standalone compiler; `--repo-root` defaults to `.` |
+| `make selector-artifact` | Generates only `build/site/selector/data.json` from governed sources |
+| `make docs-build` | Verifies and composes both ILUSIONISTA surfaces, runs `mkdocs build --strict`, then generates `build/site/selector/data.json` |
+| `make docs-serve` | Runs `docs-build`, then serves `build/site/` on `http://127.0.0.1:8000/` — external landing at `/`, docs at `/docs/`, external Selector at `/selector/` |
+| `python -m providence_wizard.orchestration.wizard.selector_compiler --output-dir <dir>` | Standalone artifact compiler; `--repo-root` defaults to `.` |
 
 ## Build and Open
 
@@ -52,7 +52,8 @@ Build the full site (selector included at `build/site/selector/`):
 
 ```bash
 make docs-build
-# then open build/site/selector/index.html
+# the external Selector page is composed at build/site/selector/index.html
+# and receives its data from build/site/selector/data.json
 ```
 
 Or serve everything together, live:
@@ -66,7 +67,9 @@ make docs-serve
 
 1. Run `make docs-build` (or `make docs-serve`).
 2. Open `build/site/selector/index.html` (or
-   `http://127.0.0.1:8000/selector/` when serving) in a browser.
+   `http://127.0.0.1:8000/selector/` when serving) in a browser. The HTML,
+   JavaScript, and CSS come from ILUSIONISTA; the local build supplies only
+   `data.json`.
 3. Select the mandates (M-IDs) and guidelines (G-IDs) you want to keep.
    - Cards with a **blue left border** are mandates.
    - Cards with a **green left border** are guidelines.

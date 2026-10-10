@@ -1,11 +1,10 @@
 /* Providence — shared dynamic site header
  * Synced copy, loaded by MkDocs via extra_javascript (mkdocs.yml). Canonical
- * source: apps/landing/public/shared/site-header.js — MkDocs's docs_dir
- * (docs/) is the only place it can resolve extra_javascript assets from, so
- * this file must be kept in sync manually when editing the canonical source.
+ * Canonical active source for the MkDocs header contract. The externally
+ * published landing and Selector releases consume their own published copies;
+ * this file is not generated from a local landing application.
  *
- * Mounted on Selector and Docs only. The landing page keeps its own React
- * header (apps/landing/src/components/Landing.tsx) unchanged.
+ * Mounted on Docs. The externally published surfaces own their presentation.
  *
  * Usage:
  *   window.SDDSiteHeader.mount({ nav: "landing" | "docs", root: "../" });

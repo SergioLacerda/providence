@@ -44,8 +44,8 @@ def test_docs_build_publishes_selector_artifacts() -> None:
     make_tasks = (REPO_ROOT / "tools" / "maintenance" / "make_tasks.py").read_text(
         encoding="utf-8"
     )
-    assert "docs-build: build-web" not in content
-    assert "build-web: install-web" in content
+    assert "build-web" not in content
+    assert "selector-artifact:" in content
     assert "$(PYTHON) tools/maintenance/make_tasks.py docs-build" in content
     assert "providence_wizard.orchestration.wizard.selector_compiler_cli" in make_tasks
     assert '"build/site/selector"' in make_tasks

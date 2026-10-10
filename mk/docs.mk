@@ -9,8 +9,11 @@ DOCS_TASKS := docs-link-check docs-link-fix
 $(DOCS_TASKS):
 	$(PYTHON) tools/maintenance/make_tasks.py $@
 
-.PHONY: docs-build docs-serve
-docs-build: ## Build composed site (ILUSIONISTA + MkDocs + Selector)
+.PHONY: selector-artifact docs-build docs-serve
+selector-artifact: ## Generate the machine-readable Selector artifact only
+	$(PYTHON) tools/maintenance/make_tasks.py selector-artifact
+
+docs-build: ## Build composed site (ILUSIONISTA + MkDocs + Selector artifact)
 	$(PYTHON) tools/maintenance/make_tasks.py docs-build
 
 docs-serve: docs-build ## Build full site (docs + selector) and serve on http://localhost:8000/providence/
