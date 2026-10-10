@@ -10,7 +10,7 @@ matrix below first.
 
 ## Symptoms
 
-- `npm ci` fails in `security / npm Audit (apps/landing)` or `docs-quality`
+- `npm ci` fails in `docs-quality`
   with an `ERESOLVE` conflict naming `@astrojs/check@0.9.10` and
   `typescript@7.0.2`.
 - `Environment Boundary Preflight` (or another job bootstrapping `uv`) fails

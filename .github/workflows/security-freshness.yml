@@ -8,7 +8,7 @@ name: Security Freshness
 #
 # Deliberately reuses reusable-security.yml wholesale rather than
 # duplicating just govulncheck/pip-audit: the scanner logic stays in one
-# place, and re-running bandit/npm-audit/container-scan weekly against
+# place, and re-running bandit/container-scan weekly against
 # otherwise-unchanged code is a normal, low-cost scheduled re-scan, not
 # scope creep — none of these jobs gate any other workflow (no `needs:`
 # from this file to anything else), matching ecosystem-canary.yml's own
