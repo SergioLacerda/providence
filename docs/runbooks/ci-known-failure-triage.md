@@ -17,6 +17,8 @@ matrix below first.
   user/pass authority" URL-parsing error against a `git+file:///D:/...@<sha>`
   local install URL, or with a `uv-resolver` panic after `uv` reports
   `Updating file:///D:/... (HEAD)`.
+- `Create GitHub Release` fails in `Set up sigstore-python` with
+  `No solution found ... you require urllib3==2.7.0 and urllib3>=2.8.0`.
 
 ## Diagnosis
 
@@ -32,6 +34,8 @@ matrix below first.
    |---|---|---|---|
    | `Unexpected input(s) 'cache'`, `uv.ndjson` timeout | `astral-sh/setup-uv@v9` received the obsolete `cache` input and resolved `version: "latest"` through a live manifest fetch | Scan the workflow's `setup-uv` step block for `cache:` and `version: "latest"` | Pin `version` to a known-good release (e.g. `0.11.9`) and use `enable-cache: true` instead of `cache:` |
    | "ambiguous user/pass authority", `uv-resolver` panic, `git+file:///D:/...@sha` | On Windows, `uv` can re-parse local `git+file:///D:/...` installs with a resolved `@<sha>` as URL authority instead of a git ref | Inspect the release source-install smoke step for any `git+file://` URL | Install the checkout package path directly with `uv tool install ./packages/interfaces/providence_cli`; do not add sibling packages via `--with-editable`, because the workspace already resolves them locally |
+
+   | `Set up sigstore-python`: `you require urllib3==2.7.0 and urllib3>=2.8.0` | The action runs `uv pip install` from the job's working directory, which is this checkout, so uv applies the root `pyproject.toml` `[tool.uv] constraint-dependencies` to the action's own pinned requirements | Reproduce with `uv pip install --dry-run 'urllib3==2.7.0'` from the repo root (fails) and with `UV_NO_CONFIG=1` (passes) | Keep `UV_NO_CONFIG: "1"` in the `env:` of the sigstore step in `release.yml`; give any new Python-based action that installs its own requirements the same isolation |
 
    If the error text does not match any row, do not assume one of these
    fixes applies — follow [Escalation](#escalation).
