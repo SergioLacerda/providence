@@ -7,6 +7,7 @@ from pathlib import Path
 from providence_core.utils.managed_block import merge_managed_block
 from providence_core.utils.text_io import read_text_utf8, write_text_utf8
 from providence_wizard.constants import RUNTIME_DIRNAME
+from providence_wizard.orchestration.prompt_submit_hooks import load_json_settings
 
 from ._ai_seed_templates import (
     CLAUDE_BOOTSTRAP_SCRIPT,
@@ -20,15 +21,7 @@ from .base_generator import BaseSeedlingGenerator
 logger = logging.getLogger(__name__)
 
 
-def _load_json_object(path: Path) -> dict[str, object]:
-    """Return *path*'s JSON content as a dict, or {} if absent/invalid/non-dict."""
-    if not path.exists():
-        return {}
-    try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
-        return {}
-    return payload if isinstance(payload, dict) else {}
+_load_json_object = load_json_settings
 
 
 def _write_root_seed_file(path: Path, block_body: str) -> None:
@@ -54,6 +47,10 @@ class AISeedsGenerator(BaseSeedlingGenerator):
         """Generate Gemini CLI governance bootstrap: GEMINI.md, settings.json, seed.json."""
         try:
             gemini_dir = self.output_base / ".gemini"
+            # Read the shared settings first: an unparsable file aborts before
+            # anything is written.
+            settings_file = gemini_dir / "settings.json"
+            settings = _load_json_object(settings_file)
             gemini_dir.mkdir(parents=True, exist_ok=True)
             redirector_content = render_agent_redirector(
                 tool_name="Gemini",
@@ -70,8 +67,6 @@ class AISeedsGenerator(BaseSeedlingGenerator):
             _write_root_seed_file(self.output_base / "GEMINI.md", redirector_content)
             # Merge, never replace: the prompt-submit hook adapter (and the user)
             # also keep settings such as `hooks` in this file.
-            settings_file = gemini_dir / "settings.json"
-            settings = _load_json_object(settings_file)
             settings["contextFileName"] = "GEMINI.md"
             write_text_utf8(settings_file, json.dumps(settings, indent=2) + "\n")
             seed_data = {
@@ -176,6 +171,9 @@ class AISeedsGenerator(BaseSeedlingGenerator):
             claude_dir = self.output_base / ".claude"
             hook_file = claude_dir / "providence-bootstrap.sh"
             settings_file = claude_dir / "settings.json"
+            # Read the shared settings first: an unparsable file aborts before
+            # anything is written.
+            settings = _load_json_object(settings_file)
             fp_header = "\n".join(
                 build_fingerprint_header(
                     self.spec_fingerprint, self.mandate_ids, self.generated_at
@@ -186,7 +184,6 @@ class AISeedsGenerator(BaseSeedlingGenerator):
             claude_dir.mkdir(parents=True, exist_ok=True)
             write_text_utf8(hook_file, CLAUDE_BOOTSTRAP_SCRIPT)
             hook_file.chmod(0o755)
-            settings = _load_json_object(settings_file)
             hooks = settings.setdefault("hooks", {})
             if not isinstance(hooks, dict):
                 hooks = {}

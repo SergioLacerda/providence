@@ -21,7 +21,11 @@ def install(
     output_dir: Path | None = typer.Option(
         None,
         "--output-dir",
-        help="Directory for the final generated project template. Defaults to ./generated/client/build/final-template/.",
+        help=(
+            "Directory for the final generated project template. Direct deployment "
+            "uses private temporary staging; template-only defaults to "
+            "./generated/client/build/final-template/."
+        ),
         show_default=False,
     ),
     only_template: bool = typer.Option(

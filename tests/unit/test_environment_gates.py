@@ -142,3 +142,26 @@ def test_signature_mode_policy_enforce_requires_strict(monkeypatch):
     result = gates.gate_signature_mode_policy_check("enforce")
     assert result.ok is False
     assert result.code == "SIGNATURE_MODE_POLICY_VIOLATION"
+
+
+def test_workspace_root_gate_rejects_the_retired_variable(monkeypatch, tmp_path):
+    """RFC-019: SDD_WORKSPACE_ROOT is retired; the gate names the replacement."""
+    gates = _load_module()
+    monkeypatch.delenv("PROVIDENCE_WORKSPACE_ROOT", raising=False)
+    monkeypatch.setenv("SDD_WORKSPACE_ROOT", str(tmp_path))
+
+    result = gates.gate_workspace_root_resolution_check("enforce")
+
+    assert result.ok is False
+    assert result.code == "RETIRED_ENVIRONMENT_VARIABLE"
+    assert "PROVIDENCE_WORKSPACE_ROOT" in result.message
+
+
+def test_workspace_root_gate_accepts_the_canonical_variable(monkeypatch, tmp_path):
+    gates = _load_module()
+    monkeypatch.delenv("SDD_WORKSPACE_ROOT", raising=False)
+    monkeypatch.setenv("PROVIDENCE_WORKSPACE_ROOT", str(tmp_path))
+
+    result = gates.gate_workspace_root_resolution_check("enforce")
+
+    assert result.ok is True

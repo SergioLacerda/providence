@@ -44,6 +44,7 @@ class Phase1Generator:
         verbose: bool = False,
         config: dict[str, Any] | None = None,
         emitter: Callable[[str], None] | None = None,
+        paths: dict[str, Path] | None = None,
     ) -> None:
         self.core_path = core_path
         self.output_path = output_path
@@ -58,6 +59,7 @@ class Phase1Generator:
         self.local_source_dir = self.output_path.parent
         self.source_spec_dirs: list[Path] = []
         self._emit = emitter or print
+        self.paths = paths
         self._mandate_parser = MandateSpecParser(emitter)
         self._guideline_parser = GuidelinesDslParser(emitter)
         self._init_source_dirs()
@@ -68,9 +70,11 @@ class Phase1Generator:
         if bundled is not None:
             candidates.append(bundled)
         try:
-            paths = get_sdd_paths()
-            docs_meta_dir = paths.get("docs_meta", self.local_source_dir / "docs-meta")
-            source_spec_dir = paths.get("source_spec", docs_meta_dir)
+            resolved_paths = self.paths or get_sdd_paths()
+            docs_meta_dir = resolved_paths.get(
+                "docs_meta", self.local_source_dir / "docs-meta"
+            )
+            source_spec_dir = resolved_paths.get("source_spec", docs_meta_dir)
             candidates.extend(
                 [
                     source_spec_dir,

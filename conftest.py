@@ -25,7 +25,7 @@ that mission's Forbidden list — not the whole `.providence/` tree. A wider
 guard (e.g. blocking any write under `.providence/runtime/`) was tried first
 and broke unrelated, pre-existing test behavior: several `packages/**/tests`
 suites (deployment, skill runtime, CLI generate) legitimately create other
-`.providence/runtime/` state when `SDD_WORKSPACE_ROOT` isn't set, which only
+`.providence/runtime/` state when `PROVIDENCE_WORKSPACE_ROOT` isn't set, which only
 happens to point at the real repo because `tests/conftest.py`'s
 session-wide isolation setup didn't run for that invocation. That is a
 separate, pre-existing test-isolation gap unrelated to M015 and out of
@@ -164,6 +164,10 @@ def _forbid_repo_sdd_writes(monkeypatch: pytest.MonkeyPatch) -> Any:  # noqa: C9
 
 _WORKSPACE_ENV_VARS = (
     "PROVIDENCE_WORKSPACE_ROOT",
+    "PROVIDENCE_ASK_ENTRYPOINT",
+    # Retired (RFC-019): scrubbed so a stale shell export cannot leak into
+    # hermetic tests; the rejection itself is covered by dedicated tests.
+    "SDD_WORKSPACE_ROOT",
     "SDD_ASK_ENTRYPOINT",
 )
 

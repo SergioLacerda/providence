@@ -73,8 +73,9 @@ class InteractiveWizard(InteractiveWizardContextMixin):
         non_interactive: bool = False,
         custom_governance_path: Path | None = None,
         debug: bool = False,
+        staging_root: Path | None = None,
     ):
-        paths = get_sdd_paths()
+        paths = get_sdd_paths(repo_root=repo_root, generated_root=staging_root)
         self.repo_root = repo_root or paths["root"]
         self.paths = paths
         self._emit = emitter or print
@@ -165,6 +166,7 @@ class InteractiveWizard(InteractiveWizardContextMixin):
             emitter=self._emit,
             runner=run_phase6_seedlings_generation,
             debug=self.debug,
+            paths=self.paths,
         )
 
     def run(self) -> bool:
@@ -178,6 +180,7 @@ def run_interactive_wizard(
     non_interactive: bool = False,
     custom_governance_path: Path | None = None,
     debug: bool = False,
+    staging_root: Path | None = None,
 ) -> bool:
     """Create an InteractiveWizard and run the main interactive flow."""
     return InteractiveWizard(
@@ -186,4 +189,5 @@ def run_interactive_wizard(
         non_interactive=non_interactive,
         custom_governance_path=custom_governance_path,
         debug=debug,
+        staging_root=staging_root,
     ).run()

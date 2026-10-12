@@ -192,7 +192,7 @@ def test_implementation_intent_text_output_states_no_provider_binding(
     """Spike follow-up (20260714-sdd-ask-single-entrypoint-spike): text output
     must state explicitly that delegation was not executed and no provider is
     bound, alongside the existing implementation_handoff signal."""
-    monkeypatch.delenv("SDD_ASK_ENTRYPOINT", raising=False)
+    monkeypatch.delenv("PROVIDENCE_ASK_ENTRYPOINT", raising=False)
     stdout = _run_ask_capture_stdout(
         tmp_path,
         monkeypatch,
@@ -217,9 +217,9 @@ def test_governance_query_text_output_reports_hook_entrypoint(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    """When SDD_ASK_ENTRYPOINT=hook, text output reflects the hook origin
+    """When PROVIDENCE_ASK_ENTRYPOINT=hook, text output reflects the hook origin
     without implying a separate/duplicate semantic action."""
-    monkeypatch.setenv("SDD_ASK_ENTRYPOINT", "hook")
+    monkeypatch.setenv("PROVIDENCE_ASK_ENTRYPOINT", "hook")
     stdout = _run_ask_capture_stdout(
         tmp_path,
         monkeypatch,

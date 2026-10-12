@@ -2,29 +2,45 @@
 
 from __future__ import annotations
 
+import tempfile
 from pathlib import Path
 
 import click
 
 
-def _resolve_final_template_dir(output_dir: Path | None) -> Path:
+def _resolve_final_template_dir(
+    output_dir: Path | None,
+    *,
+    staging_root: Path | None = None,
+) -> Path:
     if output_dir is not None:
         return output_dir.expanduser().resolve()
     from providence_core.utils.environment import get_sdd_paths
 
-    return get_sdd_paths()["client_build"] / "final-template"
+    return get_sdd_paths(generated_root=staging_root)["client_build"] / "final-template"
 
 
-def _deploy_final_template(output_dir: Path | None) -> None:
+def _deploy_final_template(
+    output_dir: Path | None,
+    *,
+    staging_root: Path | None = None,
+) -> None:
     """Deploy the generated final-template bundle into the project root."""
     from providence_wizard.orchestration.wizard._direct_root_deploy import (
+        StaleFinalTemplateError,
         deploy_to_root,
     )
 
-    result = deploy_to_root(
-        target_root=Path.cwd(),
-        final_template_dir=_resolve_final_template_dir(output_dir),
-    )
+    try:
+        result = deploy_to_root(
+            target_root=Path.cwd(),
+            final_template_dir=_resolve_final_template_dir(
+                output_dir, staging_root=staging_root
+            ),
+        )
+    except StaleFinalTemplateError as err:
+        click.echo(f"ERROR: {err}")
+        raise click.exceptions.Exit(1) from err
     if result.skipped:
         click.echo(
             "deploy...WARN "
@@ -84,32 +100,48 @@ def _run_wizard(
         from_file.expanduser().resolve() if from_file else None
     )
 
+    temporary_staging = None
+    staging_root: Path | None = None
+    if output_dir is None and not only_template:
+        temporary_staging = tempfile.TemporaryDirectory(prefix="providence-wizard-")
+        staging_root = Path(temporary_staging.name)
+
     try:
-        result = run_wizard(
-            WizardInvocation(
-                project_root=Path.cwd(),
-                output_path=resolved_output,
-                non_interactive=non_interactive,
-                custom_governance_path=resolved_custom_governance_path,
-                debug=debug,
+        try:
+            result = run_wizard(
+                WizardInvocation(
+                    project_root=Path.cwd(),
+                    output_path=resolved_output,
+                    non_interactive=non_interactive,
+                    custom_governance_path=resolved_custom_governance_path,
+                    debug=debug,
+                    staging_root=staging_root,
+                )
             )
-        )
-        if not result.success:
-            raise click.exceptions.Exit(1)
-        if not only_template:
-            _deploy_final_template(resolved_output)
-    except RuntimeError as err:
-        message = str(err)
-        if "SDD Project root not found" in message:
-            click.echo("ERROR: No SDD project context found in the current directory.")
-            click.echo(
-                "Run from your project root (where you want .providence/ to be created)."
-            )
-            click.echo("Example:")
-            click.echo("  mkdir my-project && cd my-project")
-            click.echo("  providence wizard")
-            raise click.exceptions.Exit(1) from err
-        raise
+            if not result.success:
+                raise click.exceptions.Exit(1)
+            if not only_template:
+                _deploy_final_template(
+                    resolved_output,
+                    staging_root=staging_root,
+                )
+        except RuntimeError as err:
+            message = str(err)
+            if "SDD Project root not found" in message:
+                click.echo(
+                    "ERROR: No SDD project context found in the current directory."
+                )
+                click.echo(
+                    "Run from your project root (where you want .providence/ to be created)."
+                )
+                click.echo("Example:")
+                click.echo("  mkdir my-project && cd my-project")
+                click.echo("  providence wizard")
+                raise click.exceptions.Exit(1) from err
+            raise
+    finally:
+        if temporary_staging is not None:
+            temporary_staging.cleanup()
 
 
 @click.command(
@@ -124,7 +156,7 @@ def _run_wizard(
     default=None,
     help=(
         "Directory for the final generated project template. "
-        "Defaults to ./generated/client/build/final-template/."
+        "Direct deployment uses private temporary staging; template-only defaults to ./generated/client/build/final-template/."
     ),
 )
 @click.option(

@@ -69,7 +69,7 @@ def test_plugin_validate_pass(
 ) -> None:
     """sdd plugin validate passes for a compliant Strategist entry."""
     monkeypatch.chdir(plugin_workspace)
-    monkeypatch.setenv("SDD_WORKSPACE_ROOT", str(plugin_workspace))
+    monkeypatch.setenv("PROVIDENCE_WORKSPACE_ROOT", str(plugin_workspace))
 
     from providence_cli.commands import plugin as plugin_mod
 

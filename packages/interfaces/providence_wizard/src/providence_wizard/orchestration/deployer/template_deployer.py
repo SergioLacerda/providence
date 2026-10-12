@@ -17,6 +17,10 @@ from ..wizard.seedling_catalog import resolve_selection
 logger = get_logger(__name__)
 
 
+class TemplateBaseNotFoundError(FileNotFoundError):
+    """No template base directory exists among the configured candidates."""
+
+
 class TemplateDeployer:
     """Copy IDE config templates from providence_integration to the output directory."""
 
@@ -49,10 +53,14 @@ class TemplateDeployer:
 
     @property
     def _template_base(self) -> Path:
-        for candidate in self._template_base_candidates():
+        candidates = self._template_base_candidates()
+        for candidate in candidates:
             if candidate.exists():
                 return candidate
-        return self._template_base_candidates()[-1]
+        attempted = ", ".join(str(path) for path in candidates)
+        raise TemplateBaseNotFoundError(
+            f"No template base found; attempted: {attempted}"
+        )
 
     def _resolve_template_path(self, relative_path: Path) -> Path | None:
         """Return the first template candidate that contains the requested path."""
@@ -75,11 +83,6 @@ class TemplateDeployer:
             / "src"
             / "providence_integration"
             / "templates"
-        )
-        candidates.append(
-            Path(__file__).resolve().parent.parent.parent
-            / "templates"
-            / "bootstrap-fallback"
         )
         return candidates
 
@@ -142,13 +145,10 @@ class TemplateDeployer:
         """Copy configuration templates from providence_integration to output directory."""
         self._log("Copying IDE templates and project files")
         try:
-            template_base = self._template_base
-            if not template_base.exists():
-                attempted = ", ".join(
-                    str(path) for path in self._template_base_candidates()
-                )
-                print(f"   Template base not found: {template_base}")  # noqa: T201
-                self._log(f"Attempted template bases: {attempted}")
+            try:
+                template_base = self._template_base
+            except TemplateBaseNotFoundError as exc:
+                print(f"   Template base not found: {exc}")  # noqa: T201
                 return False
 
             copied_count = 0

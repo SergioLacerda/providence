@@ -92,9 +92,6 @@ class GuidelineSeeds:
             )
             cursor_dir = self._ctx.output_base / ".cursor" / "rules"
             cursor_dir.mkdir(parents=True, exist_ok=True)
-            # Rename-away cleanup: don't leave the pre-rebrand filename behind
-            # alongside the new one.
-            (cursor_dir / "sdd-commands.mdc").unlink(missing_ok=True)
             (cursor_dir / "providence-commands.mdc").write_text(
                 "---\ndescription: Providence CLI commands\nglobs: ['**/*']\nalwaysApply: false\n---\n\n"
                 "# Providence CLI Commands\n\n" + _commands_table,

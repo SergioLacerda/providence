@@ -10,6 +10,7 @@ from providence_wizard.orchestration.phase6_seedlings_orchestrator import (
 )
 from providence_wizard.orchestration.prompt_submit_hooks import (
     SUPPORTED_PROMPT_HOOK_AGENTS,
+    HookGenerationError,
     PromptSubmitHookGenerator,
 )
 from providence_wizard.orchestration.wizard.messages import (
@@ -61,6 +62,7 @@ def run_phase6_seedlings_generation(
     output_base: Path,
     emitter: Callable[[str], None],
     debug: bool = False,
+    paths: dict[str, Path] | None = None,
 ) -> bool:
     """Run Phase 6 governance loading + seedlings generation."""
     from providence_core.utils.environment import get_sdd_paths
@@ -80,9 +82,9 @@ def run_phase6_seedlings_generation(
             },
         }
 
-    paths = get_sdd_paths()
+    resolved_paths = paths or get_sdd_paths()
     governance_core_path, governance_client_path = _resolve_governance_paths(
-        paths, output_base
+        resolved_paths, output_base
     )
 
     loader = GovernanceLoader(
@@ -98,7 +100,7 @@ def run_phase6_seedlings_generation(
         guidelines_by_category=loader.guidelines_by_category,
         config=config,
         governance_core_path=governance_core_path,
-        paths=paths,
+        paths=resolved_paths,
         verbose=debug,
     )
     handshake_mode = config.get("handshake_mode", "standard")
@@ -111,10 +113,18 @@ def run_phase6_seedlings_generation(
     if handshake_mode == "hook":
         agents = set(SUPPORTED_PROMPT_HOOK_AGENTS)
         config["prompt_submit_hook_agents"] = sorted(agents)
-        if not PromptSubmitHookGenerator(output_base, agents).generate():
+        generator = PromptSubmitHookGenerator(output_base, agents)
+        try:
+            generated = generator.generate()
+        except HookGenerationError as exc:
+            emitter(f"   Prompt-submit hook generation refused: {exc}")
+            return False
+        if not generated:
             emitter("   Failed to generate prompt-submit hooks")
             return False
         emitter("hook...OK")
+        for notice in generator.notices:
+            emitter(f"   note: {notice}")
 
     emitter(phase6_seedlings_success_message(output_base))
     return True

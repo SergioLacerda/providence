@@ -96,6 +96,7 @@ class PhaseFourRuntime:
             config,
             self._context._ask_seedling_selection(),
             debug=self._context.debug,
+            paths=self._context.paths,
         )
         if not result["success"]:
             return self._build_failure(result)

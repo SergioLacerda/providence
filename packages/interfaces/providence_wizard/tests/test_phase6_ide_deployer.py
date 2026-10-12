@@ -5,7 +5,10 @@ from pathlib import Path
 
 import pytest
 
-from providence_wizard.orchestration.deployer.template_deployer import TemplateDeployer
+from providence_wizard.orchestration.deployer.template_deployer import (
+    TemplateBaseNotFoundError,
+    TemplateDeployer,
+)
 
 
 def test_template_base_prefers_existing_candidate(tmp_path: Path) -> None:
@@ -388,3 +391,36 @@ def test_create_ide_templates_fails_when_selected_template_dir_missing(
     assert deployer.create_ide_templates() is False
     assert "Required template directory not found: .claude/" in capsys.readouterr().out
     assert not (output_base / ".claude").exists()
+
+
+def test_template_base_raises_when_no_candidate_exists(tmp_path: Path) -> None:
+    """No silent fallback: returning a path that does not exist is how a missing
+    template tier used to go unnoticed."""
+    deployer = TemplateDeployer(repo_root=tmp_path, output_base=tmp_path / "out")
+    missing_a = tmp_path / "missing-a"
+    missing_b = tmp_path / "missing-b"
+    deployer._template_base_candidates = lambda: [missing_a, missing_b]  # type: ignore[method-assign]
+
+    with pytest.raises(TemplateBaseNotFoundError) as excinfo:
+        _ = deployer._template_base
+
+    assert str(missing_a) in str(excinfo.value)
+    assert str(missing_b) in str(excinfo.value)
+
+
+def test_template_candidates_do_not_include_a_duplicate_fallback_tier(
+    tmp_path: Path,
+) -> None:
+    deployer = TemplateDeployer(repo_root=tmp_path, output_base=tmp_path / "out")
+
+    candidates = deployer._template_base_candidates()
+
+    assert candidates
+    assert all("bootstrap-fallback" not in str(path) for path in candidates)
+
+
+def test_bootstrap_fallback_template_directory_is_gone() -> None:
+    import providence_wizard
+
+    package_root = Path(providence_wizard.__file__).parent
+    assert not (package_root / "templates" / "bootstrap-fallback").exists()

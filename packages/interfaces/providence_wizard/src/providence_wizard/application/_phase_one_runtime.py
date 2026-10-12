@@ -16,6 +16,7 @@ class PhaseOneContext(Protocol):
     repo_root: Path
     phase1_choices_dir: Path
     wizard_config_path: Path
+    paths: dict[str, Any]
     SUPPORTED_PHASE2_PATTERNS: tuple[str, ...]
     debug: bool
 
@@ -138,6 +139,7 @@ class PhaseOneRuntime:
             output_path,
             verbose=self._context.debug,
             config=config,
+            paths=getattr(self._context, "paths", None),
         )
         result = generator.run()
         if result["success"]:

@@ -17,29 +17,42 @@ from providence_core.utils._environment_repo import (
     is_repo_root,
     tomllib,
 )
-from providence_core.utils._environment_workspace import (
-    _workspace_root_from_env as _workspace_root_from_env_impl,
-)
-from providence_core.utils._environment_workspace import (
+from providence_core.utils._environment_workspace import (  # noqa: F401
+    RetiredEnvironmentVariableError,
     detect_profile,
     find_workspace_root,
+    reject_retired_environment_variable,
     resolve_profile,
     resolve_sdd_child_cmd,
     resolve_venv_python,
     resolve_venv_sdd,
     write_profile,
 )
+from providence_core.utils._environment_workspace import (
+    _workspace_root_from_env as _workspace_root_from_env_impl,
+)
 
 
 def workspace_root_from_env() -> Path | None:
-    """Return `SDD_WORKSPACE_ROOT` if set (highest-priority explicit override)."""
+    """Return `PROVIDENCE_WORKSPACE_ROOT` if set (highest-priority explicit override).
+
+    The retired `SDD_WORKSPACE_ROOT` raises `RetiredEnvironmentVariableError`.
+    """
     return _workspace_root_from_env_impl()
 
 
 def get_sdd_paths(
-    *, repo_root: Path | None = None, workspace_root: Path | None = None
+    *,
+    repo_root: Path | None = None,
+    workspace_root: Path | None = None,
+    generated_root: Path | None = None,
 ) -> dict[str, Path]:
-    """Resolve canonical SDD paths for the active workspace."""
+    """Resolve canonical SDD paths for the active workspace.
+
+    ``generated_root`` overrides only the producer-side staging root. The
+    workspace root remains the customer/project root, so canonical runtime
+    paths and source discovery continue to resolve from the workspace.
+    """
     try:
         resolved_repo_root = (
             repo_root.resolve()
@@ -54,7 +67,11 @@ def get_sdd_paths(
         if workspace_root
         else env_workspace or find_workspace_root() or resolved_repo_root
     )
-    generated = resolved_workspace_root / "generated"
+    generated = (
+        generated_root.resolve()
+        if generated_root is not None
+        else resolved_workspace_root / "generated"
+    )
     isolated = bool(env_workspace) and os.environ.get(
         "SDD_TEST_ISOLATED_WORKSPACE", ""
     ).strip().lower() in {"1", "true", "yes", "on"}
@@ -106,6 +123,7 @@ def get_profile_context(profile: SddProfile | None = None) -> dict[str, Any]:
 
 __all__ = [
     "ProfileContext",
+    "RetiredEnvironmentVariableError",
     "SddProfile",
     "WorkspaceNotInitializedError",
     "detect_profile",
@@ -115,6 +133,7 @@ __all__ = [
     "get_project_config",
     "get_sdd_paths",
     "is_repo_root",
+    "reject_retired_environment_variable",
     "resolve_profile",
     "resolve_sdd_child_cmd",
     "resolve_venv_python",

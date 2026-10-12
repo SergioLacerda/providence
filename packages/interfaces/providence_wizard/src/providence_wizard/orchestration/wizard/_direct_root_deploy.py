@@ -13,16 +13,73 @@ mandate/guideline `.bin` artifacts, JSON files without comment support).
 
 from __future__ import annotations
 
+import hashlib
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from providence_wizard.constants import RUNTIME_DIRNAME
+from providence_wizard.orchestration.prompt_submit_hook_script import (
+    PROMPT_SUBMIT_HOOK_SCRIPT,
+)
 
 _GENERATOR_ID = "providence_wizard.direct_root_deploy"
 _MANIFEST_RELATIVE_PATH = (
     Path(RUNTIME_DIRNAME) / "runtime" / "direct-root-manifest.json"
 )
+
+
+_HOOK_RELATIVE = Path(RUNTIME_DIRNAME) / "runtime" / "hooks" / "prompt-submit.py"
+_ADAPTER_RELATIVES = (
+    Path(".claude") / "settings.json",
+    Path(".codex") / "config.toml",
+    Path(".gemini") / "settings.json",
+    Path(".github") / "hooks" / "providence-prompt-submit.json",
+    Path(".devin") / "hooks.v1.json",
+)
+# Command shapes and names retired by earlier generators: a build that still
+# carries one was produced by an outdated generator.
+_RETIRED_ADAPTER_TOKENS = ("hook=$1", "sdd-governance-inject.py")
+
+
+class StaleFinalTemplateError(RuntimeError):
+    """The final-template build was produced by an outdated generator."""
+
+
+def _digest(text: str) -> str:
+    return hashlib.sha256(text.replace("\r\n", "\n").encode("utf-8")).hexdigest()
+
+
+def verify_final_template_is_current(final_template_dir: Path) -> None:
+    """Raise when the hook artifacts about to be deployed are stale.
+
+    The central hook must equal the current generator template and no adapter
+    may carry a retired command shape. Nothing is deployed from a stale build.
+    """
+    problems: list[str] = []
+    hook = final_template_dir / _HOOK_RELATIVE
+    if hook.is_file():
+        content = hook.read_text(encoding="utf-8", errors="replace")
+        if _digest(content) != _digest(PROMPT_SUBMIT_HOOK_SCRIPT):
+            problems.append(
+                f"{_HOOK_RELATIVE.as_posix()} differs from the current generator "
+                "template"
+            )
+    for relative in _ADAPTER_RELATIVES:
+        adapter = final_template_dir / relative
+        if not adapter.is_file():
+            continue
+        text = adapter.read_text(encoding="utf-8", errors="replace")
+        for token in _RETIRED_ADAPTER_TOKENS:
+            if token in text:
+                problems.append(
+                    f"{relative.as_posix()} carries the retired shape {token!r}"
+                )
+    if problems:
+        raise StaleFinalTemplateError(
+            "final-template is stale; rebuild it with the current generator "
+            "before deploying: " + "; ".join(problems)
+        )
 
 
 @dataclass(frozen=True)
@@ -98,6 +155,7 @@ def deploy_to_root(
     - Previously-managed file no longer present in the source  dropped from
       the manifest, classified "removed" (the file itself is left on disk).
     """
+    verify_final_template_is_current(final_template_dir)
     fingerprint = _read_fingerprint(final_template_dir)
     previously_managed = _load_manifest(target_root)
     result = DeployToRootResult()

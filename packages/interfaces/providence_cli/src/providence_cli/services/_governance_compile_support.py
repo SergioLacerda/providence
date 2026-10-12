@@ -6,6 +6,8 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
+from providence_core.utils.environment import workspace_root_from_env
+
 logger = logging.getLogger(__name__)
 
 
@@ -31,14 +33,9 @@ def resolve_output_base_path(
     if not override:
         return output
     redirected = Path(override).resolve()
-    env_workspace = os.environ.get("SDD_WORKSPACE_ROOT", "").strip()
-    if env_workspace:
-        try:
-            workspace_root = Path(env_workspace).expanduser().resolve()
-        except Exception:
-            workspace_root = None
-    else:
-        workspace_root = None
+    # Raises RetiredEnvironmentVariableError for the retired SDD_WORKSPACE_ROOT.
+    workspace_root = workspace_root_from_env()
+    env_workspace = workspace_root is not None
     try:
         resolved_workspace = resolve_workspace_root_fn()
     except Exception:

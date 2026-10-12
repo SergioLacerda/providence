@@ -23,15 +23,15 @@ class PhaseRuntime:
     def execute(self) -> bool:
         """Run the interactive engine with lazy imports."""
         runner = self._runner or self._load_runner()
-        return bool(
-            runner(
-                self._invocation.project_root,
-                output_dir=self._invocation.output_path,
-                non_interactive=self._invocation.non_interactive,
-                custom_governance_path=self._invocation.custom_governance_path,
-                debug=self._invocation.debug,
-            )
-        )
+        kwargs = {
+            "output_dir": self._invocation.output_path,
+            "non_interactive": self._invocation.non_interactive,
+            "custom_governance_path": self._invocation.custom_governance_path,
+            "debug": self._invocation.debug,
+        }
+        if self._invocation.staging_root is not None:
+            kwargs["staging_root"] = self._invocation.staging_root
+        return bool(runner(self._invocation.project_root, **kwargs))
 
     def _load_runner(self) -> Callable[..., bool]:
         module = importlib.import_module(

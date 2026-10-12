@@ -14,14 +14,14 @@ def test_resolve_workspace_root_prefers_explicit_root(tmp_path: Path) -> None:
 def test_workspace_root_from_env(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
-    monkeypatch.setenv("SDD_WORKSPACE_ROOT", str(tmp_path))
+    monkeypatch.setenv("PROVIDENCE_WORKSPACE_ROOT", str(tmp_path))
     assert authority_mod._workspace_root_from_env() == tmp_path.resolve()
 
 
 def test_workspace_root_from_env_returns_none_when_blank(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.delenv("SDD_WORKSPACE_ROOT", raising=False)
+    monkeypatch.delenv("PROVIDENCE_WORKSPACE_ROOT", raising=False)
     assert authority_mod._workspace_root_from_env() is None
 
 

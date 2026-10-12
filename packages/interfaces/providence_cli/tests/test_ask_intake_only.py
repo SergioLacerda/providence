@@ -178,7 +178,7 @@ def test_intake_only_json_response_matches_full_gate_semantics(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.delenv("SDD_ASK_ENTRYPOINT", raising=False)
+    monkeypatch.delenv("PROVIDENCE_ASK_ENTRYPOINT", raising=False)
     patches = _patch_cheap_session(
         tmp_path, organize_used=False, organize_reason="index_unavailable"
     )

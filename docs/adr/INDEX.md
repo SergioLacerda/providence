@@ -405,6 +405,32 @@ existed since the Providence rename) as a side effect of the same edit.
 
 ---
 
+### ADR-025: Prompt-Submit Hook Hardening (2026-10-11)
+
+**Decision:** Make the prompt-submit hook either run the current central hook or be
+reported broken, never silently inert. Reject retired markers and names on the hook
+and seedling path with no migration shim; give hook and CLI one environment contract
+for the workspace root and the ask entrypoint; verify the executable version and the
+governance fingerprint before the hook runs the CLI; make degradation observable
+while the hook stays non-blocking; and ship a launcher that works on Linux and
+Windows. Scope is narrow: the wide `SDD_*` vocabulary stays under ADR-024's position
+until a separate RFC.
+
+**Rationale:**
+
+- The hook was a silent no-op in this workspace: three adapters pointed at a path
+  that does not exist, introduced by `6a3c6ee` and shipped in `v1.0.14` to
+  `v1.0.16`; `v1.0.17` repairs POSIX only
+- `providence governance hook status` could not tell, because it matched substrings
+
+**Links:**
+
+- [ADR-025-prompt-submit-hook-hardening.md](ADR-025-prompt-submit-hook-hardening.md)
+- [Runbook: dead prompt-submit hook adapter](../runbooks/dead-prompt-submit-hook-adapter.md)
+- Related: ADR-024, [RFC-019](../spec/decisions/RFC-019-hook-and-cli-environment-contract.md)
+
+---
+
 ## 🧾 Operational Appendices
 
 These artifacts support governance operations but are not ADRs:

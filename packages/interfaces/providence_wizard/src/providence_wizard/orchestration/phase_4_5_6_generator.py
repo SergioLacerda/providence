@@ -44,6 +44,7 @@ from ._phase456_run import run_phase456_pipeline
 from ._phase456_source_writer import write_phase5_sources
 from .phase6_seedlings_orchestrator import SeedlingsOrchestrator
 from .prompt_submit_hooks import (
+    HookGenerationError,
     PromptSubmitHookGenerator,
     resolve_prompt_submit_hook_agents,
 )
@@ -61,10 +62,11 @@ class Phase456Generator:
         verbose: bool = False,
         selected_seedlings: set[str] | None = None,
         emitter: Callable[[str], None] | None = None,
+        paths: dict[str, Path] | None = None,
     ) -> None:
-        paths = get_sdd_paths()
-        self.repo_root = repo_root or paths["root"]
-        self.paths = paths
+        resolved_paths = paths or get_sdd_paths(repo_root=repo_root)
+        self.repo_root = repo_root or resolved_paths["root"]
+        self.paths = resolved_paths
         self.output_base = output_base
         self.config = config
         self.verbose = verbose
@@ -132,13 +134,21 @@ class Phase456Generator:
             return True
         agents = resolve_prompt_submit_hook_agents(self.selected_seedlings)
         self.config["prompt_submit_hook_agents"] = sorted(agents)
-        if not PromptSubmitHookGenerator(self.output_base, agents).generate():
+        generator = PromptSubmitHookGenerator(self.output_base, agents)
+        try:
+            generated = generator.generate()
+        except HookGenerationError as exc:
+            result["errors"].append(f"Prompt-submit hook generation refused: {exc}")
+            return False
+        if not generated:
             result["errors"].append(
                 "handshake_mode=hook requires at least one supported hook agent "
                 "(claude, codex, gemini)"
             )
             return False
         self._emit("hook...OK")
+        for notice in generator.notices:
+            self._emit(f"   note: {notice}")
         return True
 
     def run(self) -> Phase456RunResult:
@@ -152,6 +162,7 @@ def run_phase_4_5_6_generator(
     config: dict[str, Any],
     selected_seedlings: set[str] | None = None,
     debug: bool = False,
+    paths: dict[str, Path] | None = None,
 ) -> Phase456RunResult:
     """Entry point for Phase 4-6 generator."""
     generator = Phase456Generator(
@@ -160,5 +171,6 @@ def run_phase_4_5_6_generator(
         config,
         verbose=debug,
         selected_seedlings=selected_seedlings,
+        paths=paths,
     )
     return generator.run()

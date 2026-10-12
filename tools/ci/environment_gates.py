@@ -112,14 +112,25 @@ def gate_env_boundary_lint(mode: str, context: str) -> GateResult:
 
 
 def gate_workspace_root_resolution_check(mode: str) -> GateResult:
-    raw = os.environ.get("SDD_WORKSPACE_ROOT", "").strip()
+    if os.environ.get("SDD_WORKSPACE_ROOT", "").strip():
+        return GateResult(
+            gate="workspace-root-resolution-check",
+            mode=mode,
+            ok=False,
+            code="RETIRED_ENVIRONMENT_VARIABLE",
+            message=(
+                "SDD_WORKSPACE_ROOT was retired; set PROVIDENCE_WORKSPACE_ROOT instead"
+            ),
+            details={},
+        )
+    raw = os.environ.get("PROVIDENCE_WORKSPACE_ROOT", "").strip()
     if not raw:
         return GateResult(
             gate="workspace-root-resolution-check",
             mode=mode,
             ok=True,
             code="OK",
-            message="No explicit SDD_WORKSPACE_ROOT override set",
+            message="No explicit PROVIDENCE_WORKSPACE_ROOT override set",
             details={},
         )
     path = Path(raw)
@@ -129,7 +140,7 @@ def gate_workspace_root_resolution_check(mode: str) -> GateResult:
             mode=mode,
             ok=False,
             code="WORKSPACE_ROOT_POLICY_VIOLATION",
-            message="Invalid SDD_WORKSPACE_ROOT override",
+            message="Invalid PROVIDENCE_WORKSPACE_ROOT override",
             details={"path": raw},
         )
     return GateResult(

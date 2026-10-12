@@ -43,6 +43,7 @@ class Phase3Compiler:
         repo_root: Path,
         verbose: bool = False,
         emitter: Callable[[str], None] | None = None,
+        paths: dict[str, Path] | None = None,
     ) -> None:
         self.markdown_input_path = markdown_input_path
         self.output_path = output_path
@@ -55,6 +56,7 @@ class Phase3Compiler:
         self.phase2_input_dir = self.client_build_dir / self.PHASE2_INPUT_DIRNAME
         self.wizard_config_path = self.client_build_dir / self.WIZARD_CONFIG_FILENAME
         self._emit = emitter or print
+        self.paths = paths
         self._parser = MarkdownParser()
         self._locator = TemplateLocator(repo_root, self._emit)
 
@@ -120,7 +122,11 @@ class Phase3Compiler:
     def compile_with_pipeline_builder(self, items: ParsedItems) -> bool:
         """Run PipelineBuilder on parsed items and save outputs to .providence/source/."""
         return _compile_with_pipeline_builder(
-            self.repo_root, self.output_path, cast(dict[str, Any], items), self._emit
+            self.repo_root,
+            self.output_path,
+            cast(dict[str, Any], items),
+            self._emit,
+            paths=self.paths,
         )
 
     def load_compiled_governance(

@@ -297,7 +297,7 @@ def test_ask_json_response_includes_additive_intake_contract_fields(
     structured intake contract fields are additive and must never claim
     executed delegation or provider binding.
     """
-    monkeypatch.delenv("SDD_ASK_ENTRYPOINT", raising=False)
+    monkeypatch.delenv("PROVIDENCE_ASK_ENTRYPOINT", raising=False)
     monkeypatch.setattr(
         "providence_cli.commands._ask_backend._resolve_workspace_root",
         lambda: tmp_path,
@@ -385,9 +385,9 @@ def test_ask_json_response_entrypoint_reflects_hook_env_marker(
     monkeypatch, tmp_path
 ) -> None:
     """When the prompt-submit hook invokes `providence ask`, it marks
-    SDD_ASK_ENTRYPOINT=hook so the response can distinguish hook-originated
+    PROVIDENCE_ASK_ENTRYPOINT=hook so the response can distinguish hook-originated
     calls from explicit/deliberate invocations."""
-    monkeypatch.setenv("SDD_ASK_ENTRYPOINT", "hook")
+    monkeypatch.setenv("PROVIDENCE_ASK_ENTRYPOINT", "hook")
     monkeypatch.setattr(
         "providence_cli.commands._ask_backend._resolve_workspace_root",
         lambda: tmp_path,
