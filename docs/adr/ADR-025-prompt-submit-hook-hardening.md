@@ -1,6 +1,6 @@
 # ADR-025 — Prompt-Submit Hook Hardening
 
-**Status:** Accepted (decisions); implemented in the source tree, release pending
+**Status:** Accepted (decisions); implemented, prepared for release v1.0.18 (tag pending)
 **Date:** 2026-10-11
 **Deciders:** Sergio Lacerda
 **Supersedes:** N/A
@@ -195,7 +195,7 @@ Implemented and verified in the source tree (unit and integration suites green):
 | 1 Retired input rejected | Done: pre-rebrand hook reference, unmanaged Codex block and `sdd-commands.mdc` rejected or removed |
 | 2 `hook status` from the real target and digest | Done: `legacy`, `broken`, `stale` states, exit 1 when unhealthy |
 | 3 Never silent | Done: named reasons on stderr, `DEGRADED` notice for real failures, platform timeouts above the hook's |
-| 4 One environment contract | Done in source (RFC-019); breaking, unreleased |
+| 4 One environment contract | Done (RFC-019, accepted 2026-10-12); breaking, ships in v1.0.18 |
 | 5 Stale build not deployed | Done: `deploy_to_root` refuses a stale `final-template` |
 | 6 Executable verified by behavior | Done: the CLI must echo `entrypoint : hook` (`cli_contract_mismatch`) and report the workspace fingerprint; version list, probe and cache, `.venv` search, `cwd` fallback and the fingerprint alias removed |
 | 7 Merge fails closed | Done for the hook adapters and the Claude and Gemini seeds |
@@ -206,14 +206,16 @@ Implemented and verified in the source tree (unit and integration suites green):
 | 13 Executor check for side quests | Not a repository change; a Strategist defect (outside this repository) |
 | 14 Devin CLI | Done in source: adapter, one-registration rule, `hook status`, validator, notice; the product behavior is unobserved (V-04) |
 
-Not done: a release containing the cross-shell launcher and the environment contract
-(`v1.0.17` fixes POSIX only and still reads `SDD_*`); the Windows run of the launcher;
-the observed Codex re-trust and Copilot per-OS key behavior; RFC-019 is still a draft.
+Not done: the Windows run of the launcher (CI evidence pending); the observed Codex
+re-trust, Copilot per-OS key and Devin behavior. RFC-019 was accepted on 2026-10-12
+(M006). The release that carries the cross-shell launcher and the environment contract is prepared
+as `v1.0.18` (`v1.0.17` fixes POSIX only and still reads `SDD_*`); the tag is pending.
 
 ## Verification state
 
-Source-tree behavior is covered by tests; nothing is released. The installed global CLI
-is `1.0.17`, so the deployed hook is the `1.0.17` template, not this tree's.
+Source-tree behavior is covered by tests; `v1.0.18` is prepared but not tagged. Until
+a CLI that carries this change is installed (the global CLI is `1.0.17`), the deployed
+hook is the `1.0.17` template, not this tree's.
 
 ## Links
 

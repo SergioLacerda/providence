@@ -1,7 +1,7 @@
 # RFC-019: One Environment Contract Between the Prompt-Submit Hook and the CLI
 
-**Status:** Proposed — comment period open (M006: this is a breaking change and must
-be accepted before it ships)
+**Status:** Accepted (2026-10-12) — ships in v1.0.18 (M006: breaking change accepted by
+the decider before release)
 **Date:** 2026-10-11
 **Author:** Sergio Lacerda
 **Related:** ADR-025 (prompt-submit hook hardening), ADR-007 (environment variable
@@ -169,14 +169,14 @@ exports `SDD_ASK_ENTRYPOINT`, which the CLI rejects with exit 2 and a message na
 
 ## Acceptance Criteria
 
-- [ ] `SDD_WORKSPACE_ROOT` and `SDD_ASK_ENTRYPOINT` are rejected with the replacement named
-- [ ] The CLI exits 2 with no traceback for a retired variable
-- [ ] The hook exports `PROVIDENCE_ASK_ENTRYPOINT` and surfaces the CLI diagnostic
-- [ ] The hook refuses a CLI that does not echo `entrypoint : hook` (`cli_contract_mismatch`)
-- [ ] The hook has no version list or probe and no second source for the CLI, the workspace root or the fingerprint
-- [ ] The retired names appear in package source only in the modules that reject them
-- [ ] ADR-007 and policy P005 list `PROVIDENCE_WORKSPACE_ROOT`
-- [ ] CHANGELOG `[Unreleased]` records the breaking change with its migration
+- [x] `SDD_WORKSPACE_ROOT` and `SDD_ASK_ENTRYPOINT` are rejected with the replacement named
+- [x] The CLI exits 2 with no traceback for a retired variable
+- [x] The hook exports `PROVIDENCE_ASK_ENTRYPOINT` and surfaces the CLI diagnostic
+- [x] The hook refuses a CLI that does not echo `entrypoint : hook` (`cli_contract_mismatch`)
+- [x] The hook has no version list or probe and no second source for the CLI, the workspace root or the fingerprint
+- [x] The retired names appear in package source only in the modules that reject them
+- [x] ADR-007 and policy P005 list `PROVIDENCE_WORKSPACE_ROOT`
+- [x] CHANGELOG records the breaking change with its migration (`[1.0.18]`)
 
 ---
 

@@ -25,7 +25,8 @@ do not hand-edit them as authored source.
   `entrypoint : hook` (it predates the environment contract, RFC-019: 1.0.17 and older
   report `explicit_command`); `cli_fingerprint_mismatch` means its context belongs to
   another governance fingerprint; `cli_not_found` means `providence` is not on `PATH`
-  (the workspace `.venv` is not searched). Upgrade to a release that carries RFC-019.
+  (the workspace `.venv` is not searched). Upgrade to `providence-cli` 1.0.18 or newer,
+  the release that carries RFC-019.
 
 ## Diagnosis
 

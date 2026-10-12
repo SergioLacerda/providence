@@ -95,7 +95,7 @@ Install from the tagged release wheelhouse (`providence-cli` plus every
 monorepo, so those siblings are never published to PyPI on their own):
 
 ```bash
-uv tool install providence-cli --find-links "https://github.com/SergioLacerda/providence/releases/expanded_assets/v1.0.17"
+uv tool install providence-cli --find-links "https://github.com/SergioLacerda/providence/releases/expanded_assets/v1.0.18"
 cd your-project
 providence install --wizard
 providence init --default

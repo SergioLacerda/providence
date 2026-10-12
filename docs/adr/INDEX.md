@@ -427,7 +427,7 @@ until a separate RFC.
 
 - [ADR-025-prompt-submit-hook-hardening.md](ADR-025-prompt-submit-hook-hardening.md)
 - [Runbook: dead prompt-submit hook adapter](../runbooks/dead-prompt-submit-hook-adapter.md)
-- Related: ADR-024
+- Related: ADR-024, [RFC-019](../spec/decisions/RFC-019-hook-and-cli-environment-contract.md)
 
 ---
 
