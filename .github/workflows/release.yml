@@ -651,6 +651,14 @@ jobs:
 
       - name: Sign artifacts with sigstore
         uses: sigstore/gh-action-sigstore-python@790bc6befb9d733738f18d8f895854b453640ec9 # v3.5.0
+        env:
+          # The action installs its own hash-pinned requirements with `uv pip
+          # install` from the job's working directory, which is this checkout.
+          # Without this, uv reads the root pyproject's [tool.uv]
+          # constraint-dependencies (e.g. urllib3>=2.8.0) and applies them to
+          # the action's private environment, which pins urllib3==2.7.0:
+          # "No solution found ... urllib3==2.7.0 and urllib3>=2.8.0".
+          UV_NO_CONFIG: "1"
         with:
           inputs: |
             dist/sdd-compile-linux-amd64

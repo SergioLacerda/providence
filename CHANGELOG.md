@@ -87,6 +87,9 @@ Before tagging a new release, verify:
   `python -c` launcher that resolves the workspace at run time, instead of the
   POSIX-only `sh -c` launcher of 1.0.17, so a hook installed on a standalone client
   keeps working under `sh`, `cmd.exe` and PowerShell.
+- **Release:** the sigstore signing step no longer inherits the repository's
+  `[tool.uv] constraint-dependencies`, which made the action's own pinned install
+  fail (`urllib3==2.7.0` against `urllib3>=2.8.0`); it runs with `UV_NO_CONFIG=1`.
 - **Adapters:** Codex also receives a native `SKILL.md` for `sdd-diagnose`.
 - **Dependencies:** pins and `uv.lock` were refreshed for security advisories and the
   weekly dependency updates (`crewai` 1.15.26 included).
