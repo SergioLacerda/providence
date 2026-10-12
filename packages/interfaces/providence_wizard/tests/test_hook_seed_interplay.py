@@ -56,7 +56,7 @@ def _assert_claude(root: Path) -> None:
     )
     prompt_hooks = hooks["UserPromptSubmit"]
     assert len(prompt_hooks) == 1
-    assert prompt_hooks[0]["hooks"][0]["command"] == central_prompt_submit_command(root)
+    assert prompt_hooks[0]["hooks"][0]["command"] == central_prompt_submit_command()
 
 
 def _assert_gemini(root: Path) -> None:
@@ -64,7 +64,7 @@ def _assert_gemini(root: Path) -> None:
     assert settings["contextFileName"] == "GEMINI.md"
     before_agent = settings["hooks"]["BeforeAgent"]
     assert len(before_agent) == 1
-    assert before_agent[0]["hooks"][0]["command"] == central_prompt_submit_command(root)
+    assert before_agent[0]["hooks"][0]["command"] == central_prompt_submit_command()
 
 
 @pytest.mark.parametrize(

@@ -24,6 +24,8 @@ class WizardInvocation:
     """
     debug: bool = False
     """Show full verbose wizard output instead of the quiet macro summary."""
+    staging_root: Path | None = None
+    """Optional invocation-owned root for producer-side generated artifacts."""
 
 
 @dataclass(frozen=True)

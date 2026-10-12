@@ -20,8 +20,7 @@ Explicit `/sdd-ask ...` prompts are a special case: the slash-command adapter
 for that turn will itself run a full `providence ask` call, so this hook skips its
 own full invocation to avoid paying the governance-snapshot cost twice in the
 same turn (spike: 20260714-sdd-ask-single-entrypoint-spike, R-001 preferred
-strategy). If detection is ever uncertain, this hook falls back to the full
-path rather than silently dropping governance context.
+strategy). Only an exact `/sdd-ask` prompt takes that path.
 
 Header/footer contract (20260913-governance-hooks-dogfood): every emitted
 context starts with a `PROVIDENCE GOVERNANCE ACTIVE` header and carries a
@@ -41,11 +40,12 @@ import subprocess
 import sys
 from pathlib import Path
 
-def _workspace_root() -> Path:
-    try:
-        return Path(__file__).resolve().parents[3]
-    except IndexError:
-        return Path.cwd()
+def _workspace_root() -> Path | None:
+    """The workspace that deployed this hook, or None when it is misplaced."""
+    here = Path(__file__).resolve()
+    if here.parent.parts[-3:] != (".providence", "runtime", "hooks"):
+        return None
+    return here.parents[3]
 
 def _extract_context_field(context: str, field: str, default: str) -> str:
     pattern = rf"\\b{re.escape(field)}\\s*[:=]\\s*([A-Za-z0-9_.-]+)"
@@ -104,32 +104,69 @@ def _render_explicit_command_context() -> str:
         _footer_instruction(_SDD_ASK_FOOTER_TEMPLATE),
     ])
 
+def _report_skip(
+    event_name: str, reason: str, notify_model: bool, detail: str = ""
+) -> int:
+    """Name why governance context was not injected; never block the prompt.
+
+    The reason always goes to stderr for the operator. Failures also put one
+    short DEGRADED notice in the model context so a silent outage is visible.
+    Intentional skips (disabled hook, ungoverned workspace) never come here.
+    """
+    suffix = f" detail={detail}" if detail else ""
+    sys.stderr.write(f"providence-hook: skipped reason={reason}{suffix}\\n")
+    if notify_model:
+        context = (
+            "PROVIDENCE GOVERNANCE DEGRADED | source=prompt-submit-hook | "
+            f"reason={reason}\\n"
+            "Instruction: governance context was not injected this turn; tell "
+            "the user governance is degraded and name the reason."
+        )
+        print(json.dumps({
+            "hookSpecificOutput": {
+                "hookEventName": event_name,
+                "additionalContext": context,
+            }
+        }))
+    return 0
+
 def _event_name(payload: dict) -> str:
     # Each platform names its prompt event differently (Claude/Codex/Copilot:
     # UserPromptSubmit, Gemini: BeforeAgent) and echoes it in the payload.
     name = payload.get("hook_event_name") or payload.get("hookEventName")
     return name if isinstance(name, str) and name else "UserPromptSubmit"
 
-def _resolve_providence_cli(workspace_root: Path) -> str | None:
-    found = shutil.which("providence")
-    if found:
-        return found
-    for candidate in (
-        workspace_root / ".venv" / "bin" / "providence",
-        workspace_root / ".venv" / "Scripts" / "providence.exe",
-        workspace_root / "venv" / "bin" / "providence",
-        workspace_root / "venv" / "Scripts" / "providence.exe",
-    ):
-        if candidate.is_file():
-            return str(candidate)
-    return None
+# The hook trusts a CLI by what it does, never by what it calls itself: the CLI
+# must echo the entrypoint marker it was sent (RFC-019) and report the
+# workspace's governance fingerprint. A CLI that predates the environment
+# contract ignores the marker and reports explicit_command.
+_FINGERPRINT_RE = re.compile(r"fingerprint=([0-9a-fA-F]{8,64})")
+_ENTRYPOINT_RE = re.compile(r"^entrypoint\\s*:\\s*(\\S+)", re.MULTILINE)
+
+def _workspace_fingerprint(workspace_root: Path) -> str:
+    try:
+        metadata = json.loads(
+            (workspace_root / ".providence" / "metadata.json").read_text(
+                encoding="utf-8"
+            )
+        )
+    except (OSError, ValueError):
+        return ""
+    if not isinstance(metadata, dict):
+        return ""
+    fingerprints = metadata.get("fingerprints")
+    if not isinstance(fingerprints, dict):
+        return ""
+    return str(fingerprints.get("combined") or "").strip().lower()
+
+def _fingerprints_match(expected: str, seen: str) -> bool:
+    return expected.startswith(seen.lower())
+
+def _resolve_providence_cli() -> str | None:
+    return shutil.which("providence")
 
 def main() -> int:
     workspace_root = _workspace_root()
-    if (workspace_root / ".providence/runtime/hook-disabled").exists():
-        return 0
-    if not (workspace_root / ".providence/metadata.json").exists():
-        return 0
     try:
         raw = sys.stdin.buffer.read().decode("utf-8-sig", errors="replace")
         payload = json.loads(raw or "{}")
@@ -137,10 +174,16 @@ def main() -> int:
         payload = {}
     if not isinstance(payload, dict):
         payload = {}
+    if workspace_root is None:
+        return _report_skip(_event_name(payload), "hook_misplaced", True)
+    if (workspace_root / ".providence/runtime/hook-disabled").exists():
+        return 0
     prompt = payload.get("prompt", "")
     if not prompt:
         return 0
     event_name = _event_name(payload)
+    if not (workspace_root / ".providence/metadata.json").is_file():
+        return _report_skip(event_name, "metadata_missing", True)
     if _is_explicit_sdd_ask(prompt):
         print(json.dumps({
             "hookSpecificOutput": {
@@ -149,12 +192,12 @@ def main() -> int:
             }
         }))
         return 0
-    providence_cli = _resolve_providence_cli(workspace_root)
+    providence_cli = _resolve_providence_cli()
     if providence_cli is None:
-        return 0
+        return _report_skip(event_name, "cli_not_found", True)
     try:
         env = dict(os.environ)
-        env["SDD_ASK_ENTRYPOINT"] = "hook"
+        env["PROVIDENCE_ASK_ENTRYPOINT"] = "hook"
         env["PYTHONUTF8"] = "1"
         # The hook resolved this root from its own location; an inherited value
         # may name another project and must not win.
@@ -169,9 +212,43 @@ def main() -> int:
             env=env,
             cwd=str(workspace_root),
         )
-        context = result.stdout.strip()
+    except subprocess.TimeoutExpired:
+        return _report_skip(event_name, "timeout", True)
     except Exception:
-        return 0
+        return _report_skip(event_name, "subprocess_error", True)
+    context = result.stdout.strip()
+    if not context and result.returncode != 0:
+        lines = (result.stderr or "").strip().splitlines()
+        return _report_skip(
+            event_name, "subprocess_error", True, lines[-1][:200] if lines else ""
+        )
+    if not context:
+        return _report_skip(event_name, "empty_output", False)
+    # The CLI must echo the marker it was given. A CLI that predates the
+    # environment contract ignores PROVIDENCE_ASK_ENTRYPOINT and reports
+    # explicit_command (or nothing), whatever its version number says.
+    echoed = _ENTRYPOINT_RE.search(context)
+    if echoed is None or echoed.group(1) != "hook":
+        return _report_skip(
+            event_name,
+            "cli_contract_mismatch",
+            True,
+            "entrypoint="
+            + (echoed.group(1) if echoed else "absent")
+            + "; upgrade providence-cli",
+        )
+    expected = _workspace_fingerprint(workspace_root)
+    if not expected:
+        return _report_skip(event_name, "workspace_fingerprint_missing", True)
+    seen = _FINGERPRINT_RE.search(context)
+    if seen is None or not _fingerprints_match(expected, seen.group(1)):
+        return _report_skip(
+            event_name,
+            "cli_fingerprint_mismatch",
+            True,
+            f"cli={seen.group(1)[:16] if seen else 'absent'} "
+            f"workspace={expected[:16]}",
+        )
     if context:
         context = _render_activation_header(context) + "\\n\\n" + context
         print(json.dumps({

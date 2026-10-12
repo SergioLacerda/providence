@@ -94,3 +94,57 @@ def test_bootstrap_tolerates_a_missing_cli(governed_project: Path) -> None:
     result = _run_bootstrap(governed_project, [])
 
     assert result.returncode == 0
+
+
+def test_bootstrap_names_a_missing_cli_on_stderr_and_stays_non_blocking(
+    governed_project: Path,
+) -> None:
+    result = _run_bootstrap(governed_project, [])
+
+    assert result.returncode == 0
+    assert "providence CLI not found" in result.stderr
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="a fake `providence` shell script is not resolvable by Git Bash's "
+    "`command -v` without an executable bit on NTFS",
+)
+def test_bootstrap_reports_a_failing_cli_instead_of_swallowing_it(
+    governed_project: Path, tmp_path: Path
+) -> None:
+    bin_dir = tmp_path / "failing-bin"
+    bin_dir.mkdir()
+    fake = bin_dir / "providence"
+    fake.write_text(
+        "#!/bin/sh\necho 'boom: governance compile is broken' >&2\nexit 7\n",
+        encoding="utf-8",
+    )
+    fake.chmod(0o755)
+
+    result = _run_bootstrap(governed_project, [bin_dir])
+
+    assert result.returncode == 0
+    assert "bootstrap run failed" in result.stderr
+    assert "boom: governance compile is broken" in result.stderr
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="a fake `providence` shell script is not resolvable by Git Bash's "
+    "`command -v` without an executable bit on NTFS",
+)
+def test_bootstrap_is_quiet_when_the_cli_succeeds(
+    governed_project: Path, tmp_path: Path
+) -> None:
+    bin_dir = tmp_path / "ok-bin"
+    bin_dir.mkdir()
+    fake = bin_dir / "providence"
+    fake.write_text("#!/bin/sh\necho 'noise'\nexit 0\n", encoding="utf-8")
+    fake.chmod(0o755)
+
+    result = _run_bootstrap(governed_project, [bin_dir])
+
+    assert result.returncode == 0
+    assert result.stderr == ""
+    assert "noise" not in result.stdout

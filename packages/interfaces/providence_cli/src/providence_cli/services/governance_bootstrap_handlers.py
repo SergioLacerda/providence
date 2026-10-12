@@ -17,7 +17,7 @@ def complete_bootstrap_handshake() -> None:
     Uses `resolve_workspace_root()` explicitly rather than relying on
     `AgentHandshakeProtocol()`'s cwd-based default resolution, so this
     always targets the same workspace as the rest of the bootstrap flow
-    (and honors `SDD_WORKSPACE_ROOT` in isolated test/CI environments
+    (and honors `PROVIDENCE_WORKSPACE_ROOT` in isolated test/CI environments
     instead of silently falling back to the process cwd).
     """
     from providence_core.governance.handshake import AgentHandshakeProtocol

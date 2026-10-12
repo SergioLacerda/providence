@@ -15,9 +15,35 @@ from ._environment_models import (
 )
 from .workspace_settings import resolve_workspace_settings
 
+WORKSPACE_ROOT_ENV = "PROVIDENCE_WORKSPACE_ROOT"
+# Retired by RFC-019: rejected with a diagnostic, never read, aliased or mapped.
+RETIRED_WORKSPACE_ROOT_ENV = "SDD_WORKSPACE_ROOT"
+
+
+class RetiredEnvironmentVariableError(RuntimeError):
+    """An environment variable retired by a breaking rename is set.
+
+    Interpreting it would keep a second contract alive, so it is rejected and
+    the replacement is named.
+    """
+
+    def __init__(self, retired: str, replacement: str) -> None:
+        self.retired = retired
+        self.replacement = replacement
+        super().__init__(
+            f"{retired} was retired and is no longer read; set {replacement} instead"
+        )
+
+
+def reject_retired_environment_variable(retired: str, replacement: str) -> None:
+    """Raise `RetiredEnvironmentVariableError` when `retired` holds a value."""
+    if os.environ.get(retired, "").strip():
+        raise RetiredEnvironmentVariableError(retired, replacement)
+
 
 def _workspace_root_from_env() -> Path | None:
-    raw = os.environ.get("SDD_WORKSPACE_ROOT", "").strip()
+    reject_retired_environment_variable(RETIRED_WORKSPACE_ROOT_ENV, WORKSPACE_ROOT_ENV)
+    raw = os.environ.get(WORKSPACE_ROOT_ENV, "").strip()
     if not raw:
         return None
     return Path(raw).expanduser().resolve()

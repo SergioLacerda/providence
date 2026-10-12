@@ -34,9 +34,11 @@ providence init --default
 providence governance validate
 ```
 
-`providence install --wizard` deploys generated files into the project root by default.
-Use `--only-template` to stop after producing `generated/client/build/final-template/`.
-It also supports `--from-file <path>` (bring your own governance JSON) and
+`providence install --wizard` deploys generated files into the project root by default
+using private temporary staging, which is removed after deployment. Use
+`--only-template` to retain the handoff bundle under
+`generated/client/build/final-template/`; `--output-dir <path>` retains it at the
+explicit path. It also supports `--from-file <path>` (bring your own governance JSON) and
 `--non-interactive` (skip prompts) — see `docs/spec/reference/commands/cli.md`
 for the full flag reference.
 

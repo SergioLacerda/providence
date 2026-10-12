@@ -34,6 +34,7 @@ from providence_cli.utils.operational_errors import (
     operational_error_from_exception,
     render_operational_error,
 )
+from providence_core.utils.environment import RetiredEnvironmentVariableError
 from providence_core.utils.process import ProcessRunnerError
 
 __all__ = [
@@ -129,16 +130,14 @@ def main() -> int:
     except (click.ClickException, typer_click_exceptions.ClickException) as exc:
         exc.show(file=sys.stderr)
         return int(exc.exit_code)
+    except RetiredEnvironmentVariableError as exc:
+        # A retired variable is a configuration error: say what to set instead.
+        sys.stderr.write(f"ERROR: {exc}\n")
+        return 2
     except OperationalCliError as exc:
         render_operational_error(exc)
         return int(exc.exit_code)
-    except ProcessRunnerError as exc:
-        operational_error = operational_error_from_exception(exc)
-        if operational_error is None:
-            raise
-        render_operational_error(operational_error)
-        return int(operational_error.exit_code)
-    except OSError as exc:
+    except (ProcessRunnerError, OSError) as exc:
         operational_error = operational_error_from_exception(exc)
         if operational_error is None:
             raise

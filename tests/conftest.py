@@ -200,7 +200,7 @@ def _sync_compiled_dirs(master_compiled: Path, client_compiled: Path) -> None:
 def _ensure_test_workspace() -> Path:
     from providence_core.utils.environment import write_profile
 
-    os.environ["SDD_WORKSPACE_ROOT"] = str(_TEST_WORKSPACE_ROOT)
+    os.environ["PROVIDENCE_WORKSPACE_ROOT"] = str(_TEST_WORKSPACE_ROOT)
     os.environ["SDD_TEST_ISOLATED_WORKSPACE"] = "1"
     if not (_TEST_WORKSPACE_ROOT / ".providence" / "profile").exists():
         write_profile(_TEST_WORKSPACE_ROOT, "client", "test-workspace")
@@ -447,7 +447,7 @@ def _forbid_repo_sdd_writes(monkeypatch: pytest.MonkeyPatch) -> Any:  # noqa: C9
     handshake-file-only guard for those trees — see its module docstring for
     why it does not reuse this broader per-path check (doing so broke
     unrelated, pre-existing `.providence/runtime/` usage in package test
-    suites that don't inherit this module's `SDD_WORKSPACE_ROOT` isolation).
+    suites that don't inherit this module's `PROVIDENCE_WORKSPACE_ROOT` isolation).
     """
     original_open = builtins.open
 

@@ -44,6 +44,7 @@ it.
 | Container Trivy scan reports stale Python package CVEs | [Container Trivy Vulnerability Remediation](container-trivy-vulnerability-remediation.md) |
 | Need to confirm whether a `pending/`/`refined/` package was actually implemented before closing it | [Verifying Implemented Demands](verifying-implemented-demands.md) |
 | `governance validate` reports `Active handshake (M015): FAIL` | [M015 Handshake Validation Failure](m015-handshake-validation-failure.md) |
+| Prompt-submit hook never injects governance context, or an adapter points at a missing target | [Dead Prompt-Submit Hook Adapter](dead-prompt-submit-hook-adapter.md) |
 
 ## Existing Operational References
 

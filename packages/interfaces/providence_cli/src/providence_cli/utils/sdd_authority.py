@@ -64,7 +64,7 @@ def _repo_root() -> Path:
 
 
 def _workspace_root_from_env() -> Path | None:
-    """Return SDD_WORKSPACE_ROOT if set (highest-priority explicit override).
+    """Return PROVIDENCE_WORKSPACE_ROOT if set (highest-priority explicit override).
 
     Delegates to providence_core's implementation  this used to be a
     character-for-character duplicate of
@@ -81,7 +81,7 @@ def resolve_workspace_root(explicit_root: Path | None = None) -> Path:
 
     Resolution order:
     1. ``explicit_root`` argument (``--workspace-root`` CLI flag)
-    2. ``SDD_WORKSPACE_ROOT`` environment variable
+    2. ``PROVIDENCE_WORKSPACE_ROOT`` environment variable
     3. Detected workspace with ``.providence/profile``
     4. Repository root fallback
     """
@@ -157,7 +157,7 @@ def enforce_path_policy(
         raise PathPolicyViolation(
             requested_path=ws,
             reason="workspace root must be under repository 'generated/' (or /tmp for ephemeral tests), or within repo root",
-            hint="use SDD_WORKSPACE_ROOT for a custom path",
+            hint="use PROVIDENCE_WORKSPACE_ROOT for a custom path",
         )
     if ws_in_generated and not _is_relative_to(req, generated_root):
         raise PathPolicyViolation(

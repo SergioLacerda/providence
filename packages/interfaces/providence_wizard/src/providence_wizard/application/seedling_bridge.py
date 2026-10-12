@@ -17,19 +17,21 @@ class SeedlingBridge:
         emitter: Any,
         runner: Callable[..., bool] | None = None,
         debug: bool = False,
+        paths: dict[str, Path] | None = None,
     ) -> bool:
         """Delegate to the current runtime only when requested."""
         try:
             active_runner = runner or self._load_runner()
 
-            return bool(
-                active_runner(
-                    wizard_config_path=wizard_config_path,
-                    output_base=output_base,
-                    emitter=emitter,
-                    debug=debug,
-                )
-            )
+            kwargs = {
+                "wizard_config_path": wizard_config_path,
+                "output_base": output_base,
+                "emitter": emitter,
+                "debug": debug,
+            }
+            if paths is not None:
+                kwargs["paths"] = paths
+            return bool(active_runner(**kwargs))
         except Exception as exc:
             emitter(f"   Error: {exc}")
             import traceback

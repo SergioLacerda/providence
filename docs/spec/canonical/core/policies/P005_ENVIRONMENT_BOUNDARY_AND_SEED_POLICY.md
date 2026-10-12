@@ -69,7 +69,7 @@ Managed seed artifacts (e.g. `CLAUDE.md`, `.claude/`, `.gemini/`, `.cursor/`,
 
 The following variables are recognized as standardized path controls:
 
-1. `SDD_WORKSPACE_ROOT`
+1. `PROVIDENCE_WORKSPACE_ROOT` (the retired `SDD_WORKSPACE_ROOT` is rejected, RFC-019)
 2. `SDD_TEST_OUTPUT_DIR`
 3. `SDD_COMPLIANCE_EVENTS_PATH`
 4. `SDD_TELEMETRY_PATH`

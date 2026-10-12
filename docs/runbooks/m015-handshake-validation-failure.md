@@ -112,7 +112,7 @@ CLI instead.
   `.providence/runtime/` (mtime changes on `handshake-challenge.json` or
   `handshake-response.json` after running it outside `tmp_path`), that is a
   regression in test isolation, not expected M015 behavior. Fix the test to
-  pass an explicit `project_root=tmp_path` (or `SDD_WORKSPACE_ROOT`-derived
+  pass an explicit `project_root=tmp_path` (or `PROVIDENCE_WORKSPACE_ROOT`-derived
   path) instead of relying on `AgentHandshakeProtocol()`'s cwd-based default.
 - Record recurring local pre-push M015 failures in
   `docs/incidents/FAILURE_LEDGER.md` if they keep surfacing after this

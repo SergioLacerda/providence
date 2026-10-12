@@ -298,8 +298,8 @@ Templates live in `.providence/templates/` (deployed by wizard from `providence_
 
 | Flag | Effect |
 |------|--------|
-| `--output-dir <path>` | Change where the generated template lands (default: `generated/client/build/final-template/`) |
-| `--only-template` | Stop after generating the final template bundle; do not deploy it into the project root |
+| `--output-dir <path>` | Retain the generated template at the explicit path; direct deployment without this flag uses private temporary staging |
+| `--only-template` | Stop after generating the final template bundle; retain it under `generated/client/build/final-template/` and do not deploy it into the project root |
 | `--from-file <path>` | Supply a custom mandates/guidelines JSON instead of generating one (validated before use) |
 | `--non-interactive` | Resolve preferences/agent selection without prompting (reuses an existing `wizard-config.json` or falls back to defaults) |
 

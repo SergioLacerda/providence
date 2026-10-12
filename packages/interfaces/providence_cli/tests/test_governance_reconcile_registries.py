@@ -82,7 +82,7 @@ def test_governance_reconcile_registries_json_success(tmp_path: Path) -> None:
         result = runner.invoke(
             app,
             ["--json", "governance", "reconcile-registries"],
-            env={"SDD_WORKSPACE_ROOT": str(root)},
+            env={"PROVIDENCE_WORKSPACE_ROOT": str(root)},
         )
         assert result.exit_code == 0, result.output
         payload = _last_json(result.output)
@@ -124,7 +124,7 @@ def test_governance_reconcile_registries_duplicate_command_id_fails(
         result = runner.invoke(
             app,
             ["--json", "governance", "reconcile-registries"],
-            env={"SDD_WORKSPACE_ROOT": str(root)},
+            env={"PROVIDENCE_WORKSPACE_ROOT": str(root)},
         )
         assert result.exit_code == 1
         payload = _last_json(result.output)
@@ -157,7 +157,7 @@ def test_governance_reconcile_registries_check_mode_fails_on_drift(
         result = runner.invoke(
             app,
             ["--json", "governance", "reconcile-registries", "--check"],
-            env={"SDD_WORKSPACE_ROOT": str(root)},
+            env={"PROVIDENCE_WORKSPACE_ROOT": str(root)},
         )
         assert result.exit_code == 1
         payload = _last_json(result.output)
@@ -184,14 +184,14 @@ def test_governance_reconcile_registries_check_mode_passes_when_in_sync(
         applied = runner.invoke(
             app,
             ["governance", "reconcile-registries"],
-            env={"SDD_WORKSPACE_ROOT": str(root)},
+            env={"PROVIDENCE_WORKSPACE_ROOT": str(root)},
         )
         assert applied.exit_code == 0, applied.output
 
         result = runner.invoke(
             app,
             ["--json", "governance", "reconcile-registries", "--check"],
-            env={"SDD_WORKSPACE_ROOT": str(root)},
+            env={"PROVIDENCE_WORKSPACE_ROOT": str(root)},
         )
         assert result.exit_code == 0, result.output
         payload = _last_json(result.output)

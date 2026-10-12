@@ -25,7 +25,7 @@ runs, and integration tests to interfere with each other.
 
 | Variable | test | runtime | dev/prod |
 |---|---|---|---|
-| `SDD_WORKSPACE_ROOT` | O | O | O |
+| `PROVIDENCE_WORKSPACE_ROOT` | O | O | O |
 | `SDD_TEST_OUTPUT_DIR` | **R** | **F** | **F** |
 | `SDD_COMPLIANCE_EVENTS_PATH` | O | O | O |
 | `SDD_TELEMETRY_PATH` | O | O | O |
@@ -37,9 +37,14 @@ runs, and integration tests to interfere with each other.
 
 R = required · O = optional · F = forbidden (fail-fast if present)
 
+> **Retired (RFC-019):** `SDD_WORKSPACE_ROOT` was renamed to `PROVIDENCE_WORKSPACE_ROOT`.
+> The old name is rejected with a diagnostic naming the replacement; it is never read or
+> aliased. `SDD_ASK_ENTRYPOINT` was renamed to `PROVIDENCE_ASK_ENTRYPOINT` the same way.
+> The other `SDD_*` variables above are unchanged and keep ADR-024's position.
+
 ### Workspace root precedence
 
-1. `SDD_WORKSPACE_ROOT` (if set and valid)
+1. `PROVIDENCE_WORKSPACE_ROOT` (if set and valid)
 2. Authority utility `resolve_workspace_root()` / `detect_repo_root()`
 3. Safe fallback by context: in `test` → fail with explicit error (no mutable root invented);
    in `runtime`/`dev` → fail-closed or safe-mode per active governance.

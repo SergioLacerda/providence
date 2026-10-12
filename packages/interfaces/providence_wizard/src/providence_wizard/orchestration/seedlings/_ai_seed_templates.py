@@ -10,9 +10,15 @@ if [ ! -f ".providence/metadata.json" ]; then
   exit 0
 fi
 
+# Never block the tool call, but never swallow a failure either: stderr names it.
 if command -v providence >/dev/null 2>&1; then
-  providence bootstrap run --session-guard-hours 4 >/dev/null 2>&1 || true
+  if ! out=$(providence bootstrap run --session-guard-hours 4 2>&1); then
+    echo "[providence-bootstrap] bootstrap run failed: $(printf '%s' "$out" | tail -n 1)" >&2
+  fi
+else
+  echo "[providence-bootstrap] providence CLI not found on PATH; bootstrap skipped" >&2
 fi
+exit 0
 """
 
 CLAUDE_SETTINGS = """{

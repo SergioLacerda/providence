@@ -53,6 +53,21 @@ class TestFindWorkspaceRoot:
         assert result == tmp_path
 
 
+def test_get_sdd_paths_can_use_invocation_owned_generated_root(tmp_path: Path) -> None:
+    project_root = tmp_path / "project"
+    staging_root = tmp_path / "staging"
+
+    paths = get_sdd_paths(
+        repo_root=project_root,
+        workspace_root=project_root,
+        generated_root=staging_root,
+    )
+
+    assert paths["root"] == project_root.resolve()
+    assert paths["generated"] == staging_root.resolve()
+    assert paths["client_build"] == staging_root / "client" / "build"
+
+
 class TestFindWorkspaceRootIgnoresGlobalHome:
     def test_home_providence_is_the_global_cli_not_a_workspace(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
@@ -481,7 +496,7 @@ class TestGetSddPaths:
     ) -> None:
         """Should set root path correctly."""
         (tmp_path / "generated").mkdir()
-        monkeypatch.delenv("SDD_WORKSPACE_ROOT", raising=False)
+        monkeypatch.delenv("PROVIDENCE_WORKSPACE_ROOT", raising=False)
         with (
             patch(
                 "providence_core.utils.environment.find_workspace_root",
@@ -501,7 +516,7 @@ class TestGetSddPaths:
         """Should prefer .providence/source when it exists."""
         gen = tmp_path / "generated"
         gen.mkdir()
-        monkeypatch.delenv("SDD_WORKSPACE_ROOT", raising=False)
+        monkeypatch.delenv("PROVIDENCE_WORKSPACE_ROOT", raising=False)
 
         sdd_source = tmp_path / ".providence" / "source"
         sdd_source.mkdir(parents=True)
@@ -525,7 +540,7 @@ class TestGetSddPaths:
         """Should use workspace root when framework repo root is unavailable."""
         workspace_root = tmp_path / "client-project"
         (workspace_root / ".providence" / "source").mkdir(parents=True)
-        monkeypatch.delenv("SDD_WORKSPACE_ROOT", raising=False)
+        monkeypatch.delenv("PROVIDENCE_WORKSPACE_ROOT", raising=False)
 
         with (
             patch(
@@ -546,7 +561,7 @@ class TestGetSddPaths:
     ) -> None:
         """Should use cwd for onboarding flows before `.providence` exists."""
         monkeypatch.chdir(tmp_path)
-        monkeypatch.delenv("SDD_WORKSPACE_ROOT", raising=False)
+        monkeypatch.delenv("PROVIDENCE_WORKSPACE_ROOT", raising=False)
 
         with (
             patch(
@@ -568,11 +583,11 @@ class TestGetSddPaths:
     def test_isolated_workspace_root_uses_env_generated_paths(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """Should isolate generated artifacts under SDD_WORKSPACE_ROOT in tests."""
+        """Should isolate generated artifacts under PROVIDENCE_WORKSPACE_ROOT in tests."""
         repo_root = tmp_path / "repo"
         repo_root.mkdir()
         workspace_root = tmp_path / "shadow-workspace"
-        monkeypatch.setenv("SDD_WORKSPACE_ROOT", str(workspace_root))
+        monkeypatch.setenv("PROVIDENCE_WORKSPACE_ROOT", str(workspace_root))
 
         with patch(
             "providence_core.utils.environment.detect_repo_root", return_value=repo_root

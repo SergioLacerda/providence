@@ -93,6 +93,7 @@ class PhaseThreeRuntime:
             output_path,
             self._context.paths["root"],
             verbose=self._context.debug,
+            paths=self._context.paths,
         )
 
     def _handle_compiler_result(

@@ -25,6 +25,50 @@ Before tagging a new release, verify:
 
 ## [Unreleased]
 
+### Breaking Changes
+- **Environment:** `SDD_WORKSPACE_ROOT` and `SDD_ASK_ENTRYPOINT` were retired and are
+  rejected with a diagnostic naming the replacement; there is no alias or precedence
+  between the old and new names (RFC-019, ADR-025).
+  - Migration: set `PROVIDENCE_WORKSPACE_ROOT` and `PROVIDENCE_ASK_ENTRYPOINT` instead.
+    Upgrade the CLI first, rename the variables in CI and shells, then regenerate the hook
+    with `providence governance generate` and confirm with
+    `providence governance hook status`.
+- **Hook:** `providence governance hook status` now exits 1 when any adapter is broken,
+  stale or legacy, and judges adapters by the path they run and by the deployed hook's
+  digest. A retired pre-rebrand hook reference or an unmanaged Codex hook block is
+  rejected by the generator instead of being rewritten (ADR-025).
+- **Hook:** the prompt-submit hook trusts the executable by behavior and has one source
+  per input. A CLI that does not echo `entrypoint : hook` for the marker the hook sent is
+  refused (`cli_contract_mismatch`), whatever its version; releases that predate the
+  environment contract (1.0.17 and older) ignore the marker and are therefore refused. Context whose `fingerprint=`
+  is missing or differs from `fingerprints.combined` is rejected
+  (`cli_fingerprint_mismatch`). Removed: the workspace `.venv` search for `providence`
+  (only `PATH` is used), the `cwd` fallback for the workspace root (`hook_misplaced`),
+  the `governance_fingerprint` alias, and the silent exit for missing metadata
+  (`metadata_missing`). The launcher names a missing hook file (`hook_missing`).
+  - Migration: `uv tool upgrade providence-cli`, then `providence governance generate`.
+    A hook regenerated from this tree while the installed CLI is 1.0.17 or older reports
+    a degraded notice instead of injecting context; upgrade to the release that carries
+    this change first.
+- **Hook:** the prompt-submit hook no longer exits silently on failure: it names the skip
+  reason on stderr and adds a one-line `PROVIDENCE GOVERNANCE DEGRADED` notice to the model
+  context for `cli_not_found`, `timeout` and `subprocess_error`.
+- **Templates:** the `bootstrap-fallback` template tier was removed; a missing template
+  base is now an error instead of a silently returned path.
+
+### Added
+- **Hook:** Devin CLI is a prompt-submit hook platform. `.devin/hooks.v1.json` (events at
+  the top level, no wrapper) receives the `UserPromptSubmit` launcher, which anchors on
+  `DEVIN_PROJECT_DIR`. Devin also loads `.claude/settings.json` by default, so exactly one
+  registration is written: the Claude adapter's file when Claude is generated, the Devin
+  file otherwise (a managed entry left in it is removed). `providence governance hook
+  status` reports `devin` as covered by Claude's file, and reports a double registration
+  or a `hooks` wrapper key as `broken`. `devin` is an opt-in seedling option
+  (`hook_capable`).
+- **Tooling:** `tools/testing/hook_launcher_probe.py` runs the generated adapter
+  commands through the host's shells (`sh`, `cmd.exe`, PowerShell) to validate the
+  launcher.
+
 ### Fixed
 - Ensure generated signature manifests and the public trust keyring use
   deterministic two-space JSON formatting with a final newline, so the

@@ -63,3 +63,10 @@ def test_resolve_selection_explicit_set_is_returned_unchanged() -> None:
 def test_grouped_options_preserves_group_order() -> None:
     groups = [group for group, _ in grouped_options()]
     assert groups == [g for g in (CORE, IDE, AGENTS, OPTIONAL) if g in groups]
+
+
+def test_devin_is_an_opt_in_hook_capable_agent() -> None:
+    option = CATALOG_BY_KEY["devin"]
+    assert option.hook_capable is True
+    assert option.default is False
+    assert "devin" not in RECOMMENDED_DEFAULT

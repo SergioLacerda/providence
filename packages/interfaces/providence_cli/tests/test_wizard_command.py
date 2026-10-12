@@ -50,7 +50,12 @@ def test_wizard_without_subcommand_deploys_template_by_default(
         result = runner.invoke(app, [])
 
     assert result.exit_code == 0, result.output
-    mock_deploy_final_template.assert_called_once_with(None)
+    mock_deploy_final_template.assert_called_once()
+    call = mock_deploy_final_template.call_args
+    assert call.args == (None,)
+    staging_root = call.kwargs["staging_root"]
+    assert staging_root is not None
+    assert not staging_root.exists()
 
 
 def test_wizard_list_shows_public_options() -> None:
@@ -182,6 +187,107 @@ def test_run_wizard_skips_deploy_when_only_template_flag_is_internal() -> None:
         _run_wizard(None, None, False, only_template=True)
 
     mock_deploy.assert_not_called()
+
+
+def test_only_template_does_not_allocate_private_staging_root() -> None:
+    from providence_cli.commands.wizard import _run_wizard
+    from providence_wizard.contracts import WizardInvocation, WizardResult
+
+    recorded: list[WizardInvocation] = []
+
+    def _fake_run_wizard(invocation: WizardInvocation) -> WizardResult:
+        recorded.append(invocation)
+        return WizardResult(success=True)
+
+    with patch("providence_wizard.contracts.run_wizard", side_effect=_fake_run_wizard):
+        _run_wizard(None, None, False, only_template=True)
+
+    assert recorded[0].staging_root is None
+
+
+def test_explicit_output_does_not_allocate_private_staging_root(tmp_path) -> None:
+    from providence_cli.commands.wizard import _run_wizard
+    from providence_wizard.contracts import WizardInvocation, WizardResult
+
+    recorded: list[WizardInvocation] = []
+
+    def _fake_run_wizard(invocation: WizardInvocation) -> WizardResult:
+        recorded.append(invocation)
+        return WizardResult(success=True)
+
+    output_dir = tmp_path / "template"
+    with patch("providence_wizard.contracts.run_wizard", side_effect=_fake_run_wizard):
+        _run_wizard(output_dir, None, False)
+
+    assert recorded[0].staging_root is None
+
+
+def test_failed_direct_deploy_cleans_private_staging_root() -> None:
+    from click.exceptions import Exit
+
+    from providence_cli.commands.wizard import _run_wizard
+    from providence_wizard.contracts import WizardInvocation, WizardResult
+
+    staging_roots = []
+
+    def _fake_run_wizard(invocation: WizardInvocation) -> WizardResult:
+        assert invocation.staging_root is not None
+        staging_roots.append(invocation.staging_root)
+        return WizardResult(success=False, errors=["boom"])
+
+    with (
+        patch("providence_wizard.contracts.run_wizard", side_effect=_fake_run_wizard),
+        pytest.raises(Exit),
+    ):
+        _run_wizard(None, None, False)
+
+    assert staging_roots
+    assert not staging_roots[0].exists()
+
+
+def test_separate_direct_invocations_have_independent_staging_roots() -> None:
+    from providence_cli.commands.wizard import _run_wizard
+    from providence_wizard.contracts import WizardInvocation, WizardResult
+
+    staging_roots = []
+
+    def _fake_run_wizard(invocation: WizardInvocation) -> WizardResult:
+        assert invocation.staging_root is not None
+        staging_roots.append(invocation.staging_root)
+        return WizardResult(success=True)
+
+    with patch("providence_wizard.contracts.run_wizard", side_effect=_fake_run_wizard):
+        _run_wizard(None, None, False)
+        _run_wizard(None, None, False)
+
+    assert len(staging_roots) == 2
+    assert staging_roots[0] != staging_roots[1]
+    assert all(not root.exists() for root in staging_roots)
+
+
+def test_cleanup_failure_remains_observable() -> None:
+    from providence_cli.commands.wizard import _run_wizard
+    from providence_wizard.contracts import WizardInvocation, WizardResult
+
+    class _TemporaryDirectory:
+        name = "/tmp/providence-test-staging"
+
+        def cleanup(self) -> None:
+            raise OSError("cleanup failed")
+
+    def _fake_run_wizard(invocation: WizardInvocation) -> WizardResult:
+        assert invocation.staging_root is not None
+        return WizardResult(success=True)
+
+    with (
+        patch(
+            "providence_cli.commands.wizard.tempfile.TemporaryDirectory",
+            return_value=_TemporaryDirectory(),
+        ),
+        patch("providence_wizard.contracts.run_wizard", side_effect=_fake_run_wizard),
+        pytest.raises(OSError, match="cleanup failed"),
+    ):
+        _run_wizard(None, None, False)
 
 
 def test_wizard_default_passes_through_from_file_and_non_interactive(

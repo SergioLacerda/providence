@@ -288,3 +288,52 @@ class TestOutputValidatorVerbose:
         validator.validate()
         captured = capsys.readouterr()
         assert "Validating" in captured.out
+
+
+class TestDevinAdapterValidation:
+    """Devin loads .claude/settings.json by default, so its own file is only
+    required when the Claude adapter is not part of the generation."""
+
+    @staticmethod
+    def _result() -> dict:
+        return {"checks": {}, "valid": True, "errors": []}
+
+    def _validate(self, tmp_path: Path, agents: list[str]) -> dict:
+        validator = _make_validator(
+            tmp_path,
+            config={"handshake_mode": "hook", "prompt_submit_hook_agents": agents},
+        )
+        result = self._result()
+        validator._validate_prompt_submit_hook_files(result)
+        return result
+
+    def test_devin_alone_requires_its_own_hook_file(self, tmp_path: Path) -> None:
+        _create_all_required(tmp_path)
+        _create_prompt_submit_hooks(tmp_path)
+
+        result = self._validate(tmp_path, ["devin"])
+
+        assert result["valid"] is False
+        assert result["checks"]["hook: Devin adapter"] == "MISSING"
+
+    def test_devin_alone_passes_with_its_file(self, tmp_path: Path) -> None:
+        _create_all_required(tmp_path)
+        _create_prompt_submit_hooks(tmp_path)
+        (tmp_path / ".devin").mkdir()
+        (tmp_path / ".devin" / "hooks.v1.json").write_text(
+            CENTRAL_PROMPT_SUBMIT_COMMAND, encoding="utf-8"
+        )
+
+        result = self._validate(tmp_path, ["devin"])
+
+        assert result["valid"] is True
+        assert result["checks"]["hook: Devin adapter"] == "OK"
+
+    def test_devin_with_claude_needs_no_devin_file(self, tmp_path: Path) -> None:
+        _create_all_required(tmp_path)
+        _create_prompt_submit_hooks(tmp_path)
+
+        result = self._validate(tmp_path, ["claude", "devin"])
+
+        assert result["valid"] is True
+        assert "hook: Devin adapter" not in result["checks"]

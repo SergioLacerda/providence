@@ -41,6 +41,7 @@ CATALOG: tuple[SeedlingOption, ...] = (
     SeedlingOption("codex", AGENTS, "Codex", hook_capable=True),
     SeedlingOption("gemini", AGENTS, "Gemini", hook_capable=True),
     SeedlingOption("copilot", AGENTS, "GitHub Copilot"),
+    SeedlingOption("devin", AGENTS, "Devin CLI", default=False, hook_capable=True),
     SeedlingOption(
         "ci", OPTIONAL, "CI/CD workflow (sdd-validation.yml)", default=False
     ),

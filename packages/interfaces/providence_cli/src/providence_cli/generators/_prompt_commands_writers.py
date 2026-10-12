@@ -39,9 +39,6 @@ def _write_copilot_prompts(
 def _write_cursor_commands(cursor_rules_dir: Path) -> tuple[str, Path]:
     """Write Cursor commands rule file."""
     cursor_rules_dir.mkdir(parents=True, exist_ok=True)
-    # Rename-away cleanup: don't leave the pre-rebrand filename behind
-    # alongside the new one.
-    (cursor_rules_dir / "sdd-commands.mdc").unlink(missing_ok=True)
     cursor_commands = cursor_rules_dir / "providence-commands.mdc"
     cursor_commands.write_text(
         "---\n"

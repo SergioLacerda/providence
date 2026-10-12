@@ -85,6 +85,8 @@ def _compile_with_pipeline_builder(
     output_path: Path,
     items: dict[str, list[dict[str, Any]]],
     emitter: Callable[[str], None],
+    *,
+    paths: dict[str, Path] | None = None,
 ) -> bool:
     """Run PipelineBuilder on parsed items and save outputs to .providence/source/."""
     try:
@@ -93,8 +95,10 @@ def _compile_with_pipeline_builder(
         )
 
         try:
-            paths = get_sdd_paths()
-            spec_path = paths.get("docs_meta", paths["client_build"] / "docs-meta")
+            resolved_paths = paths or get_sdd_paths()
+            spec_path = resolved_paths.get(
+                "docs_meta", resolved_paths["client_build"] / "docs-meta"
+            )
         except RuntimeError:
             spec_path = repo_root / "generated" / "client" / "build" / "docs-meta"
 

@@ -66,7 +66,7 @@ if [ "${1:-}" = "make" ] && [ "${2:-}" = "check" ]; then
     # Ensure telemetry tests use their own tmp_path/workspace resolution.
     unset SDD_TELEMETRY_PATH || true
     unset SDD_COMPLIANCE_EVENTS_PATH || true
-    unset SDD_WORKSPACE_ROOT || true
+    unset PROVIDENCE_WORKSPACE_ROOT || true
 
     # Do not force global workspace/event paths here; several tests rely on
     # per-test tmp_path resolution and explicit monkeypatching.

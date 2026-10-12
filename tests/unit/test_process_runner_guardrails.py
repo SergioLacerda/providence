@@ -32,6 +32,10 @@ ALLOWED_TOOLS = {
     # Launches `uv run mutmut` for a scoped mutation-testing target — a
     # standalone dev/CI tool, not application code under packages/.
     "tools/testing/run_mutation_python.py",
+    # Runs the generated hook adapter commands through the host's real shells
+    # (cmd.exe, PowerShell, sh) to validate the launcher; the shell is the
+    # object under test, so the ProcessRunner (no shell) cannot replace it.
+    "tools/testing/hook_launcher_probe.py",
 }
 
 MIGRATED_TOOLS = {

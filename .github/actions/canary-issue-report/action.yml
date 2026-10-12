@@ -2,8 +2,8 @@ name: Ecosystem canary issue report
 description: >-
   Open or update (never duplicate) a GitHub issue reporting an
   `ecosystem-canary` failure for one ecosystem. Idempotency is by title
-  prefix, not a dedicated label, so it only depends on labels that already
-  exist in this repo (seeded by dependabot.yml's own usage).
+  prefix, not a dedicated label; configured labels are applied when they
+  exist and missing labels do not block issue reporting.
 
 inputs:
   ecosystem:
@@ -23,20 +23,50 @@ runs:
       shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
+        CANARY_ECOSYSTEM: ${{ inputs.ecosystem }}
+        CANARY_LABELS: ${{ inputs.labels }}
+        CANARY_BODY_FILE: ${{ inputs.body-file }}
       run: |
         set -euo pipefail
-        title="[ecosystem-canary] ${{ inputs.ecosystem }}: dependency freshness failure"
+        title="[ecosystem-canary] ${CANARY_ECOSYSTEM}: dependency freshness failure"
         existing=$(gh issue list --repo "${GITHUB_REPOSITORY}" \
           --search "in:title \"${title}\"" \
           --state open --json number --jq '.[0].number // empty')
         if [[ -n "${existing}" ]]; then
           echo "Updating existing issue #${existing}"
           gh issue comment "${existing}" --repo "${GITHUB_REPOSITORY}" \
-            --body-file "${{ inputs.body-file }}"
+            --body-file "${CANARY_BODY_FILE}"
         else
           echo "Creating new issue"
-          gh issue create --repo "${GITHUB_REPOSITORY}" \
-            --title "${title}" \
-            --body-file "${{ inputs.body-file }}" \
-            --label "${{ inputs.labels }}"
+          issue_args=(
+            --repo "${GITHUB_REPOSITORY}"
+            --title "${title}"
+            --body-file "${CANARY_BODY_FILE}"
+          )
+
+          existing_labels=""
+          if ! existing_labels=$(gh label list --repo "${GITHUB_REPOSITORY}" \
+            --limit 1000 --json name --jq '.[].name'); then
+            echo "::warning::Unable to list repository labels; creating the canary issue without labels"
+          fi
+
+          IFS=',' read -r -a requested_labels <<< "${CANARY_LABELS}"
+          selected_labels=()
+          for label in "${requested_labels[@]}"; do
+            label="${label#"${label%%[![:space:]]*}"}"
+            label="${label%"${label##*[![:space:]]}"}"
+            [[ -z "${label}" ]] && continue
+            if grep -Fqx -- "${label}" <<< "${existing_labels}"; then
+              selected_labels+=("${label}")
+            else
+              echo "::warning::Repository label '${label}' does not exist; creating the canary issue without it"
+            fi
+          done
+
+          if ((${#selected_labels[@]} > 0)); then
+            joined_labels=$(IFS=,; printf '%s' "${selected_labels[*]}")
+            issue_args+=(--label "${joined_labels}")
+          fi
+
+          gh issue create "${issue_args[@]}"
         fi

@@ -529,3 +529,30 @@ def test_antigravity_seed_returns_false_and_does_not_modify_file_on_malformed_ma
     gen = _make_ai_gen(tmp_path)
     assert gen.generate_antigravity_seed() is False
     assert antigravity_file.read_text(encoding="utf-8") == original
+
+
+def test_claude_seed_does_not_overwrite_a_malformed_settings_file(
+    tmp_path: Path,
+) -> None:
+    """`settings.json` is shared with the user; an unparsable file is theirs."""
+    settings_path = tmp_path / ".claude" / "settings.json"
+    settings_path.parent.mkdir(parents=True)
+    settings_path.write_text('{"permissions": {"allow": [', encoding="utf-8")
+    gen = _make_ai_gen(tmp_path)
+
+    assert gen.generate_claude_seed() is False
+
+    assert settings_path.read_text(encoding="utf-8") == '{"permissions": {"allow": ['
+
+
+def test_gemini_seed_does_not_overwrite_a_malformed_settings_file(
+    tmp_path: Path,
+) -> None:
+    settings_path = tmp_path / ".gemini" / "settings.json"
+    settings_path.parent.mkdir(parents=True)
+    settings_path.write_text("[1, 2, 3]", encoding="utf-8")
+    gen = _make_ai_gen(tmp_path)
+
+    assert gen.generate_gemini_seed() is False
+
+    assert settings_path.read_text(encoding="utf-8") == "[1, 2, 3]"

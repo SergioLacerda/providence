@@ -164,4 +164,6 @@ build/
 
 # Drift battery local state - not for commit
 examples/security/drift_battery_snapshot.json
+
 .strategist/.compiled/
+.strategist/.upgrade-backups/

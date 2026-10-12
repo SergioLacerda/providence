@@ -21,6 +21,7 @@ class SessionBootstrap:
             language=invocation.language,
             custom_governance_path=invocation.custom_governance_path,
             debug=invocation.debug,
+            staging_root=invocation.staging_root,
         )
 
     def run(self) -> WizardResult:

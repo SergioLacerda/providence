@@ -184,8 +184,9 @@ def sign(
 
 @hook_app.command("status")
 def hook_status() -> None:
-    """Report whether the prompt-submit governance hook is enabled."""
-    run_governance_hook_status(console=console)
+    """Report prompt-submit hook state; exit 1 when an adapter is broken, stale or legacy."""
+    if not run_governance_hook_status(console=console):
+        raise typer.Exit(code=1)
 
 
 @hook_app.command("disable")

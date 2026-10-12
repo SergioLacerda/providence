@@ -544,7 +544,7 @@ class TestRuntimeStatusPathPolicy:
                 side_effect=PathPolicyViolation(
                     requested_path=tmp_path,
                     reason="outside permitted paths",
-                    hint="use SDD_WORKSPACE_ROOT",
+                    hint="use PROVIDENCE_WORKSPACE_ROOT",
                 ),
             ),
             pytest.raises(typer.Exit) as exc_info,
