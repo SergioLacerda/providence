@@ -300,6 +300,77 @@ jobs:
         run: |
           uv run python tools/ci/environment_gates.py runtime-seed-drift-check --context test --mode enforce
 
+  hook-launcher-gate:
+    # Runs the generated prompt-submit adapters through the runner's real shells
+    # (sh or cmd.exe, Windows PowerShell 5.1, PowerShell 7). The Windows lane is
+    # a non-blocking compatibility lane until the Windows launcher questions in
+    # docs/adr/ADR-025 (open point 4) are closed; its artifact is the evidence.
+    name: Hook Launcher Gate (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    continue-on-error: ${{ matrix.required == false }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            required: true
+          - os: windows-latest
+            required: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7  # v10.2.0
+        with:
+          version: "0.11.9"
+          enable-cache: true
+
+      - name: Bootstrap Providence CLI
+        uses: ./.github/actions/bootstrap-providence-cli
+
+      - name: Run generated hook adapters under the runner's shells
+        shell: bash
+        run: |
+          mkdir -p .artifacts
+          uv run python tools/ci/hook_launcher_gate.py \
+            --json-out .artifacts/hook_launcher_gate_${{ matrix.os }}.json \
+            --md-out .artifacts/hook_launcher_gate_${{ matrix.os }}.md
+
+      - name: Publish hook launcher gate summary
+        if: always()
+        shell: bash
+        run: |
+          if [ -f ".artifacts/hook_launcher_gate_${{ matrix.os }}.md" ]; then
+            cat ".artifacts/hook_launcher_gate_${{ matrix.os }}.md" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload hook launcher gate evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: hook-launcher-gate-${{ matrix.os }}
+          path: |
+            .artifacts/hook_launcher_gate_${{ matrix.os }}.json
+            .artifacts/hook_launcher_gate_${{ matrix.os }}.md
+          if-no-files-found: warn
+
+      - name: Repository .providence mutation guard
+        if: always()
+        shell: bash
+        run: |
+          uv run python tools/ci/environment_gates.py repo-providence-mutation-guard --context test --mode enforce
+
+      - name: Runtime/seed drift check
+        if: always()
+        shell: bash
+        run: |
+          uv run python tools/ci/environment_gates.py runtime-seed-drift-check --context test --mode enforce
+
   coverage-strict:
     name: Coverage Gates (core ≥ 90%, features/interfaces ≥ 70%)
     runs-on: ubuntu-latest

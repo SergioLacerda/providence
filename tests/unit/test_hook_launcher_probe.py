@@ -12,6 +12,21 @@ from tools.testing import hook_launcher_probe as probe
 
 pytestmark = pytest.mark.unit
 
+_DISCOVER_SHELLS = probe.available_shells
+
+
+@pytest.fixture(autouse=True)
+def _host_shell_only(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Pin the probe to the host's own shell.
+
+    CI images ship `pwsh`, and PowerShell does not run a command that starts
+    with a quoted path (it needs `&`), so one row per installed shell would make
+    these tests depend on the machine. Shell discovery has its own test.
+    """
+    host = _DISCOVER_SHELLS()[:1]
+    monkeypatch.setattr(probe, "available_shells", lambda: host)
+
+
 _ACTIVE = {
     "hookSpecificOutput": {
         "hookEventName": "UserPromptSubmit",
@@ -91,6 +106,51 @@ def test_probe_runs_each_command_under_the_host_shell(tmp_path: Path) -> None:
 
     assert rows
     assert {row["outcome"] for row in rows} == {"injected"}
+
+
+def test_available_shells_lists_the_host_shell_first_then_powershell(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    found = {"powershell": "/x/powershell", "pwsh": "/x/pwsh"}
+    monkeypatch.setattr(probe.shutil, "which", lambda name: found.get(name))
+
+    shells = _DISCOVER_SHELLS()
+
+    assert [name for name, _ in shells] == [
+        "cmd" if probe.os.name == "nt" else "sh",
+        "powershell",
+        "pwsh",
+    ]
+    assert shells[0][1] is None
+    assert shells[1][1][:2] == ["/x/powershell", "-NoProfile"]
+
+
+def test_available_shells_is_only_the_host_shell_without_powershell(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(probe.shutil, "which", lambda name: None)
+
+    assert len(_DISCOVER_SHELLS()) == 1
+
+
+def test_probe_reports_one_row_per_command_and_installed_shell(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    workspace = _workspace(tmp_path, json.dumps(_ACTIVE))
+    monkeypatch.setattr(
+        probe,
+        "available_shells",
+        lambda: [("sh", None), ("sh-again", None)],
+    )
+
+    rows = probe.probe(workspace, "implement C")
+
+    assert [(row["source"], row["shell"]) for row in rows] == [
+        (".github/hooks/providence-prompt-submit.json:command", "sh"),
+        (".github/hooks/providence-prompt-submit.json:command", "sh-again"),
+        (".github/hooks/providence-prompt-submit.json:bash", "sh"),
+        (".github/hooks/providence-prompt-submit.json:bash", "sh-again"),
+    ]
 
 
 def test_main_exits_one_when_a_command_errors(tmp_path: Path) -> None:

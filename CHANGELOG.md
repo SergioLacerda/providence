@@ -68,6 +68,12 @@ Before tagging a new release, verify:
 - **Tooling:** `tools/testing/hook_launcher_probe.py` runs the generated adapter
   commands through the host's shells (`sh`, `cmd.exe`, PowerShell) to validate the
   launcher.
+- **CI:** job `Hook Launcher Gate` (`reusable-test.yml`) generates the adapters with
+  the source-tree generator and runs them through every shell of `ubuntu-latest` and
+  `windows-latest` (`tools/ci/hook_launcher_gate.py`): a governed workspace and its
+  subdirectories must reach the hook, an ungoverned project must stay silent. The
+  evidence is uploaded as `hook-launcher-gate-<os>`; the Windows lane is
+  non-blocking until the Windows launcher questions in ADR-025 are closed.
 
 ### Fixed
 - Ensure generated signature manifests and the public trust keyring use

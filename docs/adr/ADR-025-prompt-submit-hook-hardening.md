@@ -199,7 +199,7 @@ Implemented and verified in the source tree (unit and integration suites green):
 | 5 Stale build not deployed | Done: `deploy_to_root` refuses a stale `final-template` |
 | 6 Executable verified by behavior | Done: the CLI must echo `entrypoint : hook` (`cli_contract_mismatch`) and report the workspace fingerprint; version list, probe and cache, `.venv` search, `cwd` fallback and the fingerprint alias removed |
 | 7 Merge fails closed | Done for the hook adapters and the Claude and Gemini seeds |
-| 8 Launcher without OS encoding | Done for the tracked Copilot file (`bash`, `powershell`, `command`); Windows shells untested |
+| 8 Launcher without OS encoding | Done for the tracked Copilot file (`bash`, `powershell`, `command`); CI job `Hook Launcher Gate` runs every generated adapter under the runner's shells (non-blocking on `windows-latest`); a developer machine is untested |
 | 9, 10 Copilot and Codex limits | Done as stated notices in `hook status` and generation output; the Codex re-review rule is settled by the official documentation (hash of the exact definition, `/hooks`), observation pending |
 | 11 `bootstrap-fallback` removed | Done; a missing template base raises |
 | 12 Tracked copies under `docs/` | Done |
